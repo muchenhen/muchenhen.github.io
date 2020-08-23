@@ -8,7 +8,130 @@
     noSupport: 'The browser does not support'
   },
   hexoVersion: '5.1.0'
-} </script><meta name="generator" content="Hexo 5.1.0"></head><body><canvas class="fireworks"></canvas><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="false"><div class="author-info"><div class="author-info__avatar text-center"><img src="/img/avatar.png"></div><div class="author-info__name text-center">MuChenhen</div><div class="author-info__description text-center">放一些笔记的地方</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">547</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">18</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">28</span></a></div></div></div><nav id="nav" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">风生之谷</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">Home</a><a class="site-page" href="/archives">Archives</a><a class="site-page" href="/tags">Tags</a><a class="site-page" href="/categories">Categories</a></span><span class="pull-right"></span></div><div id="site-info"><div id="site-title">风生之谷</div><div id="site-sub-title">一点浩然气 千里快哉风</div></div></nav><div id="content-outer"><div class="layout" id="content-inner"><div class="recent-post-item article-container"><a class="article-title" href="/2019/03/01/%E7%94%A8opengl%E7%BB%98%E5%88%B6%E4%B8%A4%E4%B8%AA%E7%9B%B8%E8%BF%9E%E4%B8%89%E8%A7%92%E5%BD%A2/">用OpenGL绘制两个相连三角形</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-03-01</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/OpenGL/">OpenGL</a></span><div class="content"><p><img src="https://www.muchenhen.com/wp-content/uploads/2019/03/QQ%E6%88%AA%E5%9B%BE20190301165057.png"></p>
+} </script><meta name="generator" content="Hexo 5.1.0"></head><body><canvas class="fireworks"></canvas><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="false"><div class="author-info"><div class="author-info__avatar text-center"><img src="/img/avatar.png"></div><div class="author-info__name text-center">MuChenhen</div><div class="author-info__description text-center">放一些笔记的地方</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">548</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">19</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">29</span></a></div></div></div><nav id="nav" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">风生之谷</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">Home</a><a class="site-page" href="/archives">Archives</a><a class="site-page" href="/tags">Tags</a><a class="site-page" href="/categories">Categories</a></span><span class="pull-right"></span></div><div id="site-info"><div id="site-title">风生之谷</div><div id="site-sub-title">一点浩然气 千里快哉风</div></div></nav><div id="content-outer"><div class="layout" id="content-inner"><div class="recent-post-item article-container"><a class="article-title" href="/2019/03/01/%E7%94%A8opengl%E7%BB%98%E5%88%B6%E4%B8%A4%E4%B8%AA%E7%9B%B8%E8%BF%9E%E4%B8%89%E8%A7%92%E5%BD%A2-1/">用OpenGL绘制两个相连三角形</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-03-01</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/OpenGL/">OpenGL</a></span><div class="content"><p><img src="https://www.muchenhen.com/wp-content/uploads/2019/03/QQ%E6%88%AA%E5%9B%BE20190301165057.png"></p>
+<p>源码：</p>
+<p>#include #include #include void framebuffer_size_callback(GLFWwindow* window, int width, int height);<br>void processInput(GLFWwindow *window);</p>
+<p>// 设置窗口大小<br>const unsigned int SCR_WIDTH = 800;<br>const unsigned int SCR_HEIGHT = 600;</p>
+<p>//编写顶点着色器<br>const char *vertexShaderSource = “#version 460 core\n”<br>“layout (location = 0) in vec3 aPos;\n”<br>“void main()\n”<br>“{\n”<br>“   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n”<br>“}\0”;</p>
+<p>//编写片段着色器<br>const char *fragmentShaderSource = “#version 460 core\n”<br>“out vec4 FragColor;\n”<br>“void main()\n”<br>“{\n”<br>“   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n”<br>“}\n\0”;</p>
+<p>int main()<br>{<br>    glfwInit();<br>    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);<br>    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);<br>    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);</p>
+<pre><code>//创建窗口
+GLFWwindow\* window = glfwCreateWindow(SCR\_WIDTH, SCR\_HEIGHT, &quot;相连的三角行&quot;, NULL, NULL);
+//检查窗口创建
+if (window == NULL)
+&#123;
+    std::cout &lt;&lt; &quot;Failed to create GLFW window&quot; &lt;&lt; std::endl;
+    glfwTerminate();
+    return -1;
+&#125;
+glfwMakeContextCurrent(window);
+glfwSetFramebufferSizeCallback(window, framebuffer\_size\_callback);
+
+if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+&#123;
+    std::cout &lt;&lt; &quot;Failed to initialize GLAD&quot; &lt;&lt; std::endl;
+    return -1;
+&#125;
+
+// 创建并编译着色器
+// 顶点着色器
+int vertexShader = glCreateShader(GL\_VERTEX\_SHADER);
+glShaderSource(vertexShader, 1, &amp;vertexShaderSource, NULL);
+glCompileShader(vertexShader);
+// 检查编译错误
+int success;
+char infoLog\[512\];
+glGetShaderiv(vertexShader, GL\_COMPILE\_STATUS, &amp;success);
+if (!success)
+&#123;
+    glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+    std::cout &lt;&lt; &quot;ERROR::SHADER::VERTEX::COMPILATION\_FAILED\\n&quot; &lt;&lt; infoLog &lt;&lt; std::endl;
+&#125;
+// 片段着色器
+int fragmentShader = glCreateShader(GL\_FRAGMENT\_SHADER);
+glShaderSource(fragmentShader, 1, &amp;fragmentShaderSource, NULL);
+glCompileShader(fragmentShader);
+//检查编译错误
+glGetShaderiv(fragmentShader, GL\_COMPILE\_STATUS, &amp;success);
+if (!success)
+&#123;
+    glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+    std::cout &lt;&lt; &quot;ERROR::SHADER::FRAGMENT::COMPILATION\_FAILED\\n&quot; &lt;&lt; infoLog &lt;&lt; std::endl;
+&#125;
+//链接着色器
+int shaderProgram = glCreateProgram();
+glAttachShader(shaderProgram, vertexShader);
+glAttachShader(shaderProgram, fragmentShader);
+glLinkProgram(shaderProgram);
+//检查连接错误
+glGetProgramiv(shaderProgram, GL\_LINK\_STATUS, &amp;success);
+if (!success) &#123;
+    glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+    std::cout &lt;&lt; &quot;ERROR::SHADER::PROGRAM::LINKING\_FAILED\\n&quot; &lt;&lt; infoLog &lt;&lt; std::endl;
+&#125;
+glDeleteShader(vertexShader);
+glDeleteShader(fragmentShader);
+
+// 设置顶点数据和缓存，配置顶点属性
+// 添加一个新的顶点数组，形成两个三角形，共6个顶点
+float vertices\[\] = &#123;
+    //第一个三角形
+    -0.9f, -0.5f, 0.0f,  // left 
+    -0.0f, -0.5f, 0.0f,  // right
+    -0.45f, 0.5f, 0.0f,  // top 
+    //第二个三角形
+     0.0f, -0.5f, 0.0f,  // left
+     0.9f, -0.5f, 0.0f,  // right
+     0.45f, 0.5f, 0.0f   // top 
+&#125;;
+
+unsigned int VBO, VAO;
+glGenVertexArrays(1, &amp;VAO);
+glGenBuffers(1, &amp;VBO);
+//绑定顶点数组对象
+glBindVertexArray(VAO);
+//绑定并设置顶点缓存
+glBindBuffer(GL\_ARRAY\_BUFFER, VBO);
+glBufferData(GL\_ARRAY\_BUFFER, sizeof(vertices), vertices, GL\_STATIC\_DRAW);
+//配置顶点属性
+glVertexAttribPointer(0, 3, GL\_FLOAT, GL\_FALSE, 3 \* sizeof(float), (void\*)0);
+glEnableVertexAttribArray(0);
+
+glBindBuffer(GL\_ARRAY\_BUFFER, 0);
+
+glBindVertexArray(0);
+
+//渲染循环
+while (!glfwWindowShouldClose(window))
+&#123;
+    //输入
+    processInput(window);
+
+    //渲染
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClear(GL\_COLOR\_BUFFER\_BIT);
+
+    //画图
+    glUseProgram(shaderProgram);
+    glBindVertexArray(VAO);
+    glDrawArrays(GL\_TRIANGLES, 0, 6); //两个三角形共六个顶点
+
+    //交换缓冲区
+    glfwSwapBuffers(window);
+    glfwPollEvents();
+&#125;
+
+//取消用过的资源的分配
+glDeleteVertexArrays(1, &amp;VAO);
+glDeleteBuffers(1, &amp;VBO);
+
+// glfw终止，清除所有分配的资源
+glfwTerminate();
+return 0;</code></pre>
+<p>}</p>
+<p>//检测并响应按键输入<br>void processInput(GLFWwindow *window)<br>{<br>    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)<br>        glfwSetWindowShouldClose(window, true);<br>}</p>
+<p>//改变窗口大小时调用<br>void framebuffer_size_callback(GLFWwindow* window, int width, int height)<br>{<br>    glViewport(0, 0, width, height);<br>}</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/03/01/%E7%94%A8opengl%E7%BB%98%E5%88%B6%E4%B8%A4%E4%B8%AA%E7%9B%B8%E8%BF%9E%E4%B8%89%E8%A7%92%E5%BD%A2/">用OpenGL绘制两个相连三角形</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-03-01</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/OpenGL/">OpenGL</a></span><div class="content"><p><img src="https://www.muchenhen.com/wp-content/uploads/2019/03/QQ%E6%88%AA%E5%9B%BE20190301165057.png"></p>
 <p>源码：</p>
 <p>#include #include #include void framebuffer_size_callback(GLFWwindow* window, int width, int height);<br>void processInput(GLFWwindow *window);</p>
 <p>// 设置窗口大小<br>const unsigned int SCR_WIDTH = 800;<br>const unsigned int SCR_HEIGHT = 600;</p>
@@ -707,23 +830,6 @@ return 0;</code></pre>
 <p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/022.png"></p>
 <p><strong>_特别注意：_当变换矩阵在前时，最后的变换矩阵相乘的时候需要反着来！</strong></p>
 <p><strong>如有发现错误请</strong><a target="_blank" rel="noopener" href="https://www.muchenhen.com/%E8%81%94%E7%B3%BB/"><strong>联系</strong></a><strong>。</strong></p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/01/03/%E5%AF%B9%E7%BE%8E%E5%A5%BD%E4%BA%8B%E7%89%A9%E8%BF%BD%E5%BF%86%E7%9A%84%E4%BD%BF%E7%94%A8-1/">对美好事物追忆的使用</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-01-03</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/%E6%83%98/">惘</a></span><div class="content"><p><strong><em>This article was translated from the economist on December 29, 2018.</em></strong></p>
-<p>————————————————————</p>
-<h4 id="如何从回忆思潮的爆发中获得最好的事物"><a href="#如何从回忆思潮的爆发中获得最好的事物" class="headerlink" title="如何从回忆思潮的爆发中获得最好的事物"></a>如何从回忆思潮的爆发中获得最好的事物</h4><p>政客们总是利用过去。而现在，发达国家和新兴的经济体们正在经历一场回忆的爆发。左派和右派，民主和专制都在追忆着昔日的荣光。正当美国总统唐纳德特朗普发誓要“让美国再次伟大”的时候，中国国家主席习近平正在使用他的“中国梦”去驱散百年的屈辱，让中国回到她的黄金时代。墨西哥新任总统安德烈斯·曼纽尔·洛佩兹·奥夫拉多尔肩负着抵御全球资本主义、恢复国家经济主权的使命。波兰最有权势的政治家雅罗斯瓦夫•卡钦斯基希望清除苏联共产主义的最后一丝痕迹，实现波兰传统价值观的复兴。</p>
-<p>这场回忆的狂欢，在不同的国家有着不同的原因。在新兴的市场，过去的辉煌往往意味着未来的胜利。中国已经经历了40年的转型增长，她意识到自己正站在伟大事业的起点上。印度在纳伦德拉•莫迪的领导下，一直在用印度教民族主义复兴来庆祝其日益增长的地缘政治影响力。</p>
-<p>相比之下，在发达国家，怀旧通常源自亨利•杰克逊协会的索菲娅•加斯顿所称的“无所不在的、具有威胁性的衰退感觉”。近三分之二的英国人认为过去的生活更好。同样比例的法国人也觉得现在的生活不舒服。今年联合国世界幸福报告中，美国民众的幸福感在降低。无论是在发达国家还是发展中国家，绝大多数的人认为机器人和自动化将会加剧不公平的现象，并且伤害到就业。在一项2017年针对28个国家所做的一项调查报告中现实，超过半数的人认为，自己的生活在将来不会有任何改善，甚至可能会更差。只有不到15%的日本民众认为他们的孩子将来会比他们的父母更加富有。</p>
-<p>大量的研究结果证明了，新兴市场的乐观主义比起发达国家的悲观主义，是建立在更坚实的基础上的。世界平均的人类寿命正变得越来越长，人们的生活也变得更加健康；战争和饥荒带走的生命越来越少；教育的普及也使得歧视与偏见慢慢减少。但是同样的，夏天不像人们想象的那样美好，国家也不像人们想象的那么光荣。</p>
-<p>但是仅仅因为悲观主义和怀旧情绪的不准确而拒绝它们，就大错特错。它们是塑造政治的强大力量。要想驾驭它们，首先要理解他们。</p>
-<p>怀旧对于乐观主义者和悲观主义者都是改变世界的支柱。包括人工智能在内的各种新技术，有可能改变整个实体工业，甚至影响国家和公民的关系。两个世纪以来，世界的中心力量正在从西方转移回中国。地球老化的速度比历史上任何时期都要快。她的气候在改变，而生活在她上面的种族和文化变得更加矛盾与复杂。</p>
-<p>在这样的时刻，人们会被怀旧所吸引，把它作为一种安慰和自尊的来源。许多脱欧派人士认为离开欧盟意味着他们将再次加入一个充满活力的全球化的英国；加泰罗尼亚人在追求独特身份的过程中唤起了一段理想化的过去；巴西人选出了一位让人回想起三十年前他们摆脱的军事独裁统治的总统。当特朗普推动煤炭和钢铁行业发展时，那些担心自己在肮脏、垂死的行业中被边缘化的人，突然觉得自己又有了价值。</p>
-<p>在发达国家，怀旧也提供了一种方式，来反抗别人的进步观念，从而夺回控制权。在前东德，极右翼政党——德国另类选择党拥有最强大的支持，那里的选民对失去社区和安全感到遗憾。</p>
-<p>在法国，“黄背心”砸碎了香榭丽舍大街上的商店橱窗，因为他们入不敷出。他们拒绝他们的总统伊曼纽尔·马克龙提出的国家繁荣与个人经济安全之间的权衡。</p>
-<p>这使得怀旧变得危险。抗议者并不一定希望时光倒流，他们可能只是想让时间慢下来。然而，这种僵化可能只会加剧衰退的感觉。此外，怀旧者渴望的自尊似乎常常助长仇外情绪。在印度，印度教民族主义复兴的过程中，针对穆斯林的仇恨犯罪有所增加。在西方，就在强硬的左翼人士谴责全球商业的阴谋诡计时，右翼人士记得一个更“白”、文化更少的过去。反犹太主义卷土重来并非偶然，尤其是在态度保守的杰里米•科尔宾领导的英国工党内部。</p>
-<p>由于仇外心理的影响，进步人士很快就把所有的怀旧情绪视为偏见，导致他们忽视了整个社会阶层的恐惧。这种笼统的判断是民粹主义者能够如此成功地利用怀旧情绪的又一个原因。</p>
-<p>他们过得太安逸了。怀旧可以被永久地利用。20世纪初，同样受到技术、地缘政治和文化变革的冲击，欧洲和美国也很怀旧。随后，一段时期的冲突和社会动荡导致了普选和全民教育。今天的政客可以从那个时代吸取教训。显然，它们必须通过维护和加强使各国能够合作的机构来避免战争。但他们也应该找到大胆的方法来应对不安全感和疏离感。这意味着国家机器需要为公民更加努力地工作，使教育贯穿公民的一生，改革税收，将权力下放，应对气候灾难，以及明智地管理移民。</p>
-<p><em>如果“过去”是“外国”，让我移民吧。</em></p>
-<p>怀旧者们有他们的道理。当一种管理世界的方式似乎已经用尽力量，而另一种方式还没有出现时，从过去吸取教训显得尤为重要。当一切似乎都没有意义时，历史就成了最高的学科。知道你是谁，从哪里来，这很重要。利用过去的最好方法是破除偏见，开拓视野。正确的历史观会帮助你明白，进步取决于面对艰难的选择。有时它也能激励人。50年前，阿波罗8号从佛罗里达州卡纳维拉尔角起飞。12月24日，它拍下了一幅地球的照片，这是一颗半遮半掩的蓝白色行星，看起来很团结。</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/QQ%E6%88%AA%E5%9B%BE20190103075927.png"></p>
 </div><hr></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/9/"><i class="fa fa-chevron-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/55/">55</a><a class="extend next" rel="next" href="/page/11/"><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer class="footer-bg" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div class="layout" id="footer"><div class="copyright">&copy;2013 - 2020 By MuChenhen</div><div class="framework-info"><span>Driven - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_site_uv"><i class="fa fa-user"></i><span id="busuanzi_value_site_uv"></span><span></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i><span id="busuanzi_value_site_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.8.2"></script><script src="/js/fancybox.js?version=1.8.2"></script><script src="/js/sidebar.js?version=1.8.2"></script><script src="/js/copy.js?version=1.8.2"></script><script src="/js/fireworks.js?version=1.8.2"></script><script src="/js/transition.js?version=1.8.2"></script><script src="/js/scroll.js?version=1.8.2"></script><script src="/js/head.js?version=1.8.2"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
   $('#nav').addClass('is-mobile')
   $('footer').addClass('is-mobile')
