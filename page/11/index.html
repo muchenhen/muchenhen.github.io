@@ -67,25 +67,6 @@
 <p>MidpointLine(int x0, int y0, int x1, int y1, int color)<br>{<br>    int a,b,delta1,delta2,d,x,y;//a是直线x的系数，b是直线y的系数，来自一般式方程<br>    a=y0-y1;//一般式的a就是等于俩端点y值的差,按例子中是2，此处取负值是为了应对任意斜率的直线<br>    b=x1-x0;//b就是俩端点x的差<br>    d=2*a+b;//d是我们构造的判别式的值，用来判断取哪个点，具体取法在下面的选择分支里，为了避免浮点数计算0.5没了所以变成了2a+b<br>    delta1=2*a;//d的其中一个增量，对应的是d大于等于0，上面翻倍了这里也要翻倍<br>    delta2=2*(a+b);//另一个情况的增量，也是翻倍了<br>    x=x0;//从端点开始画点了<br>    y=y0;//同上<br>    Drawpixel(x,y,color);//先把端点画上<br>    while(x <strong>Bresenham画线算法</strong></p>
 <p>总体思路与中点画线法相同，但是在判断点的坐标时采用了不同方法。设起始坐标(x0,y0)，则计算下一个点(x0+1,y1)中的y值，设理想y值为ny，若ny-y1&lt;1，则说明下一个点应该取y0，否则应该取y0+1。</p>
 <p>Bresenham (GLint x1,GLint y1,GLint x2,GLint y2)<br>{<br>    if(x20.0)<br>    {<br>        p=2*dy-dx;<br>        while(x=1的情况<br>    if(k&gt;=1.0)<br>    {<br>        p=dy;<br>        while(yk&gt;-1的情况<br>    if(k&gt;-1&amp;&amp;k&lt;0)<br>    {<br>        p=2*dy+dx;<br>        while(x=0)<br>                p+=twoDy;<br>            else<br>            {<br>                y–;<br>                p+=twoSum;<br>            }<br>            setPixel(x,y);<br>        }<br>    }<br>    //k&lt;-1的情况<br>    if(k&lt;=-1)<br>    {<br>        p=2*dx-dy;<br>        while(y&gt;y2)<br>        {<br>            y–;<br>            if(p&gt;=0)<br>                p-=twoDx;<br>            else<br>            {<br>                x++;<br>                p-=twoSum;<br>            }<br>            setPixel(x,y);<br>        }<br>    }<br>}</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/12/15/1-4%E5%8F%82%E6%95%B0%E6%9B%B2%E7%BA%BF%E5%AE%9A%E4%B9%89%E5%8F%8A%E5%85%B6%E7%9B%B8%E5%85%B3/">曲线1.4参数曲线定义及其相关</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-12-15</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/">cg</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/%E6%95%B0%E5%AD%A6%E6%96%B9%E6%B3%95/">数学方法</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学</a></span><div class="content"><p><strong>——脑子不够未完待续啊——</strong></p>
-<p>一条用参数的三维曲线是一个有界的点集，可以写成一个带参数的、连续的、单值的数学函数，形式为：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1401.png"></p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1402.png"></p>
-<p><strong>位置矢量</strong></p>
-<p>如图，该曲线的端点在t=0,t=1处，曲线上任意一点的位置矢量（即其坐标）可以用矢量p(t)表示：</p>
-<p><img src="http://www.muchenhen.com/wp-content/uploads/2018/12/1403.png"></p>
-<p><strong>切矢量</strong></p>
-<p>若曲线上r，Q两点的参数分别是t和t+Δt，则可以表示下面矢量：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1404.png"></p>
-<p>其大小以链接rQ的弦长表示。如果曲线在r有确定的切线，则当Q趋于r，即Δt趋于0时，导数矢量dp/dt的方向趋于该点的切线方向。如果以弧长c作为参数，即p(c)，在极限情况下，|Δp|和Δc可认为相等，则有：</p>
-<p><img src="http://www.muchenhen.com/wp-content/uploads/2018/12/1405.png"></p>
-<p>是单位长度矢向量，其方向为曲线的切线方向，称为<strong><em>单位切向量</em></strong>。</p>
-<p>当切矢量的数值超过曲线弦长（曲线两端点之间的距离）几倍时，曲线会出现回转或过顶点等现象，而小于弦长许多时，也会使曲线变得过于平坦。</p>
-<p><strong>曲率</strong></p>
-<p>与曲线在空间中弯曲和扭转相关的特征量。对于一个曲线路径，可在它的每一点构造一个正交坐标系，该坐标系的一个轴与曲线在该点的切线方向平行。</p>
-<p>通过微分来定义，表明曲线偏离直线的程度。数学上表明曲线在某一点的弯曲程度的数值。</p>
-<p>曲率越大，表示曲线的弯曲程度越大。曲率的倒数就是曲率半径。</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1406.png"></p>
 </div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/12/15/1-4%E5%8F%82%E6%95%B0%E6%9B%B2%E7%BA%BF%E5%AE%9A%E4%B9%89%E5%8F%8A%E5%85%B6%E7%9B%B8%E5%85%B3-1/">曲线1.4参数曲线定义及其相关</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-12-15</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/">cg</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/%E6%95%B0%E5%AD%A6%E6%96%B9%E6%B3%95/">数学方法</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学</a></span><div class="content"><p><strong>——脑子不够未完待续啊——</strong></p>
 <p>一条用参数的三维曲线是一个有界的点集，可以写成一个带参数的、连续的、单值的数学函数，形式为：</p>
 <p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1401.png"></p>
@@ -105,7 +86,26 @@
 <p>通过微分来定义，表明曲线偏离直线的程度。数学上表明曲线在某一点的弯曲程度的数值。</p>
 <p>曲率越大，表示曲线的弯曲程度越大。曲率的倒数就是曲率半径。</p>
 <p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1406.png"></p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/12/15/%E6%9B%B2%E7%BA%BF1-5%E6%8F%92%E5%80%BC%E3%80%81%E9%80%BC%E8%BF%91%E3%80%81%E6%8B%9F%E5%90%88%E3%80%81%E5%85%89%E9%A1%BA-1/">曲线1.5插值、逼近、拟合、光顺</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-12-15</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/">cg</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/%E6%95%B0%E5%AD%A6%E6%96%B9%E6%B3%95/">数学方法</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学</a></span><div class="content"><p><strong>插值</strong></p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/12/15/1-4%E5%8F%82%E6%95%B0%E6%9B%B2%E7%BA%BF%E5%AE%9A%E4%B9%89%E5%8F%8A%E5%85%B6%E7%9B%B8%E5%85%B3/">曲线1.4参数曲线定义及其相关</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-12-15</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/">cg</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/%E6%95%B0%E5%AD%A6%E6%96%B9%E6%B3%95/">数学方法</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学</a></span><div class="content"><p><strong>——脑子不够未完待续啊——</strong></p>
+<p>一条用参数的三维曲线是一个有界的点集，可以写成一个带参数的、连续的、单值的数学函数，形式为：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1401.png"></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1402.png"></p>
+<p><strong>位置矢量</strong></p>
+<p>如图，该曲线的端点在t=0,t=1处，曲线上任意一点的位置矢量（即其坐标）可以用矢量p(t)表示：</p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2018/12/1403.png"></p>
+<p><strong>切矢量</strong></p>
+<p>若曲线上r，Q两点的参数分别是t和t+Δt，则可以表示下面矢量：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1404.png"></p>
+<p>其大小以链接rQ的弦长表示。如果曲线在r有确定的切线，则当Q趋于r，即Δt趋于0时，导数矢量dp/dt的方向趋于该点的切线方向。如果以弧长c作为参数，即p(c)，在极限情况下，|Δp|和Δc可认为相等，则有：</p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2018/12/1405.png"></p>
+<p>是单位长度矢向量，其方向为曲线的切线方向，称为<strong><em>单位切向量</em></strong>。</p>
+<p>当切矢量的数值超过曲线弦长（曲线两端点之间的距离）几倍时，曲线会出现回转或过顶点等现象，而小于弦长许多时，也会使曲线变得过于平坦。</p>
+<p><strong>曲率</strong></p>
+<p>与曲线在空间中弯曲和扭转相关的特征量。对于一个曲线路径，可在它的每一点构造一个正交坐标系，该坐标系的一个轴与曲线在该点的切线方向平行。</p>
+<p>通过微分来定义，表明曲线偏离直线的程度。数学上表明曲线在某一点的弯曲程度的数值。</p>
+<p>曲率越大，表示曲线的弯曲程度越大。曲率的倒数就是曲率半径。</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1406.png"></p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/12/15/%E6%9B%B2%E7%BA%BF1-5%E6%8F%92%E5%80%BC%E3%80%81%E9%80%BC%E8%BF%91%E3%80%81%E6%8B%9F%E5%90%88%E3%80%81%E5%85%89%E9%A1%BA/">曲线1.5插值、逼近、拟合、光顺</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-12-15</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/">cg</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/%E6%95%B0%E5%AD%A6%E6%96%B9%E6%B3%95/">数学方法</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学</a></span><div class="content"><p><strong>插值</strong></p>
 <p>插值是一种函数逼近的重要方法。</p>
 <p>例如给定函数f(x)在区间[a,b]中互异的n个点的值：</p>
 <p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1501.png"></p>
@@ -167,7 +167,7 @@
 <p>对于第一种情况，如果曲线段两端的曲率时异号，曲线段上不可避免会有一个拐点。如果曲线段两端点的曲率异号，在p、q、r满足某些条件时，曲线段上有两个拐点，并称之为多余拐点。为了使曲线光顺，必须寻找能消除多余拐点的插值方法。通常在不改变两个端点的切线方向的条件下，把切向量的模分别乘以x，y（x,y&gt;0），这样可以保证在(x,y)平面的第一象限内找到一个矩形区域，使得在其中构造的三次参数样条曲线没有多余的拐点、尖点和二重点。对于不同的函数表示的曲线和曲面使用的光顺算法不同。</p>
 <p><strong>拟合</strong></p>
 <p>拟合没有完整的数学表示和定义。拟合是指在曲线、曲面的设计过程中，使用插值或者逼近的方法使生成的曲线达到某些设计要求，在允许的范围内贴近原始的插值点或控制点序列。对于曲线和曲面，光滑指的是在切矢量上的连续性，或更精确的要求是指曲率的连续性。</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/12/15/%E6%9B%B2%E7%BA%BF1-5%E6%8F%92%E5%80%BC%E3%80%81%E9%80%BC%E8%BF%91%E3%80%81%E6%8B%9F%E5%90%88%E3%80%81%E5%85%89%E9%A1%BA/">曲线1.5插值、逼近、拟合、光顺</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-12-15</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/">cg</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/%E6%95%B0%E5%AD%A6%E6%96%B9%E6%B3%95/">数学方法</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学</a></span><div class="content"><p><strong>插值</strong></p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/12/15/%E6%9B%B2%E7%BA%BF1-5%E6%8F%92%E5%80%BC%E3%80%81%E9%80%BC%E8%BF%91%E3%80%81%E6%8B%9F%E5%90%88%E3%80%81%E5%85%89%E9%A1%BA-1/">曲线1.5插值、逼近、拟合、光顺</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-12-15</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/">cg</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/%E6%95%B0%E5%AD%A6%E6%96%B9%E6%B3%95/">数学方法</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学</a></span><div class="content"><p><strong>插值</strong></p>
 <p>插值是一种函数逼近的重要方法。</p>
 <p>例如给定函数f(x)在区间[a,b]中互异的n个点的值：</p>
 <p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1501.png"></p>

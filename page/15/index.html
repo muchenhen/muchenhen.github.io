@@ -114,20 +114,6 @@
 <p>来自 &lt;<a target="_blank" rel="noopener" href="https://pintia.cn/problem-sets/14/problems/801">https://pintia.cn/problem-sets/14/problems/801</a>&gt;</p>
 <p><strong>枚举，和之前一道题很像</strong></p>
 <p>#include using namespace std;<br>int main() {<br>    int n;<br>    cin &gt;&gt; n;<br>    int flag=0;<br>    for (int i = 0; i &lt; 100; i++)<br>    {<br>        for (int j = 0; j &lt; 100; j++)<br>        {<br>            if (i*i + j * j == n&amp;&amp;i&lt;=j)<br>            {<br>                cout &lt;&lt; i &lt;&lt; “ “ &lt;&lt; j &lt;&lt; endl;<br>                flag++;<br>            }<br>        }<br>    }<br>    if (flag == 0)<br>        cout &lt;&lt; “No Solution”;<br>    return 0;<br>}</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/10/27/pta%E9%A2%98%E7%9B%AE%E9%9B%86%EF%BC%9A7-20-%E6%89%93%E5%8D%B0%E4%B9%9D%E4%B9%9D%E5%8F%A3%E8%AF%80%E8%A1%A8/">PTA题目集：7-20 打印九九口诀表</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-10-27</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a></span><div class="content"><p>7-20 打印九九口诀表 （15 分）</p>
-<p>下面是一个完整的下三角九九口诀表：</p>
-<p>1*1=1  <br>1*2=2   2*2=4  <br>1*3=3   2*3=6   3*3=9  <br>1*4=4   2*4=8   3*4=12  4*4=16 <br>1*5=5   2*5=10  3*5=15  4*5=20  5*5=25 <br>1*6=6   2*6=12  3*6=18  4*6=24  5*6=30  6*6=36 <br>1*7=7   2*7=14  3*7=21  4*7=28  5*7=35  6*7=42  7*7=49 <br>1*8=8   2*8=16  3*8=24  4*8=32  5*8=40  6*8=48  7*8=56  8*8=64 <br>1*9=9   2*9=18  3*9=27  4*9=36  5*9=45  6*9=54  7*9=63  8*9=72  9*9=81 </p>
-<p>本题要求对任意给定的一位正整数N，输出从1*1到N*N的部分口诀表。</p>
-<p>输入格式：</p>
-<p>输入在一行中给出一个正整数N（1≤N≤9）。</p>
-<p>输出格式：</p>
-<p>输出下三角N*N部分口诀表，其中等号右边数字占4位、左对齐。</p>
-<p>输入样例：</p>
-<p>4</p>
-<p>输出样例：</p>
-<p>1*1=1  <br>1*2=2   2*2=4  <br>1*3=3   2*3=6   3*3=9  <br>1*4=4   2*4=8   3*4=12  4*4=16 </p>
-<p>来自 &lt;<a target="_blank" rel="noopener" href="https://pintia.cn/problem-sets/14/problems/800">https://pintia.cn/problem-sets/14/problems/800</a>&gt;</p>
-<p>#include #include using namespace std;<br>int main() {<br>    int n;<br>    cin &gt;&gt; n;<br>    for (int i=1; i &lt;= n; i++) {<br>        for (int j=1; j &lt;= i; j++)<br>        {<br>            cout &lt;&lt; j &lt;&lt; “*“ &lt;&lt; i &lt;&lt; “=” &lt;</p>
 </div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/10/27/pta%E9%A2%98%E7%9B%AE%E9%9B%86%EF%BC%9A7-20-%E6%89%93%E5%8D%B0%E4%B9%9D%E4%B9%9D%E5%8F%A3%E8%AF%80%E8%A1%A8-1/">PTA题目集：7-20 打印九九口诀表</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-10-27</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a></span><div class="content"><p>7-20 打印九九口诀表 （15 分）</p>
 <p>下面是一个完整的下三角九九口诀表：</p>
 <p>1*1=1  <br>1*2=2   2*2=4  <br>1*3=3   2*3=6   3*3=9  <br>1*4=4   2*4=8   3*4=12  4*4=16 <br>1*5=5   2*5=10  3*5=15  4*5=20  5*5=25 <br>1*6=6   2*6=12  3*6=18  4*6=24  5*6=30  6*6=36 <br>1*7=7   2*7=14  3*7=21  4*7=28  5*7=35  6*7=42  7*7=49 <br>1*8=8   2*8=16  3*8=24  4*8=32  5*8=40  6*8=48  7*8=56  8*8=64 <br>1*9=9   2*9=18  3*9=27  4*9=36  5*9=45  6*9=54  7*9=63  8*9=72  9*9=81 </p>
@@ -142,7 +128,21 @@
 <p>1*1=1  <br>1*2=2   2*2=4  <br>1*3=3   2*3=6   3*3=9  <br>1*4=4   2*4=8   3*4=12  4*4=16 </p>
 <p>来自 &lt;<a target="_blank" rel="noopener" href="https://pintia.cn/problem-sets/14/problems/800">https://pintia.cn/problem-sets/14/problems/800</a>&gt;</p>
 <p>#include #include using namespace std;<br>int main() {<br>    int n;<br>    cin &gt;&gt; n;<br>    for (int i=1; i &lt;= n; i++) {<br>        for (int j=1; j &lt;= i; j++)<br>        {<br>            cout &lt;&lt; j &lt;&lt; “*“ &lt;&lt; i &lt;&lt; “=” &lt;</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/10/27/pta%E9%A2%98%E7%9B%AE%E9%9B%86%EF%BC%9A7-19-%E6%94%AF%E7%A5%A8%E9%9D%A2%E9%A2%9D/">PTA题目集：7-19 支票面额</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-10-27</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a></span><div class="content"><p>7-19 支票面额 （15 分）</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/10/27/pta%E9%A2%98%E7%9B%AE%E9%9B%86%EF%BC%9A7-20-%E6%89%93%E5%8D%B0%E4%B9%9D%E4%B9%9D%E5%8F%A3%E8%AF%80%E8%A1%A8/">PTA题目集：7-20 打印九九口诀表</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-10-27</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a></span><div class="content"><p>7-20 打印九九口诀表 （15 分）</p>
+<p>下面是一个完整的下三角九九口诀表：</p>
+<p>1*1=1  <br>1*2=2   2*2=4  <br>1*3=3   2*3=6   3*3=9  <br>1*4=4   2*4=8   3*4=12  4*4=16 <br>1*5=5   2*5=10  3*5=15  4*5=20  5*5=25 <br>1*6=6   2*6=12  3*6=18  4*6=24  5*6=30  6*6=36 <br>1*7=7   2*7=14  3*7=21  4*7=28  5*7=35  6*7=42  7*7=49 <br>1*8=8   2*8=16  3*8=24  4*8=32  5*8=40  6*8=48  7*8=56  8*8=64 <br>1*9=9   2*9=18  3*9=27  4*9=36  5*9=45  6*9=54  7*9=63  8*9=72  9*9=81 </p>
+<p>本题要求对任意给定的一位正整数N，输出从1*1到N*N的部分口诀表。</p>
+<p>输入格式：</p>
+<p>输入在一行中给出一个正整数N（1≤N≤9）。</p>
+<p>输出格式：</p>
+<p>输出下三角N*N部分口诀表，其中等号右边数字占4位、左对齐。</p>
+<p>输入样例：</p>
+<p>4</p>
+<p>输出样例：</p>
+<p>1*1=1  <br>1*2=2   2*2=4  <br>1*3=3   2*3=6   3*3=9  <br>1*4=4   2*4=8   3*4=12  4*4=16 </p>
+<p>来自 &lt;<a target="_blank" rel="noopener" href="https://pintia.cn/problem-sets/14/problems/800">https://pintia.cn/problem-sets/14/problems/800</a>&gt;</p>
+<p>#include #include using namespace std;<br>int main() {<br>    int n;<br>    cin &gt;&gt; n;<br>    for (int i=1; i &lt;= n; i++) {<br>        for (int j=1; j &lt;= i; j++)<br>        {<br>            cout &lt;&lt; j &lt;&lt; “*“ &lt;&lt; i &lt;&lt; “=” &lt;</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/10/27/pta%E9%A2%98%E7%9B%AE%E9%9B%86%EF%BC%9A7-19-%E6%94%AF%E7%A5%A8%E9%9D%A2%E9%A2%9D-1/">PTA题目集：7-19 支票面额</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-10-27</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a></span><div class="content"><p>7-19 支票面额 （15 分）</p>
 <p>一个采购员去银行兑换一张_y_元_f_分的支票，结果出纳员错给了_f_元_y_分。采购员用去了_n_分之后才发觉有错，于是清点了余额尚有2_y_元2_f_分，问该支票面额是多少？</p>
 <p>输入格式：</p>
 <p>输入在一行中给出小于100的正整数_n_。</p>

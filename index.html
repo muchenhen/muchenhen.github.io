@@ -27,52 +27,6 @@
 </div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/05/07/1406/">Untitled Post - 2</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-05-07</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/uncategorized/">uncategorized</a></span><div class="content"><p>“他们在许多时候，对于小资产阶级出身的知识分子寄予满腔的同情，连他们的缺点也给以同情甚至鼓吹。对于工农兵群众，则缺乏接近，缺乏了解，缺乏研究，缺乏知心朋友，不善于描写他们；倘若描写，也是衣服是劳动人民，面孔却是小资产阶级知识分子。他们在某些方面也爱工农兵，也爱工农兵出身的干部，但有些时候不爱，有些地方不爱，不爱他们的感情，不爱他们的姿态，不爱他们的萌芽状态的文艺（墙报、壁画、民歌、民间故事等）。他们有时也爱这些东西，那是为着猎奇，为着装饰自己的作品，甚至是为着追求其中落后的东西而爱的。有时就公开地鄙弃它们，而偏爱小资产阶级知识分子的乃至资产阶级的东西。这些同志的立足点还是在小资产阶级知识分子方面，或者换句文雅的话说，他们的灵魂深处还是一个小资产阶级知识分子的王国。”</p>
 <p>一九四二年五月</p>
 <p><img src="https://www.muchenhen.com/wp-content/uploads/2020/05/EARIMN_OIHH2PVHFWN.png"></p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/04/01/dx12-6-5-%E5%83%8F%E7%B4%A0%E7%9D%80%E8%89%B2%E5%99%A8%E7%A4%BA%E4%BE%8B-1/">DX12 6.5 像素着色器示例</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-04-01</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>在光栅化过程中，顶点着色器（或几何体着色器）输出的顶点属性被插值到三角形的像素上。插值的值随后作为输入，输入到像素着色器中。假设没有几何体着色器，下图说明了顶点数据目前为止的路径。</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/04/040120_0320_DX12651.png"></p>
-<p>每个顶点元素都具有由D3D12_INPUT_element_DESC数组指定的关联语义。顶点着色器的每个参数还具有附加的语义。语义用于将顶点元素与顶点着色器参数匹配。同样，顶点着色器的每个输出都有附加语义，每个像素着色器输入参数都有附加语义。这些语义用来映射顶点着色器的输出到顶点着色器的输入阶段。</p>
-<p>像素着色器类似于顶点着色器，因为它是为每个像素片段执行的函数。给定像素着色器输入，像素着色器的工作是计算像素片段的颜色值。有些像素片段可能无法一直存在并进入到后缓冲区，例如它可能被像素着色器（HLSL包括一个clip函数，该函数可以从进一步处理中丢弃像素片段）中剪裁，被另一个深度值较小的像素片段遮挡，或者像素片段可能会被稍后的管道测试（如模板缓冲区测试）丢弃。因此，后缓冲区上的像素可能有多个候选像素片段；这是”像素片段”和”像素”之间的区别，尽管有时使用术语可以互换，但上下文通常清楚地说明了什么意思。</p>
-<p>作为硬件优化，在将像素片段生成到像素着色器之前，可能会被管道拒绝（例如，earlyz拒绝）。这是首先进行深度测试的地方，如果确定像素片段被深度测试遮挡，则跳过像素着色器。但是，也有一些情况可以禁用early-z来禁用优化。例如，如果像素着色器修改了像素的深度，那么必须执行像素明暗器，因为我们不知道像素之前的深度是多少如果像素着色器更改了它，则使用着色器。</p>
-<p>下面是一个示例：</p>
-<p>cbuffer cbPerObject : register(b0) {</p>
-<p>float4x4 gWorldViewProj;</p>
-<p>};</p>
-<p>void VS(</p>
-<p>float3 iPos : POSITION,</p>
-<p>float4 iColor : COLOR,</p>
-<p>out float4 oPosH : SV_POSITION,</p>
-<p>out float4 oColor : COLOR)</p>
-<p>{</p>
-<p>// 转换到齐次裁剪空间.</p>
-<p>oPosH = mul(float4(iPos, 1.0f), gWorldViewProj);</p>
-<p>// 顶点颜色传递给像素着色器.</p>
-<p>oColor = iColor;</p>
-<p>}</p>
-<p>float4 PS(float4 posH : SV_POSITION, float4 color : COLOR) : SV_Target {</p>
-<p>return pin.Color;</p>
-<p>}</p>
-<p>在本例中像素着色器仅返回插值的颜色值。注意像素着色器输入与顶点着色器输出完全匹配。像素着色器返回4D颜色值，函数参数列表后的<strong>SV_TARGET</strong>语义指示返回值类型应与渲染目标格式匹配。可以使用输入/输出结构。这种表示法的不同之处在于，将语义附加到输入/输出结构的成员，并且使用一个返回语句输出而不是输出参数。</p>
-<p>cbuffer cbPerObject : register(b0) {</p>
-<p>float4x4 gWorldViewProj;</p>
-<p>};</p>
-<p>struct VertexIn {</p>
-<p>float3 Pos : POSITION;</p>
-<p>float4 Color : COLOR;</p>
-<p>};</p>
-<p>struct VertexOut {</p>
-<p>float4 PosH : SV_POSITION;</p>
-<p>float4 Color : COLOR;</p>
-<p>};</p>
-<p>VertexOut VS(VertexIn vin) {</p>
-<p>VertexOut vout;</p>
-<p>// 转换到齐次裁剪空间.</p>
-<p>vout.PosH = mul(float4(vin.Pos, 1.0f), gWorldViewProj);</p>
-<p>// 传递颜色给像素着色器.</p>
-<p>vout.Color = vin.Color;</p>
-<p>return vout;</p>
-<p>}</p>
-<p>float4 PS(VertexOut pin) : SV_Target {</p>
-<p>return pin.Color;</p>
-<p>}</p>
 </div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/04/01/dx12-6-5-%E5%83%8F%E7%B4%A0%E7%9D%80%E8%89%B2%E5%99%A8%E7%A4%BA%E4%BE%8B/">DX12 6.5 像素着色器示例</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-04-01</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>在光栅化过程中，顶点着色器（或几何体着色器）输出的顶点属性被插值到三角形的像素上。插值的值随后作为输入，输入到像素着色器中。假设没有几何体着色器，下图说明了顶点数据目前为止的路径。</p>
 <p><img src="https://www.muchenhen.com/wp-content/uploads/2020/04/040120_0320_DX12651.png"></p>
 <p>每个顶点元素都具有由D3D12_INPUT_element_DESC数组指定的关联语义。顶点着色器的每个参数还具有附加的语义。语义用于将顶点元素与顶点着色器参数匹配。同样，顶点着色器的每个输出都有附加语义，每个像素着色器输入参数都有附加语义。这些语义用来映射顶点着色器的输出到顶点着色器的输入阶段。</p>
@@ -119,7 +73,53 @@
 <p>float4 PS(VertexOut pin) : SV_Target {</p>
 <p>return pin.Color;</p>
 <p>}</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/29/dx12-6-4-%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8%E5%AE%9E%E4%BE%8B/">DX12 6.4 顶点着色器实例</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-29</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>shader使用叫做HLSL的语言携带的，语法有点像C++。</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/04/01/dx12-6-5-%E5%83%8F%E7%B4%A0%E7%9D%80%E8%89%B2%E5%99%A8%E7%A4%BA%E4%BE%8B-1/">DX12 6.5 像素着色器示例</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-04-01</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>在光栅化过程中，顶点着色器（或几何体着色器）输出的顶点属性被插值到三角形的像素上。插值的值随后作为输入，输入到像素着色器中。假设没有几何体着色器，下图说明了顶点数据目前为止的路径。</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/04/040120_0320_DX12651.png"></p>
+<p>每个顶点元素都具有由D3D12_INPUT_element_DESC数组指定的关联语义。顶点着色器的每个参数还具有附加的语义。语义用于将顶点元素与顶点着色器参数匹配。同样，顶点着色器的每个输出都有附加语义，每个像素着色器输入参数都有附加语义。这些语义用来映射顶点着色器的输出到顶点着色器的输入阶段。</p>
+<p>像素着色器类似于顶点着色器，因为它是为每个像素片段执行的函数。给定像素着色器输入，像素着色器的工作是计算像素片段的颜色值。有些像素片段可能无法一直存在并进入到后缓冲区，例如它可能被像素着色器（HLSL包括一个clip函数，该函数可以从进一步处理中丢弃像素片段）中剪裁，被另一个深度值较小的像素片段遮挡，或者像素片段可能会被稍后的管道测试（如模板缓冲区测试）丢弃。因此，后缓冲区上的像素可能有多个候选像素片段；这是”像素片段”和”像素”之间的区别，尽管有时使用术语可以互换，但上下文通常清楚地说明了什么意思。</p>
+<p>作为硬件优化，在将像素片段生成到像素着色器之前，可能会被管道拒绝（例如，earlyz拒绝）。这是首先进行深度测试的地方，如果确定像素片段被深度测试遮挡，则跳过像素着色器。但是，也有一些情况可以禁用early-z来禁用优化。例如，如果像素着色器修改了像素的深度，那么必须执行像素明暗器，因为我们不知道像素之前的深度是多少如果像素着色器更改了它，则使用着色器。</p>
+<p>下面是一个示例：</p>
+<p>cbuffer cbPerObject : register(b0) {</p>
+<p>float4x4 gWorldViewProj;</p>
+<p>};</p>
+<p>void VS(</p>
+<p>float3 iPos : POSITION,</p>
+<p>float4 iColor : COLOR,</p>
+<p>out float4 oPosH : SV_POSITION,</p>
+<p>out float4 oColor : COLOR)</p>
+<p>{</p>
+<p>// 转换到齐次裁剪空间.</p>
+<p>oPosH = mul(float4(iPos, 1.0f), gWorldViewProj);</p>
+<p>// 顶点颜色传递给像素着色器.</p>
+<p>oColor = iColor;</p>
+<p>}</p>
+<p>float4 PS(float4 posH : SV_POSITION, float4 color : COLOR) : SV_Target {</p>
+<p>return pin.Color;</p>
+<p>}</p>
+<p>在本例中像素着色器仅返回插值的颜色值。注意像素着色器输入与顶点着色器输出完全匹配。像素着色器返回4D颜色值，函数参数列表后的<strong>SV_TARGET</strong>语义指示返回值类型应与渲染目标格式匹配。可以使用输入/输出结构。这种表示法的不同之处在于，将语义附加到输入/输出结构的成员，并且使用一个返回语句输出而不是输出参数。</p>
+<p>cbuffer cbPerObject : register(b0) {</p>
+<p>float4x4 gWorldViewProj;</p>
+<p>};</p>
+<p>struct VertexIn {</p>
+<p>float3 Pos : POSITION;</p>
+<p>float4 Color : COLOR;</p>
+<p>};</p>
+<p>struct VertexOut {</p>
+<p>float4 PosH : SV_POSITION;</p>
+<p>float4 Color : COLOR;</p>
+<p>};</p>
+<p>VertexOut VS(VertexIn vin) {</p>
+<p>VertexOut vout;</p>
+<p>// 转换到齐次裁剪空间.</p>
+<p>vout.PosH = mul(float4(vin.Pos, 1.0f), gWorldViewProj);</p>
+<p>// 传递颜色给像素着色器.</p>
+<p>vout.Color = vin.Color;</p>
+<p>return vout;</p>
+<p>}</p>
+<p>float4 PS(VertexOut pin) : SV_Target {</p>
+<p>return pin.Color;</p>
+<p>}</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/29/dx12-6-4-%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8%E5%AE%9E%E4%BE%8B-1/">DX12 6.4 顶点着色器实例</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-29</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>shader使用叫做HLSL的语言携带的，语法有点像C++。</p>
 <p>着色器通常以扩展名为.hlsl的基于文本的文件编写。</p>
 <p>cbuffer cbPerObject : register(b0)</p>
 <p>{</p>
@@ -168,7 +168,7 @@
 <p>}</p>
 <p>如果没有几何着色器，则顶点着色器必须在具有SV_position语义的齐次裁剪空间中输出顶点位置，因为这是硬件在离开顶点着色器（如果没有几何着色器）时希望的顶点所处的空间。如果有一个几何着色器，输出齐次裁剪空间位置的工作可以推迟到几何着色器。</p>
 <p>顶点着色器或者几何着色器不进行透视除法，只进行投影矩阵部分，透视除法会稍后被硬件完成。</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/29/dx12-6-4-%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8%E5%AE%9E%E4%BE%8B-1/">DX12 6.4 顶点着色器实例</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-29</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>shader使用叫做HLSL的语言携带的，语法有点像C++。</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/29/dx12-6-4-%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8%E5%AE%9E%E4%BE%8B/">DX12 6.4 顶点着色器实例</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-29</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>shader使用叫做HLSL的语言携带的，语法有点像C++。</p>
 <p>着色器通常以扩展名为.hlsl的基于文本的文件编写。</p>
 <p>cbuffer cbPerObject : register(b0)</p>
 <p>{</p>
@@ -341,7 +341,7 @@
 <p>mCmdList-&gt;DrawIndexedInstanced(numSphereIndices, 1, 0, 0, 0);</p>
 <p>mCmdList-&gt;DrawIndexedInstanced(numBoxIndices, 1, firstBoxIndex, firstBoxVertexPos, 0);</p>
 <p>mCmdList-&gt;DrawIndexedInstanced(numCylIndices, 1, firstCylIndex, firstCylVertexPos, 0);</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/27/dx12-6-1-vertices-%E5%92%8C-input-layouts-1/">DX12 6.1 Vertices 和 Input Layouts</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-27</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>一个vertex可以包含除了位置之外额外的数据，可以创建自定义的vertex格式，但首先要创建一个包含我们需要的vertex的数据的结构体。比如下面两个自定义的结构体：</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/27/dx12-6-1-vertices-%E5%92%8C-input-layouts/">DX12 6.1 Vertices 和 Input Layouts</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-27</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>一个vertex可以包含除了位置之外额外的数据，可以创建自定义的vertex格式，但首先要创建一个包含我们需要的vertex的数据的结构体。比如下面两个自定义的结构体：</p>
 <p>struct Vertex1 {</p>
 <p>XMFLOAT3 Pos;</p>
 <p>XMFLOAT4 Color;</p>
