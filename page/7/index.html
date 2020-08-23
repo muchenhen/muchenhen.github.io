@@ -1,0 +1,947 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="放一些笔记的地方"><meta name="keywords" content=""><meta name="author" content="MuChenhen,muchenhen@gmail.com"><meta name="copyright" content="MuChenhen"><title>一点浩然气 千里快哉风 | 风生之谷</title><link rel="shortcut icon" href="/melody-favicon.ico"><link rel="stylesheet" href="/css/index.css?version=1.8.2"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css?version=1.8.2"><meta name="format-detection" content="telephone=no"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  hexoVersion: '5.1.0'
+} </script><meta name="generator" content="Hexo 5.1.0"></head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="false"><div class="author-info"><div class="author-info__avatar text-center"><img src="/img/avatar.png"></div><div class="author-info__name text-center">MuChenhen</div><div class="author-info__description text-center">放一些笔记的地方</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">547</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">18</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">28</span></a></div></div></div><nav class="no-bg" id="nav"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">风生之谷</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">Home</a><a class="site-page" href="/archives">Archives</a><a class="site-page" href="/tags">Tags</a><a class="site-page" href="/categories">Categories</a></span><span class="pull-right"></span></div><div id="site-info"><div id="site-title">风生之谷</div><div id="site-sub-title">一点浩然气 千里快哉风</div></div></nav><div id="content-outer"><div class="layout" id="content-inner"><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/28/latex%E6%B5%8B%E8%AF%95/">Latex测试</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-28</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/uncategorized/">uncategorized</a></span><div class="content"><p>$latex i\hbar\frac{\partial}{\partial t}\left|\Psi(t)\right&gt;=H\left|\Psi(t)\right&gt;&amp;bg=202020&amp;fg=ffffff&amp;s=4$</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/28/stl%E5%AE%B9%E5%99%A8%E5%85%B1%E9%80%9A%E6%93%8D%E4%BD%9C-1/">STL容器共通操作</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-28</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/">cpp</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/STL/">STL</a></span><div class="content"><h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><p>每个容器都提供默认构造函数，拷贝构造函数，析构函数。</p>
+<p><strong>初值列</strong></p>
+<p>可以以一个区间或者初值列作为容器初值。</p>
+<p>比如常量容器的初始化：</p>
+<p>//用初始值初始化一个vector（c++11）<br>const vector<int> v1 = {1, 2, 3, 4 };<br>//也可用不同的语法<br>const vector<int> v2 {1, 2, 3, 4 };</p>
+<p>array&lt;&gt;容器使用初值列有特殊规则。将会在array容器中解释。</p>
+<p>以某个给定区间初始化的构造函数，参数可以是来自另一个容器、来自c风格的数组、标准输入的元素。可以是不同容器，不同元素类型，前提是来源和目标的元素类型可以自动转换</p>
+<p>//int元素的list容器<br>listl;<br>//拷贝构造给一个float的vector容器<br>vectorc(l.begin(), l.end());<br>//c++11也可以使用move迭代器来搬移所有元素<br>vectorc2(make_move_iterator(l.begin()), make_move_iterator(l.end()));<br>//用c风格数组完成初始化<br>int carray[] = { 1,2,3,4 };<br>setc3(begin(carray), end(carray));//c++11中iterator定义了begin和end两个函数<br>//以标准输入设备完成初始化动作<br>deque c5{ istream_iterator(cin),istream_iterator() };<br>//c++11中可以使用一个move构造函数将容器初始化<br>vectorv1;<br>vectorv2 = move(v1);//新建容器会有之前的值，被当作初值的容器内容会不明确<br>                         //因为move函数是调动指针，不是逐一复制元素，效率较高<br>                         //在不需要某个容器又需要复制时使用move </p>
+<h2 id="swap"><a href="#swap" class="headerlink" title="swap()"></a>swap()</h2><p>用来置换两个容器的内容，事实上知识只换了若干内部的指针，可以保证常数时间复杂度。执行之后原本存在的迭代器和引用都指向原先所指的元素，不过这些元素已经位于另一个容器中了</p>
+<p>array&lt;&gt;容器的该函数行为略有不同。因为此容器无法只在内部置换指针，所以array&lt;&gt;的swap()是线性时间复杂度，而且操作之后原本存在的迭代器和引用指向同一容器中的不同元素。</p>
+<h2 id="大小相关的操作函数"><a href="#大小相关的操作函数" class="headerlink" title="大小相关的操作函数"></a>大小相关的操作函数</h2><p>所有容器都提供三个与大小相关的操作函数</p>
+<p>**empty()**：是size()==0同义快速形式，一般比后者效率高。</p>
+<p>**size()**：返回当前容器的元素个数。</p>
+<p>**max_size()**：返回容器所能容纳的元素个数的最大值。</p>
+<h2 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h2><p>除了无序容器之外，常用的比较操作符==,!=,&lt;,&lt;=,&gt;,&gt;=都依据以下三个规则定义：</p>
+<p>比较的两个容器必须属于同一类型</p>
+<p>如果两个容器的元素全部依序相等，则这两个容器相等</p>
+<p>无序容器只定义了==,!=</p>
+<p>两个容器内的每一个元素都在另一个容器有相等元素，==就返回true，元素次序无关紧要。</p>
+<p>如果要比较两个容器，必须使用STL比较算法</p>
+<h2 id="元素访问"><a href="#元素访问" class="headerlink" title="元素访问"></a>元素访问</h2><p>所有容器都支持基于范围的for循环</p>
+<p>c++11中常用的容器访问操作</p>
+<pre><code>//定义一个vector容器
+vectornums = &#123; 1,2,3,4,5,6 &#125;;
+//访问每个元素并输出
+for (const auto&amp; elem : nums)
+&#123;
+    cout &lt;&lt; elem &lt;&lt; &quot; &quot;;
+&#125;
+//如果要改变元素就不写const
+for (auto&amp; elem : nums)
+&#123;
+    elem = 0;
+&#125;
+//对指定位置进行插入删除等操作,可以使用cbegin()和cend()产生的只读迭代器
+for (auto pos = nums.cbegin(); pos != nums.cend(); ++pos)
+&#123;
+    cout &lt;&lt; \*pos &lt;&lt; endl;
+&#125;
+//使用begin()和end()产生的迭代器进行修改
+for (auto pos = nums.begin(); pos != nums.end(); pos++)
+&#123;
+    \*pos = 0;
+&#125; </code></pre>
+<h2 id="常见容器类共通操作表"><a href="#常见容器类共通操作表" class="headerlink" title="常见容器类共通操作表"></a>常见容器类共通操作表</h2><p>操作</p>
+<p>必要</p>
+<p>效果</p>
+<p>ContType c</p>
+<p>1</p>
+<p>默认构造函数,建立一个空容器，array会有默认元素</p>
+<p>ContType c(c2)</p>
+<p>1</p>
+<p>拷贝构造</p>
+<p>ContTypr c = c2</p>
+<p>1</p>
+<p>拷贝构造</p>
+<p>ContType c(begin,end)</p>
+<p> </p>
+<p>以区间内所有元素拷贝</p>
+<p>ContType c(initlist)</p>
+<p> </p>
+<p>以初值列为初值，不适用于array，c++11</p>
+<p>ContType c = initlist</p>
+<p> </p>
+<p>同上，但适用于array</p>
+<p>c.~ContType()</p>
+<p>1</p>
+<p>删除所有元素并释放内存</p>
+<p>c.empty()</p>
+<p>1</p>
+<p>判断容器是否为空</p>
+<p>c.size()</p>
+<p>1</p>
+<p>返回容器中元素数量</p>
+<p>c.max_size()</p>
+<p>1</p>
+<p>返回元素数量可能的最大值</p>
+<p>c1 == c2</p>
+<p>1</p>
+<p>判断两个容器是否相等</p>
+<p>c1 != c2</p>
+<p>1</p>
+<p>判断是否不等</p>
+<p>&gt;,&lt;,&gt;=,&lt;=</p>
+<p> </p>
+<p>不适用于无序容器</p>
+<p>c = c2</p>
+<p>1</p>
+<p>c2所有元素值赋给c</p>
+<p>c1.swap(c2)</p>
+<p>1</p>
+<p>置换c1和c2的数据</p>
+<p>swap(c1,c2)</p>
+<p>1</p>
+<p>同上，但是个全局函数</p>
+<p>c.begin()</p>
+<p>1</p>
+<p>返回指向第一个元素的迭代器</p>
+<p>c.end()</p>
+<p>1</p>
+<p>返回指向最后一个元素的下一个位置的迭代器</p>
+<p>c.cbegin()</p>
+<p>1</p>
+<p>返回一个const迭代器，指向第一个元素，c++11</p>
+<p>c.cend()</p>
+<p>1</p>
+<p>返回一个const迭代器，指向最后一个元素的下一个位置，c++11</p>
+<p>c.clear()</p>
+<p> </p>
+<p>移除所有元素，令容器为空，不适用于array</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/28/stl%E5%AE%B9%E5%99%A8%E5%85%B1%E9%80%9A%E6%93%8D%E4%BD%9C/">STL容器共通操作</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-28</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/">cpp</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/STL/">STL</a></span><div class="content"><h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><p>每个容器都提供默认构造函数，拷贝构造函数，析构函数。</p>
+<p><strong>初值列</strong></p>
+<p>可以以一个区间或者初值列作为容器初值。</p>
+<p>比如常量容器的初始化：</p>
+<p>//用初始值初始化一个vector（c++11）<br>const vector<int> v1 = {1, 2, 3, 4 };<br>//也可用不同的语法<br>const vector<int> v2 {1, 2, 3, 4 };</p>
+<p>array&lt;&gt;容器使用初值列有特殊规则。将会在array容器中解释。</p>
+<p>以某个给定区间初始化的构造函数，参数可以是来自另一个容器、来自c风格的数组、标准输入的元素。可以是不同容器，不同元素类型，前提是来源和目标的元素类型可以自动转换</p>
+<p>//int元素的list容器<br>listl;<br>//拷贝构造给一个float的vector容器<br>vectorc(l.begin(), l.end());<br>//c++11也可以使用move迭代器来搬移所有元素<br>vectorc2(make_move_iterator(l.begin()), make_move_iterator(l.end()));<br>//用c风格数组完成初始化<br>int carray[] = { 1,2,3,4 };<br>setc3(begin(carray), end(carray));//c++11中iterator定义了begin和end两个函数<br>//以标准输入设备完成初始化动作<br>deque c5{ istream_iterator(cin),istream_iterator() };<br>//c++11中可以使用一个move构造函数将容器初始化<br>vectorv1;<br>vectorv2 = move(v1);//新建容器会有之前的值，被当作初值的容器内容会不明确<br>                         //因为move函数是调动指针，不是逐一复制元素，效率较高<br>                         //在不需要某个容器又需要复制时使用move </p>
+<h2 id="swap"><a href="#swap" class="headerlink" title="swap()"></a>swap()</h2><p>用来置换两个容器的内容，事实上知识只换了若干内部的指针，可以保证常数时间复杂度。执行之后原本存在的迭代器和引用都指向原先所指的元素，不过这些元素已经位于另一个容器中了</p>
+<p>array&lt;&gt;容器的该函数行为略有不同。因为此容器无法只在内部置换指针，所以array&lt;&gt;的swap()是线性时间复杂度，而且操作之后原本存在的迭代器和引用指向同一容器中的不同元素。</p>
+<h2 id="大小相关的操作函数"><a href="#大小相关的操作函数" class="headerlink" title="大小相关的操作函数"></a>大小相关的操作函数</h2><p>所有容器都提供三个与大小相关的操作函数</p>
+<p>**empty()**：是size()==0同义快速形式，一般比后者效率高。</p>
+<p>**size()**：返回当前容器的元素个数。</p>
+<p>**max_size()**：返回容器所能容纳的元素个数的最大值。</p>
+<h2 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h2><p>除了无序容器之外，常用的比较操作符==,!=,&lt;,&lt;=,&gt;,&gt;=都依据以下三个规则定义：</p>
+<p>比较的两个容器必须属于同一类型</p>
+<p>如果两个容器的元素全部依序相等，则这两个容器相等</p>
+<p>无序容器只定义了==,!=</p>
+<p>两个容器内的每一个元素都在另一个容器有相等元素，==就返回true，元素次序无关紧要。</p>
+<p>如果要比较两个容器，必须使用STL比较算法</p>
+<h2 id="元素访问"><a href="#元素访问" class="headerlink" title="元素访问"></a>元素访问</h2><p>所有容器都支持基于范围的for循环</p>
+<p>c++11中常用的容器访问操作</p>
+<pre><code>//定义一个vector容器
+vectornums = &#123; 1,2,3,4,5,6 &#125;;
+//访问每个元素并输出
+for (const auto&amp; elem : nums)
+&#123;
+    cout &lt;&lt; elem &lt;&lt; &quot; &quot;;
+&#125;
+//如果要改变元素就不写const
+for (auto&amp; elem : nums)
+&#123;
+    elem = 0;
+&#125;
+//对指定位置进行插入删除等操作,可以使用cbegin()和cend()产生的只读迭代器
+for (auto pos = nums.cbegin(); pos != nums.cend(); ++pos)
+&#123;
+    cout &lt;&lt; \*pos &lt;&lt; endl;
+&#125;
+//使用begin()和end()产生的迭代器进行修改
+for (auto pos = nums.begin(); pos != nums.end(); pos++)
+&#123;
+    \*pos = 0;
+&#125; </code></pre>
+<h2 id="常见容器类共通操作表"><a href="#常见容器类共通操作表" class="headerlink" title="常见容器类共通操作表"></a>常见容器类共通操作表</h2><p>操作</p>
+<p>必要</p>
+<p>效果</p>
+<p>ContType c</p>
+<p>1</p>
+<p>默认构造函数,建立一个空容器，array会有默认元素</p>
+<p>ContType c(c2)</p>
+<p>1</p>
+<p>拷贝构造</p>
+<p>ContTypr c = c2</p>
+<p>1</p>
+<p>拷贝构造</p>
+<p>ContType c(begin,end)</p>
+<p> </p>
+<p>以区间内所有元素拷贝</p>
+<p>ContType c(initlist)</p>
+<p> </p>
+<p>以初值列为初值，不适用于array，c++11</p>
+<p>ContType c = initlist</p>
+<p> </p>
+<p>同上，但适用于array</p>
+<p>c.~ContType()</p>
+<p>1</p>
+<p>删除所有元素并释放内存</p>
+<p>c.empty()</p>
+<p>1</p>
+<p>判断容器是否为空</p>
+<p>c.size()</p>
+<p>1</p>
+<p>返回容器中元素数量</p>
+<p>c.max_size()</p>
+<p>1</p>
+<p>返回元素数量可能的最大值</p>
+<p>c1 == c2</p>
+<p>1</p>
+<p>判断两个容器是否相等</p>
+<p>c1 != c2</p>
+<p>1</p>
+<p>判断是否不等</p>
+<p>&gt;,&lt;,&gt;=,&lt;=</p>
+<p> </p>
+<p>不适用于无序容器</p>
+<p>c = c2</p>
+<p>1</p>
+<p>c2所有元素值赋给c</p>
+<p>c1.swap(c2)</p>
+<p>1</p>
+<p>置换c1和c2的数据</p>
+<p>swap(c1,c2)</p>
+<p>1</p>
+<p>同上，但是个全局函数</p>
+<p>c.begin()</p>
+<p>1</p>
+<p>返回指向第一个元素的迭代器</p>
+<p>c.end()</p>
+<p>1</p>
+<p>返回指向最后一个元素的下一个位置的迭代器</p>
+<p>c.cbegin()</p>
+<p>1</p>
+<p>返回一个const迭代器，指向第一个元素，c++11</p>
+<p>c.cend()</p>
+<p>1</p>
+<p>返回一个const迭代器，指向最后一个元素的下一个位置，c++11</p>
+<p>c.clear()</p>
+<p> </p>
+<p>移除所有元素，令容器为空，不适用于array</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/27/stl%EF%BC%9Avector%E5%AE%B9%E5%99%A8-1/">STL：vector容器</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-27</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/">cpp</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/STL/">STL</a></span><div class="content"><p>是一个以线性顺序组织给定类型元素的容器。它支持对任何元素的快速随机访问，以及与序列之间的动态添加和删除。</p>
+<p>可以利用索引随机访问</p>
+<p>在尾部附加或者移除元素都很快速，但是在中段或起始安插元素比较费时，插入时后面的元素必须移动以保持相对位置</p>
+<p><em>大部分情况元素追加式高速的，有时候可能是缓慢的，vector可能需要重新分配内存并将现有元素复制到对应位置</em></p>
+<p>=====================================================</p>
+<p><strong>底层原理</strong></p>
+<p>底层是一个<strong>动态数组</strong>，包含三个迭代器：start和finish之间是已经被使用的空间范围，end_of_stroage是整块连续空间包括备用空间的尾部。</p>
+<p><strong>当空间不够装下数据（vec.push_back(val)）时，会自动申请另一片更大的空间（1.5倍或者2倍），然后把原来的数据拷贝到新的内存空间，接着释放原来的那片空间【vector内存增长机制】。</strong></p>
+<p>当释放或者删除（vec.clear()）里面的数据时，其存储空间不释放，仅仅是清空了里面的数据。</p>
+<p>因此，对vector的任何操作一旦引起了空间的重新配置，指向原vector的所有迭代器会都失效了。</p>
+<p>头文件</p>
+<p>#include<vector></p>
+<p>声明元素类型为int的vector</p>
+<p>vector<int> v1, v2, v3;</p>
+<p>可以通过下标直接访问对应位置的元素</p>
+<p>v1[0]</p>
+<p><strong>vector**</strong>中**<strong>size**</strong>和**<strong>capacity**</strong>的区别**</p>
+<p>size为当前容器中元素数量 finish - start</p>
+<p>capacity为已经分配的内存可以容纳多少元素 end_of_storage - start</p>
+<p><strong>vector**</strong>中的元素类型不能是引用**</p>
+<p>vector 的底层实现要求连续的对象排列，引用不是对象，没有实际地址</p>
+<p><strong>vector迭代器失效的情况</strong></p>
+<p>当插入一个元素到vector中，由于重新引起了内存分配，指向原内存的迭代器会全部失效。</p>
+<p>删除容器中一个元素后，该迭代器所指向的元素已经被删除，也会造成迭代器失效。erase方法会返回下一个有效的迭代器，所以在删除元素时需要</p>
+<p>it=vec.erase(it);</p>
+<p><strong>vector释放内存</strong></p>
+<p>vec.clear()：清空内容，但是不释放内存。</p>
+<p>vector<int>().swap(vec)：清空内容，且释放内存，想得到一个全新的vector。</p>
+<p>vec.shrink_to_fit()：请求容器降低其capacity和size匹配。</p>
+<p>vec.clear(); vec.shrink_to_fit();：清空内容，且释放内存。</p>
+<p><strong>vector常用函数</strong></p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-5.png" alt="2 
+3 
+4 
+5 
+6 
+7 
+8 
+vector&lt;int&gt; 
+vec . (c ,ø)); 
+reverse(vec. begin() , vec . end()) 
+sort (vec. begin() , vec . end()); 
+vec . ; 
+vec . size(); 
+find (vec. begin() , vec . end() , 1); 
+iterator = vec.erase(iterator) "></p>
+<p>相关函数</p>
+<p><strong>reserve</strong></p>
+<p>为容器分配空间，直接扩充到已知大小，可以保证vector中的空间大小（capacity）最少达到参数所指定的大小</p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-6.png" alt="C++ 
+// vector_reserve. cpp 
+// compile with: /EHsc 
+#include 
+#include &lt;iostream&gt; 
+int main( ) 
+using namespace std; 
+vector &lt; int&gt; VI; 
+//vector :iterator Iter; 
+vl.push back( 1 ); 
+cout &quot;Current capacity of VI 
+VI. capacity( ) endl; 
+VI. reserve( 28 ) ; 
+cout &quot;Current capacity of VI 
+VI. capacity( ) endl; 
+Output 
+Current capacity of VI 
+Current capacity of VI "></p>
+<p><strong>resize</strong></p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/cpp/standard-library/vector-class?view=vs-2019#resize">https://docs.microsoft.com/zh-cn/cpp/standard-library/vector-class?view=vs-2019#resize</a></p>
+<p>可以改变有效空间的大小</p>
+<p>如果容器的大小小于请求的大小，则向向量添加元素，直到达到请求的大小。如果容器的大小大于请求的大小，则删除最靠近容器末端的元素，直到容器达到大小Newsize。如果容器的当前大小与请求的大小相同，则不采取任何操作。</p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-7.png" alt="void resize(size_type Newsize); 
+void resize(size_type Newsize, Type Val); "></p>
+<p>esize函数<strong>重新分配</strong>大小，改变容器的大小，并且创建对象</p>
+<p>当n小于当前size()值时候，vector首先会减少size()值 保存前n个元素，然后将超出n的元素删除(remove and destroy)</p>
+<p>当n大于当前size()值时候，vector会插入相应数量的元素 使得size()值达到n，并对这些元素进行初始化，如果调用上面的第二个resize函数，指定val，vector会用val来初始化这些新插入的元素</p>
+<p>当n大于capacity()值的时候，会自动分配重新分配内存存储空间。</p>
+<p><strong>assign</strong></p>
+<p>释放当前vector原来占用的空间并开辟新的空间</p>
+<p>两个函数原型</p>
+<p>void assign(size_type Count, const Type&amp; Val);</p>
+<p>void assign(initializer_list<Type> IList);</p>
+<p>template <class InputIterator> void assign(InputIterator First, InputIterator Last);</p>
+<p>来自 &lt;<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/cpp/standard-library/vector-class?view=vs-2019#assign">https://docs.microsoft.com/en-us/cpp/standard-library/vector-class?view=vs-2019#assign</a>&gt;</p>
+<p>第一个相当于个拷贝函数，把first到last的值赋值给调用者；（注意区间的闭合）</p>
+<p>第二个把n个x赋值给调用者；</p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-8.png" alt="Copy 
+/ vector _ assign . cpp 
+// compile uith: /EHsc 
+*include 
+*include &lt;iostream&gt; 
+int main() 
+using namespace std; 
+VI, v2, v3; 
+vl.push back(1Ê); 
+vl.push back(2Ê); 
+vl.push back(3Ê); 
+vl.push back(4Ê); 
+vl.push back(SÊ); 
+cout 
+for (auto&amp; v : vl){ 
+cout v 
+cout endl; 
+v2. assign(vl. begin() , 
+cout 
+for (auto&amp; v : v2){ 
+cout v 
+cout endl; 
+v3.assign(7, 4); 
+cout 
+for (auto&amp; v : v3){ 
+cout v 
+cout endl; 
+v3.assign({ S, 6, 7 
+for (auto&amp; v : v3){ 
+cout v 
+cout endl; 
+Vl. end())• "></p>
+<p><strong>at</strong></p>
+<p>返回参数中下标元素的引用。</p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-11.png" alt="Example 
+// vector _ at. cpp 
+// compile with: /EHsc 
+*include 
+*include &lt;iostream&gt; 
+int main( ) 
+using namespace std; 
+vector VI; 
+VI. push back( 18 ); 
+VI. 28 ); 
+const int &amp;i 
+vl.at( 8 
+int &amp;j — 
+cout 
+cout 
+Output 
+vl.at( 1 ) ; 
+&quot;The first element is 
+&quot;The second element is &#39; 
+i endl; 
+j endl; 
+Copy 
+Copy 
+The first element is le 
+The second element is 28 "></p>
+<p><strong>back</strong></p>
+<p>返回向量的最后一个元素。如果向量为空，则返回值未定义。</p>
+<p><strong>front</strong></p>
+<p>返回指向向量对象中第一个元素的引用。如果向量为空，则返回未定义。</p>
+<p>如果front的返回值被赋给一个const_reference，则不能修改vector对象。如果将front的返回值赋给引用，则可以修改vector对象。</p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-9.png" alt="// vector _ front . cpp 
+// compile with: /EHsc 
+*include 
+*include &lt;iostream&gt; 
+int main( ) 
+using namespace std; 
+vector VI; 
+VI. push back( 18 ); 
+VI. 11 ) ; 
+int&amp; i = vl.front( ); 
+const int&amp; ii = vl.front( ); 
+cout &quot;The first integer of VI is &quot;&lt;&lt; i endl; 
+// by incrementing i, we move the front reference to the second element 
+cout &quot;Now, the first integer of VI is i endl; "></p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-10.png" alt="Microsoft Visual Studio 
+he first integer of VI is 10 
+ow, the first integer of VI is 11 "></p>
+<p>//通过增加i，我们将前面的引用移动到第二个元素</p>
+<p><strong>erase</strong></p>
+<p>将容器中的指定元素删除</p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-13.png" alt="ras 
+Removes an element or a range of elements in a vector from specified positions. 
+iterator erase( 
+const_iterator Where) ; 
+iterator erase( 
+const iterator first, 
+const_iterator last) ; 
+Parameters 
+Where 
+Position of the element to be removed from the vector. 
+first 
+Position of the first element removed from the vector. 
+last 
+Position just beyond the last element removed from the vector. "></p>
+<p>![// vector erase. cpp<br>// compile uith: /EHsc<br>*include<br>*include <iostream><br>int main( )<br>using namespace std;<br>vector VI;<br>vector :iterator Iter;<br>vl.erase( Vl. begin( ) + 1,<br>vl . push<br>vl . push<br>vl . push<br>vl . push<br>vl . push<br>cout<br>back(<br>back(<br>back(<br>back(<br>back(<br>“VI<br>far ( Iter<br>cout<br>cout end];<br>vl.erase( Vl. begin( ) ) ;<br>cout “VI<br>far ( Iter<br>cout<br>cout endl;<br>cout “VI<br>far ( Iter<br>cout<br>18<br>28<br>3e<br>48 ) ;<br>Vl. begin( )<br>‘Iter;<br>Vl. begin( )<br>‘Iter;<br>Vl. begin( )<br>‘Iter;<br>Iter .<br>Iter .<br>vl.end( )<br>vl.end( )<br>vl.begin( )<br>vl.end( )<br>Iter<br>Iter++<br>Iter++<br>Iter++<br>cout<br>Output<br>1e<br>2e<br>2e<br>end];<br>2e 3e 48 sa<br>3e 4e sa<br>se ](<a target="_blank" rel="noopener" href="http://www.muchenhen.com/wp-content/uploads/2019/10/image-12.png">http://www.muchenhen.com/wp-content/uploads/2019/10/image-12.png</a>)</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/27/stl%EF%BC%9Avector%E5%AE%B9%E5%99%A8/">STL：vector容器</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-27</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/">cpp</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/STL/">STL</a></span><div class="content"><p>是一个以线性顺序组织给定类型元素的容器。它支持对任何元素的快速随机访问，以及与序列之间的动态添加和删除。</p>
+<p>可以利用索引随机访问</p>
+<p>在尾部附加或者移除元素都很快速，但是在中段或起始安插元素比较费时，插入时后面的元素必须移动以保持相对位置</p>
+<p><em>大部分情况元素追加式高速的，有时候可能是缓慢的，vector可能需要重新分配内存并将现有元素复制到对应位置</em></p>
+<p>=====================================================</p>
+<p><strong>底层原理</strong></p>
+<p>底层是一个<strong>动态数组</strong>，包含三个迭代器：start和finish之间是已经被使用的空间范围，end_of_stroage是整块连续空间包括备用空间的尾部。</p>
+<p><strong>当空间不够装下数据（vec.push_back(val)）时，会自动申请另一片更大的空间（1.5倍或者2倍），然后把原来的数据拷贝到新的内存空间，接着释放原来的那片空间【vector内存增长机制】。</strong></p>
+<p>当释放或者删除（vec.clear()）里面的数据时，其存储空间不释放，仅仅是清空了里面的数据。</p>
+<p>因此，对vector的任何操作一旦引起了空间的重新配置，指向原vector的所有迭代器会都失效了。</p>
+<p>头文件</p>
+<p>#include<vector></p>
+<p>声明元素类型为int的vector</p>
+<p>vector<int> v1, v2, v3;</p>
+<p>可以通过下标直接访问对应位置的元素</p>
+<p>v1[0]</p>
+<p><strong>vector**</strong>中**<strong>size**</strong>和**<strong>capacity**</strong>的区别**</p>
+<p>size为当前容器中元素数量 finish - start</p>
+<p>capacity为已经分配的内存可以容纳多少元素 end_of_storage - start</p>
+<p><strong>vector**</strong>中的元素类型不能是引用**</p>
+<p>vector 的底层实现要求连续的对象排列，引用不是对象，没有实际地址</p>
+<p><strong>vector迭代器失效的情况</strong></p>
+<p>当插入一个元素到vector中，由于重新引起了内存分配，指向原内存的迭代器会全部失效。</p>
+<p>删除容器中一个元素后，该迭代器所指向的元素已经被删除，也会造成迭代器失效。erase方法会返回下一个有效的迭代器，所以在删除元素时需要</p>
+<p>it=vec.erase(it);</p>
+<p><strong>vector释放内存</strong></p>
+<p>vec.clear()：清空内容，但是不释放内存。</p>
+<p>vector<int>().swap(vec)：清空内容，且释放内存，想得到一个全新的vector。</p>
+<p>vec.shrink_to_fit()：请求容器降低其capacity和size匹配。</p>
+<p>vec.clear(); vec.shrink_to_fit();：清空内容，且释放内存。</p>
+<p><strong>vector常用函数</strong></p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-5.png" alt="2 
+3 
+4 
+5 
+6 
+7 
+8 
+vector&lt;int&gt; 
+vec . (c ,ø)); 
+reverse(vec. begin() , vec . end()) 
+sort (vec. begin() , vec . end()); 
+vec . ; 
+vec . size(); 
+find (vec. begin() , vec . end() , 1); 
+iterator = vec.erase(iterator) "></p>
+<p>相关函数</p>
+<p><strong>reserve</strong></p>
+<p>为容器分配空间，直接扩充到已知大小，可以保证vector中的空间大小（capacity）最少达到参数所指定的大小</p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-6.png" alt="C++ 
+// vector_reserve. cpp 
+// compile with: /EHsc 
+#include 
+#include &lt;iostream&gt; 
+int main( ) 
+using namespace std; 
+vector &lt; int&gt; VI; 
+//vector :iterator Iter; 
+vl.push back( 1 ); 
+cout &quot;Current capacity of VI 
+VI. capacity( ) endl; 
+VI. reserve( 28 ) ; 
+cout &quot;Current capacity of VI 
+VI. capacity( ) endl; 
+Output 
+Current capacity of VI 
+Current capacity of VI "></p>
+<p><strong>resize</strong></p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/cpp/standard-library/vector-class?view=vs-2019#resize">https://docs.microsoft.com/zh-cn/cpp/standard-library/vector-class?view=vs-2019#resize</a></p>
+<p>可以改变有效空间的大小</p>
+<p>如果容器的大小小于请求的大小，则向向量添加元素，直到达到请求的大小。如果容器的大小大于请求的大小，则删除最靠近容器末端的元素，直到容器达到大小Newsize。如果容器的当前大小与请求的大小相同，则不采取任何操作。</p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-7.png" alt="void resize(size_type Newsize); 
+void resize(size_type Newsize, Type Val); "></p>
+<p>esize函数<strong>重新分配</strong>大小，改变容器的大小，并且创建对象</p>
+<p>当n小于当前size()值时候，vector首先会减少size()值 保存前n个元素，然后将超出n的元素删除(remove and destroy)</p>
+<p>当n大于当前size()值时候，vector会插入相应数量的元素 使得size()值达到n，并对这些元素进行初始化，如果调用上面的第二个resize函数，指定val，vector会用val来初始化这些新插入的元素</p>
+<p>当n大于capacity()值的时候，会自动分配重新分配内存存储空间。</p>
+<p><strong>assign</strong></p>
+<p>释放当前vector原来占用的空间并开辟新的空间</p>
+<p>两个函数原型</p>
+<p>void assign(size_type Count, const Type&amp; Val);</p>
+<p>void assign(initializer_list<Type> IList);</p>
+<p>template <class InputIterator> void assign(InputIterator First, InputIterator Last);</p>
+<p>来自 &lt;<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/cpp/standard-library/vector-class?view=vs-2019#assign">https://docs.microsoft.com/en-us/cpp/standard-library/vector-class?view=vs-2019#assign</a>&gt;</p>
+<p>第一个相当于个拷贝函数，把first到last的值赋值给调用者；（注意区间的闭合）</p>
+<p>第二个把n个x赋值给调用者；</p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-8.png" alt="Copy 
+/ vector _ assign . cpp 
+// compile uith: /EHsc 
+*include 
+*include &lt;iostream&gt; 
+int main() 
+using namespace std; 
+VI, v2, v3; 
+vl.push back(1Ê); 
+vl.push back(2Ê); 
+vl.push back(3Ê); 
+vl.push back(4Ê); 
+vl.push back(SÊ); 
+cout 
+for (auto&amp; v : vl){ 
+cout v 
+cout endl; 
+v2. assign(vl. begin() , 
+cout 
+for (auto&amp; v : v2){ 
+cout v 
+cout endl; 
+v3.assign(7, 4); 
+cout 
+for (auto&amp; v : v3){ 
+cout v 
+cout endl; 
+v3.assign({ S, 6, 7 
+for (auto&amp; v : v3){ 
+cout v 
+cout endl; 
+Vl. end())• "></p>
+<p><strong>at</strong></p>
+<p>返回参数中下标元素的引用。</p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-11.png" alt="Example 
+// vector _ at. cpp 
+// compile with: /EHsc 
+*include 
+*include &lt;iostream&gt; 
+int main( ) 
+using namespace std; 
+vector VI; 
+VI. push back( 18 ); 
+VI. 28 ); 
+const int &amp;i 
+vl.at( 8 
+int &amp;j — 
+cout 
+cout 
+Output 
+vl.at( 1 ) ; 
+&quot;The first element is 
+&quot;The second element is &#39; 
+i endl; 
+j endl; 
+Copy 
+Copy 
+The first element is le 
+The second element is 28 "></p>
+<p><strong>back</strong></p>
+<p>返回向量的最后一个元素。如果向量为空，则返回值未定义。</p>
+<p><strong>front</strong></p>
+<p>返回指向向量对象中第一个元素的引用。如果向量为空，则返回未定义。</p>
+<p>如果front的返回值被赋给一个const_reference，则不能修改vector对象。如果将front的返回值赋给引用，则可以修改vector对象。</p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-9.png" alt="// vector _ front . cpp 
+// compile with: /EHsc 
+*include 
+*include &lt;iostream&gt; 
+int main( ) 
+using namespace std; 
+vector VI; 
+VI. push back( 18 ); 
+VI. 11 ) ; 
+int&amp; i = vl.front( ); 
+const int&amp; ii = vl.front( ); 
+cout &quot;The first integer of VI is &quot;&lt;&lt; i endl; 
+// by incrementing i, we move the front reference to the second element 
+cout &quot;Now, the first integer of VI is i endl; "></p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-10.png" alt="Microsoft Visual Studio 
+he first integer of VI is 10 
+ow, the first integer of VI is 11 "></p>
+<p>//通过增加i，我们将前面的引用移动到第二个元素</p>
+<p><strong>erase</strong></p>
+<p>将容器中的指定元素删除</p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-13.png" alt="ras 
+Removes an element or a range of elements in a vector from specified positions. 
+iterator erase( 
+const_iterator Where) ; 
+iterator erase( 
+const iterator first, 
+const_iterator last) ; 
+Parameters 
+Where 
+Position of the element to be removed from the vector. 
+first 
+Position of the first element removed from the vector. 
+last 
+Position just beyond the last element removed from the vector. "></p>
+<p>![// vector erase. cpp<br>// compile uith: /EHsc<br>*include<br>*include <iostream><br>int main( )<br>using namespace std;<br>vector VI;<br>vector :iterator Iter;<br>vl.erase( Vl. begin( ) + 1,<br>vl . push<br>vl . push<br>vl . push<br>vl . push<br>vl . push<br>cout<br>back(<br>back(<br>back(<br>back(<br>back(<br>“VI<br>far ( Iter<br>cout<br>cout end];<br>vl.erase( Vl. begin( ) ) ;<br>cout “VI<br>far ( Iter<br>cout<br>cout endl;<br>cout “VI<br>far ( Iter<br>cout<br>18<br>28<br>3e<br>48 ) ;<br>Vl. begin( )<br>‘Iter;<br>Vl. begin( )<br>‘Iter;<br>Vl. begin( )<br>‘Iter;<br>Iter .<br>Iter .<br>vl.end( )<br>vl.end( )<br>vl.begin( )<br>vl.end( )<br>Iter<br>Iter++<br>Iter++<br>Iter++<br>cout<br>Output<br>1e<br>2e<br>2e<br>end];<br>2e 3e 48 sa<br>3e 4e sa<br>se ](<a target="_blank" rel="noopener" href="http://www.muchenhen.com/wp-content/uploads/2019/10/image-12.png">http://www.muchenhen.com/wp-content/uploads/2019/10/image-12.png</a>)</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/27/stl%E5%BA%8F%E5%88%97%E5%BC%8F%E5%AE%B9%E5%99%A8-1/">STL序列式容器</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-27</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/">cpp</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/STL/">STL</a></span><div class="content"><p><strong>vector：</strong>可变大小数组；支持快速随机访问，在尾部之外的位置插入或者删除元素可能很慢</p>
+<p><strong>deque：</strong>双端队列；支持快速随机访问，在头尾插入/删除速度很快</p>
+<p><strong>list：</strong>双向链表；只支持双向顺序访问，在list任何位置插入/删除速度很快</p>
+<p><strong>forward_list：</strong>单向链表；单向链表，只支持单向顺序访问，在任何位置插入删除都很快</p>
+<p><strong>array</strong>：固定大小数组；支持快速随机访问，不能添加或者删除元素</p>
+<p><strong>string</strong>：与vector相似的容器，但专门用于保存字符。随机访问快，在尾位置插入删除快</p>
+<p><strong>容器选择</strong></p>
+<p><strong>什么情况下用**</strong>vector**<strong>，什么情况下用**</strong>list**<strong>，什么情况下用**</strong>deque**</p>
+<p>vector可以随机存储元素（即可以通过公式直接计算出元素地址，而不需要挨个查找），但在非尾部插入删除数据时，效率很低，适合对象简单，除非必要，我们尽可能选择使用vector而非deque，因为deque的迭代器比vector迭代器复杂很多。</p>
+<p>list不支持随机存储，适用于对象大，对象数量变化频繁，插入和删除频繁，比如写多读少的场景。</p>
+<p>需要从首尾两端进行插入或删除操作的时候需要选择deque。</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/27/stl%E5%BA%8F%E5%88%97%E5%BC%8F%E5%AE%B9%E5%99%A8/">STL序列式容器</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-27</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/">cpp</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/STL/">STL</a></span><div class="content"><p><strong>vector：</strong>可变大小数组；支持快速随机访问，在尾部之外的位置插入或者删除元素可能很慢</p>
+<p><strong>deque：</strong>双端队列；支持快速随机访问，在头尾插入/删除速度很快</p>
+<p><strong>list：</strong>双向链表；只支持双向顺序访问，在list任何位置插入/删除速度很快</p>
+<p><strong>forward_list：</strong>单向链表；单向链表，只支持单向顺序访问，在任何位置插入删除都很快</p>
+<p><strong>array</strong>：固定大小数组；支持快速随机访问，不能添加或者删除元素</p>
+<p><strong>string</strong>：与vector相似的容器，但专门用于保存字符。随机访问快，在尾位置插入删除快</p>
+<p><strong>容器选择</strong></p>
+<p><strong>什么情况下用**</strong>vector**<strong>，什么情况下用**</strong>list**<strong>，什么情况下用**</strong>deque**</p>
+<p>vector可以随机存储元素（即可以通过公式直接计算出元素地址，而不需要挨个查找），但在非尾部插入删除数据时，效率很低，适合对象简单，除非必要，我们尽可能选择使用vector而非deque，因为deque的迭代器比vector迭代器复杂很多。</p>
+<p>list不支持随机存储，适用于对象大，对象数量变化频繁，插入和删除频繁，比如写多读少的场景。</p>
+<p>需要从首尾两端进行插入或删除操作的时候需要选择deque。</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/27/c11-stl%E4%B8%AD%E7%9A%84%E5%AE%B9%E5%99%A8-1/">C++11 STL中的容器</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-27</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/">cpp</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/STL/">STL</a></span><div class="content"><p>=====================================================</p>
+<p><strong>一、顺序</strong>容器：</p>
+<p><strong>vector：</strong>可变大小数组；支持快速随机访问，在尾部之外的位置插入或者删除元素可能很慢</p>
+<p><strong>deque：</strong>双端队列；支持快速随机访问，在头尾插入/删除速度很快</p>
+<p><strong>list：</strong>双向链表；只支持双向顺序访问，在list任何位置插入/删除速度很快</p>
+<p><strong>forward_list：</strong>单向链表；单向链表，只支持单向顺序访问，在任何位置插入删除都很快</p>
+<p><strong>array</strong>：固定大小数组；支持快速随机访问，不能添加或者删除元素</p>
+<p><strong>string</strong>：与vector相似的容器，但专门用于保存字符。随机访问快，在尾位置插入删除快</p>
+<p>==================================================</p>
+<p><strong>二、关联</strong>容器：</p>
+<p>按<strong>关键字有序</strong>保存元素：（底层实现为<strong>红黑树</strong>）</p>
+<p><strong>map：</strong>关联数组；保存关键字-值对；</p>
+<p><strong>set：</strong>关键字即值，即只保存关键字的容器；</p>
+<p><strong>multimap：</strong>关键字可重复的map；</p>
+<p><strong>multiset：</strong>关键字可重复的set；</p>
+<p>-——————————————————————————-</p>
+<p><strong>无序</strong>集合：</p>
+<p><strong>unordered_map：</strong>用哈希函数组织的map；</p>
+<p><strong>unordered_set：</strong>用哈希函数组织的set；</p>
+<p><strong>unordered_multimap：</strong>哈希组织的map；关键字可以重复出现；</p>
+<p><strong>unordered_multiset：</strong>哈希组织的set；关键字可以重复出现。</p>
+<p>==================================================</p>
+<p>三、其他项：</p>
+<p><strong>stack、queue、valarray、bitset</strong></p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/27/c11-stl%E4%B8%AD%E7%9A%84%E5%AE%B9%E5%99%A8/">C++11 STL中的容器</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-27</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/">cpp</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/STL/">STL</a></span><div class="content"><p>=====================================================</p>
+<p><strong>一、顺序</strong>容器：</p>
+<p><strong>vector：</strong>可变大小数组；支持快速随机访问，在尾部之外的位置插入或者删除元素可能很慢</p>
+<p><strong>deque：</strong>双端队列；支持快速随机访问，在头尾插入/删除速度很快</p>
+<p><strong>list：</strong>双向链表；只支持双向顺序访问，在list任何位置插入/删除速度很快</p>
+<p><strong>forward_list：</strong>单向链表；单向链表，只支持单向顺序访问，在任何位置插入删除都很快</p>
+<p><strong>array</strong>：固定大小数组；支持快速随机访问，不能添加或者删除元素</p>
+<p><strong>string</strong>：与vector相似的容器，但专门用于保存字符。随机访问快，在尾位置插入删除快</p>
+<p>==================================================</p>
+<p><strong>二、关联</strong>容器：</p>
+<p>按<strong>关键字有序</strong>保存元素：（底层实现为<strong>红黑树</strong>）</p>
+<p><strong>map：</strong>关联数组；保存关键字-值对；</p>
+<p><strong>set：</strong>关键字即值，即只保存关键字的容器；</p>
+<p><strong>multimap：</strong>关键字可重复的map；</p>
+<p><strong>multiset：</strong>关键字可重复的set；</p>
+<p>-——————————————————————————-</p>
+<p><strong>无序</strong>集合：</p>
+<p><strong>unordered_map：</strong>用哈希函数组织的map；</p>
+<p><strong>unordered_set：</strong>用哈希函数组织的set；</p>
+<p><strong>unordered_multimap：</strong>哈希组织的map；关键字可以重复出现；</p>
+<p><strong>unordered_multiset：</strong>哈希组织的set；关键字可以重复出现。</p>
+<p>==================================================</p>
+<p>三、其他项：</p>
+<p><strong>stack、queue、valarray、bitset</strong></p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/27/dx12%E9%BE%99%E4%B9%A6part%E2%85%A0chapter-1-%E5%90%91%E9%87%8F-1/">DX12龙书PartⅠChapter 1 向量</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-27</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/DirectX/">DirectX</a></span><div class="content"><p>目的:</p>
+<ul>
+<li>1. 学习向量是如何用几何和数字表示的。</li>
+<li>2. 发现向量上定义的运算及其几何应用。</li>
+<li>3.熟悉DirectXMath类库中的向量函数和类。</li>
+</ul>
+<p>D3D使用左手坐标系</p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image.png" alt="zł "></p>
+<p><strong>1.6 DIRECTX MATH VECTORS</strong><br><strong>D3D数学向量</strong></p>
+<p>要使用d3d数学库，需要</p>
+<p>#include &lt;DirectXMath.h&gt;<br>#include &lt;DirectXPackedVector.h&gt;</p>
+<p>命名空间</p>
+<p>DirectX<br>DirectX::PackedVector</p>
+<p><strong>XMVECTOR</strong></p>
+<p>库中核心的Vector类型，是对SIMD寄存器的映射。当前CPU是SSE2指令集可以使用时如下定义：</p>
+<p>typedef _m128 XMVECTOR;</p>
+<p>_m128是由Microsoft提供的基本数据类型，用于与SSE、SSE2内部指令一起使用的。在16字节边界上自动对齐。ARM处理器不支持该类型。<br>虽然这是一个128位宽的寄存器，能存储一个四维的Vector，但当我们使用二维或三维的Vector运算时，为了效率，仍然会去使用XMVECTOR类型。<br>XMVECTOR的数据不能直接访问。可以转换成XMFLOAT类型（转换方法见下文），也可通过特定的接口get或set其某个分量：</p>
+<p><strong>加载和存储方法</strong></p>
+<p>We use the following methods to load data from XMFLOATn into XMVECTOR:<br>使用如下的方法去加载数据，从XMFLOAT到XMVECTOR</p>
+<p>// Loads XMFLOAT2 into XMVECTOR<br>//加载2到V<br><strong>XMVECTOR XM_CALLCONV XMLoadFloat2(const XMFLOAT2* pSource);</strong></p>
+<p>// Loads XMFLOAT3 into XMVECTOR<br><strong>XMVECTOR XM_CALLCONV XMLoadFloat3(const XMFLOAT3* pSource);</strong></p>
+<p>// Loads XMFLOAT4 into XMVECTOR<br><strong>XMVECTOR XM_CALLCONV XMLoadFloat4(const XMFLOAT4* pSource);</strong></p>
+<p> We use the following methods to store data from XMVECTOR into XMFLOATn:<br>使用下面的方法存储数据，从V到F</p>
+<p>// Loads XMVECTOR into XMFLOAT2<br><strong>void XM_CALLCONV XMStoreFloat2(XMFLOAT2 *pDestination, FXMVECTOR V);</strong></p>
+<p>// Loads XMVECTOR into XMFLOAT3<br><strong>void XM_CALLCONV XMStoreFloat3(XMFLOAT3 *pDestination, FXMVECTOR V);</strong></p>
+<p>// Loads XMVECTOR into XMFLOAT4<br><strong>void XM_CALLCONV XMStoreFloat4(XMFLOAT4 *pDestination, FXMVECTOR V);</strong></p>
+<p>Sometimes we just want to get or set one component of an XMVECTOR; the following getter and setter functions facilitate this:<br>获得向量的某个组件，get方法</p>
+<p>float XM_CALLCONV XMVectorGetX(FXMVECTOR V);</p>
+<p>float XM_CALLCONV XMVectorGetY(FXMVECTOR V);</p>
+<p> float XM_CALLCONV XMVectorGetZ(FXMVECTOR V);</p>
+<p> float XM_CALLCONV XMVectorGetW(FXMVECTOR V);</p>
+<p>设置向量的某个组件，set方法</p>
+<p>XMVECTOR XM_CALLCONV XMVectorSetX(FXMVECTOR V, float x);</p>
+<p> XMVECTOR XM_CALLCONV XMVectorSetY(FXMVECTOR V, float y);</p>
+<p>XMVECTOR XM_CALLCONV XMVectorSetZ(FXMVECTOR V, float z);</p>
+<p>XMVECTOR XM_CALLCONV XMVectorSetW(FXMVECTOR V, float w);</p>
+<p>XMVECTOR重载了加减乘除等运算符，可以方便的进行运算。</p>
+<p><strong>1.6.3 参数传递</strong></p>
+<p>由于XMVECTOR的数据存储在寄存器，而不在堆栈上，因此参数传递时会有些特殊。基本的想法是，能用寄存器传递的就用寄存器传递，不能的就用栈。具体可以通过寄存器传递的参数数量，根据平台和编译器而定。<br>为此，增加了几种用于参数传递的数据类型，FXMVECTOR、GXMVECTOR、HXMVECTOR、CXMVECTOR。基本的使用规则是：</p>
+<ol>
+<li>前三个XMVECTOR参数使用FXMVECTOR</li>
+<li>第四个XMVECTOR参数使用GXMVECTOR</li>
+<li>第五六个XMVECTOR参数使用HXMVECTOR</li>
+<li>其他使用CXMVECTOR</li>
+</ol>
+<p>而宏XM_CALLCONV，就是用于告诉编译器该函数调用时，有这种特别的参数传递规则。<br>有这样的定义</p>
+<p>void XM_CALLCONV XMStoreFloat2(XMFLOAT2 *pDestination, FXMVECTOR V);</p>
+<p>但是，这些规则在构造函数中并不适用。在构造函数中：</p>
+<ol>
+<li>前三个XMVECTOR参数使用FXMVECTOR</li>
+<li>其他使用CXMVECTOR</li>
+<li>不要使用XM_CALLCONV</li>
+</ol>
+<p>另外，这些规则只是针对于XMVECTOR类型本身。而对于复合类，XMVECTOR&amp;、XMVECTOR*并不会使用寄存器传递，和普通参数同等看待。</p>
+<p><strong>1.6.5重载运算符</strong></p>
+<p>XMVECTOR有几个重载的运算符，用于执行向量的加法、减法和标量乘法。</p>
+<p>XMVECTOR XM_CALLCONV operator+ (FXMVECTOR V);</p>
+<p>XMVECTOR XM_CALLCONV operator- (FXMVECTOR V);</p>
+<p>XMVECTOR&amp; XM_CALLCONV operator+= (XMVECTOR&amp; V1, FXMVECTOR V2);</p>
+<p> XMVECTOR&amp; XM_CALLCONV operator-= (XMVECTOR&amp; V1, FXMVECTOR V2);</p>
+<p>XMVECTOR&amp; XM_CALLCONV operator*= (XMVECTOR&amp; V1, FXMVECTOR V2);</p>
+<p>XMVECTOR&amp; XM_CALLCONV operator/= (XMVECTOR&amp; V1, FXMVECTOR V2);</p>
+<p>XMVECTOR&amp; operator*= (XMVECTOR&amp; V, float S);</p>
+<p> XMVECTOR&amp; operator/= (XMVECTOR&amp; V, float S);</p>
+<p>XMVECTOR XM_CALLCONV operator+ (FXMVECTOR V1, FXMVECTOR V2);</p>
+<p>XMVECTOR XM_CALLCONV operator- (FXMVECTOR V1, FXMVECTOR V2);</p>
+<p> XMVECTOR XM_CALLCONV operator* (FXMVECTOR V1, FXMVECTOR V2);</p>
+<p>XMVECTOR XM_CALLCONV operator/ (FXMVECTOR V1, FXMVECTOR V2);</p>
+<p> XMVECTOR XM_CALLCONV operator* (FXMVECTOR V, float S);</p>
+<p> XMVECTOR XM_CALLCONV operator* (float S, FXMVECTOR V);</p>
+<p>XMVECTOR XM_CALLCONV operator/ (FXMVECTOR V, float S);</p>
+<p><strong>1.6.6其他参数</strong></p>
+<p><strong>定义以下常量用于涉及π近似不同的表达式**</strong>:**</p>
+<p>const float XM_PI = 3.141592654f;</p>
+<p>const float XM_2PI = 6.283185307f;</p>
+<p>const float XM_1DIVPI = 0.318309886f;</p>
+<p>const float XM_1DIV2PI = 0.159154943f;</p>
+<p>const float XM_PIDIV2 = 1.570796327f;</p>
+<p>const float XM_PIDIV4 = 0.785398163f;</p>
+<p><strong>弧度和角度转换的内联函数：</strong></p>
+<p>inline float XMConvertToRadians(float fDegrees) { return fDegrees * (XM_PI / 180.0f); } inline float XMConvertToDegrees(float fRadians) { return fRadians * (180.0f / XM_PI); }</p>
+<p><strong>min**</strong>/max**<strong>函数：</strong></p>
+<p>template<class T> inline T XMMin(T a, T b) { return (a &lt; b) ? a : b; }</p>
+<p>template<class T> inline T XMMax(T a, T b) { return (a &gt; b) ? a : b; }</p>
+<p><strong>1.6.7 Setter 函数</strong></p>
+<p>DirectX Math提供了以下函数来设置XMVECTOR的内容:</p>
+<p>// Returns the zero vector 0  置0</p>
+<p>XMVECTOR XM_CALLCONV XMVectorZero();</p>
+<p>// Returns the vector (1, 1, 1, 1)  置1</p>
+<p>XMVECTOR XM_CALLCONV XMVectorSplatOne();</p>
+<p>// Returns the vector (x, y, z, w)</p>
+<p>XMVECTOR XM_CALLCONV XMVectorSet(float x, float y, float z, float w);</p>
+<p>// Returns the vector (s, s, s, s)</p>
+<p>XMVECTOR XM_CALLCONV XMVectorReplicate(float Value);</p>
+<p>// Returns the vector (vx, vx, vx, vx)</p>
+<p>XMVECTOR XM_CALLCONV XMVectorSplatX(FXMVECTOR V);</p>
+<p>// Returns the vector (vy, vy, vy, vy)</p>
+<p>XMVECTOR XM_CALLCONV XMVectorSplatY(FXMVECTOR V);</p>
+<p>// Returns the vector (vz, vz, vz, vz)</p>
+<p>XMVECTOR XM_CALLCONV XMVectorSplatZ(FXMVECTOR V);</p>
+<p><strong>1.6.8向量函数</strong></p>
+<p>DirectX Math提供以下函数来执行各种向量操作。用3D版本来说明，但也有类似的2D和4D版本;2D和4D版本的名称与3D版本相同，只是分别用2和4代替了3。</p>
+<p>XMVECTOR XM_CALLCONV XMVector3Length( // Returns ||v||</p>
+<p>FXMVECTOR V); // Input v</p>
+<p>XMVECTOR XM_CALLCONV XMVector3LengthSq( // Returns ||v||2</p>
+<p>FXMVECTOR V); // Input v</p>
+<p>XMVECTOR XM_CALLCONV XMVector3Dot( // Returns v1·v2</p>
+<p>FXMVECTOR V1, // Input v1</p>
+<p>FXMVECTOR V2); // Input v2</p>
+<p>XMVECTOR XM_CALLCONV XMVector3Cross( // Returns v1 × v2</p>
+<p>FXMVECTOR V1, // Input v1</p>
+<p>FXMVECTOR V2); // Input v2</p>
+<p>XMVECTOR XM_CALLCONV XMVector3Normalize( // Returns</p>
+<p>v/||v|| FXMVECTOR V); // Input v</p>
+<p>XMVECTOR XM_CALLCONV XMVector3Orthogonal( // Returns a</p>
+<p>vector orthogonal to v FXMVECTOR V); // Input v</p>
+<p> XMVECTOR XM_CALLCONV</p>
+<p>XMVector3AngleBetweenVectors( // Returns the angle between v1 and</p>
+<p>v2</p>
+<p>FXMVECTOR V1, // Input v1</p>
+<p>FXMVECTOR V2); // Input v2</p>
+<p> void XM_CALLCONV XMVector3ComponentsFromNormal(</p>
+<p>XMVECTOR* pParallel, // Returns projn(v)</p>
+<p>XMVECTOR* pPerpendicular, // Returns perpn(v)</p>
+<p>FXMVECTOR V, // Input v</p>
+<p>FXMVECTOR Normal); // Input n</p>
+<p>bool XM_CALLCONV XMVector3Equal( // Returns v1 = v2</p>
+<p>FXMVECTOR V1, // Input v1</p>
+<p>FXMVECTOR V2); // Input v2</p>
+<p> bool XM_CALLCONV XMVector3NotEqual( // Returns v1 ≠ v2</p>
+<p>FXMVECTOR V1, // Input v1</p>
+<p>FXMVECTOR V2); // Input v2</p>
+<p><strong>Sample</strong> Code:</p>
+<p>#include  // for XMVerifyCPUSupport<br>#include<br>#include<br>#include<br>using namespace std;<br>using namespace DirectX;<br>using namespace DirectX::PackedVector;</p>
+<p>// Overload the  “&lt;&lt;” operators so that we can use cout to<br>// output XMVECTOR objects.</p>
+<p>//重载流运算符<br>ostream&amp; XM_CALLCONV operator &lt;&lt; (ostream&amp; os, FXMVECTOR v)<br>{<br>    XMFLOAT3 dest;<br>    XMStoreFloat3(&amp;dest, v);</p>
+<pre><code>os &lt;&lt; &quot;(&quot; &lt;&lt; dest.x &lt;&lt; &quot;, &quot; &lt;&lt; dest.y &lt;&lt; &quot;, &quot; &lt;&lt; dest.z &lt;&lt; &quot;)&quot;;
+return os;</code></pre>
+<p>}</p>
+<p>int main()<br>{<br>    cout.setf(ios_base::boolalpha);</p>
+<pre><code>// Check support for SSE2 (Pentium4, AMD K8, and above).
+//检查是否支持SSE2
+
+if (!XMVerifyCPUSupport())
+&#123;
+    cout &lt;&lt; &quot;directx math not supported&quot; &lt;&lt; endl;
+    return 0;
+&#125;
+
+XMVECTOR n = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+XMVECTOR u = XMVectorSet(1.0f, 2.0f, 3.0f, 0.0f);
+XMVECTOR v = XMVectorSet(-2.0f, 1.0f, -3.0f, 0.0f);
+XMVECTOR w = XMVectorSet(0.707f, 0.707f, 0.0f, 0.0f);
+
+// Vector addition: XMVECTOR operator + 
+// 向量加法
+XMVECTOR a = u + v;
+
+// Vector subtraction: XMVECTOR operator - 
+// 向量减法
+XMVECTOR b = u - v;
+
+// Scalar multiplication: XMVECTOR operator \* 
+// 数乘
+XMVECTOR c = 10.0f\*u;
+
+// ||u||
+// 向量的模
+XMVECTOR L = XMVector3Length(u);
+
+// d = u / ||u||
+// 向量单位化
+XMVECTOR d = XMVector3Normalize(u);
+
+// s = u dot v
+// 点乘
+XMVECTOR s = XMVector3Dot(u, v);
+
+// e = u x v
+// 叉乘
+XMVECTOR e = XMVector3Cross(u, v);
+
+// Find proj\_n(w) and perp\_n(w)
+// w对于n的两个投影分量
+XMVECTOR projW;
+XMVECTOR perpW;
+XMVector3ComponentsFromNormal(&amp;projW, &amp;perpW, w, n);
+
+// Does projW + perpW == w?
+// 两个投影分量对应的向量，加法结果是原向量，三角形法则
+bool equal = XMVector3Equal(projW + perpW, w) != 0;
+bool notEqual = XMVector3NotEqual(projW + perpW, w) != 0;
+
+// The angle between projW and perpW should be 90 degrees.
+// 两个投影分量是垂直的
+XMVECTOR angleVec = XMVector3AngleBetweenVectors(projW, perpW);
+float angleRadians = XMVectorGetX(angleVec);
+float angleDegrees = XMConvertToDegrees(angleRadians);
+
+cout &lt;&lt; &quot;u                   = &quot; &lt;&lt; u &lt;&lt; endl;
+cout &lt;&lt; &quot;v                   = &quot; &lt;&lt; v &lt;&lt; endl;
+cout &lt;&lt; &quot;w                   = &quot; &lt;&lt; w &lt;&lt; endl;
+cout &lt;&lt; &quot;n                   = &quot; &lt;&lt; n &lt;&lt; endl;
+cout &lt;&lt; &quot;a = u + v           = &quot; &lt;&lt; a &lt;&lt; endl;
+cout &lt;&lt; &quot;b = u - v           = &quot; &lt;&lt; b &lt;&lt; endl;
+cout &lt;&lt; &quot;c = 10 \* u          = &quot; &lt;&lt; c &lt;&lt; endl;
+cout &lt;&lt; &quot;d = u / ||u||       = &quot; &lt;&lt; d &lt;&lt; endl;
+cout &lt;&lt; &quot;e = u x v           = &quot; &lt;&lt; e &lt;&lt; endl;
+cout &lt;&lt; &quot;L  = ||u||          = &quot; &lt;&lt; L &lt;&lt; endl;
+cout &lt;&lt; &quot;s = u.v             = &quot; &lt;&lt; s &lt;&lt; endl;
+cout &lt;&lt; &quot;projW               = &quot; &lt;&lt; projW &lt;&lt; endl;
+cout &lt;&lt; &quot;perpW               = &quot; &lt;&lt; perpW &lt;&lt; endl;
+cout &lt;&lt; &quot;projW + perpW == w  = &quot; &lt;&lt; equal &lt;&lt; endl;
+cout &lt;&lt; &quot;projW + perpW != w  = &quot; &lt;&lt; notEqual &lt;&lt; endl;
+cout &lt;&lt; &quot;angle               = &quot; &lt;&lt; angleDegrees &lt;&lt; endl;
+
+return 0;</code></pre>
+<p>}</p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-3.png" alt="0) 
+10 * u 
+=(1,2,3) 
+(-2, 1, -3) 
+(0. 707, 0. 707, 
+(10, 20, 30) 
+d = u 
+u 
+rajW 
+erpW 
+rajW 
+rajW 
+angle 
+/IIuII 
+V 
+perpW 
+perpW 
+(0. 267261, 0. 534522, 0. 801784) 
+(-9, -3, 5) 
+(3. 74166, 3. 74166, 3. 74166) 
+(0. 707, 0, 0) 
+(0, 0. 707, 0) 
+false "></p>
+<p>总结：</p>
+<p>1. 对局部或全局变量使用XMVECTOR。<br>2. 对类数据成员使用XMFLOAT2、XMFLOAT3和XMFLOAT4。<br>3.在进行计算之前，使用加载函数将XMFLOATn转换为XMVECTOR<br>4. 使用XMVECTOR实例进行计算。<br>5. 使用存储函数将XMVECTOR转换为XMFLOATn</p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-1.png" alt="I. 
+2. 
+3. 
+4. 
+5. 
+Use XMVECTOR for local or global variables. 
+Use XMFLOAT2, XMFLOAT3, and XMFLOAT4 for class data members. 
+Use loading functions to convert from XMFLOATn to XMVECTOR before 
+doing calculations. 
+Do calculations with XMVECTOR instances. 
+Use storage functions to convert from XMVECTOR to XMFLOATn. "></p>
+<p>矢量用于模拟同时具有大小和方向的物理量。几何上，我们用有向线段表示一个向量。矢量平行于自身平移时处于标准位置，使其尾部与坐标系的原点重合。一个处于标准位置的向量可以通过指定其头部相对于一个坐标系的坐标来进行数值描述。</p>
+<p>![operations: </p>
+<ol>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li>Addition: u + V = (ux + vx, uy + vy, Liz + vz)<br>Subtraction: u — V = (ux — vx, uy — vy, Liz — vz)<br>Scalar Multiplication: ku = (ku ku kuz)<br>x2 + + z2<br>Length: Ilu<br>Normalization:<br>Dot Product:<br>Cross Product:<br>(xyz<br>I lull ‘ llull ‘ lull<br>Ilull<br>uv<br>—uV u V —uyvx) ](<a target="_blank" rel="noopener" href="http://www.muchenhen.com/wp-content/uploads/2019/10/image-2.png">http://www.muchenhen.com/wp-content/uploads/2019/10/image-2.png</a>)</li>
+</ol>
+<p>提供了以下有用的函数来计算一个向量的长度，一个向量的长度的平方，计算两个向量的点积，计算两个向量的外积，以及对一个向量进行归一化:</p>
+<p>XMVECTOR XM_CALLCONV XMVector3Length(FXMVECTOR V);</p>
+<p>XMVECTOR XM_CALLCONV XMVector3LengthSq(FXMVECTOR V);</p>
+<p>XMVECTOR XM_CALLCONV XMVector3Dot(FXMVECTOR V1, FXMVECTOR V2);</p>
+<p>XMVECTOR XM_CALLCONV XMVector3Cross(FXMVECTOR V1, FXMVECTOR V2);</p>
+<p>XMVECTOR XM_CALLCONV XMVector3Normalize(FXMVECTOR V);</p>
+</div><hr></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/6/"><i class="fa fa-chevron-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/55/">55</a><a class="extend next" rel="next" href="/page/8/"><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer><div class="layout" id="footer"><div class="copyright">&copy;2013 - 2020 By MuChenhen</div><div class="framework-info"><span>Driven - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_site_uv"><i class="fa fa-user"></i><span id="busuanzi_value_site_uv"></span><span></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i><span id="busuanzi_value_site_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.8.2"></script><script src="/js/fancybox.js?version=1.8.2"></script><script src="/js/sidebar.js?version=1.8.2"></script><script src="/js/copy.js?version=1.8.2"></script><script src="/js/fireworks.js?version=1.8.2"></script><script src="/js/transition.js?version=1.8.2"></script><script src="/js/scroll.js?version=1.8.2"></script><script src="/js/head.js?version=1.8.2"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+  $('#nav').addClass('is-mobile')
+  $('footer').addClass('is-mobile')
+  $('#top-container').addClass('is-mobile')
+}</script></body></html>
