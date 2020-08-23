@@ -778,121 +778,6 @@ copy(coll.cbegin(), coll.cend(), ostream\_iterator(cout, &quot;\\n&quot;));
 
 return 0;</code></pre>
 <p>}</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/30/dx12%E9%BE%99%E4%B9%A6part%E2%85%A0chapter-3-%E5%8F%98%E6%8D%A2/">DX12龙书PartⅠChapter 3 变换</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-30</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/DirectX/">DirectX</a></span><div class="content"><h2 id="Chapter-3-TRANSFORMATIONS"><a href="#Chapter-3-TRANSFORMATIONS" class="headerlink" title="Chapter 3 TRANSFORMATIONS"></a>Chapter 3 TRANSFORMATIONS</h2><p>本章的数学部分只总结结论，具体过程会总结在别的文章</p>
-<p>几何变换的例子有平移、旋转和缩放。在这一章中，我们建立了矩阵方程，它可以用来转换三维空间中的点和向量。</p>
-<p>目的:</p>
-<ol>
-<li>了解如何用矩阵表示线性和仿射变换。</li>
-<li>学习用于缩放、旋转和转换几何图形的坐标转换。</li>
-<li>了解如何通过矩阵-矩阵乘法将多个变换矩阵组合成一个净变换矩阵。</li>
-<li>找出如何将坐标从一个坐标系转换到另一个坐标系，以及如何用矩阵表示坐标变换的变化。</li>
-<li>熟悉用于构造转换矩阵的DirectX数学库提供的函数子集。</li>
-</ol>
-<h2 id="3-1线性变换"><a href="#3-1线性变换" class="headerlink" title="3.1线性变换"></a>3.1线性变换</h2><h3 id="3-1-1定义"><a href="#3-1-1定义" class="headerlink" title="3.1.1定义"></a>3.1.1定义</h3><p>一个函数输入一个三维向量，输出一个三维向量。称作为线性变换。</p>
-<h3 id="3-1-2矩阵表示"><a href="#3-1-2矩阵表示" class="headerlink" title="3.1.2矩阵表示"></a>3.1.2矩阵表示</h3><p>参考线性代数</p>
-<h3 id="3-1-3缩放"><a href="#3-1-3缩放" class="headerlink" title="3.1.3缩放"></a>3.1.3缩放</h3><p>如图</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-15.png"></p>
-<p>左侧是原始目标，中间的是Y轴缩放，最右侧是X轴缩放</p>
-<p>通过下面的式子来定义缩放变换：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-18.png" alt="S(x, y, z) = (sxx, syy, szz) "></p>
-<p>缩放变换是相对于坐标原点的，按照三个轴上的单位向量进行。</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-17.png" alt=".o,sz .O) = 
-.l,sz 
-y o,sz 
-s(k) "></p>
-<p>换成矩阵表示就是</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-16.png" alt="s 
-O 
-0 
-o 
-o 
-o "></p>
-<p>我们称这个矩阵是缩放矩阵</p>
-<p>该矩阵的逆矩阵为</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-19.png" alt="l/sx "></p>
-<p>举个例子：</p>
-<p>假设目前有一个矩形，左下角点为（-4，-4，0），右上角为（4，4，0），是一个位于xoy面上的正方形。对该矩形在x轴上缩放0.5个单位，在y轴缩放2.0个单位，z轴不变，对应的缩放矩阵是：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-20.png" alt="0.5 
-o "></p>
-<p>对两个点进行缩放运算</p>
-<p>![0.5<br>[-4,궈,이 0<br>0<br>0<br>2<br>0<br>0<br>0 =[-2,-8,0] [4,4,0]<br>0.5<br>0<br>0<br>0<br>0<br>20 =<a target="_blank" rel="noopener" href="https://www.muchenhen.com/wp-content/uploads/2019/10/image-21.png">2,8,이<br>0<br>1 </a></p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-22.png" alt="Scaling: 
-(4, 4,0) 
--8,0) "></p>
-<h3 id="3-1-4旋转"><a href="#3-1-4旋转" class="headerlink" title="3.1.4旋转"></a>3.1.4旋转</h3><p>在这个部分，描述了一个向量v绕着坐标轴n旋转一个θ角。注意，测量的角度是向下看n轴的顺时针方向的角度，假设n的模=1。</p>
-<p>旋转的矩阵表示如下：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-23.png" alt="o 
-O 
-coso 
-—sin O 
-sin 0 
-coso 
-coso 
-sin O 
-o 
-O 
-—sin O 
-coso 
-coso 
-—sin 0 
-sin O 
-coso 
-o 
-o 
-1 
-o 
-o 
-o 
-o 
-1 "></p>
-<p>举个例子：</p>
-<p>我们定义一个左下角坐标为（-1，0，-1），右上角为（1，0，1）的矩形。要求将其绕Y轴顺时针旋转-30度（即逆时针30度），对应的Y轴旋转矩阵为：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-24.png" alt="coso 
-sin O 
-o 
-O 
-—sin O 
-coso 
-cos( 
-sin ( 
--300) 
--300) 
-O —sin (—30 ) 
-o 
-I 
-0 "></p>
-<p>将举行的两个点坐标与旋转矩阵相乘可以得到：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-25.png"></p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-26.png"></p>
-<h2 id="3-2仿射变换"><a href="#3-2仿射变换" class="headerlink" title="3.2仿射变换"></a>3.2仿射变换</h2><p>此部分总结在其他文章</p>
-<h2 id="3-3-Composition-of-Transformation"><a href="#3-3-Composition-of-Transformation" class="headerlink" title="3.3 Composition of Transformation"></a>3.3 Composition of Transformation</h2><p>成分转换</p>
-<p>假设S是一个缩放矩阵，R是一个旋转矩阵，T是一个位移矩阵。假设有一个cube，是由八个向量Vi所确定的，如果要将三个变换依次应用于每个顶点，最简单的办法是一步一步来。但是由于矩阵乘法有结合律，所以可以简化，求出一个矩阵C，使C满足C=SRT。如下：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-27.png" alt="for "></p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-28.png" alt="v, (SRT)zv,&quot;&#39; for i "></p>
-<p>可以将矩阵C看作三个变换封装的一个净变换矩阵。</p>
-<p>这对性能有很重要的影响，比如假设有20000个点的某个对象，不用封装矩阵的话，会需要进行20000*3次的矩阵乘法运算，使用组合之后的矩阵只需要进行20000次。</p>
-<p>再次注意：是结合律，绝对是没有交换律的。</p>
-<h2 id="3-4坐标变换"><a href="#3-4坐标变换" class="headerlink" title="3.4坐标变换"></a>3.4坐标变换</h2><p>同一个向量在不同的坐标系有不同的相对于坐标系的坐标。计算机图形学中经常使用多个坐标系，所以需要知道如何在坐标系之间转换。位置不是向量的属性，是点的属性，所以坐标系变换是针对点的。</p>
-<h2 id="3-5变换矩阵与坐标系变换"><a href="#3-5变换矩阵与坐标系变换" class="headerlink" title="3.5变换矩阵与坐标系变换"></a>3.5变换矩阵与坐标系变换</h2><p>其实在数学上，对一个对象进行的变换（平移，旋转，缩放等）和坐标系的变换是等价的。一个主动的变换可以被视为坐标系转换的变化。</p>
-<h2 id="3-6-DIRECTX数学变换函数"><a href="#3-6-DIRECTX数学变换函数" class="headerlink" title="3.6 DIRECTX数学变换函数"></a>3.6 DIRECTX数学变换函数</h2><p>// Constructs a scaling matrix: 构造一个缩放矩阵<br>XMMATRIX XM_CALLCONV XMMatrixScaling( float ScaleX, float ScaleY, float ScaleZ);</p>
-<p>// Constructs a scaling matrix from components in vector:从向量中的分量构造一个缩放矩阵<br>XMMATRIX XM_CALLCONV XMMatrixScalingFromVector( FXMVECTOR Scale);</p>
-<p>// Constructs a x-axis rotation matrix Rx: 构造一个x轴旋转矩阵，顺时针旋转<br>XMMATRIX XM_CALLCONV XMMatrixRotationX(float Angle);</p>
-<p>// Constructs a y-axis rotation matrix Ry: 构造一个y轴旋转矩阵，顺时针<br>XMMATRIX XM_CALLCONV XMMatrixRotationY(float Angle);</p>
-<p>// Constructs a z-axis rotation matrix Rz: z轴，顺时针<br>XMMATRIX XM_CALLCONV XMMatrixRotationZ(float Angle);</p>
-<p>// Constructs an arbitrary axis rotation matrix Rn: 构造任意轴旋转矩阵，第一个参数是轴所对应的向量，第二个参数是顺时针角度<br>XMMATRIX XM_CALLCONV XMMatrixRotationAxis(FXMVECTOR Axis, float Angle);</p>
-<p>//Constructs a translation matrix: 平移矩阵<br>XMMATRIX XM_CALLCONV XMMatrixTranslation( float OffsetX, float OffsetY, float OffsetZ);</p>
-<p>//Constructs a translation matrix from components in a vector: 从向量的分量构造平移矩阵<br>XMMATRIX XM_CALLCONV XMMatrixTranslationFromVector( FXMVECTOR Offset);</p>
-<p>// Computes the vector-matrix product vM where vw = 1 for transforming points: 计算向量矩阵乘积vM，其中vw = 1表示转换点<br>XMVECTOR XM_CALLCONV XMVector3TransformCoord( FXMVECTOR V, CXMMATRIX M);</p>
-<p>// Computes the vector-matrix product vM where vw = 0 for transforming vectors:计算向量矩阵乘积vM，其中vw = 0表示向量的变换<br>XMVECTOR XM_CALLCONV XMVector3TransformNormal( FXMVECTOR V, CXMMATRIX M);</p>
-<h2 id="3-7总结"><a href="#3-7总结" class="headerlink" title="3.7总结"></a>3.7总结</h2><p>1、基本变换矩阵——缩放、旋转和平移——由下列形式给出:</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-29.png"></p>
-<p>2、我们用4×4矩阵来表示变换，用1×4齐次坐标来描述点和向量，其中我们通过设置第四个分量为w = 1来表示一个点，通过设置w = 0来表示一个向量。这样，平移作用于点而不是向量。</p>
-<p>关于为什么要使用4*4矩阵的原因</p>
-<p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/36296104">为什么directX里表示三维坐标要建一个4*4的矩阵？</a></p>
-<p>3、如果一个矩阵的所有行向量都是单位长度并且相互正交，那么这个矩阵就是正交的。一个正交矩阵的特殊性质是它的逆等于它的转置，从而使得逆的计算简单而有效。所有的旋转矩阵都是正交的。</p>
-<p>4. 根据矩阵乘法的结合律，我们可以将多个变换矩阵合并成一个变换矩阵。</p>
-<p>5、如果矩阵M将坐标系A映射到坐标系B中，那么矩阵M的逆矩阵将坐标系B映射到坐标系A中。</p>
-<p>6、主动变换可以解释为坐标变换的变化，反之亦然。对于某些情况，更直观的做法是使用多个坐标系统，并在对象保持不变但其坐标表示方式发生变化的系统之间进行转换，因为它是相对于不同的参照系进行描述的。</p>
 </div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/30/dx12%E9%BE%99%E4%B9%A6part%E2%85%A0chapter-3-%E5%8F%98%E6%8D%A2-1/">DX12龙书PartⅠChapter 3 变换</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-30</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/DirectX/">DirectX</a></span><div class="content"><h2 id="Chapter-3-TRANSFORMATIONS"><a href="#Chapter-3-TRANSFORMATIONS" class="headerlink" title="Chapter 3 TRANSFORMATIONS"></a>Chapter 3 TRANSFORMATIONS</h2><p>本章的数学部分只总结结论，具体过程会总结在别的文章</p>
 <p>几何变换的例子有平移、旋转和缩放。在这一章中，我们建立了矩阵方程，它可以用来转换三维空间中的点和向量。</p>
 <p>目的:</p>
@@ -1008,7 +893,122 @@ I
 <p>4. 根据矩阵乘法的结合律，我们可以将多个变换矩阵合并成一个变换矩阵。</p>
 <p>5、如果矩阵M将坐标系A映射到坐标系B中，那么矩阵M的逆矩阵将坐标系B映射到坐标系A中。</p>
 <p>6、主动变换可以解释为坐标变换的变化，反之亦然。对于某些情况，更直观的做法是使用多个坐标系统，并在对象保持不变但其坐标表示方式发生变化的系统之间进行转换，因为它是相对于不同的参照系进行描述的。</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/30/stl%EF%BC%9Aarray%E5%AE%B9%E5%99%A8-1/">STL：array容器</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-30</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/">cpp</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/STL/">STL</a></span><div class="content"><p>需要头文件<br>命名空间为std<br>定义为class template<br>namespace std {<br>template<br>class array;<br>}<br>包覆一个静态c数组并提供了一个STL容器接口。有固定大小，无法增加或者删除，有固定大小。只能改变元素值。<br>第二个参数为生命周期内元素的个数，size()函数 返回值总等于N<br>array会将元素复制到内部的c数组，是有序的，且支持随机访问。内存分配在栈中，绝不会被重新分配</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/30/dx12%E9%BE%99%E4%B9%A6part%E2%85%A0chapter-3-%E5%8F%98%E6%8D%A2/">DX12龙书PartⅠChapter 3 变换</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-30</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/DirectX/">DirectX</a></span><div class="content"><h2 id="Chapter-3-TRANSFORMATIONS"><a href="#Chapter-3-TRANSFORMATIONS" class="headerlink" title="Chapter 3 TRANSFORMATIONS"></a>Chapter 3 TRANSFORMATIONS</h2><p>本章的数学部分只总结结论，具体过程会总结在别的文章</p>
+<p>几何变换的例子有平移、旋转和缩放。在这一章中，我们建立了矩阵方程，它可以用来转换三维空间中的点和向量。</p>
+<p>目的:</p>
+<ol>
+<li>了解如何用矩阵表示线性和仿射变换。</li>
+<li>学习用于缩放、旋转和转换几何图形的坐标转换。</li>
+<li>了解如何通过矩阵-矩阵乘法将多个变换矩阵组合成一个净变换矩阵。</li>
+<li>找出如何将坐标从一个坐标系转换到另一个坐标系，以及如何用矩阵表示坐标变换的变化。</li>
+<li>熟悉用于构造转换矩阵的DirectX数学库提供的函数子集。</li>
+</ol>
+<h2 id="3-1线性变换"><a href="#3-1线性变换" class="headerlink" title="3.1线性变换"></a>3.1线性变换</h2><h3 id="3-1-1定义"><a href="#3-1-1定义" class="headerlink" title="3.1.1定义"></a>3.1.1定义</h3><p>一个函数输入一个三维向量，输出一个三维向量。称作为线性变换。</p>
+<h3 id="3-1-2矩阵表示"><a href="#3-1-2矩阵表示" class="headerlink" title="3.1.2矩阵表示"></a>3.1.2矩阵表示</h3><p>参考线性代数</p>
+<h3 id="3-1-3缩放"><a href="#3-1-3缩放" class="headerlink" title="3.1.3缩放"></a>3.1.3缩放</h3><p>如图</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-15.png"></p>
+<p>左侧是原始目标，中间的是Y轴缩放，最右侧是X轴缩放</p>
+<p>通过下面的式子来定义缩放变换：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-18.png" alt="S(x, y, z) = (sxx, syy, szz) "></p>
+<p>缩放变换是相对于坐标原点的，按照三个轴上的单位向量进行。</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-17.png" alt=".o,sz .O) = 
+.l,sz 
+y o,sz 
+s(k) "></p>
+<p>换成矩阵表示就是</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-16.png" alt="s 
+O 
+0 
+o 
+o 
+o "></p>
+<p>我们称这个矩阵是缩放矩阵</p>
+<p>该矩阵的逆矩阵为</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-19.png" alt="l/sx "></p>
+<p>举个例子：</p>
+<p>假设目前有一个矩形，左下角点为（-4，-4，0），右上角为（4，4，0），是一个位于xoy面上的正方形。对该矩形在x轴上缩放0.5个单位，在y轴缩放2.0个单位，z轴不变，对应的缩放矩阵是：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-20.png" alt="0.5 
+o "></p>
+<p>对两个点进行缩放运算</p>
+<p>![0.5<br>[-4,궈,이 0<br>0<br>0<br>2<br>0<br>0<br>0 =[-2,-8,0] [4,4,0]<br>0.5<br>0<br>0<br>0<br>0<br>20 =<a target="_blank" rel="noopener" href="https://www.muchenhen.com/wp-content/uploads/2019/10/image-21.png">2,8,이<br>0<br>1 </a></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-22.png" alt="Scaling: 
+(4, 4,0) 
+-8,0) "></p>
+<h3 id="3-1-4旋转"><a href="#3-1-4旋转" class="headerlink" title="3.1.4旋转"></a>3.1.4旋转</h3><p>在这个部分，描述了一个向量v绕着坐标轴n旋转一个θ角。注意，测量的角度是向下看n轴的顺时针方向的角度，假设n的模=1。</p>
+<p>旋转的矩阵表示如下：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-23.png" alt="o 
+O 
+coso 
+—sin O 
+sin 0 
+coso 
+coso 
+sin O 
+o 
+O 
+—sin O 
+coso 
+coso 
+—sin 0 
+sin O 
+coso 
+o 
+o 
+1 
+o 
+o 
+o 
+o 
+1 "></p>
+<p>举个例子：</p>
+<p>我们定义一个左下角坐标为（-1，0，-1），右上角为（1，0，1）的矩形。要求将其绕Y轴顺时针旋转-30度（即逆时针30度），对应的Y轴旋转矩阵为：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-24.png" alt="coso 
+sin O 
+o 
+O 
+—sin O 
+coso 
+cos( 
+sin ( 
+-300) 
+-300) 
+O —sin (—30 ) 
+o 
+I 
+0 "></p>
+<p>将举行的两个点坐标与旋转矩阵相乘可以得到：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-25.png"></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-26.png"></p>
+<h2 id="3-2仿射变换"><a href="#3-2仿射变换" class="headerlink" title="3.2仿射变换"></a>3.2仿射变换</h2><p>此部分总结在其他文章</p>
+<h2 id="3-3-Composition-of-Transformation"><a href="#3-3-Composition-of-Transformation" class="headerlink" title="3.3 Composition of Transformation"></a>3.3 Composition of Transformation</h2><p>成分转换</p>
+<p>假设S是一个缩放矩阵，R是一个旋转矩阵，T是一个位移矩阵。假设有一个cube，是由八个向量Vi所确定的，如果要将三个变换依次应用于每个顶点，最简单的办法是一步一步来。但是由于矩阵乘法有结合律，所以可以简化，求出一个矩阵C，使C满足C=SRT。如下：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-27.png" alt="for "></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-28.png" alt="v, (SRT)zv,&quot;&#39; for i "></p>
+<p>可以将矩阵C看作三个变换封装的一个净变换矩阵。</p>
+<p>这对性能有很重要的影响，比如假设有20000个点的某个对象，不用封装矩阵的话，会需要进行20000*3次的矩阵乘法运算，使用组合之后的矩阵只需要进行20000次。</p>
+<p>再次注意：是结合律，绝对是没有交换律的。</p>
+<h2 id="3-4坐标变换"><a href="#3-4坐标变换" class="headerlink" title="3.4坐标变换"></a>3.4坐标变换</h2><p>同一个向量在不同的坐标系有不同的相对于坐标系的坐标。计算机图形学中经常使用多个坐标系，所以需要知道如何在坐标系之间转换。位置不是向量的属性，是点的属性，所以坐标系变换是针对点的。</p>
+<h2 id="3-5变换矩阵与坐标系变换"><a href="#3-5变换矩阵与坐标系变换" class="headerlink" title="3.5变换矩阵与坐标系变换"></a>3.5变换矩阵与坐标系变换</h2><p>其实在数学上，对一个对象进行的变换（平移，旋转，缩放等）和坐标系的变换是等价的。一个主动的变换可以被视为坐标系转换的变化。</p>
+<h2 id="3-6-DIRECTX数学变换函数"><a href="#3-6-DIRECTX数学变换函数" class="headerlink" title="3.6 DIRECTX数学变换函数"></a>3.6 DIRECTX数学变换函数</h2><p>// Constructs a scaling matrix: 构造一个缩放矩阵<br>XMMATRIX XM_CALLCONV XMMatrixScaling( float ScaleX, float ScaleY, float ScaleZ);</p>
+<p>// Constructs a scaling matrix from components in vector:从向量中的分量构造一个缩放矩阵<br>XMMATRIX XM_CALLCONV XMMatrixScalingFromVector( FXMVECTOR Scale);</p>
+<p>// Constructs a x-axis rotation matrix Rx: 构造一个x轴旋转矩阵，顺时针旋转<br>XMMATRIX XM_CALLCONV XMMatrixRotationX(float Angle);</p>
+<p>// Constructs a y-axis rotation matrix Ry: 构造一个y轴旋转矩阵，顺时针<br>XMMATRIX XM_CALLCONV XMMatrixRotationY(float Angle);</p>
+<p>// Constructs a z-axis rotation matrix Rz: z轴，顺时针<br>XMMATRIX XM_CALLCONV XMMatrixRotationZ(float Angle);</p>
+<p>// Constructs an arbitrary axis rotation matrix Rn: 构造任意轴旋转矩阵，第一个参数是轴所对应的向量，第二个参数是顺时针角度<br>XMMATRIX XM_CALLCONV XMMatrixRotationAxis(FXMVECTOR Axis, float Angle);</p>
+<p>//Constructs a translation matrix: 平移矩阵<br>XMMATRIX XM_CALLCONV XMMatrixTranslation( float OffsetX, float OffsetY, float OffsetZ);</p>
+<p>//Constructs a translation matrix from components in a vector: 从向量的分量构造平移矩阵<br>XMMATRIX XM_CALLCONV XMMatrixTranslationFromVector( FXMVECTOR Offset);</p>
+<p>// Computes the vector-matrix product vM where vw = 1 for transforming points: 计算向量矩阵乘积vM，其中vw = 1表示转换点<br>XMVECTOR XM_CALLCONV XMVector3TransformCoord( FXMVECTOR V, CXMMATRIX M);</p>
+<p>// Computes the vector-matrix product vM where vw = 0 for transforming vectors:计算向量矩阵乘积vM，其中vw = 0表示向量的变换<br>XMVECTOR XM_CALLCONV XMVector3TransformNormal( FXMVECTOR V, CXMMATRIX M);</p>
+<h2 id="3-7总结"><a href="#3-7总结" class="headerlink" title="3.7总结"></a>3.7总结</h2><p>1、基本变换矩阵——缩放、旋转和平移——由下列形式给出:</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-29.png"></p>
+<p>2、我们用4×4矩阵来表示变换，用1×4齐次坐标来描述点和向量，其中我们通过设置第四个分量为w = 1来表示一个点，通过设置w = 0来表示一个向量。这样，平移作用于点而不是向量。</p>
+<p>关于为什么要使用4*4矩阵的原因</p>
+<p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/36296104">为什么directX里表示三维坐标要建一个4*4的矩阵？</a></p>
+<p>3、如果一个矩阵的所有行向量都是单位长度并且相互正交，那么这个矩阵就是正交的。一个正交矩阵的特殊性质是它的逆等于它的转置，从而使得逆的计算简单而有效。所有的旋转矩阵都是正交的。</p>
+<p>4. 根据矩阵乘法的结合律，我们可以将多个变换矩阵合并成一个变换矩阵。</p>
+<p>5、如果矩阵M将坐标系A映射到坐标系B中，那么矩阵M的逆矩阵将坐标系B映射到坐标系A中。</p>
+<p>6、主动变换可以解释为坐标变换的变化，反之亦然。对于某些情况，更直观的做法是使用多个坐标系统，并在对象保持不变但其坐标表示方式发生变化的系统之间进行转换，因为它是相对于不同的参照系进行描述的。</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/30/stl%EF%BC%9Aarray%E5%AE%B9%E5%99%A8/">STL：array容器</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-30</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/">cpp</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/STL/">STL</a></span><div class="content"><p>需要头文件<br>命名空间为std<br>定义为class template<br>namespace std {<br>template<br>class array;<br>}<br>包覆一个静态c数组并提供了一个STL容器接口。有固定大小，无法增加或者删除，有固定大小。只能改变元素值。<br>第二个参数为生命周期内元素的个数，size()函数 返回值总等于N<br>array会将元素复制到内部的c数组，是有序的，且支持随机访问。内存分配在栈中，绝不会被重新分配</p>
 <h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><p>array特殊的地方是，默认构造产生的不是空容器，元素数量一定是第二个参数N。初值可能不明确，不一定是0。<br>arrayx;//x内的元素值不确定<br>arrayx1 = {};//x1内的元素都为0 (int())<br>arrayx2 = { 1,2,3,4 };//正常的一个初始化<br>arrayx3 = { 3 };//第一个元素是3，后面的是0<br>如果元素数量超过N值，会出现错误</p>
 <p>array的swap操作可以和一个元素类型和元素个数都相同的容器置换彼此的元素，但迭代器和引用不会改变所指 的容器。</p>
 <h2 id="大小"><a href="#大小" class="headerlink" title="大小"></a>大小</h2><p>array大小可以是0，此时begin()和end()，cbegin()和cend()都会释出同一个值。但是front()和back()返回的就不明确了。</p>
@@ -1104,7 +1104,7 @@ print(a);</code></pre>
 11 22 33 4400 0 0 42 999999 
 sum: 1000151-11 -22 -33 -44 0 0 0 0 
 —999999 "></p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/30/stl%EF%BC%9Aarray%E5%AE%B9%E5%99%A8/">STL：array容器</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-30</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/">cpp</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/STL/">STL</a></span><div class="content"><p>需要头文件<br>命名空间为std<br>定义为class template<br>namespace std {<br>template<br>class array;<br>}<br>包覆一个静态c数组并提供了一个STL容器接口。有固定大小，无法增加或者删除，有固定大小。只能改变元素值。<br>第二个参数为生命周期内元素的个数，size()函数 返回值总等于N<br>array会将元素复制到内部的c数组，是有序的，且支持随机访问。内存分配在栈中，绝不会被重新分配</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/30/stl%EF%BC%9Aarray%E5%AE%B9%E5%99%A8-1/">STL：array容器</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-30</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/">cpp</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/STL/">STL</a></span><div class="content"><p>需要头文件<br>命名空间为std<br>定义为class template<br>namespace std {<br>template<br>class array;<br>}<br>包覆一个静态c数组并提供了一个STL容器接口。有固定大小，无法增加或者删除，有固定大小。只能改变元素值。<br>第二个参数为生命周期内元素的个数，size()函数 返回值总等于N<br>array会将元素复制到内部的c数组，是有序的，且支持随机访问。内存分配在栈中，绝不会被重新分配</p>
 <h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><p>array特殊的地方是，默认构造产生的不是空容器，元素数量一定是第二个参数N。初值可能不明确，不一定是0。<br>arrayx;//x内的元素值不确定<br>arrayx1 = {};//x1内的元素都为0 (int())<br>arrayx2 = { 1,2,3,4 };//正常的一个初始化<br>arrayx3 = { 3 };//第一个元素是3，后面的是0<br>如果元素数量超过N值，会出现错误</p>
 <p>array的swap操作可以和一个元素类型和元素个数都相同的容器置换彼此的元素，但迭代器和引用不会改变所指 的容器。</p>
 <h2 id="大小"><a href="#大小" class="headerlink" title="大小"></a>大小</h2><p>array大小可以是0，此时begin()和end()，cbegin()和cend()都会释出同一个值。但是front()和back()返回的就不明确了。</p>
