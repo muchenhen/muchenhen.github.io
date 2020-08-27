@@ -14,7 +14,28 @@
     noSupport: 'The browser does not support'
   },
   hexoVersion: '5.1.0'
-} </script><meta name="generator" content="Hexo 5.1.0"></head><body><canvas class="fireworks"></canvas><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="author-info"><div class="author-info__avatar text-center"><img src="https://github.com/muchenhen/muchenhen.github.io/blob/master/XuanGe.jpg?raw=true"></div><div class="author-info__name text-center">木尘痕</div><div class="author-info__description text-center">放一些笔记的地方</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">550</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">22</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">31</span></a></div></div></div><nav id="nav" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">风生之谷</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">Home</a><a class="site-page" href="/archives">Archives</a><a class="site-page" href="/tags">tags</a><a class="site-page" href="/categories">categories</a><a class="site-page" href="/contact">contact</a></span><span class="pull-right"></span></div><div id="site-info"><div id="site-title">风生之谷</div><div id="site-sub-title">一点浩然气 千里快哉风</div></div></nav><div id="content-outer"><div class="layout" id="content-inner"><div class="recent-post-item article-container"><a class="article-title" href="/2019/11/12/directx-12-4-3%E5%88%9D%E5%A7%8B%E5%8C%96direct3d-1/">DIRECTX 12 4.3初始化DIRECT3D</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-11-12</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/DirectX/">DirectX</a></span><div class="content"><p>终于到初始化了，已经第4.3节了<br>初始化也是一个麻烦的过程，但所幸只需要进行一次。初始化Direct3D的过程可以分为以下几个步骤:<br>• 1. 使用D3D12CreateDevice函数创建ID3D12Device。<br>• 2. 创建一个ID3D12Fence对象和查询描述符大小。<br>• 3.检查4X MSAA质量水平支持。<br>• 4. 创建命令队列、命令列表分配器和主命令列表。<br>• 5. 描述并创建交换链。<br>• 6. 创建应用程序需要的描述符堆。<br>• 7. 调整后端缓冲区的大小，并为后端缓冲区创建一个呈现目标视图。<br>• 8. 创建深度/模板缓冲区及其关联的深度/模板视图。<br>• 9. 设置视口和裁剪矩形。</p>
+} </script><meta name="generator" content="Hexo 5.1.0"></head><body><canvas class="fireworks"></canvas><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="author-info"><div class="author-info__avatar text-center"><img src="https://github.com/muchenhen/muchenhen.github.io/blob/master/XuanGe.jpg?raw=true"></div><div class="author-info__name text-center">木尘痕</div><div class="author-info__description text-center">放一些笔记的地方</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">551</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">22</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">30</span></a></div><hr><div class="author-info-links"><div class="author-info-links__title text-center">友情链接</div><a class="author-info-links__name text-center" target="_blank" rel="noopener" href="https://alec-ray.github.io/">止戈</a></div></div></div><nav id="nav" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">风生之谷</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">Home</a><a class="site-page" href="/archives">Archives</a><a class="site-page" href="/tags">tags</a><a class="site-page" href="/categories">categories</a><a class="site-page" href="/contact">contact</a></span><span class="pull-right"></span></div><div id="site-info"><div id="site-title">风生之谷</div><div id="site-sub-title">一点浩然气 千里快哉风</div></div></nav><div id="content-outer"><div class="layout" id="content-inner"><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/07/%E6%8F%8F%E8%BE%B9%E6%95%88%E6%9E%9C/">描边效果</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-07</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/unity3d/">unity3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/unity3d/Unity-Shader/">Unity Shader</a></span><div class="content"><p>本文简单归纳总结整理了关于各种思路的ShaderLab中的描边效果的实现。</p>
+<p>描边效果常见于一些非真实感的渲染中。下图是本人在测试各种描边方法实现时在Unity中的表现：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/030720_0937_1.png"></p>
+<h2 id="第一行：Back-Facing描边"><a href="#第一行：Back-Facing描边" class="headerlink" title="第一行：Back Facing描边"></a>第一行：Back Facing描边</h2><p>这种方法的思路十分简单，将每个顶点的位置沿着法线的方向进行扩展。</p>
+<p>过程实现非常简单，理论上讲，先把顶点坐标转换到裁剪空间，然后将法线坐标变换到视角空间后，直接讲顶点的位置的xy分量（xyz也行）加上对应的法线坐标。这个加法的结果就是所有的点沿着法线方向”膨胀”了一定的位移。然后把膨胀后的模型直接渲染成纯色，之后再正常的渲染模型，这样两层叠加后看起来就是喵了个边。</p>
+<p>. <img src="https://www.muchenhen.com/wp-content/uploads/2020/03/030720_0937_2.png"><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/030720_0937_3.png"></p>
+<p>此处实例是将模型简单设置成了白色 描边设置为黑色。如果想要控制描边的粗细，其实就是控制模型膨胀的程度，那么定义一个变量与计算膨胀的顶点坐标中的法线参数相乘，就可以通过这个参数的大小控制描边粗细。</p>
+<p>但是这个描边效果有两个问题：<br>1、对于正方体这种，转角处法线方向突变的情况，相当于周围面片飘了起来<br>2、随着摄像机靠近物体，会发现描边也是跟着变粗的，当然这个不能算问题，可以作为一种特性。</p>
+<p>第一个图的第二行就是解决了上述两个问题的情况</p>
+<h2 id="第二行：临时更改法线信息"><a href="#第二行：临时更改法线信息" class="headerlink" title="第二行：临时更改法线信息"></a>第二行：临时更改法线信息</h2><p>对于第一个问题，很清楚是因为法线完全垂直于平面，往外扩张之后还是垂直的，然后出现转角的时候就出现了断裂。正方体甚至正面完全看不见，因为就是渲染了一个平面。</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/030720_0937_4.png"></p>
+<p>所以我们可以临时修改法线的信息来实这种情况的描边。将每个顶点在同一个位置的不同的法线信息数据进行平均计算，计算出新的临时法线信息。</p>
+<p><strong>此处牵涉到一个新的问题，如果模型有骨骼动画，那么法线的数据会随着骨骼动画变化。如果模型使用了骨骼动画，那么需要将法线和切线数据写进mesh。如果不需要可以直接在顶点着色器中进行变化。如果要对mesh进行改变需要脚本进行。此处选择在脚本中操作。</strong></p>
+<p>实现的主要思路是通过Unity的API读取到mesh的顶点相关信息，然后自定义一个字典来进行每个顶点对应的法线向量的判断，将一个顶点的不同面的法线进行相加然后标准化（此处的几何意义很明显不解释了）。这样可以得到一个比较”温和”的转折处的法线，然后再进行扩张，可以得到很好的效果。</p>
+<p>关于第二个问题其实很简单，因为是在视角空间进行的操作，随意会对摄像机产生随距离变化的情况。如果把描边改成NDC空间就会解决这个问题。</p>
+<p>转换到NDC空间会遇到新的问题，众所周知Unity采用OpenGL的NDC空间，是个标准正方体，但是屏幕一般是16比9，所以我们要对x坐标进行修正。具体实现就是x坐标乘屏幕宽高比。</p>
+<p>完成上述的操作后就获得了比较好的描边效果，这种描边不是完全的轮廓边界，因为在渲染描边的时候Z缓冲写入没有关闭。</p>
+<h2 id="第三行：关闭Z缓冲的Back-Facing"><a href="#第三行：关闭Z缓冲的Back-Facing" class="headerlink" title="第三行：关闭Z缓冲的Back Facing"></a>第三行：关闭Z缓冲的Back Facing</h2><p>如果我不想要前面的部分会出现局部描边，而是完全的只有外部轮廓有描边的话，就需要关闭描边的Z缓冲写入，这样就会被后渲染的图形完全遮挡，就会得到想要的效果。</p>
+<h2 id="第四行：关闭Z缓冲的法线修改"><a href="#第四行：关闭Z缓冲的法线修改" class="headerlink" title="第四行：关闭Z缓冲的法线修改"></a>第四行：关闭Z缓冲的法线修改</h2><p>这个是在临时修改法线的基础上关闭了描边的Zbuffer写入。</p>
+<p>此外需要注意，在进行Z缓冲关闭的时候，由于默认 的渲染顺序是先于skybox的顺序的，所以渲染skybox后会遮掉描边，需要更改渲染队列的顺序，放在skybox之后。</p>
+<p>源码地址：<a target="_blank" rel="noopener" href="https://github.com/muchenhen/MyUnityShaders/tree/master/Assets/Unreality/01%E6%8F%8F%E8%BE%B9%E6%95%88%E6%9E%9C%20%E5%90%84%E7%A7%8D%E5%B0%9D%E8%AF%95">https://github.com/muchenhen/MyUnityShaders/tree/master/Assets/Unreality/01%E6%8F%8F%E8%BE%B9%E6%95%88%E6%9E%9C%20%E5%90%84%E7%A7%8D%E5%B0%9D%E8%AF%95</a></p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/11/12/directx-12-4-3%E5%88%9D%E5%A7%8B%E5%8C%96direct3d-1/">DIRECTX 12 4.3初始化DIRECT3D</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-11-12</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/DirectX/">DirectX</a></span><div class="content"><p>终于到初始化了，已经第4.3节了<br>初始化也是一个麻烦的过程，但所幸只需要进行一次。初始化Direct3D的过程可以分为以下几个步骤:<br>• 1. 使用D3D12CreateDevice函数创建ID3D12Device。<br>• 2. 创建一个ID3D12Fence对象和查询描述符大小。<br>• 3.检查4X MSAA质量水平支持。<br>• 4. 创建命令队列、命令列表分配器和主命令列表。<br>• 5. 描述并创建交换链。<br>• 6. 创建应用程序需要的描述符堆。<br>• 7. 调整后端缓冲区的大小，并为后端缓冲区创建一个呈现目标视图。<br>• 8. 创建深度/模板缓冲区及其关联的深度/模板视图。<br>• 9. 设置视口和裁剪矩形。</p>
 <p>4.3.1创建设备<br>初始化Direct3D首先创建Direct3D 12设备(ID3D12Device)。该设备表示一个显示适配器。通常，显示适配器是一个物理的3D硬件块(例如，显卡);然而，一个系统也可以有一个软件显示适配器来模拟3D硬件功能(例如，WARP适配器)。Direct3D 12设备用于检查特性支持，并创建所有其他Direct3D接口对象，如资源、标识符和命令列表。设备可以通过以下功能来创建:<br>HRESULT WINAPI D3D12CreateDevice(<br>IUnknown* pAdapter,<br>D3D_FEATURE_LEVEL MinimumFeatureLevel,<br>REFIID riid, // 预期:ID3D12Device<br>void** ppDevice );<br>pAdapter：指定要创建的设备表示的显示适配器。为该参数指定null将使用主显示适配器。<br>MinimumFeatureLevel：应用程序需要支持的最低功能级别;如果适配器不支持此功能级别，则设备创建将失败。<br>riid：要创建的ID3D12Device接口的COM ID。<br>ppDevice：返回创建的设备。<br>下面是这个函数调用的一个例子:<br>e is an example call of this function: #if defined(DEBUG) || defined(_DEBUG) // Enable the D3D12 debug layer.<br>{<br>ComPtr debugController; ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(&amp;debugController))); debugController-&gt;EnableDebugLayer(); } #endif<br>ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&amp;mdxgiFactory)));<br>// Try to create hardware device. HRESULT hardwareResult = D3D12CreateDevice(<br>nullptr, // default adapter D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&amp;md3dDevice));<br>// Fallback to WARP device. if(FAILED(hardwareResult)) {<br>ComPtr pWarpAdapter; ThrowIfFailed(mdxgiFactory-</p>
 <blockquote>
 <p>EnumWarpAdapter(IID_PPV_ARGS(&amp;pWarpAdapter)));<br>ThrowIfFailed(D3D12CreateDevice( pWarpAdapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&amp;md3dDevice)));<br>}<br>首先为调试模式构建启用调试层。当调试层启用后，Direct3D将启用额外的调试并向vc++输出窗口发送调试消息，如下所示:<br>D3D12 ERROR: ID3D12CommandList::Reset: Reset fails because the command list was not closed.</p>
@@ -968,227 +989,7 @@ list1.merge(list2);
 printLists(&quot;合并：&quot;, list1, list2);</code></pre>
 <p>}</p>
 <p>![`刀始<br>list1:1 2 3<br>list2:77 88<br>6수新元素=<br>list1:1 2 3<br>list2:10 11<br>入錯果=<br>listl:10 11<br>list2:10 11<br>list1:1 2 3<br>list2:1 23<br>4<br>99<br>4<br>12<br>12<br>12<br>13<br>13<br>13<br>10 99 77 88 99<br>10 99 77 88 99<br>10 99 77 88 99<br>!]除第二수和99之后的<br>1 2 3 4<br>1 2 3 4<br>listl:10 11<br>list2:10 12<br>*序幷去重<br>12 13 10 99 77 88 99<br>13 10 99<br>口升=<br>list1:<br>list2:<br>1 2<br>4 10 10 11 12 13 77 88 99 99<br>4 10 11 12 13 77 88 99<br>2 3 3 4 4 10 10 10 11 11 12 12<br>13<br>13 77 77 88 88 99 99 99 ](<a target="_blank" rel="noopener" href="https://www.muchenhen.com/wp-content/uploads/2019/11/image-6.png">https://www.muchenhen.com/wp-content/uploads/2019/11/image-6.png</a>)</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/11/03/stl%EF%BC%9Aforward-list%E5%AE%B9%E5%99%A8/">STL：forward_list容器</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-11-03</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/">cpp</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/STL/">STL</a></span><div class="content"><p>该容器从c11才有，内部是一个单向链表。</p>
-<p>需要头文件&lt;forward_list&gt;</p>
-<p>在std中定义如下：</p>
-<p>template &lt;class Type,</p>
-<p>    class Allocator = allocator<Type>&gt;</p>
-<p>class forward_list</p>
-<p>forward_list是一个受限制的list，优点是内存用量较少，行动也比较快。比起list有一些约束：</p>
-<p>不提供双向迭代器，不支持反向迭代器。</p>
-<p>不提供成员函数size()</p>
-<p>没有指向最后一个元素的anchor，所以没有back() push_back() pop_back()</p>
-<p>对于所有插入操作的函数都有特殊版本。例如insert()变为insert_back()，必须传递第一个被处理元素的前一个位置，将新元素插入到第一个实参所表示的元素后。同样，begin()会变成before_begin()，会返回头指针（指向头结点的指针，即单链表的anchor）</p>
-<p>不提供size()函数的原因是设计者要求forward_list()与手写的单向链表相比不造成额外的时间或者空间开销。</p>
-<p>其余事项与list基本相同。</p>
-<p>如果必须计算元素个数，可以使用distance，定义于头文件 <iterator>，返回从 first 到 last 的路程。</p>
-<p>forward_list<int> list = { 1, 2, 3 };</p>
-<p>cout &lt;&lt; distance(list.begin(),list.end());</p>
-<p>输出结果是3</p>
-<p>元素访问</p>
-<p>唯一能够直接访问的元素是第一个元素</p>
-<p>c.front()，不检查是否存在第一个元素</p>
-<h2 id="迭代器相关"><a href="#迭代器相关" class="headerlink" title="迭代器相关"></a>迭代器相关</h2><p>只能以前行方向遍历元素，没有反向迭代器，无法调用双向或者随机迭代器的算法。排序只能用自己的成员函数。</p>
-<p>注意，before_begin()和cbefore_begin()作为第一个参数使用任何STL函数都会导致运行时出错。</p>
-<p>所有以after结尾的插入函数，会将元素插入到指定位置之后，因为forwardlist没有指向前一个元素的指针。如果后缀after的元素传入了end()作为参数，会产生不明确的行为，如果要在尾部插入一个元素，需要传入终端元素的位置。</p>
-<p>和list一样forwardlist可以在常量时间内删除和插入元素。forwardlist提供和list几乎一致的成员函数splice_after()</p>
-<h2 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h2><p>对于和list相同的函数，异常处理方式完全相同。</p>
-<h2 id="成员函数"><a href="#成员函数" class="headerlink" title="成员函数"></a>成员函数</h2><p>创建、复制、删除</p>
-<p>操作</p>
-<p>结果</p>
-<p>forward_list<Elem> c</p>
-<p>默认构造</p>
-<p>forward_list<Elem> c(c2)</p>
-<p>复制构造</p>
-<p>forward_list<Elem> c = c2</p>
-<p>复制构造</p>
-<p>forward_list<Elem> c(rvalue)</p>
-<p>move构造</p>
-<p>forward_list<Elem> c=crvalue</p>
-<p>move构造</p>
-<p>forward_list<Elem> c(n)</p>
-<p>默认构造一个大小为n的forward_list</p>
-<p>forward_list<Elem> c(n,elem)</p>
-<p>生成一个有n个元素的forward_list，每个元素都是elem</p>
-<p>forward_list<Elem> c(begin,end)</p>
-<p>以begin和end的左闭右开区间构造一个forward_list</p>
-<p>forward_list<Elem> c(initforward_list)</p>
-<p>以初值列表构造forward_list</p>
-<p>forward_list<Elem> c = initforward_list</p>
-<p>同上</p>
-<p>c.~forward_list()</p>
-<p>销毁所有元素，释放内存</p>
-<p>非变动性操作</p>
-<p>操作</p>
-<p>效果</p>
-<p>c.empty()</p>
-<p>返回容器是否为空</p>
-<p>c.size()</p>
-<p>返回目前容器内元素个数</p>
-<p>c.max_size()</p>
-<p>返回元素个数的最大可能值</p>
-<p>c1 == c2</p>
-<p> </p>
-<p>!=</p>
-<p> </p>
-<p>&lt;</p>
-<p> </p>
-<p>&gt;</p>
-<p> </p>
-<p>&lt;=</p>
-<p> </p>
-<p>&gt;=</p>
-<p> </p>
-<p>赋值操作</p>
-<p>操作</p>
-<p>效果</p>
-<p>c = c2</p>
-<p>赋值</p>
-<p>c = rv</p>
-<p>将右值move给c</p>
-<p>c = initlist</p>
-<p>初始化表赋给c</p>
-<p>c.assign(n,elem)</p>
-<p>n个elem赋给c</p>
-<p>c.assign(begin,end)</p>
-<p>左闭右开赋给c</p>
-<p>c.assign(initlist)</p>
-<p>初始化表赋给c</p>
-<p>c1.swap(c2)</p>
-<p>交换c1，c2</p>
-<p>swap(c1,c2)</p>
-<p>比上面那个慢，全局函数</p>
-<p>迭代器操作</p>
-<p>操作</p>
-<p>效果</p>
-<p>c.begin()</p>
-<p>返回一个双向迭代器指向第一个元素</p>
-<p>c.end()</p>
-<p>返回指向最后一个元素的双向迭代器</p>
-<p>c.cbegin()</p>
-<p>第一个的const，c11</p>
-<p>c.cend()</p>
-<p>第二的const，c11</p>
-<p>c.before_begin()</p>
-<p>返回一个forward迭代器指向第一个元素的前一个位置</p>
-<p>c.cbefore_begin()</p>
-<p>返回一个const forward迭代器指向第一元素的前一位置</p>
-<p>插入删除</p>
-<p>操作</p>
-<p>效果</p>
-<p>异常处理</p>
-<p>c.push_front()</p>
-<p>头插</p>
-<p>成功或者没有任何效果</p>
-<p>c.pop_front()</p>
-<p>头删，不返回</p>
-<p>不抛出异常</p>
-<p>c.insert_after(pos,elem)</p>
-<p>指定位置后插入</p>
-<p>成功或者没有任何效果</p>
-<p>c.insert_after(pos,n,elem)</p>
-<p>指定位置后插入n个elem，返回第一个新元素的位置</p>
-<p>成功或者没有任何效果</p>
-<p>c.insert_after(pos,begin,end)</p>
-<p>指定位置后插入左闭右开的所有元素，返回第一个新元素位置</p>
-<p>成功或者没有任何效果</p>
-<p>c.insert_after(pos,initlist)</p>
-<p>指定位置后插入初始化列的所有元素并返回第一个新元素的位置</p>
-<p>成功或者没有任何效果</p>
-<p>c.emplace_after(pos,args…)</p>
-<p>在pos后插入以args为初值的元素，并返回新元素位置，c11</p>
-<p> </p>
-<p>c.emplace_front(args…)</p>
-<p>上面的函数的头插实现，不返回，c11</p>
-<p> </p>
-<p>c.erase_after(pos)</p>
-<p>删除指定位之后的元素，不返回任何</p>
-<p>不抛出异常</p>
-<p>c.erase_after(begin,end)</p>
-<p>删除区间，不返回任何</p>
-<p>不抛出异常</p>
-<p>c.remove(val)</p>
-<p>删除所有值为val的元素</p>
-<p>元素比较不抛出异常，这个函数就不抛出异常</p>
-<p>c.remove_if(op)</p>
-<p>上文讲过了</p>
-<p>如上</p>
-<p>c.resize(num)</p>
-<p>元素数量改为num，如果变多，多出来的默认构造</p>
-<p>成功或者没有任何效果</p>
-<p>c.resize(num,elem)</p>
-<p>如果变多，多出来的为elem</p>
-<p>成功或者没有任何效果</p>
-<p>c.clear()</p>
-<p>删除所有元素</p>
-<p>不抛出异常</p>
-<p>特殊变动性操作</p>
-<p>操作</p>
-<p>效果</p>
-<p>异常处理</p>
-<p>c.unique()</p>
-<p>如果存在临近且数值相同的元素，只保留一个</p>
-<p>元素比较不抛出异常，这个函数就不抛出异常</p>
-<p>c.unique(op)</p>
-<p>如果存在相邻元素满足op，就只保留一个</p>
-<p>元素比较不抛出异常，这个函数就不抛出异常</p>
-<p>c.splice_after(pos,c2)</p>
-<p>把c2的所有元素搬到c的pos后</p>
-<p>不抛出异常</p>
-<p>c.splice_after(pos,c2,c2pos)</p>
-<p>把c2的c2pos的元素搬到c的pos后</p>
-<p>同上</p>
-<p>c.splice_after(pos,c2,c2begin,c2end)</p>
-<p>把c2的c2begin和c2end之间的元素左闭右开搬到c的pos后</p>
-<p>同上</p>
-<p>c.sort()</p>
-<p>从小到大对c进行排序</p>
-<p> </p>
-<p>c.sort(op)</p>
-<p>以op准则进行排序</p>
-<p> </p>
-<p>c.merge(c2)</p>
-<p>假设c和c2的容器都包含符合op()的已经排序的元素，将c2的元素搬到c，并保证合并后的list依然是已排序的</p>
-<p>元素比较不抛出异常，这个函数就不抛出异常</p>
-<p>c.merge(c2,op)</p>
-<p>假设c和c2的容器都包含符合op()的已经排序的元素，将c2的元素搬到c，并保证合并后的list依然是符合op的已排序的</p>
-<p>元素比较不抛出异常，这个函数就不抛出异常</p>
-<p>c.reserve()</p>
-<p>将所有元素反序</p>
-<p>不抛出</p>
-<p>实例：</p>
-<p>#include<br>#include<br>#include<br>#include<br>#include </p>
-<p>using namespace std;</p>
-<p>void printLists(const string&amp; s, const forward_list&amp; l1, const forward_list&amp; l2)<br>{<br>    cout &lt;&lt; s &lt;&lt; endl;<br>    cout &lt;&lt; “list1:”;<br>    copy(l1.cbegin(), l1.cend(), ostream_iterator(cout, “ “));<br>    cout &lt;&lt; endl;<br>    cout &lt;&lt; “list2:”;<br>    copy(l2.cbegin(), l2.cend(), ostream_iterator(cout, “ “));<br>    cout &lt;&lt; endl;</p>
-<p>}</p>
-<p>int main()<br>{<br>    //创建两个空forwardlist<br>    forward_list list1 = { 1,2,3,4 };<br>    forward_list list2 = { 77,88,99 };<br>    printLists(“初始化：”, list1, list2);</p>
-<pre><code>//在list2的第一个元素前插入6个新元素
-list2.insert\_after(list2.before\_begin(), 99);
-list2.push\_front(10);
-list2.insert\_after(list2.before\_begin(), &#123; 10,11,12,13 &#125;);
-printLists(&quot;6个新元素：&quot;, list1, list2);
-
-//把list2的所有元素插入到list1的开头
-list1.insert\_after(list1.before\_begin(), list2.begin(), list2.end());
-printLists(&quot;插入结果：&quot;, list1, list2);
-
-//删除第二个元素和在99后面的元素
-list2.erase\_after(list2.begin());
-list2.erase\_after(find(list2.begin(), list2.end(), 99), list2.end());
-printLists(&quot;删除第二个和99之后的&quot;, list1, list2);
-
-//将list1排序并赋值给list2，去除重复元素
-list1.sort();
-list2 = list1;
-list2.unique();
-printLists(&quot;排序并去重&quot;, list1, list2);
-
-//合并并排序两个lists到list1
-list1.merge(list2);
-printLists(&quot;合并：&quot;, list1, list2);</code></pre>
-<p>}</p>
-<p>![`刀始<br>list1:1 2 3<br>list2:77 88<br>6수新元素=<br>list1:1 2 3<br>list2:10 11<br>入錯果=<br>listl:10 11<br>list2:10 11<br>list1:1 2 3<br>list2:1 23<br>4<br>99<br>4<br>12<br>12<br>12<br>13<br>13<br>13<br>10 99 77 88 99<br>10 99 77 88 99<br>10 99 77 88 99<br>!]除第二수和99之后的<br>1 2 3 4<br>1 2 3 4<br>listl:10 11<br>list2:10 12<br>*序幷去重<br>12 13 10 99 77 88 99<br>13 10 99<br>口升=<br>list1:<br>list2:<br>1 2<br>4 10 10 11 12 13 77 88 99 99<br>4 10 11 12 13 77 88 99<br>2 3 3 4 4 10 10 10 11 11 12 12<br>13<br>13 77 77 88 88 99 99 99 ](<a target="_blank" rel="noopener" href="https://www.muchenhen.com/wp-content/uploads/2019/11/image-6.png">https://www.muchenhen.com/wp-content/uploads/2019/11/image-6.png</a>)</p>
-</div><hr></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-chevron-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/55/">55</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer class="footer-bg" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div class="layout" id="footer"><div class="copyright">&copy;2017 - 2020 By 木尘痕</div><div class="framework-info"><span>Driven - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="icp"><a><span>豫ICP备17048032号</span></a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_site_uv"><i class="fa fa-user"></i><span id="busuanzi_value_site_uv"></span><span></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i><span id="busuanzi_value_site_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.8.2"></script><script src="/js/fancybox.js?version=1.8.2"></script><script src="/js/sidebar.js?version=1.8.2"></script><script src="/js/copy.js?version=1.8.2"></script><script src="/js/fireworks.js?version=1.8.2"></script><script src="/js/transition.js?version=1.8.2"></script><script src="/js/scroll.js?version=1.8.2"></script><script src="/js/head.js?version=1.8.2"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+</div><hr></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-chevron-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/56/">56</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer class="footer-bg" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div class="layout" id="footer"><div class="copyright">&copy;2017 - 2020 By 木尘痕</div><div class="framework-info"><span>Driven - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="icp"><a><span>豫ICP备17048032号</span></a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_site_uv"><i class="fa fa-user"></i><span id="busuanzi_value_site_uv"></span><span></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i><span id="busuanzi_value_site_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.8.2"></script><script src="/js/fancybox.js?version=1.8.2"></script><script src="/js/sidebar.js?version=1.8.2"></script><script src="/js/copy.js?version=1.8.2"></script><script src="/js/fireworks.js?version=1.8.2"></script><script src="/js/transition.js?version=1.8.2"></script><script src="/js/scroll.js?version=1.8.2"></script><script src="/js/head.js?version=1.8.2"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
   $('#nav').addClass('is-mobile')
   $('footer').addClass('is-mobile')
   $('#top-container').addClass('is-mobile')
