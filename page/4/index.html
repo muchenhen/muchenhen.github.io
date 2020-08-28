@@ -14,7 +14,102 @@
     noSupport: 'The browser does not support'
   },
   hexoVersion: '5.1.0'
-} </script><meta name="generator" content="Hexo 5.1.0"></head><body><canvas class="fireworks"></canvas><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="author-info"><div class="author-info__avatar text-center"><img src="https://github.com/muchenhen/muchenhen.github.io/blob/master/XuanGe.jpg?raw=true"></div><div class="author-info__name text-center">木尘痕</div><div class="author-info__description text-center">放一些笔记的地方</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">551</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">21</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">30</span></a></div><hr><div class="author-info-links"><div class="author-info-links__title text-center">Links</div><a class="author-info-links__name text-center" target="_blank" rel="noopener" href="https://alec-ray.github.io/">止戈</a></div></div></div><nav id="nav" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">风生之谷</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">主页</a><a class="site-page" href="/archives">全部文章</a><a class="site-page" href="/tags">标签分类</a><a class="site-page" href="/categories">文章分类</a><a class="site-page" href="/contact">联系</a></span><span class="pull-right"></span></div><div id="site-info"><div id="site-title">风生之谷</div><div id="site-sub-title">一点浩然气 千里快哉风</div></div></nav><div id="content-outer"><div class="layout" id="content-inner"><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/19/c%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%EF%BC%9A%E5%9B%9B%E7%A7%8D%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E8%BF%90%E7%AE%97%E7%AC%A6/">C++面向对象：四种类型转换运算符</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-19</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a></span><div class="content"><p>隐式类型转换是安全的，显式类型转换是有风险的</p>
+} </script><meta name="generator" content="Hexo 5.1.0"></head><body><canvas class="fireworks"></canvas><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="author-info"><div class="author-info__avatar text-center"><img src="https://github.com/muchenhen/muchenhen.github.io/blob/master/XuanGe.jpg?raw=true"></div><div class="author-info__name text-center">木尘痕</div><div class="author-info__description text-center">放一些笔记的地方</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">552</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">21</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">31</span></a></div><hr><div class="author-info-links"><div class="author-info-links__title text-center">Links</div><a class="author-info-links__name text-center" target="_blank" rel="noopener" href="https://alec-ray.github.io/">止戈</a></div></div></div><nav id="nav" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">风生之谷</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">主页</a><a class="site-page" href="/archives">全部文章</a><a class="site-page" href="/tags">标签分类</a><a class="site-page" href="/categories">文章分类</a><a class="site-page" href="/contact">联系</a></span><span class="pull-right"></span></div><div id="site-info"><div id="site-title">风生之谷</div><div id="site-sub-title">一点浩然气 千里快哉风</div></div></nav><div id="content-outer"><div class="layout" id="content-inner"><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/19/c%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%EF%BC%9A%E5%9B%9B%E7%A7%8D%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E8%BF%90%E7%AE%97%E7%AC%A6-1/">C++面向对象：四种类型转换运算符</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-19</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a></span><div class="content"><p>隐式类型转换是安全的，显式类型转换是有风险的</p>
+<p>C风格的强制类型转换统一使用( )，而( )在代码中随处可见，所以也不利于使用文本检索工具</p>
+<p>有几种特定于c++语言的类型转换操作符。这些操作符旨在<strong>消除旧式C语言强制类型转换中固有的一些模糊性和危险</strong>。</p>
+<p>c++类型转换的几种分类</p>
+<p><strong>关键字</strong></p>
+<p><strong>说明</strong></p>
+<p>static_cast</p>
+<p>用于良性转换，一般不会导致意外发生，风险很低。用于非多态的转换。</p>
+<p>const_cast</p>
+<p>用于 const 与非 const、volatile 与非 volatile 之间的转换。</p>
+<p>reinterpret_cast</p>
+<p>高度危险的转换，这种转换仅仅是对二进制位的重新解释，不会借助已有的转换规则对数据进行调整，但是可以实现最灵活的 C++ 类型转换。</p>
+<p>dynamic_cast</p>
+<p>借助 RTTI，用于类型安全的向下转型（Downcasting）。<br>用于多态类型的转换。</p>
+<p>safe_cast</p>
+<p>Used in C++/CLI to produce verifiable MSIL.</p>
+<p><em>来自 &lt;<a target="_blank" rel="noopener" href="http://c.biancheng.net/cpp/biancheng/view/3297.html">http://c.biancheng.net/cpp/biancheng/view/3297.html</a>&gt;</em></p>
+<p><strong>dynamic_cast Operator</strong></p>
+<p><strong>语法</strong></p>
+<p>dynamic_cast &lt; type-id &gt; ( expression )</p>
+<p>type-id 必须是一个指针或引用指向之前定义好的类类型，或者是一个指向void的指针</p>
+<p>如果type-id是指针 expression也得是指针</p>
+<p>如果type-id是引用 expression需要是左值</p>
+<p>当type-id是指向值类型的内部指针时，动态强制转换将不再抛出异常，而强制转换在运行时失败。强制转换将返回0指针值，而不是抛出。</p>
+<p>如果type-id是一个指向明确可访问的表达式直接或间接基类的指针，那么结果就是指向type-id类型的惟一子对象的指针。</p>
+<p>比如：</p>
+<p>class B { };</p>
+<p>class C : public B { };</p>
+<p>class D : public C { };</p>
+<p>void f(D* pd) {</p>
+<p>C* pc = dynamic_cast&lt;C*&gt;(pd); // ok: C是一个直接基类</p>
+<p>// pc指向pd的C子对象</p>
+<p>B* pb = dynamic_cast&lt;B*&gt;(pd); // ok: B是D的间接基类</p>
+<p>// pb指向pd的B子对象</p>
+<p>}</p>
+<p>dynamic_cast与static_cast是相对的</p>
+<p>dynamic_cast 用于在类的继承层次之间进行类型转换，它既允许向上转型（Upcasting），也允许向下转型（Downcasting）。向上转型是无条件的，不会进行任何检测，所以都能成功；向下转型的前提必须是安全的，要借助 RTTI 进行检测，所有只有一部分能成功。</p>
+<p><strong>static_cast Operator</strong></p>
+<p><strong>语法</strong></p>
+<p>static_cast <type-id> ( expression )</p>
+<p>在标准c++中，不进行任何运行时类型检查来帮助确保转换的安全性。</p>
+<p>该运算符可以用于将基类指针转换为派生类指针等操作，这样的转换并不总是安全的。该操作符只能用于良性转化，比如：</p>
+<ul>
+<li>原有的自动类型转换，例如 short 转 int、int 转 double、const 转非 const、向上转型等</li>
+<li>void 指针和具体类型指针之间的转换，例如void *转int *、char *转void *等</li>
+<li>有转换构造函数或者类型转换函数的类与其它类型之间的转换，例如 double 转 Complex（调用转换构造函数）、Complex 转 double（调用类型转换函数）。</li>
+</ul>
+<p><strong>静态和动态的区别</strong></p>
+<p>一般情况下 静态操作符可以转换数值类数据类型，比如enums转ints 转floats。静态强制转换没有动态强制转换安全，因为静态强制转换<strong>没有运行时类型检查</strong>。对于不明确的指针的动态强制转换会失败，但是静态强制转换会不检查就返回，仿佛没有错误。但是动态强制转换只能用于指针和引用，并且运行时类型检查时有一定开销的。</p>
+<p>下面有一个例子：</p>
+<p>class B {};</p>
+<p>class D : public B {};</p>
+<p>void f(B* pb, D* pd) {</p>
+<p>D* pd2 = static_cast&lt;D*&gt;(pb); // 不安全, 将B类型强制转换为D类型，D中可能有B没有的字段和方法</p>
+<p>B* pb2 = static_cast&lt;B*&gt;(pd); // 安全，因为派生类D一定有基类B的字段和方法。</p>
+<p>}</p>
+<p>动态强制转换和静态强制转换操作符在类层次结构中移动指针。但是，静态强制转换仅依赖于cast语句中提供的信息，因此可能不安全。例如：</p>
+<p>class B {</p>
+<p>public:</p>
+<p>virtual void Test(){}</p>
+<p>};</p>
+<p>class D : public B {};</p>
+<p>void f(B* pb) {</p>
+<p>D* pd1 = dynamic_cast&lt;D*&gt;(pb);</p>
+<p>D* pd2 = static_cast&lt;D*&gt;(pb);</p>
+<p>}</p>
+<p>如果pb确实指向类型为D的对象，那么pd1和pd2将获得相同的值。如果pb == 0，它们也会得到相同的值。</p>
+<p>如果pb指向的是B类型的对象，而不是完整的D类，那么动态强制转换将知道足够多的信息以返回0。但是，静态强制转换依赖于程序员的断言，即pb指向类型为D的对象，并且只返回一个指向假定的D对象的指针。</p>
+<p>因此，静态强制转换可以执行隐式转换的逆转换，在这种情况下，结果是未定义的。由程序员来验证静态强制转换的结果是否安全。</p>
+<p>这种行为也适用于类类型之外的类型。例如，可以使用静态强制转换将int转换为char。但是，得到的char可能没有足够的位来容纳整个int值。同样，由程序员来验证静态强制转换的结果是否安全。</p>
+<p>静态强制转换操作符还可用于执行任何隐式转换，包括标准转换和用户定义转换。例如</p>
+<p>typedef unsigned char BYTE;</p>
+<p>void f() {</p>
+<p>char ch;</p>
+<p>int i = 65;</p>
+<p>float f = 2.5;</p>
+<p>double dbl;</p>
+<p>ch = static_cast<char>(i); // int 转 char</p>
+<p>dbl = static_cast<double>(f); // float转 double</p>
+<p>i = static_cast<BYTE>(ch);</p>
+<p>}</p>
+<p>任何表达式都可以通过静态强制转换操作符显式转换为void类型。目标void类型可以选择包含const、volatile或unaligned属性。</p>
+<p>静态强制转换操作符不能丢弃常量、易失性或未对齐的属性。</p>
+<p>需要注意的是，static_cast 不能用于无关类型之间的转换，因为这些转换都是有风险的：</p>
+<ul>
+<li>两个具体类型指针之间的转换，例如int *转double *、Student *转int *等。不同类型的数据存储格式不一样，长度也不一样，用 A 类型的指针指向 B 类型的数据后，会按照 A 类型的方式来处理数据：如果是读取操作，可能会得到一堆没有意义的值；如果是写入操作，可能会使 B 类型的数据遭到破坏，当再次以 B 类型的方式读取数据时会得到一堆没有意义的值。</li>
+<li>int 和指针之间的转换。将一个具体的地址赋值给指针变量是非常危险的，因为该地址上的内存可能没有分配，也可能没有读写权限，恰好是可用内存反而是小概率事件。</li>
+</ul>
+<p><strong>reinterpret_cast Operator</strong></p>
+<p><strong>语法</strong></p>
+<p>reinterpret_cast &lt; type-id &gt; ( expression )</p>
+<p>这个运算符用不好会造成不安全，尽量能用其他的代替就用其他的。</p>
+<p>这种转换仅仅是对二进制位的重新解释，不会借助已有的转换规则对数据进行调整，所以风险很高。</p>
+<p>reinterpret cast操作符可用于将char*转换为int*，或将一个类*转换为不相关的类*，这些操作符本质上是不安全的。</p>
+<p>重新解释强制类型转换的结果除了被强制转换回其原始类型外，不能安全地用于其他任何事情。</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/19/c%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%EF%BC%9A%E5%9B%9B%E7%A7%8D%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E8%BF%90%E7%AE%97%E7%AC%A6/">C++面向对象：四种类型转换运算符</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-19</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a></span><div class="content"><p>隐式类型转换是安全的，显式类型转换是有风险的</p>
 <p>C风格的强制类型转换统一使用( )，而( )在代码中随处可见，所以也不利于使用文本检索工具</p>
 <p>有几种特定于c++语言的类型转换操作符。这些操作符旨在<strong>消除旧式C语言强制类型转换中固有的一些模糊性和危险</strong>。</p>
 <p>c++类型转换的几种分类</p>
@@ -245,27 +340,6 @@
 <li>当前的material状态</li>
 </ol>
 <p>具体的方法都卸载了源码的注释中。<a target="_blank" rel="noopener" href="https://github.com/muchenhen/MyUnityShaders/tree/master/Assets/PostEffects">https://github.com/muchenhen/MyUnityShaders/tree/master/Assets/PostEffects</a></p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/07/%E6%8F%8F%E8%BE%B9%E6%95%88%E6%9E%9C-1/">描边效果</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-07</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/unity3d/">unity3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/unity3d/Unity-Shader/">Unity Shader</a></span><div class="content"><p>本文简单归纳总结整理了关于各种思路的ShaderLab中的描边效果的实现。</p>
-<p>描边效果常见于一些非真实感的渲染中。下图是本人在测试各种描边方法实现时在Unity中的表现：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/030720_0937_1.png"></p>
-<h2 id="第一行：Back-Facing描边"><a href="#第一行：Back-Facing描边" class="headerlink" title="第一行：Back Facing描边"></a>第一行：Back Facing描边</h2><p>这种方法的思路十分简单，将每个顶点的位置沿着法线的方向进行扩展。</p>
-<p>过程实现非常简单，理论上讲，先把顶点坐标转换到裁剪空间，然后将法线坐标变换到视角空间后，直接讲顶点的位置的xy分量（xyz也行）加上对应的法线坐标。这个加法的结果就是所有的点沿着法线方向”膨胀”了一定的位移。然后把膨胀后的模型直接渲染成纯色，之后再正常的渲染模型，这样两层叠加后看起来就是喵了个边。</p>
-<p>. <img src="https://www.muchenhen.com/wp-content/uploads/2020/03/030720_0937_2.png"><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/030720_0937_3.png"></p>
-<p>此处实例是将模型简单设置成了白色 描边设置为黑色。如果想要控制描边的粗细，其实就是控制模型膨胀的程度，那么定义一个变量与计算膨胀的顶点坐标中的法线参数相乘，就可以通过这个参数的大小控制描边粗细。</p>
-<p>但是这个描边效果有两个问题：<br>1、对于正方体这种，转角处法线方向突变的情况，相当于周围面片飘了起来<br>2、随着摄像机靠近物体，会发现描边也是跟着变粗的，当然这个不能算问题，可以作为一种特性。</p>
-<p>第一个图的第二行就是解决了上述两个问题的情况</p>
-<h2 id="第二行：临时更改法线信息"><a href="#第二行：临时更改法线信息" class="headerlink" title="第二行：临时更改法线信息"></a>第二行：临时更改法线信息</h2><p>对于第一个问题，很清楚是因为法线完全垂直于平面，往外扩张之后还是垂直的，然后出现转角的时候就出现了断裂。正方体甚至正面完全看不见，因为就是渲染了一个平面。</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/030720_0937_4.png"></p>
-<p>所以我们可以临时修改法线的信息来实这种情况的描边。将每个顶点在同一个位置的不同的法线信息数据进行平均计算，计算出新的临时法线信息。</p>
-<p><strong>此处牵涉到一个新的问题，如果模型有骨骼动画，那么法线的数据会随着骨骼动画变化。如果模型使用了骨骼动画，那么需要将法线和切线数据写进mesh。如果不需要可以直接在顶点着色器中进行变化。如果要对mesh进行改变需要脚本进行。此处选择在脚本中操作。</strong></p>
-<p>实现的主要思路是通过Unity的API读取到mesh的顶点相关信息，然后自定义一个字典来进行每个顶点对应的法线向量的判断，将一个顶点的不同面的法线进行相加然后标准化（此处的几何意义很明显不解释了）。这样可以得到一个比较”温和”的转折处的法线，然后再进行扩张，可以得到很好的效果。</p>
-<p>关于第二个问题其实很简单，因为是在视角空间进行的操作，随意会对摄像机产生随距离变化的情况。如果把描边改成NDC空间就会解决这个问题。</p>
-<p>转换到NDC空间会遇到新的问题，众所周知Unity采用OpenGL的NDC空间，是个标准正方体，但是屏幕一般是16比9，所以我们要对x坐标进行修正。具体实现就是x坐标乘屏幕宽高比。</p>
-<p>完成上述的操作后就获得了比较好的描边效果，这种描边不是完全的轮廓边界，因为在渲染描边的时候Z缓冲写入没有关闭。</p>
-<h2 id="第三行：关闭Z缓冲的Back-Facing"><a href="#第三行：关闭Z缓冲的Back-Facing" class="headerlink" title="第三行：关闭Z缓冲的Back Facing"></a>第三行：关闭Z缓冲的Back Facing</h2><p>如果我不想要前面的部分会出现局部描边，而是完全的只有外部轮廓有描边的话，就需要关闭描边的Z缓冲写入，这样就会被后渲染的图形完全遮挡，就会得到想要的效果。</p>
-<h2 id="第四行：关闭Z缓冲的法线修改"><a href="#第四行：关闭Z缓冲的法线修改" class="headerlink" title="第四行：关闭Z缓冲的法线修改"></a>第四行：关闭Z缓冲的法线修改</h2><p>这个是在临时修改法线的基础上关闭了描边的Zbuffer写入。</p>
-<p>此外需要注意，在进行Z缓冲关闭的时候，由于默认 的渲染顺序是先于skybox的顺序的，所以渲染skybox后会遮掉描边，需要更改渲染队列的顺序，放在skybox之后。</p>
-<p>源码地址：<a target="_blank" rel="noopener" href="https://github.com/muchenhen/MyUnityShaders/tree/master/Assets/Unreality/01%E6%8F%8F%E8%BE%B9%E6%95%88%E6%9E%9C%20%E5%90%84%E7%A7%8D%E5%B0%9D%E8%AF%95">https://github.com/muchenhen/MyUnityShaders/tree/master/Assets/Unreality/01%E6%8F%8F%E8%BE%B9%E6%95%88%E6%9E%9C%20%E5%90%84%E7%A7%8D%E5%B0%9D%E8%AF%95</a></p>
 </div><hr></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-chevron-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/56/">56</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer class="footer-bg" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div class="layout" id="footer"><div class="copyright">&copy;2017 - 2020 By 木尘痕</div><div class="framework-info"><span>Driven - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="footer_custom_text">千秋竟岁，伏苦飞逐</div><div class="icp"><a><span>豫ICP备17048032号</span></a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_site_uv"><i class="fa fa-user"></i><span id="busuanzi_value_site_uv"></span><span></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i><span id="busuanzi_value_site_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.8.2"></script><script src="/js/fancybox.js?version=1.8.2"></script><script src="/js/sidebar.js?version=1.8.2"></script><script src="/js/copy.js?version=1.8.2"></script><script src="/js/fireworks.js?version=1.8.2"></script><script src="/js/transition.js?version=1.8.2"></script><script src="/js/scroll.js?version=1.8.2"></script><script src="/js/head.js?version=1.8.2"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
   $('#nav').addClass('is-mobile')
   $('footer').addClass('is-mobile')
