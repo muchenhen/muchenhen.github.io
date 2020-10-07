@@ -14,959 +14,193 @@
     noSupport: 'The browser does not support'
   },
   hexoVersion: '5.1.0'
-} </script><meta name="generator" content="Hexo 5.1.0"></head><body><canvas class="fireworks"></canvas><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="author-info"><div class="author-info__avatar text-center"><img src="https://github.com/muchenhen/muchenhen.github.io/blob/master/XuanGe.jpg?raw=true"></div><div class="author-info__name text-center">木尘痕</div><div class="author-info__description text-center">放一些笔记的地方</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">552</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">21</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">31</span></a></div><hr><div class="author-info-links"><div class="author-info-links__title text-center">Links</div><a class="author-info-links__name text-center" target="_blank" rel="noopener" href="https://alec-ray.github.io/">止戈</a></div></div></div><nav id="nav" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">风生之谷</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">主页</a><a class="site-page" href="/archives">全部文章</a><a class="site-page" href="/tags">标签分类</a><a class="site-page" href="/categories">文章分类</a><a class="site-page" href="/contact">联系</a></span><span class="pull-right"></span></div><div id="site-info"><div id="site-title">风生之谷</div><div id="site-sub-title">一点浩然气 千里快哉风</div></div></nav><div id="content-outer"><div class="layout" id="content-inner"><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/30/stl%EF%BC%9Aarray%E5%AE%B9%E5%99%A8-1/">STL：array容器</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-30</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/">cpp</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/STL/">STL</a></span><div class="content"><p>需要头文件<br>命名空间为std<br>定义为class template<br>namespace std {<br>template<br>class array;<br>}<br>包覆一个静态c数组并提供了一个STL容器接口。有固定大小，无法增加或者删除，有固定大小。只能改变元素值。<br>第二个参数为生命周期内元素的个数，size()函数 返回值总等于N<br>array会将元素复制到内部的c数组，是有序的，且支持随机访问。内存分配在栈中，绝不会被重新分配</p>
-<h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><p>array特殊的地方是，默认构造产生的不是空容器，元素数量一定是第二个参数N。初值可能不明确，不一定是0。<br>arrayx;//x内的元素值不确定<br>arrayx1 = {};//x1内的元素都为0 (int())<br>arrayx2 = { 1,2,3,4 };//正常的一个初始化<br>arrayx3 = { 3 };//第一个元素是3，后面的是0<br>如果元素数量超过N值，会出现错误</p>
-<p>array的swap操作可以和一个元素类型和元素个数都相同的容器置换彼此的元素，但迭代器和引用不会改变所指 的容器。</p>
-<h2 id="大小"><a href="#大小" class="headerlink" title="大小"></a>大小</h2><p>array大小可以是0，此时begin()和end()，cbegin()和cend()都会释出同一个值。但是front()和back()返回的就不明确了。</p>
-<p>建立赋值和删除操作</p>
-<p>操作</p>
-<p>结果</p>
-<p>array&lt;Elem,N&gt; c</p>
-<p>某人构造，有默认参数表</p>
-<p>array&lt;Elem,N&gt; c(c2)</p>
-<p>复制构造，建立另一个同类型array并复制所有元素</p>
-<p>array&lt;Elem,N&gt; c = c2</p>
-<p>同上</p>
-<p>array&lt;Elem,N&gt; c = initlist</p>
-<p>给初始化参数列来建立一个array</p>
-<h2 id="非变动性操作"><a href="#非变动性操作" class="headerlink" title="非变动性操作"></a>非变动性操作</h2><p>操作</p>
-<p>结果</p>
-<p>c.empty()</p>
-<p>返回是否为空</p>
-<p>c.size()</p>
-<p>返回目前的元素个数，都是N</p>
-<p>c.max_size()</p>
-<p>返回元素个数的可能最大值</p>
-<p>==</p>
-<p>对每个元素调用了==</p>
-<p>!=</p>
-<p>相当于!(==)</p>
-<p>&lt;</p>
-<p> </p>
-<p>&gt;</p>
-<p> </p>
-<p>&lt;=</p>
-<p>相当于!(&lt;)</p>
-<p>&gt;=</p>
-<p>相当于!(&gt;)</p>
-<h2 id="赋值"><a href="#赋值" class="headerlink" title="赋值"></a>赋值</h2><p>除了赋值操作符之外，只能用fill()赋新值给每一个元素</p>
-<p>操作</p>
-<p>结果</p>
-<p>c = c2</p>
-<p>将c2元素给c</p>
-<p>c.fill(value)</p>
-<p>将value的值赋给c中的每一个元素</p>
-<p>c1.swap(c2)</p>
-<p>置换c1和c2的数据</p>
-<p>swap(c1.c2)</p>
-<p>同上，此函数是全局函数</p>
-<h2 id="元素访问"><a href="#元素访问" class="headerlink" title="元素访问"></a>元素访问</h2><p>访问array内的所有元素，需要使用范围for循环，或者特定操作函数或迭代器。</p>
-<p>也可以像c数组一样，第一个元素索引是0，最后一个是size()-1.</p>
-<p>操作</p>
-<p>结果</p>
-<p>c[index]</p>
-<p>返回索引所指向的元素，不检查范围</p>
-<p>c.at(index)</p>
-<p>返回索引指向的元素，会检查范围，超过范围抛出范围错误异常</p>
-<p>c.front()</p>
-<p>返回第一个元素，不检查是否存在第一个元素</p>
-<p>c.back()</p>
-<p>返回最后一个元素，不检查是否存在最后一个</p>
-<h2 id="迭代器相关函数"><a href="#迭代器相关函数" class="headerlink" title="迭代器相关函数"></a>迭代器相关函数</h2><p>array提供的是随机访问迭代器，原则上对array可以用STL的所有算法</p>
-<p>操作</p>
-<p>效果</p>
-<p>c.begin()</p>
-<p>返回迭代器指向第一个元素</p>
-<p>c.end()</p>
-<p>指向最后一个</p>
-<p>c.cbegin()</p>
-<p>返回一个const迭代器指向第一个，c11</p>
-<p>c.cend()</p>
-<p>只想最后一个的const迭代器,c11</p>
-<p>c.rbegin()</p>
-<p>返回一个反向的迭代器指向第一个元素</p>
-<p>c.rend()</p>
-<p>返回一个反向的迭代器指向最后一个元素</p>
-<p>c.crbegin()</p>
-<p>返回一个const反向指向第一个的迭代器,c11</p>
-<p>c.crend()</p>
-<p>返回一个const反向指向最后一个的迭代器,c11</p>
-<p>对于array来说，begin(),end(),cbegin(),cend()返回的是普通指针。并且只要array有效，其迭代器也保持有效，并且swap()函数是将新值赋给迭代器、引用、指针指向的元素上。</p>
-<h2 id="Tuple接口"><a href="#Tuple接口" class="headerlink" title="Tuple接口"></a>Tuple接口</h2><p>array提供tuple接口</p>
-<p> typedef array FiveStrings;<br>     FiveStrings a = { “h”,”e”,”l”,”l”,”o” };<br>     cout&lt;&lt; tuple_size::value;//取得元素个数<br>     tuple_element&lt;1,FiveStrings&gt;::type;//获取特定的元素类型<br>     get&lt;1&gt;(a);//取得某特定元素</p>
-<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><p>#include “print.h”</p>
-<p>int main()<br>{<br>    array a = { 11,22,33,44 };</p>
-<pre><code>print(a);
-a.back() = 999999;
-a\[a.size() - 2\] = 42;
-print(a);
-
-cout &lt;&lt; &quot;sum: &quot; &lt;&lt; accumulate(a.begin(), a.end(), 0);
-
-transform(a.begin(), a.end(), a.begin(), negate());
-print(a);</code></pre>
-<p>}</p>
-<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/array.png" alt="11 22 33 44000000 
-11 22 33 4400 0 0 42 999999 
-sum: 1000151-11 -22 -33 -44 0 0 0 0 
-—999999 "></p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/30/stl%EF%BC%9Aarray%E5%AE%B9%E5%99%A8/">STL：array容器</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-30</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/">cpp</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/STL/">STL</a></span><div class="content"><p>需要头文件<br>命名空间为std<br>定义为class template<br>namespace std {<br>template<br>class array;<br>}<br>包覆一个静态c数组并提供了一个STL容器接口。有固定大小，无法增加或者删除，有固定大小。只能改变元素值。<br>第二个参数为生命周期内元素的个数，size()函数 返回值总等于N<br>array会将元素复制到内部的c数组，是有序的，且支持随机访问。内存分配在栈中，绝不会被重新分配</p>
-<h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><p>array特殊的地方是，默认构造产生的不是空容器，元素数量一定是第二个参数N。初值可能不明确，不一定是0。<br>arrayx;//x内的元素值不确定<br>arrayx1 = {};//x1内的元素都为0 (int())<br>arrayx2 = { 1,2,3,4 };//正常的一个初始化<br>arrayx3 = { 3 };//第一个元素是3，后面的是0<br>如果元素数量超过N值，会出现错误</p>
-<p>array的swap操作可以和一个元素类型和元素个数都相同的容器置换彼此的元素，但迭代器和引用不会改变所指 的容器。</p>
-<h2 id="大小"><a href="#大小" class="headerlink" title="大小"></a>大小</h2><p>array大小可以是0，此时begin()和end()，cbegin()和cend()都会释出同一个值。但是front()和back()返回的就不明确了。</p>
-<p>建立赋值和删除操作</p>
-<p>操作</p>
-<p>结果</p>
-<p>array&lt;Elem,N&gt; c</p>
-<p>某人构造，有默认参数表</p>
-<p>array&lt;Elem,N&gt; c(c2)</p>
-<p>复制构造，建立另一个同类型array并复制所有元素</p>
-<p>array&lt;Elem,N&gt; c = c2</p>
-<p>同上</p>
-<p>array&lt;Elem,N&gt; c = initlist</p>
-<p>给初始化参数列来建立一个array</p>
-<h2 id="非变动性操作"><a href="#非变动性操作" class="headerlink" title="非变动性操作"></a>非变动性操作</h2><p>操作</p>
-<p>结果</p>
-<p>c.empty()</p>
-<p>返回是否为空</p>
-<p>c.size()</p>
-<p>返回目前的元素个数，都是N</p>
-<p>c.max_size()</p>
-<p>返回元素个数的可能最大值</p>
-<p>==</p>
-<p>对每个元素调用了==</p>
-<p>!=</p>
-<p>相当于!(==)</p>
-<p>&lt;</p>
-<p> </p>
-<p>&gt;</p>
-<p> </p>
-<p>&lt;=</p>
-<p>相当于!(&lt;)</p>
-<p>&gt;=</p>
-<p>相当于!(&gt;)</p>
-<h2 id="赋值"><a href="#赋值" class="headerlink" title="赋值"></a>赋值</h2><p>除了赋值操作符之外，只能用fill()赋新值给每一个元素</p>
-<p>操作</p>
-<p>结果</p>
-<p>c = c2</p>
-<p>将c2元素给c</p>
-<p>c.fill(value)</p>
-<p>将value的值赋给c中的每一个元素</p>
-<p>c1.swap(c2)</p>
-<p>置换c1和c2的数据</p>
-<p>swap(c1.c2)</p>
-<p>同上，此函数是全局函数</p>
-<h2 id="元素访问"><a href="#元素访问" class="headerlink" title="元素访问"></a>元素访问</h2><p>访问array内的所有元素，需要使用范围for循环，或者特定操作函数或迭代器。</p>
-<p>也可以像c数组一样，第一个元素索引是0，最后一个是size()-1.</p>
-<p>操作</p>
-<p>结果</p>
-<p>c[index]</p>
-<p>返回索引所指向的元素，不检查范围</p>
-<p>c.at(index)</p>
-<p>返回索引指向的元素，会检查范围，超过范围抛出范围错误异常</p>
-<p>c.front()</p>
-<p>返回第一个元素，不检查是否存在第一个元素</p>
-<p>c.back()</p>
-<p>返回最后一个元素，不检查是否存在最后一个</p>
-<h2 id="迭代器相关函数"><a href="#迭代器相关函数" class="headerlink" title="迭代器相关函数"></a>迭代器相关函数</h2><p>array提供的是随机访问迭代器，原则上对array可以用STL的所有算法</p>
-<p>操作</p>
-<p>效果</p>
-<p>c.begin()</p>
-<p>返回迭代器指向第一个元素</p>
-<p>c.end()</p>
-<p>指向最后一个</p>
-<p>c.cbegin()</p>
-<p>返回一个const迭代器指向第一个，c11</p>
-<p>c.cend()</p>
-<p>只想最后一个的const迭代器,c11</p>
-<p>c.rbegin()</p>
-<p>返回一个反向的迭代器指向第一个元素</p>
-<p>c.rend()</p>
-<p>返回一个反向的迭代器指向最后一个元素</p>
-<p>c.crbegin()</p>
-<p>返回一个const反向指向第一个的迭代器,c11</p>
-<p>c.crend()</p>
-<p>返回一个const反向指向最后一个的迭代器,c11</p>
-<p>对于array来说，begin(),end(),cbegin(),cend()返回的是普通指针。并且只要array有效，其迭代器也保持有效，并且swap()函数是将新值赋给迭代器、引用、指针指向的元素上。</p>
-<h2 id="Tuple接口"><a href="#Tuple接口" class="headerlink" title="Tuple接口"></a>Tuple接口</h2><p>array提供tuple接口</p>
-<p> typedef array FiveStrings;<br>     FiveStrings a = { “h”,”e”,”l”,”l”,”o” };<br>     cout&lt;&lt; tuple_size::value;//取得元素个数<br>     tuple_element&lt;1,FiveStrings&gt;::type;//获取特定的元素类型<br>     get&lt;1&gt;(a);//取得某特定元素</p>
-<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><p>#include “print.h”</p>
-<p>int main()<br>{<br>    array a = { 11,22,33,44 };</p>
-<pre><code>print(a);
-a.back() = 999999;
-a\[a.size() - 2\] = 42;
-print(a);
-
-cout &lt;&lt; &quot;sum: &quot; &lt;&lt; accumulate(a.begin(), a.end(), 0);
-
-transform(a.begin(), a.end(), a.begin(), negate());
-print(a);</code></pre>
-<p>}</p>
-<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/array.png" alt="11 22 33 44000000 
-11 22 33 4400 0 0 42 999999 
-sum: 1000151-11 -22 -33 -44 0 0 0 0 
-—999999 "></p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/28/dx12%E9%BE%99%E4%B9%A6part%E2%85%A0chapter-2-%E7%9F%A9%E9%98%B5-1/">DX12龙书PartⅠChapter 2 矩阵</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-28</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/DirectX/">DirectX</a></span><div class="content"><p>在三维计算机图形学中，我们使用矩阵来简洁地描述几何变换，如缩放、旋转、平移，以及将点或向量的坐标从一帧变换到另一帧。本章探讨矩阵的数学。</p>
-<p>目的:</p>
+} </script><meta name="generator" content="Hexo 5.1.0"></head><body><canvas class="fireworks"></canvas><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="author-info"><div class="author-info__avatar text-center"><img src="https://github.com/muchenhen/muchenhen.github.io/blob/master/XuanGe.jpg?raw=true"></div><div class="author-info__name text-center">木尘痕</div><div class="author-info__description text-center">放一些笔记的地方</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">274</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">22</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">32</span></a></div><hr><div class="author-info-links"><div class="author-info-links__title text-center">Links</div><a class="author-info-links__name text-center" target="_blank" rel="noopener" href="https://alec-ray.github.io/">止戈</a></div></div></div><nav id="nav" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">风生之谷</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">Home</a><a class="site-page" href="/archives">Archives</a><a class="site-page" href="/tags">tags</a><a class="site-page" href="/categories">categories</a><a class="site-page" href="/contact">contact</a><a class="site-page" href="/">主页</a><a class="site-page" href="/archives">全部文章</a><a class="site-page" href="/tags">标签分类</a><a class="site-page" href="/categories">文章分类</a><a class="site-page" href="/contact">联系</a></span><span class="pull-right"></span></div><div id="site-info"><div id="site-title">风生之谷</div><div id="site-sub-title">一点浩然气 千里快哉风</div></div></nav><div id="content-outer"><div class="layout" id="content-inner"><div class="recent-post-item article-container"><a class="article-title" href="/2018/12/13/trashed/">曲线3.3超线段</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/">cg</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/%E6%95%B0%E5%AD%A6%E6%96%B9%E6%B3%95/">数学方法</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学</a></span><div class="content"><p><strong><em>3.2的线段部分包含在了3.1的多项式片段中</em></strong></p>
+<p>在线段的基础上，考虑高次的曲线。首先考虑二次方程（曲线是二次的）。</p>
+<p>一个二次方程有三个系数，a0，a1，a2 。这些系数对于描述曲线的形状不是很方便，但是可以使用基矩阵的方法来推导出更方便的参数。如果已知u值，规范式就变成了参数的线性方程。</p>
+<p>假设要使用曲线的起点（u=0），中点（参数空间的中点，不一定在曲线中间）（u=0.5），终点（u=1）来描述曲线，在规范式中代入合适的值，则：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/3301-1024x234.png"></p>
+<p>可以得到约束矩阵为：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/3302.png"></p>
+<p>求出基矩阵为：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/3303.png"></p>
+<p>指定一个附加的约束（或参数）：曲线的导数必须是特定的值。曲线的导数指相对于它的自由参数的导数。直觉上，导数值反映了曲线的变化情况，所以一阶导数表示了曲线的走向，二阶导数表示了曲线方向变化的快慢。</p>
+<p>对二次方程：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/3304.png"></p>
+<p>其一阶导数：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/3305.png"></p>
+<p>二阶导数：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/3306.png"></p>
+<p>更一般地表达为：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/3307.png"></p>
+<p>假设用点的位置，中间点（u=0.5）处地一阶导数和二阶导数定义一条二次曲线段</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/3308.png"></p>
+<p>约束矩阵为：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/3309.png"></p>
+<p>基矩阵为：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/3310.png"></p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/12/13/%E6%9B%B2%E7%BA%BF3-1%E5%A4%9A%E9%A1%B9%E5%BC%8F%E7%89%87%E6%96%AD/">曲线3.1多项式片断</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/">cg</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/%E6%95%B0%E5%AD%A6%E6%96%B9%E6%B3%95/">数学方法</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学</a></span><div class="content"><p>计算机图形学中广泛使用的曲线表示方法是吧基本图元连接在一起，这些图元使用多项式定义的，称为多项式片段。</p>
+<p><strong>多项式的表示</strong></p>
+<p>多项式是具有以下形式的函数</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/3001.png"></p>
+<p>其中ai为系数，如果an≠0，n称为多项式的次数，可以改写成以下形式：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/3002.png"></p>
+<p>上面的式子称为多项式的规范形式。</p>
+<p>还可以对规范形式进行泛化，得到：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/3003.png"></p>
+<p>其中bi(t)是多项式。针对不同的应用可以选择便于处理的多项式。这些多项式称为<strong><em>基函数</em></strong>或<strong><em>混合函数</em></strong>。在式2中t^i就是式3中的bi(t)。如果能正确地选择基函数集，可以选择适当的c表示任意地n+1次多项式。</p>
+<p>为了确定二维空间中地一条曲线，可以确定两个t的多项式：一个是x随着t变化的多项式，另一个是y随着t变化的多项式；或者定义一个多项式，其中每一个ai都代表一个二维点。类似情况对于n维空间中的任意曲线也存在。</p>
+<p><strong>线段</strong></p>
+<p>通过线段理解简单的分段多项式曲线的概念。</p>
+<p>假设线段从点p0连接到p1，线段单位区间上的参数方程如下：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/3004.png"></p>
+<p>曲线写成向量形式，可以隐藏点的维数乙级要分开处理每一个维的事实。例如，二维中就需要创建两个分开的公式：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/3005.png"></p>
+<p>尽管通过端点的位置来描述线段很明显，通常也很方便，但是还有很多描述线段的其他方式，例如：</p>
 <ol>
-<li>了解矩阵及其运算。</li>
-<li>发现向量矩阵乘法如何被视为一个线性组合。</li>
-<li>学习单位矩阵是什么，矩阵的转置，行列式和逆是什么。</li>
-<li>熟悉用于矩阵数学的DirectX数学库提供的类和函数的子集。</li>
+<li>线段中点的位置、方向和长度。</li>
+<li>一个端点的位置和第二个点相对于第一个点的位置。</li>
+<li>线段中点的位置和其中一个端点。</li>
 </ol>
-<p>2.1定义</p>
-<p>2.2矩阵乘法</p>
-<p>2.3矩阵转置</p>
-<p>2.4单位矩阵</p>
-<p>2.5矩阵行列式</p>
-<p>2.6伴随矩阵</p>
-<p>2.7矩阵的逆</p>
-<h2 id="以上内容为线性代数知识，不赘述"><a href="#以上内容为线性代数知识，不赘述" class="headerlink" title="以上内容为线性代数知识，不赘述"></a>以上内容为线性代数知识，不赘述</h2><h2 id="2-8-DIRECTX-MATH-MATRICES"><a href="#2-8-DIRECTX-MATH-MATRICES" class="headerlink" title="2.8 DIRECTX MATH MATRICES"></a><strong>2.8 DIRECTX MATH MATRICES</strong></h2><p>DirectX数学矩阵</p>
-<h2 id="2-8-1矩阵类型"><a href="#2-8-1矩阵类型" class="headerlink" title="2.8.1矩阵类型"></a><strong>2.8.1矩阵类型</strong></h2><p>为了在DirectX数学中表示4×4矩阵，我们使用了XMMATRIX类，它在DirectXMath.h头文件中定义</p>
-<p>XMMATRIX使用四个XMVECTOR实例来使用SIMD。而且，XMMATRIX为矩阵运算提供了重载的运算符。</p>
-<p>除了使用各种构造函数之外，还可以使用XMMatrixSet函数创建XMMATRIX实例:</p>
-<p>XMMATRIX XM_CALLCONV XMMatrixSet(</p>
-<p>float m00, float m01, float m02, float m03,</p>
-<p>float m10, float m11, float m12, float m13,</p>
-<p>float m20, float m21, float m22, float m23,</p>
-<p>float m30, float m31, float m32, float m33);</p>
-<p>我们使用以下方法将数据从XMFLOAT4X4加载到XMMATRIX:</p>
-<p> inline XMMATRIX XM_CALLCONV</p>
-<p>XMLoadFloat4x4(const XMFLOAT4X4* pSource);</p>
-<p>我们使用以下方法将数据从XMMATRIX存储到XMFLOAT4X4:</p>
-<p>inline void XM_CALLCONV</p>
-<p>XMStoreFloat4x4(XMFLOAT4X4* pDestination, FXMMATRIX M);</p>
-<h2 id="2-8-2矩阵函数"><a href="#2-8-2矩阵函数" class="headerlink" title="2.8.2矩阵函数"></a><strong>2.8.2矩阵函数</strong></h2><p>XMMATRIX XM_CALLCONV XMMatrixIdentity();</p>
-<p> // Returns the identity matrix I 返回单位矩阵I</p>
-<p> bool XM_CALLCONV XMMatrixIsIdentity( FXMMATRIX M);</p>
-<p> // Returns true if M is the identity matrix 如果是单位矩阵返回true</p>
-<p> // Input M</p>
-<p>XMMATRIX XM_CALLCONV XMMatrixMultiply( FXMMATRIX A, CXMMATRIX B);</p>
-<p> // Returns the matrix product AB 返回矩阵AB的乘积</p>
-<p>// Input A</p>
-<p> // Input B</p>
-<p>XMMATRIX XM_CALLCONV XMMatrixTranspose( FXMMATRIX M);</p>
-<p>// Returns MT 返回矩阵转置</p>
-<p> // Input M</p>
-<p>XMVECTOR XM_CALLCONV XMMatrixDeterminant(  FXMMATRIX M);</p>
-<p>// Returns(det M, det M, det M, det M) 返回矩阵行列式</p>
-<p>// Input M XMMATRIX XM_CALLCONV</p>
-<p>XMMatrixInverse(XMVECTOR* pDeterminant, FXMMATRIX M);</p>
-<p> // Returns M−1 返回矩阵的逆</p>
-<p> // Input (det M, det M, det M, det M)</p>
-<p>// Input M</p>
-<p>When we declare a XMMATRIX</p>
-<h2 id="2-8-3例子"><a href="#2-8-3例子" class="headerlink" title="2.8.3例子"></a><strong>2.8.3例子</strong></h2><p>#include // for XMVerifyCPUSupport<br>#include #include #include using namespace std;<br>using namespace DirectX;<br>using namespace DirectX::PackedVector;</p>
-<p>// Overload the  “&lt;&lt;” operators so that we can use cout to<br>//重载“&lt;&lt;”操作符，以便我们可以使用cout<br>// output XMVECTOR and XMMATRIX objects.<br>//输出XMVECTOR和XMMATRIX对象。<br>ostream&amp; XM_CALLCONV operator &lt;&lt; (ostream&amp; os, FXMVECTOR v)<br>{<br>    XMFLOAT4 dest;<br>    XMStoreFloat4(&amp;dest, v);</p>
-<pre><code>os &lt;&lt; &quot;(&quot; &lt;&lt; dest.x &lt;&lt; &quot;, &quot; &lt;&lt; dest.y &lt;&lt; &quot;, &quot; &lt;&lt; dest.z &lt;&lt; &quot;, &quot; &lt;&lt; dest.w &lt;&lt; &quot;)&quot;;
-return os;</code></pre>
-<p>}</p>
-<p>ostream&amp; XM_CALLCONV operator &lt;&lt; (ostream&amp; os, FXMMATRIX m)<br>{<br>    for (int i = 0; i &lt; 4; ++i)<br>    {<br>        os &lt;&lt; XMVectorGetX(m.r[i]) &lt;&lt; “\t”;<br>        os &lt;&lt; XMVectorGetY(m.r[i]) &lt;&lt; “\t”;<br>        os &lt;&lt; XMVectorGetZ(m.r[i]) &lt;&lt; “\t”;<br>        os &lt;&lt; XMVectorGetW(m.r[i]);<br>        os &lt;&lt; endl;<br>    }<br>    return os;<br>}</p>
-<p>int main()<br>{<br>    // Check support for SSE2 (Pentium4, AMD K8, and above).<br>    //检查是否支持SSE2<br>    if (!XMVerifyCPUSupport())<br>    {<br>        cout &lt;&lt; “directx math not supported” &lt;&lt; endl;<br>        return 0;<br>    }</p>
-<pre><code>XMMATRIX A(1.0f, 0.0f, 0.0f, 0.0f,
-    0.0f, 2.0f, 0.0f, 0.0f,
-    0.0f, 0.0f, 4.0f, 0.0f,
-    1.0f, 2.0f, 3.0f, 1.0f);
-
-XMMATRIX B = XMMatrixIdentity();//定义了一个单位矩阵
-
-XMMATRIX C = A \* B;//矩阵乘法
-
-XMMATRIX D = XMMatrixTranspose(A);//A的转置
-
-XMVECTOR det = XMMatrixDeterminant(A);//A的行列式
-XMMATRIX E = XMMatrixInverse(&amp;det, A);//A的逆
-
-XMMATRIX F = A \* E;//A乘A的逆矩阵，结果是单位阵
-
-cout &lt;&lt; &quot;A = &quot; &lt;&lt; endl &lt;&lt; A &lt;&lt; endl;
-cout &lt;&lt; &quot;B = &quot; &lt;&lt; endl &lt;&lt; B &lt;&lt; endl;
-cout &lt;&lt; &quot;C = A\*B = &quot; &lt;&lt; endl &lt;&lt; C &lt;&lt; endl;
-cout &lt;&lt; &quot;D = transpose(A) = &quot; &lt;&lt; endl &lt;&lt; D &lt;&lt; endl;
-cout &lt;&lt; &quot;det = determinant(A) = &quot; &lt;&lt; det &lt;&lt; endl &lt;&lt; endl;
-cout &lt;&lt; &quot;E = inverse(A) = &quot; &lt;&lt; endl &lt;&lt; E &lt;&lt; endl;
-cout &lt;&lt; &quot;F = A\*E = &quot; &lt;&lt; endl &lt;&lt; F &lt;&lt; endl;
+<p>另一种描述线段的方法是利用多项式的规范形式（见上文）：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/3006.png"></p>
+<p>任何线段都可以通过a0和a1或者两个端点(p0和p1)来表示。</p>
+<p>为了把规范形式写成向量表达式，定义向量u，它是表示u的一系列幂数的向量：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/3007.png"></p>
+<p>这样就可以将规范式写成如下形式：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/3008.png"></p>
+<p>向量表示法可以使曲线不同形式之间的转换更容易。</p>
+<p>上式描述了用一组多项式系数定义的曲线段，系数是指多项式的简单形式的系数。这种表达式称为规范形式，其参数记为a。</p>
+<p>规范形式看起来很简单，但是不一定是定义曲线最方便的方式。如果定义p0是线段的始点（参数=0的位置），p1是线段的终点（线段中参数=1的位置），可以写成下面的式子：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/3009.png"></p>
+<p>求解两个公式，得到a0和a1：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/3010.png"></p>
+<p><strong>多项式矩阵表达形式</strong></p>
+<p>对于更复杂的例子，比如将上面的式子写成如下形式：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/3011.png"></p>
+<p>还可以写成：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/3012.png"></p>
+<p>C称为约束矩阵。可以通过C的逆矩阵求出a，这个逆矩阵称为基矩阵，用B表示。基矩阵可以方便的将参数p和规范形式a之间进行转换，所以给了一种计算曲线值的简单方式。</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/3013.png"></p>
+<p>对于任何形式的曲线，都可以找到一个基矩阵。</p>
+<p>假设要对线段进行参数化，也就是让p0代表中间点（即u=0.5），p1代表终点（即u=1）。为了得到这个参数方程的基矩阵，设</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/3014.png"></p>
+<p>所以</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/3015.png"></p>
+<p>因而</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/3016.png"></p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/12/13/%E6%9B%B2%E7%BA%BF2%E6%9B%B2%E7%BA%BF%E7%9A%84%E6%80%A7%E8%B4%A8/">曲线2曲线的性质</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/">cg</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/%E6%95%B0%E5%AD%A6%E6%96%B9%E6%B3%95/">数学方法</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学</a></span><div class="content"><p>为了描述曲线，需要给出一些曲线的性质。比如描述一个圆，要给出半径和圆心的位置。但是对于自由形状的曲线，需要更加一般的性质集合来描述特定的曲线。</p>
+<p>曲线的一些性质只归结于曲线的一个局部，其它的一些性质需要关于整个曲线的信息。</p>
+<p>从直觉上来讲，大雾天气中的火车轨道，可以描述出它是直的或者弯曲的，是否在终点，这些就是局部性质。而对于轨道是否封闭和是否有交叉，或者轨道的长度是无法回答的，这些性质为全局性质。</p>
+<p>局部性质是描述曲线非常重要的工具，不需要关于整个曲线的信息，局部性质包括：</p>
+<ul>
+<li>连续性</li>
+<li>曲线上具体地方的位置</li>
+<li>曲线上具体地方的方向</li>
+<li>曲率和其他导数</li>
+</ul>
+<p>经常指定曲线要经过一个特殊的点，如果这个点是曲线的一部分，就成为曲线<strong><em>插值</em></strong>了一个点。如果函数f插值了一个点v，如果参数t存在一个值使f(t)=v，就把参数的值称为插值位置。</p>
+<p><strong>连续性</strong></p>
+<p>对于1.2中的曲线，如果f1(1)≠f2(0)，则曲线就会断开，即不能用笔连续画出这条曲线。这个条件称为曲线段连接的<strong><em>连续性条件</em></strong>。对曲线的定义要求曲线是连续的，所以“断开”的曲线不是一条曲线。</p>
+<p>除了位置，还可以检查片断的导数是否正确匹配。如果：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/2002.png"></p>
+<p>合并之后的曲面在连接点处的一阶导数会有一个突变，一阶导数是不连续的。</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/2001-960x1024.png"></p>
+<p>凑合看吧……</p>
+<p>如图，一阶导数不连续是非常明显的，会突显出一个明显的尖角。二阶导数不连续有时也是比较明显的。更高阶的导数取决于应用场景。例如，如果曲线代表一定的运动，二阶导数的上突变是非常明显的，所以经常会用到三阶导数。如果是飞机机翼或轮船轮廓，有液体从曲线上流过，则在四阶或五阶导数的不连续可能会引起湍流。</p>
+<p>即使导数是匹配的，但是参数化表示中的速度可能是不同的，所以定义另外一种连续性，忽略掉速度，定义为<strong><em>几何连续性</em></strong>。</p>
+<p>几何连续性条件是在一个片断的终点和下一个片断的始点的一阶导数只在度量上不同，也就是C1的条件要求：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/2003.png"></p>
+<p>G1连续性条件要求，对于某些值k：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/2004.png"></p>
+<p>即，参数连续性比几何连续性更加严格。</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/12/13/%E6%9B%B2%E7%BA%BF1-3%E6%A0%B7%E6%9D%A1/">曲线1.3样条</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/">cg</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/%E6%95%B0%E5%AD%A6%E6%96%B9%E6%B3%95/">数学方法</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学</a></span><div class="content"><p>数学家们发现可以使用分段多项式函数来表示曲线。最初使用<strong>spline</strong>即样条来指平滑的分段多项式函数。现在样条一般用来表示任意的分段多项式函数。这样的函数对于表示曲线非常有用。</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/12/13/%E6%9B%B2%E7%BA%BF1-2%E5%88%86%E6%AE%B5%E7%9A%84%E5%8F%82%E6%95%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/">曲线1.2分段的参数表达式</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/">cg</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/%E6%95%B0%E5%AD%A6%E6%96%B9%E6%B3%95/">数学方法</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学</a></span><div class="content"><p>许多曲线找一个函数直接定义形状很困难。对于复杂曲线的定义通常采用分治法：把曲线分成简单的小段，每一段有简单的描述形式。</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/301.png"></p>
+<p>灵魂画手体谅一下</p>
+<p>如图中的曲线，a可以用两条直线来表示，b可以用一条直线和一个圆弧来表示，c是用五条直线逼近曲线b得到的曲线。</p>
+<p>为了创建复合曲线的参数化表示，如b，需要用参数函数表示不同的曲线段。如果定义参数函数的范围在[0,1]内，则a或者b的参数方程可以定义为如下：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/302.png"></p>
+<p>其中f1表示第一段的参数化形式，f2表示第二段的参数化形式，两个函数都定义在单位区间上。在定义f1和f2时要保证曲线的分段相吻合，即f1(1)=f2(0)，才能确保曲线分片能连接在一起形成一个连续的曲线。</p>
+<p>对于b，可以使用两种片断，直线和圆弧来表示。这样更加准确，但是一般情况下为了简单，选择使用简单线段来表示，如图c。且片段数量越多，近似准确曲线的效果越好。</p>
+<p>使用分段表达的优点是，可以在表达的曲线与真实的曲线的近似程度，片段的复杂度和数量，这些因素之间找到一个折中。</p>
+<p>在计算机图形学中倾向于使用相对简单的曲线片段。</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/12/13/%E6%9B%B2%E7%BA%BF1-1%E5%8F%82%E6%95%B0%E5%8C%96%E4%B8%8E%E9%87%8D%E6%96%B0%E5%8F%82%E6%95%B0%E5%8C%96/">曲线1.1参数化与重新参数化</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/">cg</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/%E6%95%B0%E5%AD%A6%E6%96%B9%E6%B3%95/">数学方法</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学</a></span><div class="content"><p>一条参数曲线具有一个给定的函数，这个函数是参数区间的一个映射。通常为了方便，将参数位于0到1的单元区间，用u来表示参数。 如果把参数区间作为用笔在纸上化的一条线，参数等于0时为开始画线的时间，画线结束时的参数等于1 。单位时间即指的是画线所用的总时间。本质上，曲线的定义是一个函数，指出“在时间u时笔在哪里”。 <strong>重新参数化</strong> 如果一个函数<img src="http://www.muchenhen.com/wp-content/uploads/2018/12/201.png">在区间[a,b]上定义了一条曲线，则可以定义一条新函数<img src="http://www.muchenhen.com/wp-content/uploads/2018/12/202.png">并使它在单位区间上表示同一条函数。 首先定义： <img src="http://www.muchenhen.com/wp-content/uploads/2018/12/203.png"> 然后定义： <img src="http://www.muchenhen.com/wp-content/uploads/2018/12/204.png"> 两个函数都表示同一条曲线，但提供了曲线不同的<strong><em>参数化</em></strong>形式。 由一条已知直线生成新的参数化形式的过程称为<strong><em>重新参数化</em></strong>。 从旧函数到新函数的映射称为<strong><em>重新参数化函数</em></strong>。 因为可以重新参数化，所以同样一条曲线存在无数种其他形式。在允许创建方便的参数化形式的同时，很难通过比较两个函数来判断两个函数是否表示同一条曲线。 <img src="http://www.muchenhen.com/wp-content/uploads/2018/12/205.png"> 以上三个函数表示同一条曲线，但在参数值不是1或0的时候，根据不同的函数会得到不同的点。即在整个单位时间内，笔在纸上画线的速度，可能是匀速，也有可能是缓慢开始后加速。 如果给定曲线的一种参数化形式，可以直接用它来定义曲线，也可以建立一个更方便的参数化形式。通常，自然参数化是为了便于定义曲线而创建的形式，这样就没有必要知道曲线上速度的变化。 如果速度恒定，则，参数空间的中点就是曲线上的中点。若不考虑时间，参数就是沿着曲线长度的度量。这样的参数化称为<strong><em>弧长参数化</em></strong>。因为它们通过函数定义曲线，该函数把曲线的长度（即弧长）映射到曲线上的位置，通常用参数s表示弧长参数。 如果曲线斜率（参数化形式对参数的导数）大小恒定，参数化表示就是一个弧度参数化表示。用公式表示如下： <img src="http://www.muchenhen.com/wp-content/uploads/2018/12/206.png"> 直观上讲，导数的大小是笔在曲线上移动的速度，则通过对导数的积分定义曲线的长度。所以，若给定参数v，可以用以下公式计算参数s（曲线上点f(0)到f(v)的弧长距离）： <img src="http://www.muchenhen.com/wp-content/uploads/2018/12/207.png"> 其中 是用自然参数化表示定义曲线的函数。</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/12/12/%E6%9B%B2%E7%BA%BF1%EF%BC%9A%E6%9B%B2%E7%BA%BF%E5%9F%BA%E7%A1%80/">曲线1：曲线基础</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/">cg</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/%E6%95%B0%E5%AD%A6%E6%96%B9%E6%B3%95/">数学方法</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学</a></span><div class="content"><p>曲线在数学中的两种常用定义：</p>
+<ol>
+<li>在n维空间中某区间上的连续图像</li>
+<li>从一维空间到n维空间的连续映射</li>
+</ol>
+<p>明显区别是，第一个定义中，曲线是一系列点的集合。第二个定义中，曲线是时间和点集之间的映射。</p>
+<p>以下讨论使用第一个定义。</p>
+<p>一条曲线是一个无限大的点集。曲线上的点具有以下性质：除了极个别的点（端点），其余点都有两个相邻点。一些曲线没有端点，可能是因为它们是无限的或者封闭的。</p>
+<p>首先需要解决如何定义一条曲线。对于一般的曲线（非已知形状的，即非线段、圆弧等），没有经过命名的形状，称为自由曲线。自由行是的曲线很难定义，因为它们有任意的形状。</p>
+<p>数学描述曲线的三种主要方式：</p>
+<ul>
+<li><p>隐式曲线<br>通过隐式函数来定义，如  </p>
+<p>曲线是满足上面等式的点的集合。</p>
+</li>
+</ul>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2018/12/101.png"></p>
+<ul>
+<li>参数曲线<br>定义了从自由参数到曲线上点集的映射。即自由参数为曲线上的点提供了一个索引。曲线的参数形式是一个函数，给自由参数的每个值指派了一个位置。<br>(如果认为曲线是用笔在纸上画出来的，那么，自由参数就是时间，取值范围是从开始画线到结束的时间间隔)  </li>
+</ul>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2018/12/102.png"></p>
+<p>          参数方程是一个向量值函数，在二维情况下输出二维向量，三维情况下输出 三维向量。</p>
+<ul>
+<li>生成式或过程式曲线<br>提供了一个过程可以生成曲线上的点。</li>
+</ul>
+<p>参数形式不一定是曲线最方便的表示形式，但是参数曲线更容易画出来，因为可以在自由参数中采样。所以通常图形学中参数形式是最常用的，更容易处理。</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/11/03/pta%E9%A2%98%E7%9B%AE%E9%9B%86%EF%BC%9A7-31-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%BE%AA%E7%8E%AF%E5%B7%A6%E7%A7%BB/">PTA题目集：7-31 字符串循环左移</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a></span><div class="content"><p>7-31 字符串循环左移 （20 分）</p>
+<p>输入一个字符串和一个非负整数_N_，要求将字符串循环左移_N_次。</p>
+<p>输入格式：</p>
+<p>输入在第1行中给出一个不超过100个字符长度的、以回车结束的非空字符串；第2行给出非负整数_N_。</p>
+<p>输出格式：</p>
+<p>在一行中输出循环左移_N_次后的字符串。</p>
+<p>输入样例：</p>
+<p>Hello World!<br>2</p>
+<p>输出样例：</p>
+<p>llo World!He</p>
+<p>来自 &lt;<a target="_blank" rel="noopener" href="https://pintia.cn/problem-sets/14/problems/811">https://pintia.cn/problem-sets/14/problems/811</a>&gt;</p>
+<p>#include #include using namespace std;<br>int main()<br>{<br>    string s, t;<br>    int N, R;<br>    getline(cin, s);<br>    cin &gt;&gt; N;<br>    if (N &gt; 0 &amp;&amp; N &lt; s.length())<br>    {<br>        t.append(s, 0, N);/*对临时字符串t追加s中的从下标0开始的N个字符*/<br>        s.erase(0, N);/*删除s中的从下标0开始的N个字符*/<br>        s.append(t);/*对s追加临时字符串t*/<br>    }<br>    else if (N &gt; s.length())<br>    {<br>        R = N % s.length();/*取余*/<br>        t.append(s, 0, R);<br>        s.erase(0, R);<br>        s.append(t);<br>    }<br>    cout &lt;&lt; s;<br>    return 0;<br>}</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/11/03/pta%E9%A2%98%E7%9B%AE%E9%9B%86%EF%BC%9A7-30-%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F/">PTA题目集：7-30 字符串的冒泡排序</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a></span><div class="content"><p>7-30 字符串的冒泡排序 （20 分）</p>
+<p>我们已经知道了将_N_个整数按从小到大排序的冒泡排序法。本题要求将此方法用于字符串序列，并对任意给定的_K_（&lt;_N_），输出扫描完第_K_遍后的中间结果序列。</p>
+<p>输入格式：</p>
+<p>输入在第1行中给出<em>N_和_K_（1≤_K</em>&lt;_N_≤100），此后_N_行，每行包含一个长度不超过10的、仅由小写英文字母组成的非空字符串。</p>
+<p>输出格式：</p>
+<p>输出冒泡排序法扫描完第_K_遍后的中间结果序列，每行包含一个字符串。</p>
+<p>输入样例：</p>
+<p>6 2<br>best<br>cat<br>east<br>a<br>free<br>day</p>
+<p>输出样例：</p>
+<p>best<br>a<br>cat<br>day<br>east<br>free</p>
+<p>来自 &lt;<a target="_blank" rel="noopener" href="https://pintia.cn/problem-sets/14/problems/810">https://pintia.cn/problem-sets/14/problems/810</a>&gt;</p>
+<p>使用库函数可以很快完成</p>
+<p>#include #include #include using namespace std;<br>int main()<br>{<br>    int N, K;<br>    cin &gt;&gt; N &gt;&gt; K;<br>    string s[100];<br>    for (int i = 0; i &lt; N; i++)<br>        cin &gt;&gt; s[i];<br>    for (int i = 0; i &lt; K; i++)<br>        for (int j = 0; j &lt; N - 1; j++)<br>            if (s[j] &gt; s[j + 1])<br>                swap(s[j], s[j + 1]);<br>    for (int i = 0; i &lt; N; i++)<br>        cout &lt;&lt; s[i] &lt;&lt; endl;<br>    return 0;<br>}</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/11/03/7-29-%E5%88%A0%E9%99%A4%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E7%9A%84%E5%AD%90%E4%B8%B2/">PTA题目集：7-29 删除字符串中的子串</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a></span><div class="content"><p>7-29 删除字符串中的子串 （20 分）</p>
+<p>输入2个字符串S1和S2，要求删除字符串S1中出现的所有子串S2，即结果字符串中不能包含S2。</p>
+<p>输入格式：</p>
+<p>输入在2行中分别给出不超过80个字符长度的、以回车结束的2个非空字符串，对应S1和S2。</p>
+<p>输出格式：</p>
+<p>在一行中输出删除字符串S1中出现的所有子串S2后的结果字符串。</p>
+<p>输入样例：</p>
+<p>Tomcat is a male ccatat<br>cat</p>
+<p>输出样例：</p>
+<p>Tom is a male</p>
+<p>来自 &lt;<a target="_blank" rel="noopener" href="https://pintia.cn/problem-sets/14/problems/809">https://pintia.cn/problem-sets/14/problems/809</a>&gt;</p>
+<p>char数组方法</p>
+<p>这个方法是用了一些自带函数，但是gets函数在c++11中被删除，vs中保留了gets_s但是在PTA上面g++编译不能通过</p>
+<p>#include #include using namespace std;<br>int main() {<br>    char s1[81], s2[81];<br>    gets_s(s1);<br>    gets_s(s2);<br>    int l1 = strlen(s1);<br>    int l2 = strlen(s2);<br>    char *s = strstr(s1, s2);<br>    char word;<br>    while (s)<br>    {<br>        while (s + l2 &lt;= s1 + l1 - 1)<br>        {<br>            word = s[0];<br>            s[0] = s[l2];<br>            s[l2] = word;<br>            s++;<br>        }<br>        s[0] = NULL;<br>        s = strstr(s1, s2);<br>    }<br>    puts(s1);<br>    return 0;<br>} </p>
+<p>string方法</p>
+<p>主要是string自带的函数也比较方便</p>
+<p>#include #include using namespace std;<br>int main()<br>{<br>    string s1, s2;<br>    getline(cin, s1);            //行输入<br>    getline(cin, s2);</p>
+<pre><code>while (s1.find(s2) &lt; s1.length())        //判断S1中是否还存在S2
+&#123;
+    s1=s1.erase(s1.find(s2), s2.length());        //将S1中的S2删除掉
+&#125;
+cout &lt;&lt; s1 &lt;&lt; endl;
 
 return 0;</code></pre>
-<p>} </p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-14.png"></p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/28/dx12%E9%BE%99%E4%B9%A6part%E2%85%A0chapter-2-%E7%9F%A9%E9%98%B5/">DX12龙书PartⅠChapter 2 矩阵</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-28</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/DirectX/">DirectX</a></span><div class="content"><p>在三维计算机图形学中，我们使用矩阵来简洁地描述几何变换，如缩放、旋转、平移，以及将点或向量的坐标从一帧变换到另一帧。本章探讨矩阵的数学。</p>
-<p>目的:</p>
-<ol>
-<li>了解矩阵及其运算。</li>
-<li>发现向量矩阵乘法如何被视为一个线性组合。</li>
-<li>学习单位矩阵是什么，矩阵的转置，行列式和逆是什么。</li>
-<li>熟悉用于矩阵数学的DirectX数学库提供的类和函数的子集。</li>
-</ol>
-<p>2.1定义</p>
-<p>2.2矩阵乘法</p>
-<p>2.3矩阵转置</p>
-<p>2.4单位矩阵</p>
-<p>2.5矩阵行列式</p>
-<p>2.6伴随矩阵</p>
-<p>2.7矩阵的逆</p>
-<h2 id="以上内容为线性代数知识，不赘述"><a href="#以上内容为线性代数知识，不赘述" class="headerlink" title="以上内容为线性代数知识，不赘述"></a>以上内容为线性代数知识，不赘述</h2><h2 id="2-8-DIRECTX-MATH-MATRICES"><a href="#2-8-DIRECTX-MATH-MATRICES" class="headerlink" title="2.8 DIRECTX MATH MATRICES"></a><strong>2.8 DIRECTX MATH MATRICES</strong></h2><p>DirectX数学矩阵</p>
-<h2 id="2-8-1矩阵类型"><a href="#2-8-1矩阵类型" class="headerlink" title="2.8.1矩阵类型"></a><strong>2.8.1矩阵类型</strong></h2><p>为了在DirectX数学中表示4×4矩阵，我们使用了XMMATRIX类，它在DirectXMath.h头文件中定义</p>
-<p>XMMATRIX使用四个XMVECTOR实例来使用SIMD。而且，XMMATRIX为矩阵运算提供了重载的运算符。</p>
-<p>除了使用各种构造函数之外，还可以使用XMMatrixSet函数创建XMMATRIX实例:</p>
-<p>XMMATRIX XM_CALLCONV XMMatrixSet(</p>
-<p>float m00, float m01, float m02, float m03,</p>
-<p>float m10, float m11, float m12, float m13,</p>
-<p>float m20, float m21, float m22, float m23,</p>
-<p>float m30, float m31, float m32, float m33);</p>
-<p>我们使用以下方法将数据从XMFLOAT4X4加载到XMMATRIX:</p>
-<p> inline XMMATRIX XM_CALLCONV</p>
-<p>XMLoadFloat4x4(const XMFLOAT4X4* pSource);</p>
-<p>我们使用以下方法将数据从XMMATRIX存储到XMFLOAT4X4:</p>
-<p>inline void XM_CALLCONV</p>
-<p>XMStoreFloat4x4(XMFLOAT4X4* pDestination, FXMMATRIX M);</p>
-<h2 id="2-8-2矩阵函数"><a href="#2-8-2矩阵函数" class="headerlink" title="2.8.2矩阵函数"></a><strong>2.8.2矩阵函数</strong></h2><p>XMMATRIX XM_CALLCONV XMMatrixIdentity();</p>
-<p> // Returns the identity matrix I 返回单位矩阵I</p>
-<p> bool XM_CALLCONV XMMatrixIsIdentity( FXMMATRIX M);</p>
-<p> // Returns true if M is the identity matrix 如果是单位矩阵返回true</p>
-<p> // Input M</p>
-<p>XMMATRIX XM_CALLCONV XMMatrixMultiply( FXMMATRIX A, CXMMATRIX B);</p>
-<p> // Returns the matrix product AB 返回矩阵AB的乘积</p>
-<p>// Input A</p>
-<p> // Input B</p>
-<p>XMMATRIX XM_CALLCONV XMMatrixTranspose( FXMMATRIX M);</p>
-<p>// Returns MT 返回矩阵转置</p>
-<p> // Input M</p>
-<p>XMVECTOR XM_CALLCONV XMMatrixDeterminant(  FXMMATRIX M);</p>
-<p>// Returns(det M, det M, det M, det M) 返回矩阵行列式</p>
-<p>// Input M XMMATRIX XM_CALLCONV</p>
-<p>XMMatrixInverse(XMVECTOR* pDeterminant, FXMMATRIX M);</p>
-<p> // Returns M−1 返回矩阵的逆</p>
-<p> // Input (det M, det M, det M, det M)</p>
-<p>// Input M</p>
-<p>When we declare a XMMATRIX</p>
-<h2 id="2-8-3例子"><a href="#2-8-3例子" class="headerlink" title="2.8.3例子"></a><strong>2.8.3例子</strong></h2><p>#include // for XMVerifyCPUSupport<br>#include #include #include using namespace std;<br>using namespace DirectX;<br>using namespace DirectX::PackedVector;</p>
-<p>// Overload the  “&lt;&lt;” operators so that we can use cout to<br>//重载“&lt;&lt;”操作符，以便我们可以使用cout<br>// output XMVECTOR and XMMATRIX objects.<br>//输出XMVECTOR和XMMATRIX对象。<br>ostream&amp; XM_CALLCONV operator &lt;&lt; (ostream&amp; os, FXMVECTOR v)<br>{<br>    XMFLOAT4 dest;<br>    XMStoreFloat4(&amp;dest, v);</p>
-<pre><code>os &lt;&lt; &quot;(&quot; &lt;&lt; dest.x &lt;&lt; &quot;, &quot; &lt;&lt; dest.y &lt;&lt; &quot;, &quot; &lt;&lt; dest.z &lt;&lt; &quot;, &quot; &lt;&lt; dest.w &lt;&lt; &quot;)&quot;;
-return os;</code></pre>
 <p>}</p>
-<p>ostream&amp; XM_CALLCONV operator &lt;&lt; (ostream&amp; os, FXMMATRIX m)<br>{<br>    for (int i = 0; i &lt; 4; ++i)<br>    {<br>        os &lt;&lt; XMVectorGetX(m.r[i]) &lt;&lt; “\t”;<br>        os &lt;&lt; XMVectorGetY(m.r[i]) &lt;&lt; “\t”;<br>        os &lt;&lt; XMVectorGetZ(m.r[i]) &lt;&lt; “\t”;<br>        os &lt;&lt; XMVectorGetW(m.r[i]);<br>        os &lt;&lt; endl;<br>    }<br>    return os;<br>}</p>
-<p>int main()<br>{<br>    // Check support for SSE2 (Pentium4, AMD K8, and above).<br>    //检查是否支持SSE2<br>    if (!XMVerifyCPUSupport())<br>    {<br>        cout &lt;&lt; “directx math not supported” &lt;&lt; endl;<br>        return 0;<br>    }</p>
-<pre><code>XMMATRIX A(1.0f, 0.0f, 0.0f, 0.0f,
-    0.0f, 2.0f, 0.0f, 0.0f,
-    0.0f, 0.0f, 4.0f, 0.0f,
-    1.0f, 2.0f, 3.0f, 1.0f);
-
-XMMATRIX B = XMMatrixIdentity();//定义了一个单位矩阵
-
-XMMATRIX C = A \* B;//矩阵乘法
-
-XMMATRIX D = XMMatrixTranspose(A);//A的转置
-
-XMVECTOR det = XMMatrixDeterminant(A);//A的行列式
-XMMATRIX E = XMMatrixInverse(&amp;det, A);//A的逆
-
-XMMATRIX F = A \* E;//A乘A的逆矩阵，结果是单位阵
-
-cout &lt;&lt; &quot;A = &quot; &lt;&lt; endl &lt;&lt; A &lt;&lt; endl;
-cout &lt;&lt; &quot;B = &quot; &lt;&lt; endl &lt;&lt; B &lt;&lt; endl;
-cout &lt;&lt; &quot;C = A\*B = &quot; &lt;&lt; endl &lt;&lt; C &lt;&lt; endl;
-cout &lt;&lt; &quot;D = transpose(A) = &quot; &lt;&lt; endl &lt;&lt; D &lt;&lt; endl;
-cout &lt;&lt; &quot;det = determinant(A) = &quot; &lt;&lt; det &lt;&lt; endl &lt;&lt; endl;
-cout &lt;&lt; &quot;E = inverse(A) = &quot; &lt;&lt; endl &lt;&lt; E &lt;&lt; endl;
-cout &lt;&lt; &quot;F = A\*E = &quot; &lt;&lt; endl &lt;&lt; F &lt;&lt; endl;
-
-return 0;</code></pre>
-<p>} </p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-14.png"></p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/28/latex%E6%B5%8B%E8%AF%95-1/">Latex测试</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-28</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/uncategorized/">uncategorized</a></span><div class="content"><p>$latex i\hbar\frac{\partial}{\partial t}\left|\Psi(t)\right&gt;=H\left|\Psi(t)\right&gt;&amp;bg=202020&amp;fg=ffffff&amp;s=4$</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/28/latex%E6%B5%8B%E8%AF%95/">Latex测试</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-28</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/uncategorized/">uncategorized</a></span><div class="content"><p>$latex i\hbar\frac{\partial}{\partial t}\left|\Psi(t)\right&gt;=H\left|\Psi(t)\right&gt;&amp;bg=202020&amp;fg=ffffff&amp;s=4$</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/28/stl%E5%AE%B9%E5%99%A8%E5%85%B1%E9%80%9A%E6%93%8D%E4%BD%9C-1/">STL容器共通操作</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-28</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/">cpp</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/STL/">STL</a></span><div class="content"><h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><p>每个容器都提供默认构造函数，拷贝构造函数，析构函数。</p>
-<p><strong>初值列</strong></p>
-<p>可以以一个区间或者初值列作为容器初值。</p>
-<p>比如常量容器的初始化：</p>
-<p>//用初始值初始化一个vector（c++11）<br>const vector<int> v1 = {1, 2, 3, 4 };<br>//也可用不同的语法<br>const vector<int> v2 {1, 2, 3, 4 };</p>
-<p>array&lt;&gt;容器使用初值列有特殊规则。将会在array容器中解释。</p>
-<p>以某个给定区间初始化的构造函数，参数可以是来自另一个容器、来自c风格的数组、标准输入的元素。可以是不同容器，不同元素类型，前提是来源和目标的元素类型可以自动转换</p>
-<p>//int元素的list容器<br>listl;<br>//拷贝构造给一个float的vector容器<br>vectorc(l.begin(), l.end());<br>//c++11也可以使用move迭代器来搬移所有元素<br>vectorc2(make_move_iterator(l.begin()), make_move_iterator(l.end()));<br>//用c风格数组完成初始化<br>int carray[] = { 1,2,3,4 };<br>setc3(begin(carray), end(carray));//c++11中iterator定义了begin和end两个函数<br>//以标准输入设备完成初始化动作<br>deque c5{ istream_iterator(cin),istream_iterator() };<br>//c++11中可以使用一个move构造函数将容器初始化<br>vectorv1;<br>vectorv2 = move(v1);//新建容器会有之前的值，被当作初值的容器内容会不明确<br>                         //因为move函数是调动指针，不是逐一复制元素，效率较高<br>                         //在不需要某个容器又需要复制时使用move </p>
-<h2 id="swap"><a href="#swap" class="headerlink" title="swap()"></a>swap()</h2><p>用来置换两个容器的内容，事实上知识只换了若干内部的指针，可以保证常数时间复杂度。执行之后原本存在的迭代器和引用都指向原先所指的元素，不过这些元素已经位于另一个容器中了</p>
-<p>array&lt;&gt;容器的该函数行为略有不同。因为此容器无法只在内部置换指针，所以array&lt;&gt;的swap()是线性时间复杂度，而且操作之后原本存在的迭代器和引用指向同一容器中的不同元素。</p>
-<h2 id="大小相关的操作函数"><a href="#大小相关的操作函数" class="headerlink" title="大小相关的操作函数"></a>大小相关的操作函数</h2><p>所有容器都提供三个与大小相关的操作函数</p>
-<p>**empty()**：是size()==0同义快速形式，一般比后者效率高。</p>
-<p>**size()**：返回当前容器的元素个数。</p>
-<p>**max_size()**：返回容器所能容纳的元素个数的最大值。</p>
-<h2 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h2><p>除了无序容器之外，常用的比较操作符==,!=,&lt;,&lt;=,&gt;,&gt;=都依据以下三个规则定义：</p>
-<p>比较的两个容器必须属于同一类型</p>
-<p>如果两个容器的元素全部依序相等，则这两个容器相等</p>
-<p>无序容器只定义了==,!=</p>
-<p>两个容器内的每一个元素都在另一个容器有相等元素，==就返回true，元素次序无关紧要。</p>
-<p>如果要比较两个容器，必须使用STL比较算法</p>
-<h2 id="元素访问"><a href="#元素访问" class="headerlink" title="元素访问"></a>元素访问</h2><p>所有容器都支持基于范围的for循环</p>
-<p>c++11中常用的容器访问操作</p>
-<pre><code>//定义一个vector容器
-vectornums = &#123; 1,2,3,4,5,6 &#125;;
-//访问每个元素并输出
-for (const auto&amp; elem : nums)
-&#123;
-    cout &lt;&lt; elem &lt;&lt; &quot; &quot;;
-&#125;
-//如果要改变元素就不写const
-for (auto&amp; elem : nums)
-&#123;
-    elem = 0;
-&#125;
-//对指定位置进行插入删除等操作,可以使用cbegin()和cend()产生的只读迭代器
-for (auto pos = nums.cbegin(); pos != nums.cend(); ++pos)
-&#123;
-    cout &lt;&lt; \*pos &lt;&lt; endl;
-&#125;
-//使用begin()和end()产生的迭代器进行修改
-for (auto pos = nums.begin(); pos != nums.end(); pos++)
-&#123;
-    \*pos = 0;
-&#125; </code></pre>
-<h2 id="常见容器类共通操作表"><a href="#常见容器类共通操作表" class="headerlink" title="常见容器类共通操作表"></a>常见容器类共通操作表</h2><p>操作</p>
-<p>必要</p>
-<p>效果</p>
-<p>ContType c</p>
-<p>1</p>
-<p>默认构造函数,建立一个空容器，array会有默认元素</p>
-<p>ContType c(c2)</p>
-<p>1</p>
-<p>拷贝构造</p>
-<p>ContTypr c = c2</p>
-<p>1</p>
-<p>拷贝构造</p>
-<p>ContType c(begin,end)</p>
-<p> </p>
-<p>以区间内所有元素拷贝</p>
-<p>ContType c(initlist)</p>
-<p> </p>
-<p>以初值列为初值，不适用于array，c++11</p>
-<p>ContType c = initlist</p>
-<p> </p>
-<p>同上，但适用于array</p>
-<p>c.~ContType()</p>
-<p>1</p>
-<p>删除所有元素并释放内存</p>
-<p>c.empty()</p>
-<p>1</p>
-<p>判断容器是否为空</p>
-<p>c.size()</p>
-<p>1</p>
-<p>返回容器中元素数量</p>
-<p>c.max_size()</p>
-<p>1</p>
-<p>返回元素数量可能的最大值</p>
-<p>c1 == c2</p>
-<p>1</p>
-<p>判断两个容器是否相等</p>
-<p>c1 != c2</p>
-<p>1</p>
-<p>判断是否不等</p>
-<p>&gt;,&lt;,&gt;=,&lt;=</p>
-<p> </p>
-<p>不适用于无序容器</p>
-<p>c = c2</p>
-<p>1</p>
-<p>c2所有元素值赋给c</p>
-<p>c1.swap(c2)</p>
-<p>1</p>
-<p>置换c1和c2的数据</p>
-<p>swap(c1,c2)</p>
-<p>1</p>
-<p>同上，但是个全局函数</p>
-<p>c.begin()</p>
-<p>1</p>
-<p>返回指向第一个元素的迭代器</p>
-<p>c.end()</p>
-<p>1</p>
-<p>返回指向最后一个元素的下一个位置的迭代器</p>
-<p>c.cbegin()</p>
-<p>1</p>
-<p>返回一个const迭代器，指向第一个元素，c++11</p>
-<p>c.cend()</p>
-<p>1</p>
-<p>返回一个const迭代器，指向最后一个元素的下一个位置，c++11</p>
-<p>c.clear()</p>
-<p> </p>
-<p>移除所有元素，令容器为空，不适用于array</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/28/stl%E5%AE%B9%E5%99%A8%E5%85%B1%E9%80%9A%E6%93%8D%E4%BD%9C/">STL容器共通操作</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-28</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/">cpp</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/STL/">STL</a></span><div class="content"><h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><p>每个容器都提供默认构造函数，拷贝构造函数，析构函数。</p>
-<p><strong>初值列</strong></p>
-<p>可以以一个区间或者初值列作为容器初值。</p>
-<p>比如常量容器的初始化：</p>
-<p>//用初始值初始化一个vector（c++11）<br>const vector<int> v1 = {1, 2, 3, 4 };<br>//也可用不同的语法<br>const vector<int> v2 {1, 2, 3, 4 };</p>
-<p>array&lt;&gt;容器使用初值列有特殊规则。将会在array容器中解释。</p>
-<p>以某个给定区间初始化的构造函数，参数可以是来自另一个容器、来自c风格的数组、标准输入的元素。可以是不同容器，不同元素类型，前提是来源和目标的元素类型可以自动转换</p>
-<p>//int元素的list容器<br>listl;<br>//拷贝构造给一个float的vector容器<br>vectorc(l.begin(), l.end());<br>//c++11也可以使用move迭代器来搬移所有元素<br>vectorc2(make_move_iterator(l.begin()), make_move_iterator(l.end()));<br>//用c风格数组完成初始化<br>int carray[] = { 1,2,3,4 };<br>setc3(begin(carray), end(carray));//c++11中iterator定义了begin和end两个函数<br>//以标准输入设备完成初始化动作<br>deque c5{ istream_iterator(cin),istream_iterator() };<br>//c++11中可以使用一个move构造函数将容器初始化<br>vectorv1;<br>vectorv2 = move(v1);//新建容器会有之前的值，被当作初值的容器内容会不明确<br>                         //因为move函数是调动指针，不是逐一复制元素，效率较高<br>                         //在不需要某个容器又需要复制时使用move </p>
-<h2 id="swap"><a href="#swap" class="headerlink" title="swap()"></a>swap()</h2><p>用来置换两个容器的内容，事实上知识只换了若干内部的指针，可以保证常数时间复杂度。执行之后原本存在的迭代器和引用都指向原先所指的元素，不过这些元素已经位于另一个容器中了</p>
-<p>array&lt;&gt;容器的该函数行为略有不同。因为此容器无法只在内部置换指针，所以array&lt;&gt;的swap()是线性时间复杂度，而且操作之后原本存在的迭代器和引用指向同一容器中的不同元素。</p>
-<h2 id="大小相关的操作函数"><a href="#大小相关的操作函数" class="headerlink" title="大小相关的操作函数"></a>大小相关的操作函数</h2><p>所有容器都提供三个与大小相关的操作函数</p>
-<p>**empty()**：是size()==0同义快速形式，一般比后者效率高。</p>
-<p>**size()**：返回当前容器的元素个数。</p>
-<p>**max_size()**：返回容器所能容纳的元素个数的最大值。</p>
-<h2 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h2><p>除了无序容器之外，常用的比较操作符==,!=,&lt;,&lt;=,&gt;,&gt;=都依据以下三个规则定义：</p>
-<p>比较的两个容器必须属于同一类型</p>
-<p>如果两个容器的元素全部依序相等，则这两个容器相等</p>
-<p>无序容器只定义了==,!=</p>
-<p>两个容器内的每一个元素都在另一个容器有相等元素，==就返回true，元素次序无关紧要。</p>
-<p>如果要比较两个容器，必须使用STL比较算法</p>
-<h2 id="元素访问"><a href="#元素访问" class="headerlink" title="元素访问"></a>元素访问</h2><p>所有容器都支持基于范围的for循环</p>
-<p>c++11中常用的容器访问操作</p>
-<pre><code>//定义一个vector容器
-vectornums = &#123; 1,2,3,4,5,6 &#125;;
-//访问每个元素并输出
-for (const auto&amp; elem : nums)
-&#123;
-    cout &lt;&lt; elem &lt;&lt; &quot; &quot;;
-&#125;
-//如果要改变元素就不写const
-for (auto&amp; elem : nums)
-&#123;
-    elem = 0;
-&#125;
-//对指定位置进行插入删除等操作,可以使用cbegin()和cend()产生的只读迭代器
-for (auto pos = nums.cbegin(); pos != nums.cend(); ++pos)
-&#123;
-    cout &lt;&lt; \*pos &lt;&lt; endl;
-&#125;
-//使用begin()和end()产生的迭代器进行修改
-for (auto pos = nums.begin(); pos != nums.end(); pos++)
-&#123;
-    \*pos = 0;
-&#125; </code></pre>
-<h2 id="常见容器类共通操作表"><a href="#常见容器类共通操作表" class="headerlink" title="常见容器类共通操作表"></a>常见容器类共通操作表</h2><p>操作</p>
-<p>必要</p>
-<p>效果</p>
-<p>ContType c</p>
-<p>1</p>
-<p>默认构造函数,建立一个空容器，array会有默认元素</p>
-<p>ContType c(c2)</p>
-<p>1</p>
-<p>拷贝构造</p>
-<p>ContTypr c = c2</p>
-<p>1</p>
-<p>拷贝构造</p>
-<p>ContType c(begin,end)</p>
-<p> </p>
-<p>以区间内所有元素拷贝</p>
-<p>ContType c(initlist)</p>
-<p> </p>
-<p>以初值列为初值，不适用于array，c++11</p>
-<p>ContType c = initlist</p>
-<p> </p>
-<p>同上，但适用于array</p>
-<p>c.~ContType()</p>
-<p>1</p>
-<p>删除所有元素并释放内存</p>
-<p>c.empty()</p>
-<p>1</p>
-<p>判断容器是否为空</p>
-<p>c.size()</p>
-<p>1</p>
-<p>返回容器中元素数量</p>
-<p>c.max_size()</p>
-<p>1</p>
-<p>返回元素数量可能的最大值</p>
-<p>c1 == c2</p>
-<p>1</p>
-<p>判断两个容器是否相等</p>
-<p>c1 != c2</p>
-<p>1</p>
-<p>判断是否不等</p>
-<p>&gt;,&lt;,&gt;=,&lt;=</p>
-<p> </p>
-<p>不适用于无序容器</p>
-<p>c = c2</p>
-<p>1</p>
-<p>c2所有元素值赋给c</p>
-<p>c1.swap(c2)</p>
-<p>1</p>
-<p>置换c1和c2的数据</p>
-<p>swap(c1,c2)</p>
-<p>1</p>
-<p>同上，但是个全局函数</p>
-<p>c.begin()</p>
-<p>1</p>
-<p>返回指向第一个元素的迭代器</p>
-<p>c.end()</p>
-<p>1</p>
-<p>返回指向最后一个元素的下一个位置的迭代器</p>
-<p>c.cbegin()</p>
-<p>1</p>
-<p>返回一个const迭代器，指向第一个元素，c++11</p>
-<p>c.cend()</p>
-<p>1</p>
-<p>返回一个const迭代器，指向最后一个元素的下一个位置，c++11</p>
-<p>c.clear()</p>
-<p> </p>
-<p>移除所有元素，令容器为空，不适用于array</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/27/stl%EF%BC%9Avector%E5%AE%B9%E5%99%A8-1/">STL：vector容器</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-27</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/">cpp</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/STL/">STL</a></span><div class="content"><p>是一个以线性顺序组织给定类型元素的容器。它支持对任何元素的快速随机访问，以及与序列之间的动态添加和删除。</p>
-<p>可以利用索引随机访问</p>
-<p>在尾部附加或者移除元素都很快速，但是在中段或起始安插元素比较费时，插入时后面的元素必须移动以保持相对位置</p>
-<p><em>大部分情况元素追加式高速的，有时候可能是缓慢的，vector可能需要重新分配内存并将现有元素复制到对应位置</em></p>
-<p>=====================================================</p>
-<p><strong>底层原理</strong></p>
-<p>底层是一个<strong>动态数组</strong>，包含三个迭代器：start和finish之间是已经被使用的空间范围，end_of_stroage是整块连续空间包括备用空间的尾部。</p>
-<p><strong>当空间不够装下数据（vec.push_back(val)）时，会自动申请另一片更大的空间（1.5倍或者2倍），然后把原来的数据拷贝到新的内存空间，接着释放原来的那片空间【vector内存增长机制】。</strong></p>
-<p>当释放或者删除（vec.clear()）里面的数据时，其存储空间不释放，仅仅是清空了里面的数据。</p>
-<p>因此，对vector的任何操作一旦引起了空间的重新配置，指向原vector的所有迭代器会都失效了。</p>
-<p>头文件</p>
-<p>#include<vector></p>
-<p>声明元素类型为int的vector</p>
-<p>vector<int> v1, v2, v3;</p>
-<p>可以通过下标直接访问对应位置的元素</p>
-<p>v1[0]</p>
-<p><strong>vector**</strong>中**<strong>size**</strong>和**<strong>capacity**</strong>的区别**</p>
-<p>size为当前容器中元素数量 finish - start</p>
-<p>capacity为已经分配的内存可以容纳多少元素 end_of_storage - start</p>
-<p><strong>vector**</strong>中的元素类型不能是引用**</p>
-<p>vector 的底层实现要求连续的对象排列，引用不是对象，没有实际地址</p>
-<p><strong>vector迭代器失效的情况</strong></p>
-<p>当插入一个元素到vector中，由于重新引起了内存分配，指向原内存的迭代器会全部失效。</p>
-<p>删除容器中一个元素后，该迭代器所指向的元素已经被删除，也会造成迭代器失效。erase方法会返回下一个有效的迭代器，所以在删除元素时需要</p>
-<p>it=vec.erase(it);</p>
-<p><strong>vector释放内存</strong></p>
-<p>vec.clear()：清空内容，但是不释放内存。</p>
-<p>vector<int>().swap(vec)：清空内容，且释放内存，想得到一个全新的vector。</p>
-<p>vec.shrink_to_fit()：请求容器降低其capacity和size匹配。</p>
-<p>vec.clear(); vec.shrink_to_fit();：清空内容，且释放内存。</p>
-<p><strong>vector常用函数</strong></p>
-<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-5.png" alt="2 
-3 
-4 
-5 
-6 
-7 
-8 
-vector&lt;int&gt; 
-vec . (c ,ø)); 
-reverse(vec. begin() , vec . end()) 
-sort (vec. begin() , vec . end()); 
-vec . ; 
-vec . size(); 
-find (vec. begin() , vec . end() , 1); 
-iterator = vec.erase(iterator) "></p>
-<p>相关函数</p>
-<p><strong>reserve</strong></p>
-<p>为容器分配空间，直接扩充到已知大小，可以保证vector中的空间大小（capacity）最少达到参数所指定的大小</p>
-<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-6.png" alt="C++ 
-// vector_reserve. cpp 
-// compile with: /EHsc 
-#include 
-#include &lt;iostream&gt; 
-int main( ) 
-using namespace std; 
-vector &lt; int&gt; VI; 
-//vector :iterator Iter; 
-vl.push back( 1 ); 
-cout &quot;Current capacity of VI 
-VI. capacity( ) endl; 
-VI. reserve( 28 ) ; 
-cout &quot;Current capacity of VI 
-VI. capacity( ) endl; 
-Output 
-Current capacity of VI 
-Current capacity of VI "></p>
-<p><strong>resize</strong></p>
-<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/cpp/standard-library/vector-class?view=vs-2019#resize">https://docs.microsoft.com/zh-cn/cpp/standard-library/vector-class?view=vs-2019#resize</a></p>
-<p>可以改变有效空间的大小</p>
-<p>如果容器的大小小于请求的大小，则向向量添加元素，直到达到请求的大小。如果容器的大小大于请求的大小，则删除最靠近容器末端的元素，直到容器达到大小Newsize。如果容器的当前大小与请求的大小相同，则不采取任何操作。</p>
-<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-7.png" alt="void resize(size_type Newsize); 
-void resize(size_type Newsize, Type Val); "></p>
-<p>esize函数<strong>重新分配</strong>大小，改变容器的大小，并且创建对象</p>
-<p>当n小于当前size()值时候，vector首先会减少size()值 保存前n个元素，然后将超出n的元素删除(remove and destroy)</p>
-<p>当n大于当前size()值时候，vector会插入相应数量的元素 使得size()值达到n，并对这些元素进行初始化，如果调用上面的第二个resize函数，指定val，vector会用val来初始化这些新插入的元素</p>
-<p>当n大于capacity()值的时候，会自动分配重新分配内存存储空间。</p>
-<p><strong>assign</strong></p>
-<p>释放当前vector原来占用的空间并开辟新的空间</p>
-<p>两个函数原型</p>
-<p>void assign(size_type Count, const Type&amp; Val);</p>
-<p>void assign(initializer_list<Type> IList);</p>
-<p>template <class InputIterator> void assign(InputIterator First, InputIterator Last);</p>
-<p>来自 &lt;<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/cpp/standard-library/vector-class?view=vs-2019#assign">https://docs.microsoft.com/en-us/cpp/standard-library/vector-class?view=vs-2019#assign</a>&gt;</p>
-<p>第一个相当于个拷贝函数，把first到last的值赋值给调用者；（注意区间的闭合）</p>
-<p>第二个把n个x赋值给调用者；</p>
-<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-8.png" alt="Copy 
-/ vector _ assign . cpp 
-// compile uith: /EHsc 
-*include 
-*include &lt;iostream&gt; 
-int main() 
-using namespace std; 
-VI, v2, v3; 
-vl.push back(1Ê); 
-vl.push back(2Ê); 
-vl.push back(3Ê); 
-vl.push back(4Ê); 
-vl.push back(SÊ); 
-cout 
-for (auto&amp; v : vl){ 
-cout v 
-cout endl; 
-v2. assign(vl. begin() , 
-cout 
-for (auto&amp; v : v2){ 
-cout v 
-cout endl; 
-v3.assign(7, 4); 
-cout 
-for (auto&amp; v : v3){ 
-cout v 
-cout endl; 
-v3.assign({ S, 6, 7 
-for (auto&amp; v : v3){ 
-cout v 
-cout endl; 
-Vl. end())• "></p>
-<p><strong>at</strong></p>
-<p>返回参数中下标元素的引用。</p>
-<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-11.png" alt="Example 
-// vector _ at. cpp 
-// compile with: /EHsc 
-*include 
-*include &lt;iostream&gt; 
-int main( ) 
-using namespace std; 
-vector VI; 
-VI. push back( 18 ); 
-VI. 28 ); 
-const int &amp;i 
-vl.at( 8 
-int &amp;j — 
-cout 
-cout 
-Output 
-vl.at( 1 ) ; 
-&quot;The first element is 
-&quot;The second element is &#39; 
-i endl; 
-j endl; 
-Copy 
-Copy 
-The first element is le 
-The second element is 28 "></p>
-<p><strong>back</strong></p>
-<p>返回向量的最后一个元素。如果向量为空，则返回值未定义。</p>
-<p><strong>front</strong></p>
-<p>返回指向向量对象中第一个元素的引用。如果向量为空，则返回未定义。</p>
-<p>如果front的返回值被赋给一个const_reference，则不能修改vector对象。如果将front的返回值赋给引用，则可以修改vector对象。</p>
-<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-9.png" alt="// vector _ front . cpp 
-// compile with: /EHsc 
-*include 
-*include &lt;iostream&gt; 
-int main( ) 
-using namespace std; 
-vector VI; 
-VI. push back( 18 ); 
-VI. 11 ) ; 
-int&amp; i = vl.front( ); 
-const int&amp; ii = vl.front( ); 
-cout &quot;The first integer of VI is &quot;&lt;&lt; i endl; 
-// by incrementing i, we move the front reference to the second element 
-cout &quot;Now, the first integer of VI is i endl; "></p>
-<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-10.png" alt="Microsoft Visual Studio 
-he first integer of VI is 10 
-ow, the first integer of VI is 11 "></p>
-<p>//通过增加i，我们将前面的引用移动到第二个元素</p>
-<p><strong>erase</strong></p>
-<p>将容器中的指定元素删除</p>
-<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-13.png" alt="ras 
-Removes an element or a range of elements in a vector from specified positions. 
-iterator erase( 
-const_iterator Where) ; 
-iterator erase( 
-const iterator first, 
-const_iterator last) ; 
-Parameters 
-Where 
-Position of the element to be removed from the vector. 
-first 
-Position of the first element removed from the vector. 
-last 
-Position just beyond the last element removed from the vector. "></p>
-<p>![// vector erase. cpp<br>// compile uith: /EHsc<br>*include<br>*include <iostream><br>int main( )<br>using namespace std;<br>vector VI;<br>vector :iterator Iter;<br>vl.erase( Vl. begin( ) + 1,<br>vl . push<br>vl . push<br>vl . push<br>vl . push<br>vl . push<br>cout<br>back(<br>back(<br>back(<br>back(<br>back(<br>“VI<br>far ( Iter<br>cout<br>cout end];<br>vl.erase( Vl. begin( ) ) ;<br>cout “VI<br>far ( Iter<br>cout<br>cout endl;<br>cout “VI<br>far ( Iter<br>cout<br>18<br>28<br>3e<br>48 ) ;<br>Vl. begin( )<br>‘Iter;<br>Vl. begin( )<br>‘Iter;<br>Vl. begin( )<br>‘Iter;<br>Iter .<br>Iter .<br>vl.end( )<br>vl.end( )<br>vl.begin( )<br>vl.end( )<br>Iter<br>Iter++<br>Iter++<br>Iter++<br>cout<br>Output<br>1e<br>2e<br>2e<br>end];<br>2e 3e 48 sa<br>3e 4e sa<br>se ](<a target="_blank" rel="noopener" href="http://www.muchenhen.com/wp-content/uploads/2019/10/image-12.png">http://www.muchenhen.com/wp-content/uploads/2019/10/image-12.png</a>)</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/27/stl%EF%BC%9Avector%E5%AE%B9%E5%99%A8/">STL：vector容器</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-27</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/">cpp</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/STL/">STL</a></span><div class="content"><p>是一个以线性顺序组织给定类型元素的容器。它支持对任何元素的快速随机访问，以及与序列之间的动态添加和删除。</p>
-<p>可以利用索引随机访问</p>
-<p>在尾部附加或者移除元素都很快速，但是在中段或起始安插元素比较费时，插入时后面的元素必须移动以保持相对位置</p>
-<p><em>大部分情况元素追加式高速的，有时候可能是缓慢的，vector可能需要重新分配内存并将现有元素复制到对应位置</em></p>
-<p>=====================================================</p>
-<p><strong>底层原理</strong></p>
-<p>底层是一个<strong>动态数组</strong>，包含三个迭代器：start和finish之间是已经被使用的空间范围，end_of_stroage是整块连续空间包括备用空间的尾部。</p>
-<p><strong>当空间不够装下数据（vec.push_back(val)）时，会自动申请另一片更大的空间（1.5倍或者2倍），然后把原来的数据拷贝到新的内存空间，接着释放原来的那片空间【vector内存增长机制】。</strong></p>
-<p>当释放或者删除（vec.clear()）里面的数据时，其存储空间不释放，仅仅是清空了里面的数据。</p>
-<p>因此，对vector的任何操作一旦引起了空间的重新配置，指向原vector的所有迭代器会都失效了。</p>
-<p>头文件</p>
-<p>#include<vector></p>
-<p>声明元素类型为int的vector</p>
-<p>vector<int> v1, v2, v3;</p>
-<p>可以通过下标直接访问对应位置的元素</p>
-<p>v1[0]</p>
-<p><strong>vector**</strong>中**<strong>size**</strong>和**<strong>capacity**</strong>的区别**</p>
-<p>size为当前容器中元素数量 finish - start</p>
-<p>capacity为已经分配的内存可以容纳多少元素 end_of_storage - start</p>
-<p><strong>vector**</strong>中的元素类型不能是引用**</p>
-<p>vector 的底层实现要求连续的对象排列，引用不是对象，没有实际地址</p>
-<p><strong>vector迭代器失效的情况</strong></p>
-<p>当插入一个元素到vector中，由于重新引起了内存分配，指向原内存的迭代器会全部失效。</p>
-<p>删除容器中一个元素后，该迭代器所指向的元素已经被删除，也会造成迭代器失效。erase方法会返回下一个有效的迭代器，所以在删除元素时需要</p>
-<p>it=vec.erase(it);</p>
-<p><strong>vector释放内存</strong></p>
-<p>vec.clear()：清空内容，但是不释放内存。</p>
-<p>vector<int>().swap(vec)：清空内容，且释放内存，想得到一个全新的vector。</p>
-<p>vec.shrink_to_fit()：请求容器降低其capacity和size匹配。</p>
-<p>vec.clear(); vec.shrink_to_fit();：清空内容，且释放内存。</p>
-<p><strong>vector常用函数</strong></p>
-<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-5.png" alt="2 
-3 
-4 
-5 
-6 
-7 
-8 
-vector&lt;int&gt; 
-vec . (c ,ø)); 
-reverse(vec. begin() , vec . end()) 
-sort (vec. begin() , vec . end()); 
-vec . ; 
-vec . size(); 
-find (vec. begin() , vec . end() , 1); 
-iterator = vec.erase(iterator) "></p>
-<p>相关函数</p>
-<p><strong>reserve</strong></p>
-<p>为容器分配空间，直接扩充到已知大小，可以保证vector中的空间大小（capacity）最少达到参数所指定的大小</p>
-<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-6.png" alt="C++ 
-// vector_reserve. cpp 
-// compile with: /EHsc 
-#include 
-#include &lt;iostream&gt; 
-int main( ) 
-using namespace std; 
-vector &lt; int&gt; VI; 
-//vector :iterator Iter; 
-vl.push back( 1 ); 
-cout &quot;Current capacity of VI 
-VI. capacity( ) endl; 
-VI. reserve( 28 ) ; 
-cout &quot;Current capacity of VI 
-VI. capacity( ) endl; 
-Output 
-Current capacity of VI 
-Current capacity of VI "></p>
-<p><strong>resize</strong></p>
-<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/cpp/standard-library/vector-class?view=vs-2019#resize">https://docs.microsoft.com/zh-cn/cpp/standard-library/vector-class?view=vs-2019#resize</a></p>
-<p>可以改变有效空间的大小</p>
-<p>如果容器的大小小于请求的大小，则向向量添加元素，直到达到请求的大小。如果容器的大小大于请求的大小，则删除最靠近容器末端的元素，直到容器达到大小Newsize。如果容器的当前大小与请求的大小相同，则不采取任何操作。</p>
-<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-7.png" alt="void resize(size_type Newsize); 
-void resize(size_type Newsize, Type Val); "></p>
-<p>esize函数<strong>重新分配</strong>大小，改变容器的大小，并且创建对象</p>
-<p>当n小于当前size()值时候，vector首先会减少size()值 保存前n个元素，然后将超出n的元素删除(remove and destroy)</p>
-<p>当n大于当前size()值时候，vector会插入相应数量的元素 使得size()值达到n，并对这些元素进行初始化，如果调用上面的第二个resize函数，指定val，vector会用val来初始化这些新插入的元素</p>
-<p>当n大于capacity()值的时候，会自动分配重新分配内存存储空间。</p>
-<p><strong>assign</strong></p>
-<p>释放当前vector原来占用的空间并开辟新的空间</p>
-<p>两个函数原型</p>
-<p>void assign(size_type Count, const Type&amp; Val);</p>
-<p>void assign(initializer_list<Type> IList);</p>
-<p>template <class InputIterator> void assign(InputIterator First, InputIterator Last);</p>
-<p>来自 &lt;<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/cpp/standard-library/vector-class?view=vs-2019#assign">https://docs.microsoft.com/en-us/cpp/standard-library/vector-class?view=vs-2019#assign</a>&gt;</p>
-<p>第一个相当于个拷贝函数，把first到last的值赋值给调用者；（注意区间的闭合）</p>
-<p>第二个把n个x赋值给调用者；</p>
-<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-8.png" alt="Copy 
-/ vector _ assign . cpp 
-// compile uith: /EHsc 
-*include 
-*include &lt;iostream&gt; 
-int main() 
-using namespace std; 
-VI, v2, v3; 
-vl.push back(1Ê); 
-vl.push back(2Ê); 
-vl.push back(3Ê); 
-vl.push back(4Ê); 
-vl.push back(SÊ); 
-cout 
-for (auto&amp; v : vl){ 
-cout v 
-cout endl; 
-v2. assign(vl. begin() , 
-cout 
-for (auto&amp; v : v2){ 
-cout v 
-cout endl; 
-v3.assign(7, 4); 
-cout 
-for (auto&amp; v : v3){ 
-cout v 
-cout endl; 
-v3.assign({ S, 6, 7 
-for (auto&amp; v : v3){ 
-cout v 
-cout endl; 
-Vl. end())• "></p>
-<p><strong>at</strong></p>
-<p>返回参数中下标元素的引用。</p>
-<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-11.png" alt="Example 
-// vector _ at. cpp 
-// compile with: /EHsc 
-*include 
-*include &lt;iostream&gt; 
-int main( ) 
-using namespace std; 
-vector VI; 
-VI. push back( 18 ); 
-VI. 28 ); 
-const int &amp;i 
-vl.at( 8 
-int &amp;j — 
-cout 
-cout 
-Output 
-vl.at( 1 ) ; 
-&quot;The first element is 
-&quot;The second element is &#39; 
-i endl; 
-j endl; 
-Copy 
-Copy 
-The first element is le 
-The second element is 28 "></p>
-<p><strong>back</strong></p>
-<p>返回向量的最后一个元素。如果向量为空，则返回值未定义。</p>
-<p><strong>front</strong></p>
-<p>返回指向向量对象中第一个元素的引用。如果向量为空，则返回未定义。</p>
-<p>如果front的返回值被赋给一个const_reference，则不能修改vector对象。如果将front的返回值赋给引用，则可以修改vector对象。</p>
-<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-9.png" alt="// vector _ front . cpp 
-// compile with: /EHsc 
-*include 
-*include &lt;iostream&gt; 
-int main( ) 
-using namespace std; 
-vector VI; 
-VI. push back( 18 ); 
-VI. 11 ) ; 
-int&amp; i = vl.front( ); 
-const int&amp; ii = vl.front( ); 
-cout &quot;The first integer of VI is &quot;&lt;&lt; i endl; 
-// by incrementing i, we move the front reference to the second element 
-cout &quot;Now, the first integer of VI is i endl; "></p>
-<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-10.png" alt="Microsoft Visual Studio 
-he first integer of VI is 10 
-ow, the first integer of VI is 11 "></p>
-<p>//通过增加i，我们将前面的引用移动到第二个元素</p>
-<p><strong>erase</strong></p>
-<p>将容器中的指定元素删除</p>
-<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-13.png" alt="ras 
-Removes an element or a range of elements in a vector from specified positions. 
-iterator erase( 
-const_iterator Where) ; 
-iterator erase( 
-const iterator first, 
-const_iterator last) ; 
-Parameters 
-Where 
-Position of the element to be removed from the vector. 
-first 
-Position of the first element removed from the vector. 
-last 
-Position just beyond the last element removed from the vector. "></p>
-<p>![// vector erase. cpp<br>// compile uith: /EHsc<br>*include<br>*include <iostream><br>int main( )<br>using namespace std;<br>vector VI;<br>vector :iterator Iter;<br>vl.erase( Vl. begin( ) + 1,<br>vl . push<br>vl . push<br>vl . push<br>vl . push<br>vl . push<br>cout<br>back(<br>back(<br>back(<br>back(<br>back(<br>“VI<br>far ( Iter<br>cout<br>cout end];<br>vl.erase( Vl. begin( ) ) ;<br>cout “VI<br>far ( Iter<br>cout<br>cout endl;<br>cout “VI<br>far ( Iter<br>cout<br>18<br>28<br>3e<br>48 ) ;<br>Vl. begin( )<br>‘Iter;<br>Vl. begin( )<br>‘Iter;<br>Vl. begin( )<br>‘Iter;<br>Iter .<br>Iter .<br>vl.end( )<br>vl.end( )<br>vl.begin( )<br>vl.end( )<br>Iter<br>Iter++<br>Iter++<br>Iter++<br>cout<br>Output<br>1e<br>2e<br>2e<br>end];<br>2e 3e 48 sa<br>3e 4e sa<br>se ](<a target="_blank" rel="noopener" href="http://www.muchenhen.com/wp-content/uploads/2019/10/image-12.png">http://www.muchenhen.com/wp-content/uploads/2019/10/image-12.png</a>)</p>
-</div><hr></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/6/"><i class="fa fa-chevron-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/56/">56</a><a class="extend next" rel="next" href="/page/8/"><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer class="footer-bg" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div class="layout" id="footer"><div class="copyright">&copy;2017 - 2020 By 木尘痕</div><div class="framework-info"><span>Driven - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="footer_custom_text">千秋竟岁，伏苦飞逐</div><div class="icp"><a><span>豫ICP备17048032号</span></a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_site_uv"><i class="fa fa-user"></i><span id="busuanzi_value_site_uv"></span><span></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i><span id="busuanzi_value_site_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.8.2"></script><script src="/js/fancybox.js?version=1.8.2"></script><script src="/js/sidebar.js?version=1.8.2"></script><script src="/js/copy.js?version=1.8.2"></script><script src="/js/fireworks.js?version=1.8.2"></script><script src="/js/transition.js?version=1.8.2"></script><script src="/js/scroll.js?version=1.8.2"></script><script src="/js/head.js?version=1.8.2"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+</div><hr></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/6/"><i class="fa fa-chevron-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/28/">28</a><a class="extend next" rel="next" href="/page/8/"><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer class="footer-bg" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div class="layout" id="footer"><div class="copyright">&copy;2017 - 2020 By 木尘痕</div><div class="framework-info"><span>Driven - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="footer_custom_text">千秋竟岁，伏苦飞逐</div><div class="icp"><a><span>豫ICP备17048032号</span></a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_site_uv"><i class="fa fa-user"></i><span id="busuanzi_value_site_uv"></span><span></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i><span id="busuanzi_value_site_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.8.2"></script><script src="/js/fancybox.js?version=1.8.2"></script><script src="/js/sidebar.js?version=1.8.2"></script><script src="/js/copy.js?version=1.8.2"></script><script src="/js/fireworks.js?version=1.8.2"></script><script src="/js/transition.js?version=1.8.2"></script><script src="/js/scroll.js?version=1.8.2"></script><script src="/js/head.js?version=1.8.2"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
   $('#nav').addClass('is-mobile')
   $('footer').addClass('is-mobile')
   $('#top-container').addClass('is-mobile')

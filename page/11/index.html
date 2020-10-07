@@ -14,287 +14,303 @@
     noSupport: 'The browser does not support'
   },
   hexoVersion: '5.1.0'
-} </script><meta name="generator" content="Hexo 5.1.0"></head><body><canvas class="fireworks"></canvas><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="author-info"><div class="author-info__avatar text-center"><img src="https://github.com/muchenhen/muchenhen.github.io/blob/master/XuanGe.jpg?raw=true"></div><div class="author-info__name text-center">木尘痕</div><div class="author-info__description text-center">放一些笔记的地方</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">552</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">21</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">31</span></a></div><hr><div class="author-info-links"><div class="author-info-links__title text-center">Links</div><a class="author-info-links__name text-center" target="_blank" rel="noopener" href="https://alec-ray.github.io/">止戈</a></div></div></div><nav id="nav" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">风生之谷</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">主页</a><a class="site-page" href="/archives">全部文章</a><a class="site-page" href="/tags">标签分类</a><a class="site-page" href="/categories">文章分类</a><a class="site-page" href="/contact">联系</a></span><span class="pull-right"></span></div><div id="site-info"><div id="site-title">风生之谷</div><div id="site-sub-title">一点浩然气 千里快哉风</div></div></nav><div id="content-outer"><div class="layout" id="content-inner"><div class="recent-post-item article-container"><a class="article-title" href="/2019/01/06/%E4%B8%89%E7%BB%B4%E7%A9%BA%E9%97%B4%E5%87%A0%E4%BD%95%E5%8F%98%E6%8D%A2%E7%9F%A9%E9%98%B5-1/">三维空间几何变换矩阵</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-01-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/">cg</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/%E6%95%B0%E5%AD%A6%E6%96%B9%E6%B3%95/">数学方法</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学</a></span><div class="content"><p>三维空间几何变换矩阵</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/301.png"></p>
-<p>你大概可以根据字母猜出来，一部分线性变换，一部分平移变换，一部分透视变换，一个整体比例变换。（猜不出来当我没说）</p>
-<p><strong>_特别注意_：OpenGL为右手坐标系！</strong></p>
-<p><strong>平移变换</strong></p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/302.png"></p>
-<p>变换矩阵为：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/303.png"></p>
-<p><strong>比例变换</strong></p>
-<p>变换矩阵为：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/304.png"></p>
-<p><strong>旋转变换</strong></p>
-<p>绕Z轴：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/305.png"></p>
-<p>这些考试应该够了剩下的日后补充。</p>
-<p><strong>举个栗子：</strong></p>
-<p>已知空间中一条线段的两个顶点为d1(5.0f,3.0f,-2.0f) d2(6.0f,4.0f,-2.0f)计算出其绕(y=3,z=0)的轴旋转90°后再缩小0.5倍后的新的线段的两个顶点坐标，</p>
-<p>要求写出每一个计算后得到的新矩阵。</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/306.png"></p>
-<p>我就不写计算过程了，需要验证的自己计算一下：</p>
-<p>缩小0.5倍：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/307.png"></p>
-<p>沿Y轴平移3：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/308.png"></p>
-<p>绕X旋转90：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/309.png"></p>
-<p>沿Y轴平移-3：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/310.png"></p>
-<p>写出每一个计算后得到的新矩阵：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/311.png"></p>
-<p>则转换后的点</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/312.png"></p>
-<p><strong>如有错误请<a target="_blank" rel="noopener" href="https://www.muchenhen.com/%e8%81%94%e7%b3%bb/">联系</a>。</strong></p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/01/06/%E4%B8%89%E7%BB%B4%E7%A9%BA%E9%97%B4%E5%87%A0%E4%BD%95%E5%8F%98%E6%8D%A2%E7%9F%A9%E9%98%B5/">三维空间几何变换矩阵</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-01-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/">cg</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/%E6%95%B0%E5%AD%A6%E6%96%B9%E6%B3%95/">数学方法</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学</a></span><div class="content"><p>三维空间几何变换矩阵</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/301.png"></p>
-<p>你大概可以根据字母猜出来，一部分线性变换，一部分平移变换，一部分透视变换，一个整体比例变换。（猜不出来当我没说）</p>
-<p><strong>_特别注意_：OpenGL为右手坐标系！</strong></p>
-<p><strong>平移变换</strong></p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/302.png"></p>
-<p>变换矩阵为：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/303.png"></p>
-<p><strong>比例变换</strong></p>
-<p>变换矩阵为：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/304.png"></p>
-<p><strong>旋转变换</strong></p>
-<p>绕Z轴：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/305.png"></p>
-<p>这些考试应该够了剩下的日后补充。</p>
-<p><strong>举个栗子：</strong></p>
-<p>已知空间中一条线段的两个顶点为d1(5.0f,3.0f,-2.0f) d2(6.0f,4.0f,-2.0f)计算出其绕(y=3,z=0)的轴旋转90°后再缩小0.5倍后的新的线段的两个顶点坐标，</p>
-<p>要求写出每一个计算后得到的新矩阵。</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/306.png"></p>
-<p>我就不写计算过程了，需要验证的自己计算一下：</p>
-<p>缩小0.5倍：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/307.png"></p>
-<p>沿Y轴平移3：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/308.png"></p>
-<p>绕X旋转90：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/309.png"></p>
-<p>沿Y轴平移-3：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/310.png"></p>
-<p>写出每一个计算后得到的新矩阵：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/311.png"></p>
-<p>则转换后的点</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/312.png"></p>
-<p><strong>如有错误请<a target="_blank" rel="noopener" href="https://www.muchenhen.com/%e8%81%94%e7%b3%bb/">联系</a>。</strong></p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/01/06/%E4%BA%8C%E7%BB%B4%E7%A9%BA%E9%97%B4%E5%87%A0%E4%BD%95%E5%8F%98%E6%8D%A2%E7%9F%A9%E9%98%B5-1/">二维空间几何变换矩阵</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-01-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/">cg</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/%E6%95%B0%E5%AD%A6%E6%96%B9%E6%B3%95/">数学方法</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学</a></span><div class="content"><p>二维变换矩阵</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/001.png"></p>
-<p>从变换功能上可以将T2D分为四个子矩阵，其中</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/002.png"></p>
-<p>控制旋转，缩放，对称，错切</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/003.png"></p>
-<p>控制平移</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/004.png"></p>
-<p>控制投影</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/005.png"></p>
-<p>控制整体图形作伸缩变换</p>
-<p><strong>平移变换矩阵</strong></p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/006.png"></p>
-<p>则变换矩阵为</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/007.png"></p>
-<p>接下来的只给出变换矩阵，具体推导过程和上面的相似</p>
-<p><strong>_特别注意_：由于矩阵乘法不具有交换律，有些资料里变换矩阵在前面，所以长得不一样！但是结果是一样的！！！</strong></p>
-<p><strong>比例变换矩阵</strong></p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/008.png"></p>
-<p><strong>旋转变换矩阵</strong></p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/009.png"></p>
-<p>如图α为起始角，β为逆时针旋转角</p>
-<p>逆时针变换矩阵：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/010.png"></p>
-<p>顺时针变换矩阵：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/013.png"></p>
-<p><strong>对称变换矩阵</strong></p>
-<p>关于原点对称矩阵：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/014.png"></p>
-<p>关于Y轴对称矩阵：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/015.png"></p>
-<p>关于X轴对称矩阵：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/016.png"></p>
-<p><strong>错切变换矩阵</strong></p>
-<p>这个有点麻烦应该不会考先不写了。</p>
-<p><strong>举个栗子：</strong></p>
-<p>已知三角形ABC的各顶点坐标为A(1,2)、B(5,2)、C(3,5)，现有直线L，L上的两点P、Q的坐标分别为P(0,-1)和Q(1,0)，将三角形ABC相对直线L作对称变换后得到三角形A′B′C′，按步骤列出变换矩阵，并计算三角形A′B′C′各顶点的坐标值。</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/017.png"></p>
-<p>将坐标轴平移</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/018.png"></p>
-<p>以y=x对称变换</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/019.png"></p>
-<p>坐标轴平移回去</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/020.png"></p>
-<p>则</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/021.png"></p>
-<p>可以求得：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/022.png"></p>
-<p><strong>_特别注意：_当变换矩阵在前时，最后的变换矩阵相乘的时候需要反着来！</strong></p>
-<p><strong>如有发现错误请</strong><a target="_blank" rel="noopener" href="https://www.muchenhen.com/%E8%81%94%E7%B3%BB/"><strong>联系</strong></a><strong>。</strong></p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/01/06/%E4%BA%8C%E7%BB%B4%E7%A9%BA%E9%97%B4%E5%87%A0%E4%BD%95%E5%8F%98%E6%8D%A2%E7%9F%A9%E9%98%B5/">二维空间几何变换矩阵</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-01-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/">cg</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/%E6%95%B0%E5%AD%A6%E6%96%B9%E6%B3%95/">数学方法</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学</a></span><div class="content"><p>二维变换矩阵</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/001.png"></p>
-<p>从变换功能上可以将T2D分为四个子矩阵，其中</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/002.png"></p>
-<p>控制旋转，缩放，对称，错切</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/003.png"></p>
-<p>控制平移</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/004.png"></p>
-<p>控制投影</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/005.png"></p>
-<p>控制整体图形作伸缩变换</p>
-<p><strong>平移变换矩阵</strong></p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/006.png"></p>
-<p>则变换矩阵为</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/007.png"></p>
-<p>接下来的只给出变换矩阵，具体推导过程和上面的相似</p>
-<p><strong>_特别注意_：由于矩阵乘法不具有交换律，有些资料里变换矩阵在前面，所以长得不一样！但是结果是一样的！！！</strong></p>
-<p><strong>比例变换矩阵</strong></p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/008.png"></p>
-<p><strong>旋转变换矩阵</strong></p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/009.png"></p>
-<p>如图α为起始角，β为逆时针旋转角</p>
-<p>逆时针变换矩阵：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/010.png"></p>
-<p>顺时针变换矩阵：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/013.png"></p>
-<p><strong>对称变换矩阵</strong></p>
-<p>关于原点对称矩阵：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/014.png"></p>
-<p>关于Y轴对称矩阵：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/015.png"></p>
-<p>关于X轴对称矩阵：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/016.png"></p>
-<p><strong>错切变换矩阵</strong></p>
-<p>这个有点麻烦应该不会考先不写了。</p>
-<p><strong>举个栗子：</strong></p>
-<p>已知三角形ABC的各顶点坐标为A(1,2)、B(5,2)、C(3,5)，现有直线L，L上的两点P、Q的坐标分别为P(0,-1)和Q(1,0)，将三角形ABC相对直线L作对称变换后得到三角形A′B′C′，按步骤列出变换矩阵，并计算三角形A′B′C′各顶点的坐标值。</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/017.png"></p>
-<p>将坐标轴平移</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/018.png"></p>
-<p>以y=x对称变换</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/019.png"></p>
-<p>坐标轴平移回去</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/020.png"></p>
-<p>则</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/021.png"></p>
-<p>可以求得：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/022.png"></p>
-<p><strong>_特别注意：_当变换矩阵在前时，最后的变换矩阵相乘的时候需要反着来！</strong></p>
-<p><strong>如有发现错误请</strong><a target="_blank" rel="noopener" href="https://www.muchenhen.com/%E8%81%94%E7%B3%BB/"><strong>联系</strong></a><strong>。</strong></p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/01/03/%E5%AF%B9%E7%BE%8E%E5%A5%BD%E4%BA%8B%E7%89%A9%E8%BF%BD%E5%BF%86%E7%9A%84%E4%BD%BF%E7%94%A8-1/">对美好事物追忆的使用</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-01-03</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/%E6%83%98/">惘</a></span><div class="content"><p><strong><em>This article was translated from the economist on December 29, 2018.</em></strong></p>
-<p>————————————————————</p>
-<h4 id="如何从回忆思潮的爆发中获得最好的事物"><a href="#如何从回忆思潮的爆发中获得最好的事物" class="headerlink" title="如何从回忆思潮的爆发中获得最好的事物"></a>如何从回忆思潮的爆发中获得最好的事物</h4><p>政客们总是利用过去。而现在，发达国家和新兴的经济体们正在经历一场回忆的爆发。左派和右派，民主和专制都在追忆着昔日的荣光。正当美国总统唐纳德特朗普发誓要“让美国再次伟大”的时候，中国国家主席习近平正在使用他的“中国梦”去驱散百年的屈辱，让中国回到她的黄金时代。墨西哥新任总统安德烈斯·曼纽尔·洛佩兹·奥夫拉多尔肩负着抵御全球资本主义、恢复国家经济主权的使命。波兰最有权势的政治家雅罗斯瓦夫•卡钦斯基希望清除苏联共产主义的最后一丝痕迹，实现波兰传统价值观的复兴。</p>
-<p>这场回忆的狂欢，在不同的国家有着不同的原因。在新兴的市场，过去的辉煌往往意味着未来的胜利。中国已经经历了40年的转型增长，她意识到自己正站在伟大事业的起点上。印度在纳伦德拉•莫迪的领导下，一直在用印度教民族主义复兴来庆祝其日益增长的地缘政治影响力。</p>
-<p>相比之下，在发达国家，怀旧通常源自亨利•杰克逊协会的索菲娅•加斯顿所称的“无所不在的、具有威胁性的衰退感觉”。近三分之二的英国人认为过去的生活更好。同样比例的法国人也觉得现在的生活不舒服。今年联合国世界幸福报告中，美国民众的幸福感在降低。无论是在发达国家还是发展中国家，绝大多数的人认为机器人和自动化将会加剧不公平的现象，并且伤害到就业。在一项2017年针对28个国家所做的一项调查报告中现实，超过半数的人认为，自己的生活在将来不会有任何改善，甚至可能会更差。只有不到15%的日本民众认为他们的孩子将来会比他们的父母更加富有。</p>
-<p>大量的研究结果证明了，新兴市场的乐观主义比起发达国家的悲观主义，是建立在更坚实的基础上的。世界平均的人类寿命正变得越来越长，人们的生活也变得更加健康；战争和饥荒带走的生命越来越少；教育的普及也使得歧视与偏见慢慢减少。但是同样的，夏天不像人们想象的那样美好，国家也不像人们想象的那么光荣。</p>
-<p>但是仅仅因为悲观主义和怀旧情绪的不准确而拒绝它们，就大错特错。它们是塑造政治的强大力量。要想驾驭它们，首先要理解他们。</p>
-<p>怀旧对于乐观主义者和悲观主义者都是改变世界的支柱。包括人工智能在内的各种新技术，有可能改变整个实体工业，甚至影响国家和公民的关系。两个世纪以来，世界的中心力量正在从西方转移回中国。地球老化的速度比历史上任何时期都要快。她的气候在改变，而生活在她上面的种族和文化变得更加矛盾与复杂。</p>
-<p>在这样的时刻，人们会被怀旧所吸引，把它作为一种安慰和自尊的来源。许多脱欧派人士认为离开欧盟意味着他们将再次加入一个充满活力的全球化的英国；加泰罗尼亚人在追求独特身份的过程中唤起了一段理想化的过去；巴西人选出了一位让人回想起三十年前他们摆脱的军事独裁统治的总统。当特朗普推动煤炭和钢铁行业发展时，那些担心自己在肮脏、垂死的行业中被边缘化的人，突然觉得自己又有了价值。</p>
-<p>在发达国家，怀旧也提供了一种方式，来反抗别人的进步观念，从而夺回控制权。在前东德，极右翼政党——德国另类选择党拥有最强大的支持，那里的选民对失去社区和安全感到遗憾。</p>
-<p>在法国，“黄背心”砸碎了香榭丽舍大街上的商店橱窗，因为他们入不敷出。他们拒绝他们的总统伊曼纽尔·马克龙提出的国家繁荣与个人经济安全之间的权衡。</p>
-<p>这使得怀旧变得危险。抗议者并不一定希望时光倒流，他们可能只是想让时间慢下来。然而，这种僵化可能只会加剧衰退的感觉。此外，怀旧者渴望的自尊似乎常常助长仇外情绪。在印度，印度教民族主义复兴的过程中，针对穆斯林的仇恨犯罪有所增加。在西方，就在强硬的左翼人士谴责全球商业的阴谋诡计时，右翼人士记得一个更“白”、文化更少的过去。反犹太主义卷土重来并非偶然，尤其是在态度保守的杰里米•科尔宾领导的英国工党内部。</p>
-<p>由于仇外心理的影响，进步人士很快就把所有的怀旧情绪视为偏见，导致他们忽视了整个社会阶层的恐惧。这种笼统的判断是民粹主义者能够如此成功地利用怀旧情绪的又一个原因。</p>
-<p>他们过得太安逸了。怀旧可以被永久地利用。20世纪初，同样受到技术、地缘政治和文化变革的冲击，欧洲和美国也很怀旧。随后，一段时期的冲突和社会动荡导致了普选和全民教育。今天的政客可以从那个时代吸取教训。显然，它们必须通过维护和加强使各国能够合作的机构来避免战争。但他们也应该找到大胆的方法来应对不安全感和疏离感。这意味着国家机器需要为公民更加努力地工作，使教育贯穿公民的一生，改革税收，将权力下放，应对气候灾难，以及明智地管理移民。</p>
-<p><em>如果“过去”是“外国”，让我移民吧。</em></p>
-<p>怀旧者们有他们的道理。当一种管理世界的方式似乎已经用尽力量，而另一种方式还没有出现时，从过去吸取教训显得尤为重要。当一切似乎都没有意义时，历史就成了最高的学科。知道你是谁，从哪里来，这很重要。利用过去的最好方法是破除偏见，开拓视野。正确的历史观会帮助你明白，进步取决于面对艰难的选择。有时它也能激励人。50年前，阿波罗8号从佛罗里达州卡纳维拉尔角起飞。12月24日，它拍下了一幅地球的照片，这是一颗半遮半掩的蓝白色行星，看起来很团结。</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/QQ%E6%88%AA%E5%9B%BE20190103075927.png"></p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/01/03/%E5%AF%B9%E7%BE%8E%E5%A5%BD%E4%BA%8B%E7%89%A9%E8%BF%BD%E5%BF%86%E7%9A%84%E4%BD%BF%E7%94%A8/">对美好事物追忆的使用</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-01-03</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/%E6%83%98/">惘</a></span><div class="content"><p><strong><em>This article was translated from the economist on December 29, 2018.</em></strong></p>
-<p>————————————————————</p>
-<h4 id="如何从回忆思潮的爆发中获得最好的事物"><a href="#如何从回忆思潮的爆发中获得最好的事物" class="headerlink" title="如何从回忆思潮的爆发中获得最好的事物"></a>如何从回忆思潮的爆发中获得最好的事物</h4><p>政客们总是利用过去。而现在，发达国家和新兴的经济体们正在经历一场回忆的爆发。左派和右派，民主和专制都在追忆着昔日的荣光。正当美国总统唐纳德特朗普发誓要“让美国再次伟大”的时候，中国国家主席习近平正在使用他的“中国梦”去驱散百年的屈辱，让中国回到她的黄金时代。墨西哥新任总统安德烈斯·曼纽尔·洛佩兹·奥夫拉多尔肩负着抵御全球资本主义、恢复国家经济主权的使命。波兰最有权势的政治家雅罗斯瓦夫•卡钦斯基希望清除苏联共产主义的最后一丝痕迹，实现波兰传统价值观的复兴。</p>
-<p>这场回忆的狂欢，在不同的国家有着不同的原因。在新兴的市场，过去的辉煌往往意味着未来的胜利。中国已经经历了40年的转型增长，她意识到自己正站在伟大事业的起点上。印度在纳伦德拉•莫迪的领导下，一直在用印度教民族主义复兴来庆祝其日益增长的地缘政治影响力。</p>
-<p>相比之下，在发达国家，怀旧通常源自亨利•杰克逊协会的索菲娅•加斯顿所称的“无所不在的、具有威胁性的衰退感觉”。近三分之二的英国人认为过去的生活更好。同样比例的法国人也觉得现在的生活不舒服。今年联合国世界幸福报告中，美国民众的幸福感在降低。无论是在发达国家还是发展中国家，绝大多数的人认为机器人和自动化将会加剧不公平的现象，并且伤害到就业。在一项2017年针对28个国家所做的一项调查报告中现实，超过半数的人认为，自己的生活在将来不会有任何改善，甚至可能会更差。只有不到15%的日本民众认为他们的孩子将来会比他们的父母更加富有。</p>
-<p>大量的研究结果证明了，新兴市场的乐观主义比起发达国家的悲观主义，是建立在更坚实的基础上的。世界平均的人类寿命正变得越来越长，人们的生活也变得更加健康；战争和饥荒带走的生命越来越少；教育的普及也使得歧视与偏见慢慢减少。但是同样的，夏天不像人们想象的那样美好，国家也不像人们想象的那么光荣。</p>
-<p>但是仅仅因为悲观主义和怀旧情绪的不准确而拒绝它们，就大错特错。它们是塑造政治的强大力量。要想驾驭它们，首先要理解他们。</p>
-<p>怀旧对于乐观主义者和悲观主义者都是改变世界的支柱。包括人工智能在内的各种新技术，有可能改变整个实体工业，甚至影响国家和公民的关系。两个世纪以来，世界的中心力量正在从西方转移回中国。地球老化的速度比历史上任何时期都要快。她的气候在改变，而生活在她上面的种族和文化变得更加矛盾与复杂。</p>
-<p>在这样的时刻，人们会被怀旧所吸引，把它作为一种安慰和自尊的来源。许多脱欧派人士认为离开欧盟意味着他们将再次加入一个充满活力的全球化的英国；加泰罗尼亚人在追求独特身份的过程中唤起了一段理想化的过去；巴西人选出了一位让人回想起三十年前他们摆脱的军事独裁统治的总统。当特朗普推动煤炭和钢铁行业发展时，那些担心自己在肮脏、垂死的行业中被边缘化的人，突然觉得自己又有了价值。</p>
-<p>在发达国家，怀旧也提供了一种方式，来反抗别人的进步观念，从而夺回控制权。在前东德，极右翼政党——德国另类选择党拥有最强大的支持，那里的选民对失去社区和安全感到遗憾。</p>
-<p>在法国，“黄背心”砸碎了香榭丽舍大街上的商店橱窗，因为他们入不敷出。他们拒绝他们的总统伊曼纽尔·马克龙提出的国家繁荣与个人经济安全之间的权衡。</p>
-<p>这使得怀旧变得危险。抗议者并不一定希望时光倒流，他们可能只是想让时间慢下来。然而，这种僵化可能只会加剧衰退的感觉。此外，怀旧者渴望的自尊似乎常常助长仇外情绪。在印度，印度教民族主义复兴的过程中，针对穆斯林的仇恨犯罪有所增加。在西方，就在强硬的左翼人士谴责全球商业的阴谋诡计时，右翼人士记得一个更“白”、文化更少的过去。反犹太主义卷土重来并非偶然，尤其是在态度保守的杰里米•科尔宾领导的英国工党内部。</p>
-<p>由于仇外心理的影响，进步人士很快就把所有的怀旧情绪视为偏见，导致他们忽视了整个社会阶层的恐惧。这种笼统的判断是民粹主义者能够如此成功地利用怀旧情绪的又一个原因。</p>
-<p>他们过得太安逸了。怀旧可以被永久地利用。20世纪初，同样受到技术、地缘政治和文化变革的冲击，欧洲和美国也很怀旧。随后，一段时期的冲突和社会动荡导致了普选和全民教育。今天的政客可以从那个时代吸取教训。显然，它们必须通过维护和加强使各国能够合作的机构来避免战争。但他们也应该找到大胆的方法来应对不安全感和疏离感。这意味着国家机器需要为公民更加努力地工作，使教育贯穿公民的一生，改革税收，将权力下放，应对气候灾难，以及明智地管理移民。</p>
-<p><em>如果“过去”是“外国”，让我移民吧。</em></p>
-<p>怀旧者们有他们的道理。当一种管理世界的方式似乎已经用尽力量，而另一种方式还没有出现时，从过去吸取教训显得尤为重要。当一切似乎都没有意义时，历史就成了最高的学科。知道你是谁，从哪里来，这很重要。利用过去的最好方法是破除偏见，开拓视野。正确的历史观会帮助你明白，进步取决于面对艰难的选择。有时它也能激励人。50年前，阿波罗8号从佛罗里达州卡纳维拉尔角起飞。12月24日，它拍下了一幅地球的照片，这是一颗半遮半掩的蓝白色行星，看起来很团结。</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/QQ%E6%88%AA%E5%9B%BE20190103075927.png"></p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/12/16/%E5%9B%BE%E5%83%8F%E7%94%9F%E6%88%9001%E7%9B%B4%E7%BA%BF%E6%AE%B5%E6%89%AB%E6%8F%8F%E8%BD%AC%E6%8D%A2-1/">图像生成01直线段扫描转换</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-12-16</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学</a></span><div class="content"><p>三个常用的直线扫描转换算法</p>
-<p><strong>数值微分法</strong></p>
-<p>简要描述：</p>
-<p>根据端点算出直线斜率。从端点开始，x坐标每次加一，用增量的思想，取整数点。由于整型会面对舍入运算，需要对y值增加0.5 。</p>
-<p>计算举例：</p>
-<p>设两个端点为(0,0)(5,3)，计算出k值为0.6，计算过程如下：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1001-1.png"></p>
-<p>对于k&gt;1的情况，需要把xy交换，y每次增加1，x每次增加k分之q1。</p>
-<p>适用于任意斜率的伪代码如下：</p>
-<p>voidDDALine(int x0,int y0,int x1,int y1)<br>{<br>Int dx,dy,n,k;<br>float xinc,yinc,x,y;<br>dx=x1-x0;<br>dy=y1-y0;<br>if(abs(dx)&gt;abs(dy))//用来判断直线斜率<br>n=abs(dx);<br>else<br>n=abs(dy);<br>xinc=(float)dx/n;//求出x的增量<br>yinc=(float)dy/n;//求出y的增量<br>x=(float)x0;<br>y=(float)y0;<br>for(k=1;k&lt;=n;k++)//开始从起点循环<br>{<br>Drawpixel(int(x+0.5),int(y+0.5),color);//画点<br>x+=xinc;<br>y+=yinc;<br>}<br>}</p>
-<p><strong>中点画线法</strong></p>
-<p>该算法也采用了增量思想。</p>
-<p>以k小于1的直线为例，设起点的坐标为x0,y0 ,则下一个点的坐标的x值增加1，y的值只能增加0或者1，在0和1中选择接近理想直线的点。</p>
-<p>选择点的方法是与“中点”的值进行比较。假设下一个点为P1(xp1,yp1) 或P2(xp1,yp2) , 理想直线的点为Q(xq,yq)，P1与P2的中点为M。则M坐标应为(x0+1,y0+0.5) , yp1=y0+0 ,yp2=y0+1 ,比较yq与y0+0.5，若yq比y0+0.5大，则应该取上方的点，否则取下方的点。</p>
-<p>算法实现时的判定使用直线一般式方程，设终点为x1,y1 ，F(x,y)=ax+by+c，其中a为y1-y0，b为x1-x0，c为x0y1-x1y0。直线上的点F(x,y)=0,直线上的点大于0，直线下小于0。</p>
-<p>计算过程举例：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1002.png"></p>
-<p>任意斜率伪码：</p>
-<p>MidpointLine(int x0, int y0, int x1, int y1, int color)<br>{<br>    int a,b,delta1,delta2,d,x,y;//a是直线x的系数，b是直线y的系数，来自一般式方程<br>    a=y0-y1;//一般式的a就是等于俩端点y值的差,按例子中是2，此处取负值是为了应对任意斜率的直线<br>    b=x1-x0;//b就是俩端点x的差<br>    d=2*a+b;//d是我们构造的判别式的值，用来判断取哪个点，具体取法在下面的选择分支里，为了避免浮点数计算0.5没了所以变成了2a+b<br>    delta1=2*a;//d的其中一个增量，对应的是d大于等于0，上面翻倍了这里也要翻倍<br>    delta2=2*(a+b);//另一个情况的增量，也是翻倍了<br>    x=x0;//从端点开始画点了<br>    y=y0;//同上<br>    Drawpixel(x,y,color);//先把端点画上<br>    while(x <strong>Bresenham画线算法</strong></p>
-<p>总体思路与中点画线法相同，但是在判断点的坐标时采用了不同方法。设起始坐标(x0,y0)，则计算下一个点(x0+1,y1)中的y值，设理想y值为ny，若ny-y1&lt;1，则说明下一个点应该取y0，否则应该取y0+1。</p>
-<p>Bresenham (GLint x1,GLint y1,GLint x2,GLint y2)<br>{<br>    if(x20.0)<br>    {<br>        p=2*dy-dx;<br>        while(x=1的情况<br>    if(k&gt;=1.0)<br>    {<br>        p=dy;<br>        while(yk&gt;-1的情况<br>    if(k&gt;-1&amp;&amp;k&lt;0)<br>    {<br>        p=2*dy+dx;<br>        while(x=0)<br>                p+=twoDy;<br>            else<br>            {<br>                y–;<br>                p+=twoSum;<br>            }<br>            setPixel(x,y);<br>        }<br>    }<br>    //k&lt;-1的情况<br>    if(k&lt;=-1)<br>    {<br>        p=2*dx-dy;<br>        while(y&gt;y2)<br>        {<br>            y–;<br>            if(p&gt;=0)<br>                p-=twoDx;<br>            else<br>            {<br>                x++;<br>                p-=twoSum;<br>            }<br>            setPixel(x,y);<br>        }<br>    }<br>}</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/12/16/%E5%9B%BE%E5%83%8F%E7%94%9F%E6%88%9001%E7%9B%B4%E7%BA%BF%E6%AE%B5%E6%89%AB%E6%8F%8F%E8%BD%AC%E6%8D%A2/">图像生成01直线段扫描转换</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-12-16</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学</a></span><div class="content"><p>三个常用的直线扫描转换算法</p>
-<p><strong>数值微分法</strong></p>
-<p>简要描述：</p>
-<p>根据端点算出直线斜率。从端点开始，x坐标每次加一，用增量的思想，取整数点。由于整型会面对舍入运算，需要对y值增加0.5 。</p>
-<p>计算举例：</p>
-<p>设两个端点为(0,0)(5,3)，计算出k值为0.6，计算过程如下：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1001-1.png"></p>
-<p>对于k&gt;1的情况，需要把xy交换，y每次增加1，x每次增加k分之q1。</p>
-<p>适用于任意斜率的伪代码如下：</p>
-<p>voidDDALine(int x0,int y0,int x1,int y1)<br>{<br>Int dx,dy,n,k;<br>float xinc,yinc,x,y;<br>dx=x1-x0;<br>dy=y1-y0;<br>if(abs(dx)&gt;abs(dy))//用来判断直线斜率<br>n=abs(dx);<br>else<br>n=abs(dy);<br>xinc=(float)dx/n;//求出x的增量<br>yinc=(float)dy/n;//求出y的增量<br>x=(float)x0;<br>y=(float)y0;<br>for(k=1;k&lt;=n;k++)//开始从起点循环<br>{<br>Drawpixel(int(x+0.5),int(y+0.5),color);//画点<br>x+=xinc;<br>y+=yinc;<br>}<br>}</p>
-<p><strong>中点画线法</strong></p>
-<p>该算法也采用了增量思想。</p>
-<p>以k小于1的直线为例，设起点的坐标为x0,y0 ,则下一个点的坐标的x值增加1，y的值只能增加0或者1，在0和1中选择接近理想直线的点。</p>
-<p>选择点的方法是与“中点”的值进行比较。假设下一个点为P1(xp1,yp1) 或P2(xp1,yp2) , 理想直线的点为Q(xq,yq)，P1与P2的中点为M。则M坐标应为(x0+1,y0+0.5) , yp1=y0+0 ,yp2=y0+1 ,比较yq与y0+0.5，若yq比y0+0.5大，则应该取上方的点，否则取下方的点。</p>
-<p>算法实现时的判定使用直线一般式方程，设终点为x1,y1 ，F(x,y)=ax+by+c，其中a为y1-y0，b为x1-x0，c为x0y1-x1y0。直线上的点F(x,y)=0,直线上的点大于0，直线下小于0。</p>
-<p>计算过程举例：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1002.png"></p>
-<p>任意斜率伪码：</p>
-<p>MidpointLine(int x0, int y0, int x1, int y1, int color)<br>{<br>    int a,b,delta1,delta2,d,x,y;//a是直线x的系数，b是直线y的系数，来自一般式方程<br>    a=y0-y1;//一般式的a就是等于俩端点y值的差,按例子中是2，此处取负值是为了应对任意斜率的直线<br>    b=x1-x0;//b就是俩端点x的差<br>    d=2*a+b;//d是我们构造的判别式的值，用来判断取哪个点，具体取法在下面的选择分支里，为了避免浮点数计算0.5没了所以变成了2a+b<br>    delta1=2*a;//d的其中一个增量，对应的是d大于等于0，上面翻倍了这里也要翻倍<br>    delta2=2*(a+b);//另一个情况的增量，也是翻倍了<br>    x=x0;//从端点开始画点了<br>    y=y0;//同上<br>    Drawpixel(x,y,color);//先把端点画上<br>    while(x <strong>Bresenham画线算法</strong></p>
-<p>总体思路与中点画线法相同，但是在判断点的坐标时采用了不同方法。设起始坐标(x0,y0)，则计算下一个点(x0+1,y1)中的y值，设理想y值为ny，若ny-y1&lt;1，则说明下一个点应该取y0，否则应该取y0+1。</p>
-<p>Bresenham (GLint x1,GLint y1,GLint x2,GLint y2)<br>{<br>    if(x20.0)<br>    {<br>        p=2*dy-dx;<br>        while(x=1的情况<br>    if(k&gt;=1.0)<br>    {<br>        p=dy;<br>        while(yk&gt;-1的情况<br>    if(k&gt;-1&amp;&amp;k&lt;0)<br>    {<br>        p=2*dy+dx;<br>        while(x=0)<br>                p+=twoDy;<br>            else<br>            {<br>                y–;<br>                p+=twoSum;<br>            }<br>            setPixel(x,y);<br>        }<br>    }<br>    //k&lt;-1的情况<br>    if(k&lt;=-1)<br>    {<br>        p=2*dx-dy;<br>        while(y&gt;y2)<br>        {<br>            y–;<br>            if(p&gt;=0)<br>                p-=twoDx;<br>            else<br>            {<br>                x++;<br>                p-=twoSum;<br>            }<br>            setPixel(x,y);<br>        }<br>    }<br>}</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/12/15/1-4%E5%8F%82%E6%95%B0%E6%9B%B2%E7%BA%BF%E5%AE%9A%E4%B9%89%E5%8F%8A%E5%85%B6%E7%9B%B8%E5%85%B3-1/">曲线1.4参数曲线定义及其相关</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-12-15</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/">cg</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/%E6%95%B0%E5%AD%A6%E6%96%B9%E6%B3%95/">数学方法</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学</a></span><div class="content"><p><strong>——脑子不够未完待续啊——</strong></p>
-<p>一条用参数的三维曲线是一个有界的点集，可以写成一个带参数的、连续的、单值的数学函数，形式为：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1401.png"></p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1402.png"></p>
-<p><strong>位置矢量</strong></p>
-<p>如图，该曲线的端点在t=0,t=1处，曲线上任意一点的位置矢量（即其坐标）可以用矢量p(t)表示：</p>
-<p><img src="http://www.muchenhen.com/wp-content/uploads/2018/12/1403.png"></p>
-<p><strong>切矢量</strong></p>
-<p>若曲线上r，Q两点的参数分别是t和t+Δt，则可以表示下面矢量：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1404.png"></p>
-<p>其大小以链接rQ的弦长表示。如果曲线在r有确定的切线，则当Q趋于r，即Δt趋于0时，导数矢量dp/dt的方向趋于该点的切线方向。如果以弧长c作为参数，即p(c)，在极限情况下，|Δp|和Δc可认为相等，则有：</p>
-<p><img src="http://www.muchenhen.com/wp-content/uploads/2018/12/1405.png"></p>
-<p>是单位长度矢向量，其方向为曲线的切线方向，称为<strong><em>单位切向量</em></strong>。</p>
-<p>当切矢量的数值超过曲线弦长（曲线两端点之间的距离）几倍时，曲线会出现回转或过顶点等现象，而小于弦长许多时，也会使曲线变得过于平坦。</p>
-<p><strong>曲率</strong></p>
-<p>与曲线在空间中弯曲和扭转相关的特征量。对于一个曲线路径，可在它的每一点构造一个正交坐标系，该坐标系的一个轴与曲线在该点的切线方向平行。</p>
-<p>通过微分来定义，表明曲线偏离直线的程度。数学上表明曲线在某一点的弯曲程度的数值。</p>
-<p>曲率越大，表示曲线的弯曲程度越大。曲率的倒数就是曲率半径。</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1406.png"></p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/12/15/1-4%E5%8F%82%E6%95%B0%E6%9B%B2%E7%BA%BF%E5%AE%9A%E4%B9%89%E5%8F%8A%E5%85%B6%E7%9B%B8%E5%85%B3/">曲线1.4参数曲线定义及其相关</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-12-15</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/">cg</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/%E6%95%B0%E5%AD%A6%E6%96%B9%E6%B3%95/">数学方法</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学</a></span><div class="content"><p><strong>——脑子不够未完待续啊——</strong></p>
-<p>一条用参数的三维曲线是一个有界的点集，可以写成一个带参数的、连续的、单值的数学函数，形式为：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1401.png"></p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1402.png"></p>
-<p><strong>位置矢量</strong></p>
-<p>如图，该曲线的端点在t=0,t=1处，曲线上任意一点的位置矢量（即其坐标）可以用矢量p(t)表示：</p>
-<p><img src="http://www.muchenhen.com/wp-content/uploads/2018/12/1403.png"></p>
-<p><strong>切矢量</strong></p>
-<p>若曲线上r，Q两点的参数分别是t和t+Δt，则可以表示下面矢量：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1404.png"></p>
-<p>其大小以链接rQ的弦长表示。如果曲线在r有确定的切线，则当Q趋于r，即Δt趋于0时，导数矢量dp/dt的方向趋于该点的切线方向。如果以弧长c作为参数，即p(c)，在极限情况下，|Δp|和Δc可认为相等，则有：</p>
-<p><img src="http://www.muchenhen.com/wp-content/uploads/2018/12/1405.png"></p>
-<p>是单位长度矢向量，其方向为曲线的切线方向，称为<strong><em>单位切向量</em></strong>。</p>
-<p>当切矢量的数值超过曲线弦长（曲线两端点之间的距离）几倍时，曲线会出现回转或过顶点等现象，而小于弦长许多时，也会使曲线变得过于平坦。</p>
-<p><strong>曲率</strong></p>
-<p>与曲线在空间中弯曲和扭转相关的特征量。对于一个曲线路径，可在它的每一点构造一个正交坐标系，该坐标系的一个轴与曲线在该点的切线方向平行。</p>
-<p>通过微分来定义，表明曲线偏离直线的程度。数学上表明曲线在某一点的弯曲程度的数值。</p>
-<p>曲率越大，表示曲线的弯曲程度越大。曲率的倒数就是曲率半径。</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1406.png"></p>
-</div><hr></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/10/"><i class="fa fa-chevron-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/">12</a><span class="space">&hellip;</span><a class="page-number" href="/page/56/">56</a><a class="extend next" rel="next" href="/page/12/"><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer class="footer-bg" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div class="layout" id="footer"><div class="copyright">&copy;2017 - 2020 By 木尘痕</div><div class="framework-info"><span>Driven - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="footer_custom_text">千秋竟岁，伏苦飞逐</div><div class="icp"><a><span>豫ICP备17048032号</span></a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_site_uv"><i class="fa fa-user"></i><span id="busuanzi_value_site_uv"></span><span></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i><span id="busuanzi_value_site_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.8.2"></script><script src="/js/fancybox.js?version=1.8.2"></script><script src="/js/sidebar.js?version=1.8.2"></script><script src="/js/copy.js?version=1.8.2"></script><script src="/js/fireworks.js?version=1.8.2"></script><script src="/js/transition.js?version=1.8.2"></script><script src="/js/scroll.js?version=1.8.2"></script><script src="/js/head.js?version=1.8.2"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+} </script><meta name="generator" content="Hexo 5.1.0"></head><body><canvas class="fireworks"></canvas><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="author-info"><div class="author-info__avatar text-center"><img src="https://github.com/muchenhen/muchenhen.github.io/blob/master/XuanGe.jpg?raw=true"></div><div class="author-info__name text-center">木尘痕</div><div class="author-info__description text-center">放一些笔记的地方</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">274</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">22</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">32</span></a></div><hr><div class="author-info-links"><div class="author-info-links__title text-center">Links</div><a class="author-info-links__name text-center" target="_blank" rel="noopener" href="https://alec-ray.github.io/">止戈</a></div></div></div><nav id="nav" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">风生之谷</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">Home</a><a class="site-page" href="/archives">Archives</a><a class="site-page" href="/tags">tags</a><a class="site-page" href="/categories">categories</a><a class="site-page" href="/contact">contact</a><a class="site-page" href="/">主页</a><a class="site-page" href="/archives">全部文章</a><a class="site-page" href="/tags">标签分类</a><a class="site-page" href="/categories">文章分类</a><a class="site-page" href="/contact">联系</a></span><span class="pull-right"></span></div><div id="site-info"><div id="site-title">风生之谷</div><div id="site-sub-title">一点浩然气 千里快哉风</div></div></nav><div id="content-outer"><div class="layout" id="content-inner"><div class="recent-post-item article-container"><a class="article-title" href="/2018/10/24/%E5%A4%9A%E8%BE%B9%E5%BD%A2%E7%9A%84%E5%8C%BA%E5%9F%9F%E5%A1%AB%E5%85%85/">多边形的区域填充</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/OpenGL/">OpenGL</a></span><div class="content"><p><strong>详细的函数实现思路需要缓缓思路</strong></p>
+<p>扫描线算法实现区域填充，算法核心为求扫描线与多边形边线的交点。</p>
+<p>按照求交，排序，交点配对，区间填色的步骤</p>
+<p>此处详细知识看相关的计算机图形学的书籍，一般都有对多边形域的填充的相关内容。以下着重C++实现算法。</p>
+<p><strong>1**</strong>、算法的基本思想**</p>
+<p>此处略去对于一条扫描线的一般四个步骤。</p>
+<p>对于求交点，是关键的一步，需要尽量少的计算求出交点，并且要注意特殊交点。如果按照正常的线段求交点的方法进行计算，会导致计算量过大。</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/10/1.jpg"></p>
+<p>如图可知：</p>
+<p>1、同一条扫描线并不会同时和所有的边有交点。</p>
+<p>2、相邻的扫描线与同一直线的交点位置存在递推关系，这一点可以用来把乘法换成加法</p>
+<p>对于第一点，按照孙家广《计算机图形学》中，在处理一条扫描时，仅对与他相交的多边形的边进行求交运算。把与当前扫描线相交的边称为<strong>活性边（活动边），</strong>并把它们按与扫描线交点x坐标递增的顺序存放在一个链表中，称此链表为活性链表（AET）。例如扫描线4的“活动边表”由P1P2和P3P4两条边组成，而扫描线7的“活动边表”由P1P2、P6P1、P5P6和P4P5四条边组成。</p>
+<p>对于第二点，由图可以轻易发现，当前的活动边已经通过直线段求交点算法求出了交点，下一条活动边的交点不需要再求交计算，通过步进关系可以直接得到新交点坐标为（x + △x, y + 1）。前面提到过，步进关系△x是个常量，与直线的斜率有关，易得出△x=-b/a，斜率的倒数。推导的过程可以参考老师上课讲的任意斜率的数值微分法。</p>
+<p>接下来要考虑整个核心的<strong>活性边表，</strong>其实是关于扫描线的单链表。为了定义链表，首先需要定义“边”的数据类型，此处使用结构体</p>
+<p>typedef struct tagEDGE<br> {<br>     double xi;<br>    double dx;<br>     int ymax;<br> }EDGE;</p>
+<p>需要注意的是，扫描填充在意的只是交点的x坐标。Dx用来简化求下一条活性边交点的运算。同时，如果下一条扫描线与“边”没有交点之后，需要从边表删除掉该“边”。判断是否有交点需要看扫描线y是否大于该边的两端端点的y值，所以需要定义一下边的y坐标的最大值ymax。</p>
+<p>如果多边形不自交，关于一条“边”从当前到下一条扫描线延续，交点的顺序是不变的，有图象可以看出来。但是如果多边形自交了，比如对顶三角形，就会出现交点顺序改变，此时需要重新排序，因为扫描线是连贯的，仅有个别点需要重排序，可以使用冒泡排序：<a target="_blank" rel="noopener" href="https://www.muchenhen.com/2018/08/29/%e5%86%92%e6%b3%a1%e6%8e%92%e5%ba%8f/">冒泡排序</a></p>
+<p><strong>这些都是书上有的东西啊！关于新交上的边肯定是要添加到表里面啊，最好插进去的时候就排好序啊，所以<a target="_blank" rel="noopener" href="https://www.muchenhen.com/2018/10/28/%e6%8f%92%e5%85%a5%e6%8e%92%e5%ba%8f/">插入排序</a>啊！</strong></p>
+<p>下面是扫描线4和扫描线7的活性边表</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/10/2.png"></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/10/3.png"></p>
+<p>每一条扫描线都需要一个活性边表，所以为了方便更新活性边表，建立一个新边表。</p>
+<p><strong>以下是我的个人看法，书上写的比较专业**</strong>= =**</p>
+<p><strong>建立新边表的目的：</strong>为了不用计算每一条扫描线与边的交点，可以利用活性边表方便归纳出所有扫描线的活性边表。可以用新边表直接补全活性边表</p>
+<p><strong>建立“新边表”的规则是</strong>：如果某条边的较低端点（y坐标较小的那个点）的y坐标与扫描线y相等，则该边就是扫描线y的新边，应该加入扫描线y的“新边表”。</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/10/4.png"></p>
+<p>下面是补全的活性边表</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/10/5.png"></p>
+<p><strong>2**</strong>、特殊边和定点处理**</p>
+<p><strong>水平边：</strong>麻烦直接画出来，不然全都是交点！</p>
+<p><strong>顶点：为了保证偶数个交点，按照课本的方法对不同的点算不同的次数。</strong></p>
+<p><strong>填充边界：</strong>书上说了左开右闭，行规。</p>
+<p><strong>3**</strong>、算法实现**</p>
+<p>以下所有代码仅涉及了C++基本语法啊，不会的自己百度啊</p>
+<p>画线算法不再赘述。</p>
+<p>基本上需要这几个函数：</p>
+<p><strong>首先需要定义新边表的数据结构。定义“新边表”为一个数组，数组的每个元素存放对应扫描线的所有“新边”。</strong></p>
+<p><strong>ScanLinePolygonFill**</strong>：**在开始对每条扫描线处理之前，需要先计算出多边形的ymax和ymin并初始化“新边表”（调用下面那个）。</p>
+<p><strong>InitScanLineNewEdgeTable**</strong>：**根据多边形的顶点和边的情况初始化“新边表”。</p>
+<p><strong>ProcessScanLineFill</strong>函数开始对每条扫描线进行处理。</p>
+<p><strong>InsertNetListToAet</strong>函数负责将扫描线对应的所有新边插入到AET中，插入操作到保证AET还是有序表，应用插入排序。</p>
+<p>**FillAetScanLine()**函数执行具体的填充动作，它将AET中的边交点成对取出组成填充区间，然后根据“左闭右开”的原则对每个区间填充。</p>
+<p>**RemoveNonActiveEdgeFromAet()**函数负责将对下一条扫描线来说已经不是“活动边”的边从AET中删除，删除的条件就是当前扫描线y与边的ymax相等，如果有多条边满足这个条件，则一并全部删除。</p>
+<p><strong>UpdateAndResortAet</strong>函数更新边表中每项的xi值，就是根据扫描线的连贯性用dx对其进行修正，并且根据xi从小到大的原则对更新后的AET表重新排序。</p>
+<p>#include #include const int POINTNUM=7;      //多边形点数.</p>
+<p>//定义结构体用于活性边表AET和新边表NET<br>typedef struct XET<br>{<br>    float x;<br>    float dx,ymax;<br>    XET* next;<br>} AET,NET;</p>
+<p>//定义点结构体point<br>struct point<br>{<br>    float x;<br>    float y;<br>} polypoint[POINTNUM]= { {250,50},{50,150},{550,400},{250,250},{100,350},{100,100},{120,30} }; //多边形顶点</p>
+<p>void PolyScan()<br>{<br>    //计算最高点的y坐标(扫描到此结束)<br>    int MaxY=0;<br>    int i;<br>    for(i=0; iMaxY)<br>            MaxY=polypoint[i].y;</p>
+<pre><code>//初始化AET表
+AET \*pAET=new AET;
+pAET-&gt;next=NULL;
+
+//初始化NET表
+NET \*pNET\[1024\];
+for(i=0; i&lt;=MaxY; i++)
+&#123;
+    pNET\[i\]=new NET;
+    pNET\[i\]-&gt;next=NULL;
+&#125;
+glClear(GL\_COLOR\_BUFFER\_BIT);        //赋值的窗口显示.
+glColor3f(0.0,0.0,0.0);             //设置直线的颜色红色
+glBegin(GL\_POINTS);
+//扫描并建立NET表
+for(i=0; i&lt;=MaxY; i++)
+&#123;
+    for(int j=0; jpolypoint\[j\].y)
+            &#123;
+                NET \*p=new NET;
+                p-&gt;x=polypoint\[j\].x;
+                p-&gt;ymax=polypoint\[(j-1+POINTNUM)%POINTNUM\].y;
+                p-&gt;dx=(polypoint\[(j-1+POINTNUM)%POINTNUM\].x-polypoint\[j\].x)/(polypoint\[(j-1+POINTNUM)%POINTNUM\].y-polypoint\[j\].y);
+                p-&gt;next=pNET\[i\]-&gt;next;
+                pNET\[i\]-&gt;next=p;
+            &#125;
+            if(polypoint\[(j+1+POINTNUM)%POINTNUM\].y&gt;polypoint\[j\].y)
+            &#123;
+                NET \*p=new NET;
+                p-&gt;x=polypoint\[j\].x;
+                p-&gt;ymax=polypoint\[(j+1+POINTNUM)%POINTNUM\].y;
+                p-&gt;dx=(polypoint\[(j+1+POINTNUM)%POINTNUM\].x-polypoint\[j\].x)/(polypoint\[(j+1+POINTNUM)%POINTNUM\].y-polypoint\[j\].y);
+                p-&gt;next=pNET\[i\]-&gt;next;
+                pNET\[i\]-&gt;next=p;
+            &#125;
+        &#125;
+&#125;
+//建立并更新活性边表AET
+for(i=0; i&lt;=MaxY; i++)
+&#123;
+    //计算新的交点x,更新AET
+    NET \*p=pAET-&gt;next;
+    while(p)
+    &#123;
+        p-&gt;x=p-&gt;x + p-&gt;dx;
+        p=p-&gt;next;
+    &#125;
+    //更新后新AET先排序/
+    //断表排序,不再开辟空间
+    AET \*tq=pAET;
+    p=pAET-&gt;next;
+    tq-&gt;next=NULL;
+    while(p)
+    &#123;
+        while(tq-&gt;next &amp;&amp; p-&gt;x &gt;= tq-&gt;next-&gt;x)
+            tq=tq-&gt;next;
+        NET \*s=p-&gt;next;
+        p-&gt;next=tq-&gt;next;
+        tq-&gt;next=p;
+        p=s;
+        tq=pAET;
+    &#125;
+    //(改进算法)先从AET表中删除ymax==i的结点
+    AET \*q=pAET;
+    p=q-&gt;next;
+    while(p)
+    &#123;
+        if(p-&gt;ymax==i)
+        &#123;
+            q-&gt;next=p-&gt;next;
+            delete p;
+            p=q-&gt;next;
+        &#125;
+        else
+        &#123;
+            q=q-&gt;next;
+            p=q-&gt;next;
+        &#125;
+    &#125;
+    //将NET中的新点加入AET,并用插入法按X值递增排序
+    p=pNET\[i\]-&gt;next;
+    q=pAET;
+    while(p)
+    &#123;
+        while(q-&gt;next &amp;&amp; p-&gt;x &gt;= q-&gt;next-&gt;x)
+            q=q-&gt;next;
+        NET \*s=p-&gt;next;
+        p-&gt;next=q-&gt;next;
+        q-&gt;next=p;
+        p=s;
+        q=pAET;
+    &#125;
+    //配对填充颜色
+
+    p=pAET-&gt;next;
+    while(p &amp;&amp; p-&gt;next)
+    &#123;
+        for(float j=p-&gt;x; j&lt;=p-&gt;next-&gt;x; j++)
+            glVertex2i(static\_cast(j),i);
+        p=p-&gt;next-&gt;next;//考虑端点情况
+    &#125;
+&#125;
+glEnd();
+glFlush();</code></pre>
+<p>}</p>
+<p>void init(int argc,char** argv)<br>{<br>    glutInit(&amp;argc,argv);  //I初始化 GLUT.<br>    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);  =<br>    glutInitWindowPosition(50,100);  //设置窗口的顶部和左边位置<br>    glutInitWindowSize(800,600);  //设置窗口的高度和宽度<br>    glutCreateWindow(“Scan Program”);</p>
+<pre><code>glClearColor(1.0,1.0,1.0,0); //窗口背景颜色为白色
+glMatrixMode(GL\_PROJECTION);
+gluOrtho2D(0,600,0,450);</code></pre>
+<p>}</p>
+<p>void myDisplay(void)<br>{<br>    glClear(GL_COLOR_BUFFER_BIT);<br>    glColor3f(0.0,0.4,0.2);<br>    glPointSize(1);<br>    glBegin(GL_POINTS);<br>    PolyScan();<br>    glEnd();<br>    glFlush();<br>}</p>
+<p>int main(int argc,char** argv)<br>{<br>    init(argc,argv);<br>    glutDisplayFunc(myDisplay);<br>    glutMainLoop();<br>    return 0;<br>}</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/09/27/%E5%9B%9E%E6%BA%AF%E6%B3%95%E8%A7%A3%E5%86%B3n%E7%9A%87%E5%90%8E%E9%97%AE%E9%A2%98/">回溯法解决N皇后问题</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a></span><div class="content"><p>解题思路：</p>
+<p>把皇后放在第x[i]列，行号列号从0开始一个一个找：</p>
+<p>初始x[0]=0,然后找第一个合法的x[1]，可得x[1]=2，再寻找第一个合法的x[2],发现0、1、2、3都不行，需要回退到x[1],令x[1]=3，继续寻找x[2],若找到一组解就寻找下一组，否则回退，直到无法回退为止。</p>
+<p>X[i]表示n后皇后i放置在棋盘的第i行的第x[i]列</p>
+<p>设两个皇后的位置分别是(a,b)(x,y)则两个皇后在同一个斜线上的条件是a-b=x-y或者是a+b=x+y</p>
+<p>/*<br>用n元组x[1:n]表示n后问题的解。x[i]表示皇后i放置在棋盘的第i行的第x[i]列<br>*/</p>
+<p>#include #include<br>#include<br>#include<br>using namespace std;</p>
+<p>static int n, x[1000];<br>static long sum;</p>
+<p>/*<br>判断第k个后能不能放在x[k]处<br>两个皇后不能放在统一斜线上：<br>若2个皇后放置的位置分别是（i,j）和（k,l）,<br>且 i-j = k -l 或 i+j = k+l，则说明这2个皇后处于同一斜线上。<br>*/</p>
+<p>void OutPut()<br>{<br>    for (int i = 1; i &lt;= n; ++i)<br>        cout&lt;n说明已经完成一次放置<br>    if (t &gt; n)<br>    {<br>        sum++;<br>        OutPut();//输出放置的情况<br>    }<br>    else//没有成功放置<br>    {<br>        for (int i = 1; i &lt;= n; ++i)<br>        {<br>            x[t] = i;<br>            if (Place(t))                   //可以放在i位置处，则继续搜索<br>                BackTrack1(t + 1);<br>        }<br>    }<br>}</p>
+<p>void BackTrack()<br>{<br>    int k;<br>    x[1] = 0;       //初始化为0<br>    k = 1;//<br>    while (k &gt;= 1)  //循环<br>    {<br>        x[k] += 1;  //先放在第一个位置<br>        while ((x[k] &lt;= n) &amp;&amp; !(Place(k)))  //如果不能放<br>            x[k] += 1;                      //放在下一个位置<br>        if (x[k] &lt;= n)                      //放置完成<br>        {<br>            if (k == n)                     //如果已经放完了n个皇后<br>            {<br>                sum++;                      //处理次数，输出<br>                OutPut();<br>            }<br>            else                            //没有处理完，让k自加，处理下一个皇后<br>            {<br>                k++;<br>                x[k] = 0;<br>            }<br>        }                                   //x[k] &gt; n，说明没有合适的位置了，重回第一列<br>        else<br>            k–;                            //回溯回去，回到第k-1步，即回到上一行，继续上一行的下一列<br>    }<br>}</p>
+<p>int main()<br>{<br>    double duration;</p>
+<pre><code>int nn;
+while (cin&gt;&gt;nn)
+&#123;
+    n = nn;
+    sum = 0;
+    for (int i = 0; i &lt;= n; ++i)
+        x\[i\] = 0;
+    BackTrack();
+    //BackTrack1(1);
+    printf(&quot;%d\\n&quot;, sum);
+&#125;
+
+return 0;</code></pre>
+<p>}</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/09/24/%E4%BA%8C%E5%88%86%E4%BE%8B%E9%A2%98%EF%BC%9Aaggressive-cows/">二分例题：Aggressive cows</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/MOOC%E7%AC%94%E8%AE%B0/">MOOC笔记</a></span><div class="content"><p>总时间限制: 1000ms</p>
+<p>内存限制: 65536kB</p>
+<p><strong>描述</strong></p>
+<p>Farmer John has built a new long barn, with N (2 &lt;= N &lt;= 100,000) stalls. The stalls are located along a straight line at positions x1,…,xN (0 &lt;= xi &lt;= 1,000,000,000).</p>
+<p>His C (2 &lt;= C &lt;= N) cows don’t like this barn layout and become aggressive towards each other once put into a stall. To prevent the cows from hurting each other, FJ want to assign the cows to the stalls, such that the minimum distance between any two of them is as large as possible. What is the largest minimum distance?</p>
+<p><strong>输入</strong></p>
+<p>* Line 1: Two space-separated integers: N and C</p>
+<p>* Lines 2..N+1: Line i+1 contains an integer stall location, xi</p>
+<p><strong>输出</strong></p>
+<p>* Line 1: One integer: the largest minimum distance</p>
+<p><strong>样例输入</strong></p>
+<p>5 3<br>1<br>2<br>8<br>4<br>9</p>
+<p><strong>样例输出</strong></p>
+<p>3</p>
+<p><strong>提示</strong></p>
+<p>OUTPUT DETAILS:</p>
+<p>FJ can put his 3 cows in the stalls at positions 1, 4 and 8, resulting in a minimum distance of 3.</p>
+<p>Huge input data,scanf is recommended.</p>
+<p><strong>来源</strong></p>
+<p>USACO 2005 February Gold</p>
+<p>来自 &lt;<a target="_blank" rel="noopener" href="http://cxsjsxmooc.openjudge.cn/2018t2fallw4/1/">http://cxsjsxmooc.openjudge.cn/2018t2fallw4/1/</a>&gt;</p>
+<p>农夫 John 建造了一座很长的畜栏，它包括N (2≤N≤100,000)个隔间，这 些小隔间的位置为x0 ,…,xN-1 (0≤xi≤1,000,000,000,均为整数,各不相同). John的C (2≤C≤N)头牛每头分到一个隔间。牛都希望互相离得远点省得互 相打扰。怎样才能使任意两头牛之间的最小距离尽可能的大，这个最大的 最小距离是多少呢？</p>
+<p>解法1： 先得到排序后的隔间坐标 x0 ,…,xN-1 从1,000,000,000到1依次尝试这个 “最大的最近距离”D，找到的 第一个可行的就是答案。 尝试方法： 1) 第1头牛放在x0 2) 若第k头牛放在xi ，则找到xi+1到xN-1中第一个位于[xi+D, 1,000,000,000]中的Xj ,第k+1头牛放在Xj。找不到这样的Xj ,则 D=D-1,转 1)再试 若所有牛都能放下，则D即答案</p>
+<p>复杂度 1,000,000,000/C *N，即 1,000,000,000, 超时</p>
+<p>解法2： 先得到排序后的隔间坐标 x0 ,…,xN-1 在[L,R]内用二分法尝试“最大最近距离”D = (L+R)/2 (L,R初值为 [1, 1,000,000,000/C] 若D可行，则记住该D，然后在新[L,R]中继续尝试(L= D+1) 若D不可行，则在新[L,R]中继续尝试(R= D-1) 复杂度 log(1,000,000,000/C) * N</p>
+<p>#include #include #include #include #include using namespace std;</p>
+<p>int a[100005];<br>int n, m;<br>int f(int mid)    //查找距离为mid时的个数<br>{<br>    int sum = 0;<br>    int len = 1;<br>    for (int i = 1; i &lt; n; i++)<br>    {<br>        if ((sum + (a[i] - a[i - 1])) &lt; mid)<br>        {<br>            sum += (a[i] - a[i - 1]);<br>        }<br>        else<br>        {<br>            sum = 0;<br>            len++;<br>        }<br>    }<br>    if (len &lt; m) return false;<br>    else return true;<br>}</p>
+<p>int main()<br>{<br>    int i;<br>    while (scanf_s(“%d%d”, &amp;n, &amp;m) == 2)<br>    {</p>
+<pre><code>    for (i = 0; i &lt; n; i++)
+    &#123;
+        scanf\_s(&quot;%d&quot;, &amp;a\[i\]);
+    &#125;
+    sort(a, a + n);
+    int low = a\[n - 1\] - a\[0\], high = a\[n - 1\] - a\[0\];
+    for (i = 1; i &lt; n; i++)
+    &#123;
+        low = min(low, a\[i\] - a\[i - 1\]);
+    &#125;
+    int mid;
+    while (low &lt;= high)
+    &#123;
+        mid = (low + high) / 2;
+        if (f(mid))
+        &#123;
+            low = mid + 1;
+        &#125;
+        else
+        &#123;
+            high = mid - 1;
+        &#125;
+    &#125;
+    printf(&quot;%d\\n&quot;, high);
+&#125;
+return 0;</code></pre>
+<p>}</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/09/24/%E4%BA%8C%E5%88%86%E4%BE%8B%E9%A2%98%EF%BC%9A%E5%AF%BB%E6%89%BE%E6%8C%87%E5%AE%9A%E5%92%8C%E7%9A%84%E6%95%B4%E6%95%B0%E5%AF%B9/">二分例题：寻找指定和的整数对</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/MOOC%E7%AC%94%E8%AE%B0/">MOOC笔记</a></span><div class="content"><p>输入n ( n&lt;= 100,000)个整数，找出其中的两个数，它们之和等于整数m(假定肯 定有解)。题中所有整数都能用 int 表示</p>
+<p>解法1：用两重循环，枚举所有的取数方法，复杂度是O(n2 )的</p>
+<p>for(int i = 0;i &lt; n-1; ++i)<br>    for(int j = i + 1; j &lt; n; ++j)<br>        if( a[i]+a[j] == m)<br>break;</p>
+<p>100,0002 = 100亿，在各种OJ上提交或参加各种程序设计竞赛，这样的复杂度都会超时</p>
+<p>解法2： 1) 将数组排序，复杂度是O(n×log(n)) 2) 对数组中的每个元素a[i],在数组中二分查找m-a[i]，看能否找到。复杂度log(n)，最 坏要查找n-2次，所以查找这部分的复杂度也是O(n×log(n)) 这种解法总的复杂度是O(n×log(n))的。</p>
+<p>解法3： 1) 将数组排序，复杂度是O(n×log(n)) 2) 查找的时候，设置两个变量i和j,i初值是0,j初值是n-1.看a[i]+a[j],如果大于m，就让j 减1，如果小于m,就让i加1，直至a[i]+a[j]=m。 这种解法总的复杂度是O(n×log(n))的。</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/09/24/%E4%BA%8C%E5%88%86%E6%B3%95%E6%B1%82%E6%96%B9%E7%A8%8B%E7%9A%84%E6%A0%B9/">二分法求方程的根</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/MOOC%E7%AC%94%E8%AE%B0/">MOOC笔记</a></span><div class="content"><p>求下面方程的一个根：f(x) = x3 -5x2+10x-80 = 0 若求出的根是a，则要求 |f(a)| &lt;= 10-6</p>
+<p>解法：对f(x)求导，得f’(x)=3x2-10x+10。由一元二次方程求根公式知方程 f’(x)= 0 无解，因此f’(x)恒大于0。故f(x)是单调递增的。易知 f(0) &lt; 0且 f(100)&gt;0,所以区间[0,100]内必然有且只有一个根。由于f(x)在[0,100]内是单 调的，所以可以用二分的办法在区间[0,100]中寻找根。</p>
+<p>#include<br>#include<br>#include<br>using namespace std;<br>double EPS = 1e-6;<br>double f(double x) { return x * x*x - 5 * x*x + 10 * x - 80; }<br>int main() {<br>    double root, x1 = 0, x2 = 100, y;<br>    root = x1 + (x2 - x1) / 2;<br>    int triedTimes = 1; //记录一共尝试多少次，对求根来说不是必须的<br>    y = f(root);<br>    while (fabs(y) &gt; EPS) {<br>        if (y &gt; 0) x2 = root;<br>        else x1 = root;<br>        root = x1 + (x2 - x1) / 2;<br>        y = f(root);<br>        triedTimes++;<br>    }<br>    printf(“%.8f\n”, root);<br>    printf(“%d”, triedTimes);<br>    return 0;<br>}</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/09/24/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/">二分查找</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/MOOC%E7%AC%94%E8%AE%B0/">MOOC笔记</a></span><div class="content"><p>A心里想一个1-1000之间的数，B来猜，可以问问题，A只能回答是或否。怎 么猜才能问的问题次数最少？ 是1吗？是2吗？…….是999吗？ 平均要问500次 大于500吗？大于750吗？大于625吗？ ……每次缩小猜测范围到上次的一半， 只需要 10次</p>
+<p>写一个函数BinarySeach，在包含size个元素的、从小到大排序的int数组a里查找元素 p,如果找到，则返回元素下标，如果找不到，则返回-1。要求复杂度O(log(n))</p>
+<p>int BinarySearch(int a[], int size, int p)<br>{<br>    int L = 0; //查找区间的左端点<br>    int R = size - 1; //查找区间的右端点<br>    while (L &lt;= R) { //如果查找区间不为空就继续查找<br>        int mid = L + (R - L) / 2; //取查找区间正中元素的下标<br>        if (p == a[mid])<br>            return mid;<br>        else if (p &gt; a[mid])<br>            L = mid + 1; //设置新的查找区间的左端点<br>        else<br>            R = mid - 1; //设置新的查找区间的右端点<br>    }<br>    return -1;<br>} //复杂度O(log(n))</p>
+<p>写一个函数LowerBound，在包含size个元素的、从小到大排序的int数组a里查找比给 定整数p小的，下标最大的元素。找到则返回其下标，找不到则返回-1</p>
+<p>int LowerBound(int a[], int size, int p) //复杂度O(log(n))<br>{<br>    int L = 0; //查找区间的左端点<br>    int R = size - 1; //查找区间的右端点<br>    int lastPos = -1; //到目前为止找到的最优解<br>    while (L &lt;= R) { //如果查找区间不为空就继续查找<br>        int mid = L + (R - L) / 2; //取查找区间正中元素的下标<br>        if (a[mid] &gt;= p)<br>            R = mid - 1;<br>        else {<br>            lastPos = mid;<br>            L = mid + 1;<br>        }<br>    }<br>    return lastPos;<br>}</p>
+<p>注意： int mid = (L+R)/2; //取查找区间正中元素的下标</p>
+<p>为了防止 (L+R)过大溢出: int mid = L+(R-L)/2;</p>
+<p>二分查找的前提是已经被排过序</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/09/24/%E7%A8%8B%E5%BA%8F%E6%88%96%E7%AE%97%E6%B3%95%E7%9A%84%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6/">程序或算法的时间复杂度</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/MOOC%E7%AC%94%E8%AE%B0/">MOOC笔记</a></span><div class="content"><p>一个程序或算法的时间效率，也称“时间复杂度”，有时简称“复杂度”</p>
+<p>复杂度常用大的字母O和小写字母n来表示，比如O(n),O(n2 )等。n代表问题 的规模</p>
+<p>时间复杂度是用算法运行过程中，某种时间固定的操作需要被执行的次数和n 的关系来度量的。在无序数列中查找某个数，复杂度是O(n)</p>
+<p>计算复杂度的时候，只统计执行次数最多的(n足够大时)那种固定操作的次数 。比如某个算法需要执行加法n2次，除法n次，那么就记其复杂度是O(n2 )的。</p>
+<p>如果复杂度是多个n的函数之和，则只关心随n的增长增长得最快的那个函数</p>
+<p>O(n3+n2 ) =&gt; O(n3 )</p>
+<p>O(2n+n3 ) =&gt; O(2n )</p>
+<p>O(n! + 3n ) =&gt; O(n!)</p>
+<p>常数复杂度：O(1) 时间(操作次数)和问题的规模无关</p>
+<p>对数复杂度：O(log(n))</p>
+<p>线性复杂度：O(n)</p>
+<p>多项式复杂度：O(nk )</p>
+<p>指数复杂度：O(an )</p>
+<p>阶乘复杂度：O(n! )</p>
+<p>复杂度有“平均复杂度”和“最坏复杂度”两种。 两者可能一致，也可能不一致</p>
+<p>在无序数列中查找某个数(顺序查找) O(n)</p>
+<p>平面上有n个点，要求出任意两点之间的距离 O(n2 )</p>
+<p>插入排序、选择排序、冒泡排序 O(n2 )</p>
+<p>快速排序 O( n*log(n))</p>
+<p>二分查找 O(log(n))</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/09/23/leetcode%E9%A2%98%E8%A7%A3%EF%BC%9A160-%E7%9B%B8%E4%BA%A4%E9%93%BE%E8%A1%A8/">LeetCode题解：160. 相交链表</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a></span><div class="content"><p>编写一个程序，找到两个单链表相交的起始节点。</p>
+<p>例如，下面的两个链表：<br>A: a1 → a2<br>                    ↘<br>                         c1 → c2 → c3<br>                     ↗<br>B: b1 → b2 → b3</p>
+<p>在节点 c1 开始相交。</p>
+<p>注意：<br>• 如果两个链表没有交点，返回 null.<br>• 在返回结果后，两个链表仍须保持原有的结构。<br>• 可假定整个链表结构中没有循环。<br>• 程序尽量满足 O(n) 时间复杂度，且仅用 O(1) 内存。</p>
+<p>来自 <a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/intersection-of-two-linked-lists/description/">https://leetcode-cn.com/problems/intersection-of-two-linked-lists/description/</a></p>
+<p>/**<br> * Definition for singly-linked list.<br> * struct ListNode {<br> *     int val;<br> *     ListNode *next;<br> *     ListNode(int x) : val(x), next(NULL) {}<br> * };<br> */<br>class Solution {<br>public:<br>   ListNode *getIntersectionNode(ListNode *headA, ListNode *headB){<br>    if(!headA || !headB)<br>        return NULL;<br>    int lenA= getLength(headA),lenB=getLength(headB);<br>    if(lenAnext;<br>    }<br>    else<br>    {<br>        for (int i = 0; i &lt; lenA-lenB; i++)<br>            headA=headA-&gt;next;<br>    }<br>    while (headA &amp;&amp; headB &amp;&amp; headA!=headB )<br>    {<br>        headA=headA-&gt;next;<br>        headB=headB-&gt;next;<br>    }<br>    return headA&amp;&amp;headB?headA:NULL;<br>}</p>
+<p>int getLength(ListNode *head){<br>    int cnt=0;<br>        while (head) {<br>            ++cnt;<br>            head = head-&gt;next;<br>        }<br>        return cnt;<br>}<br>};</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/09/23/leetcode%E9%A2%98%E8%A7%A3%EF%BC%9A142-%E7%8E%AF%E5%BD%A2%E9%93%BE%E8%A1%A8-ii/">LeetCode题解：142. 环形链表 II</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a></span><div class="content"><p>给定一个链表，返回链表开始入环的第一个节点。 如果链表无环，则返回 null。</p>
+<p><strong>说明：</strong>不允许修改给定的链表。</p>
+<p><strong>进阶：</strong></p>
+<p>你是否可以不用额外空间解决此题？</p>
+<p>来自 &lt;<a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/linked-list-cycle-ii/description/">https://leetcode-cn.com/problems/linked-list-cycle-ii/description/</a>&gt;</p>
+<p>/**<br> * Definition for singly-linked list.<br> * struct ListNode {<br> *     int val;<br> *     ListNode *next;<br> *     ListNode(int x) : val(x), next(NULL) {}<br> * };<br> */<br>class Solution {<br>public:<br>   ListNode *detectCycle(ListNode *head) {<br>        ListNode *slow = head, *fast = head;<br>        while (fast &amp;&amp; fast-&gt;next) {<br>            slow = slow-&gt;next;<br>            fast = fast-&gt;next-&gt;next;<br>            if (slow == fast) break;<br>        }<br>        if (!fast || !fast-&gt;next) return NULL;<br>        slow = head;<br>        while (slow != fast) {<br>            slow = slow-&gt;next;<br>            fast = fast-&gt;next;<br>        }<br>        return fast;<br>    }<br>};</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/09/23/leetcode%E9%A2%98%E8%A7%A3141-%E7%8E%AF%E5%BD%A2%E9%93%BE%E8%A1%A8/">LeetCode题解：141. 环形链表</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a></span><div class="content"><p>给定一个链表，判断链表中是否有环。</p>
+<p><strong>进阶：</strong></p>
+<p>你能否不使用额外空间解决此题？</p>
+<p>来自 &lt;<a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/linked-list-cycle/description/">https://leetcode-cn.com/problems/linked-list-cycle/description/</a>&gt;</p>
+<p>/**<br> * Definition for singly-linked list.<br> * struct ListNode {<br> *     int val;<br> *     ListNode *next;<br> *     ListNode(int x) : val(x), next(NULL) {}<br> * };<br> */<br>class Solution {<br>public:<br>    bool hasCycle(ListNode *head){<br>    ListNode *fast=head,*slow=head;<br>    while (fast &amp;&amp; fast-&gt;next)<br>    {<br>        slow=slow-&gt;next;<br>        fast=fast-&gt;next-&gt;next;<br>        if (fast==slow)<br>            return true;<br>    }<br>    return false;<br>}<br>};</p>
+</div><hr></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/10/"><i class="fa fa-chevron-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/">12</a><span class="space">&hellip;</span><a class="page-number" href="/page/28/">28</a><a class="extend next" rel="next" href="/page/12/"><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer class="footer-bg" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div class="layout" id="footer"><div class="copyright">&copy;2017 - 2020 By 木尘痕</div><div class="framework-info"><span>Driven - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="footer_custom_text">千秋竟岁，伏苦飞逐</div><div class="icp"><a><span>豫ICP备17048032号</span></a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_site_uv"><i class="fa fa-user"></i><span id="busuanzi_value_site_uv"></span><span></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i><span id="busuanzi_value_site_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.8.2"></script><script src="/js/fancybox.js?version=1.8.2"></script><script src="/js/sidebar.js?version=1.8.2"></script><script src="/js/copy.js?version=1.8.2"></script><script src="/js/fireworks.js?version=1.8.2"></script><script src="/js/transition.js?version=1.8.2"></script><script src="/js/scroll.js?version=1.8.2"></script><script src="/js/head.js?version=1.8.2"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
   $('#nav').addClass('is-mobile')
   $('footer').addClass('is-mobile')
   $('#top-container').addClass('is-mobile')

@@ -14,257 +14,683 @@
     noSupport: 'The browser does not support'
   },
   hexoVersion: '5.1.0'
-} </script><meta name="generator" content="Hexo 5.1.0"></head><body><canvas class="fireworks"></canvas><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="author-info"><div class="author-info__avatar text-center"><img src="https://github.com/muchenhen/muchenhen.github.io/blob/master/XuanGe.jpg?raw=true"></div><div class="author-info__name text-center">木尘痕</div><div class="author-info__description text-center">放一些笔记的地方</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">552</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">21</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">31</span></a></div><hr><div class="author-info-links"><div class="author-info-links__title text-center">Links</div><a class="author-info-links__name text-center" target="_blank" rel="noopener" href="https://alec-ray.github.io/">止戈</a></div></div></div><nav id="nav" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">风生之谷</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">主页</a><a class="site-page" href="/archives">全部文章</a><a class="site-page" href="/tags">标签分类</a><a class="site-page" href="/categories">文章分类</a><a class="site-page" href="/contact">联系</a></span><span class="pull-right"></span></div><div id="site-info"><div id="site-title">风生之谷</div><div id="site-sub-title">一点浩然气 千里快哉风</div></div></nav><div id="content-outer"><div class="layout" id="content-inner"><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/22/directx12-5-10-%E5%85%89%E6%A0%85%E5%8C%96%E9%98%B6%E6%AE%B5-1/">DIRECTX12 5.10 光栅化阶段</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-22</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>光栅化阶段的主要工作是从投影的三维三角形计算像素颜色。</p>
-<p><strong>视口变换</strong></p>
-<p><strong>Viewport Transform</strong></p>
-<p>裁剪完成后，硬件进行透视除法，将均匀的裁剪空间转换为标准化的设备坐标（NDC）。一旦顶点位于NDC空间中，形成2D图像的2D x和y坐标就被转换为后缓冲区上称为viewport的矩形。在这个转换之后，x和y坐标是以像素为单位的。通常，viewport转换不会修改z坐标，因为它用于深度缓冲，但可以通过修改D3D12_viewport结构的MinDepth和MaxDepth值来实现。MinDepth和MaxDepth值必须是介于0和1之间。</p>
-<p><strong>背面剔除</strong></p>
-<p><strong>Backface Culling</strong></p>
-<p>一个平面有两个”面”，对正面和反面的区分按照以下规则：</p>
-<p>如果一个三角形由三个vertex：v0, v1, v2构成，然后计算法线向量n，</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032220_0605_DIRECTX12511.png"></p>
-<p>法向量从正面 发出：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032220_0605_DIRECTX12512.png"></p>
-<p>大对数对象是封闭的实体对象，因为前向三角形遮挡了后向三角形，所以绘制它们是没有意义的。背面剔除是指从管道中丢弃背面三角形的过程。这可能会将需要处理的三角形数量减少一半。</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032220_0605_DIRECTX12513.png"></p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032220_0605_DIRECTX12514.png"></p>
-<p>在不使用透明度的情况下，就像右边只能看到三个面。后面的三个三角形可以在处理过程中丢弃掉。</p>
-<p>默认情况下，Direct3D将顺时针顺序（相对于查看器）的三角形视为前向，而具有逆时针顺序（相对于查看器）的三角形视为后向。</p>
-<p><strong>顶点属性插值</strong></p>
-<p><strong>Vertex Attribute Interpolation</strong></p>
-<p>vertex中附加的其他属性，在经过视口变换之后，这些属性需要被插值到三角形覆盖的每一个像素。除了顶点属性外，顶点深度值还需要插值，以便每个像素都有深度缓冲算法的深度值。顶点属性需要在屏幕空间中进行插值，这样才能保证属性值在3D空间中基于三角形进行的线性插值的结果还能用。这就需要被称为<strong>透视正确插值</strong>的操作。具体的数学推导请参阅《introduce 3D math》那本书。</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032220_0605_DIRECTX12515.png"></p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032220_0605_DIRECTX12516.png"></p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/22/directx12-5-10-%E5%85%89%E6%A0%85%E5%8C%96%E9%98%B6%E6%AE%B5/">DIRECTX12 5.10 光栅化阶段</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-22</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>光栅化阶段的主要工作是从投影的三维三角形计算像素颜色。</p>
-<p><strong>视口变换</strong></p>
-<p><strong>Viewport Transform</strong></p>
-<p>裁剪完成后，硬件进行透视除法，将均匀的裁剪空间转换为标准化的设备坐标（NDC）。一旦顶点位于NDC空间中，形成2D图像的2D x和y坐标就被转换为后缓冲区上称为viewport的矩形。在这个转换之后，x和y坐标是以像素为单位的。通常，viewport转换不会修改z坐标，因为它用于深度缓冲，但可以通过修改D3D12_viewport结构的MinDepth和MaxDepth值来实现。MinDepth和MaxDepth值必须是介于0和1之间。</p>
-<p><strong>背面剔除</strong></p>
-<p><strong>Backface Culling</strong></p>
-<p>一个平面有两个”面”，对正面和反面的区分按照以下规则：</p>
-<p>如果一个三角形由三个vertex：v0, v1, v2构成，然后计算法线向量n，</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032220_0605_DIRECTX12511.png"></p>
-<p>法向量从正面 发出：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032220_0605_DIRECTX12512.png"></p>
-<p>大对数对象是封闭的实体对象，因为前向三角形遮挡了后向三角形，所以绘制它们是没有意义的。背面剔除是指从管道中丢弃背面三角形的过程。这可能会将需要处理的三角形数量减少一半。</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032220_0605_DIRECTX12513.png"></p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032220_0605_DIRECTX12514.png"></p>
-<p>在不使用透明度的情况下，就像右边只能看到三个面。后面的三个三角形可以在处理过程中丢弃掉。</p>
-<p>默认情况下，Direct3D将顺时针顺序（相对于查看器）的三角形视为前向，而具有逆时针顺序（相对于查看器）的三角形视为后向。</p>
-<p><strong>顶点属性插值</strong></p>
-<p><strong>Vertex Attribute Interpolation</strong></p>
-<p>vertex中附加的其他属性，在经过视口变换之后，这些属性需要被插值到三角形覆盖的每一个像素。除了顶点属性外，顶点深度值还需要插值，以便每个像素都有深度缓冲算法的深度值。顶点属性需要在屏幕空间中进行插值，这样才能保证属性值在3D空间中基于三角形进行的线性插值的结果还能用。这就需要被称为<strong>透视正确插值</strong>的操作。具体的数学推导请参阅《introduce 3D math》那本书。</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032220_0605_DIRECTX12515.png"></p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032220_0605_DIRECTX12516.png"></p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/20/directx-12-5-9-%E8%A3%81%E5%89%AA-1/">DIRECTX 12 5.9 裁剪</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-20</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>不在视锥体的近平面远平面上下左右平面之间的都要删除掉：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032020_1012_DIRECTX12591.png"></p>
-<p>Sutherland-Hodgeman 裁剪算法，基本上相当于找到平面和多边形边之间的交点，然后对顶点排序以形成新的剪裁多边形。</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032020_1012_DIRECTX12592.png"></p>
-<p>在齐次空间中, 做除法之前, 4D points (x, y, z, w)</p>
-<p>透视投影之后, points</p>
+} </script><meta name="generator" content="Hexo 5.1.0"></head><body><canvas class="fireworks"></canvas><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="author-info"><div class="author-info__avatar text-center"><img src="https://github.com/muchenhen/muchenhen.github.io/blob/master/XuanGe.jpg?raw=true"></div><div class="author-info__name text-center">木尘痕</div><div class="author-info__description text-center">放一些笔记的地方</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">274</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">22</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">32</span></a></div><hr><div class="author-info-links"><div class="author-info-links__title text-center">Links</div><a class="author-info-links__name text-center" target="_blank" rel="noopener" href="https://alec-ray.github.io/">止戈</a></div></div></div><nav id="nav" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">风生之谷</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">Home</a><a class="site-page" href="/archives">Archives</a><a class="site-page" href="/tags">tags</a><a class="site-page" href="/categories">categories</a><a class="site-page" href="/contact">contact</a><a class="site-page" href="/">主页</a><a class="site-page" href="/archives">全部文章</a><a class="site-page" href="/tags">标签分类</a><a class="site-page" href="/categories">文章分类</a><a class="site-page" href="/contact">联系</a></span><span class="pull-right"></span></div><div id="site-info"><div id="site-title">风生之谷</div><div id="site-sub-title">一点浩然气 千里快哉风</div></div></nav><div id="content-outer"><div class="layout" id="content-inner"><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/19/visual-studio-2019%E5%88%9D%E5%A7%8B%E5%8C%96directx12%E9%81%87%E5%88%B0%E7%9A%84%E4%B8%80%E4%BA%9B%E9%97%AE%E9%A2%98/">Visual Studio 2019初始化DirectX12遇到的一些问题</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>在使用《Introduce to 3D Game Programing with DirectX12》提供的基础框架时，使用VS2019创建项目无法成功生成项目，但是从github获取龙书自带的项目打开之后却没有任何问题，成功的生成了所有的实例。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/d3dcoder/d3d12book">https://github.com/d3dcoder/d3d12book</a> 这里是随书源码的github地址。</p>
+<p>经过对比项目设置后发现，以下几个选项务必保持一致：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0558_VisualStudi1.png"></p>
+<p>必须设置为x64平台</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0558_VisualStudi2.png"></p>
+<p>这里的符合模式必须要改成否</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0558_VisualStudi3.png"></p>
+<p>预处理器定义要加上WIN32</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0558_VisualStudi4.png"></p>
+<p><strong>链接器</strong>的<strong>系统</strong>中的<strong>子系统</strong>必须为<strong>窗口</strong></p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/19/directx-12-5-5-%E8%BE%93%E5%85%A5%E8%A3%85%E9%85%8D%E9%98%B6%E6%AE%B5/">DIRECTX 12 5.5 输入装配阶段</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>input assembler 简称IA阶段</p>
+<p>读取几何数据，如vertices和indices，然后装配成几何图元。</p>
+<p>vertex可以视为特殊的点，并且在DirectX中可以有更多的属性，可以定义不同格式的vertex，可以包含位置、uv、法线、颜色等等信息。</p>
+<p><strong>图元拓扑</strong></p>
+<p><strong>Primitive Topology</strong></p>
+<p>渲染管线中vertex被绑定到了vertex buffer中，里面存了一系列vertex，但是没有定义这些点怎么组装成几何图元。比如这里有一堆点，是两两配对装成线，还是三三配对成面呢？在D3D中需要指明图元拓扑规则。D3D中有一个枚举类来进行指定图元装配的拓扑规则。太长了自己去看doc吧</p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/api/d3dcommon/ne-d3dcommon-d3d_primitive_topology">https://docs.microsoft.com/en-us/windows/win32/api/d3dcommon/ne-d3dcommon-d3d_primitive_topology</a></p>
+<p>捡几个常见的说一下</p>
+<p><strong>Point List</strong></p>
+<p><strong>D3D_PRIMITIVE_TOPOLOGY_POINTLIST</strong></p>
+<p>会把每个vertex画成单独的点</p>
+<p><strong>Line Strip</strong></p>
+<p><strong>D3D_PRIMITIVE_TOPOLOGY_LINESTRIP</strong></p>
+<p>会把vertex画成线，这里如果有n+1个vertex，那么会有n条线</p>
+<p><strong>Line List</strong></p>
+<p><strong>D3D_PRIMITIVE_TOPOLOGY_LINELIST</strong></p>
+<p>和上面那个不一样，这里每两个vertex画成一条线</p>
+<p><strong>Triangle Strip</strong></p>
+<p><strong>D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP</strong></p>
+<p>会画成三角形，会假设这些三角形是关联的，也就是说n+2个点的话绘画出来n个三角形</p>
+<p><strong>Triangle List</strong></p>
+<p><strong>D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST</strong></p>
+<p>每三个点会画成一个单独的三角形</p>
+<p>下图简单的说明了明显的差异</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0541_DIRECTX12551.png"></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0541_DIRECTX12552.png"></p>
+<p><strong>图元邻接</strong></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0541_DIRECTX12553.png"></p>
+<p>每个三角形有三个相邻的三角形，叫做<strong>邻接三角形</strong> adjacent triangles。</p>
+<p>几何着色器geometry shader需要用到这些信息。为了让几何着色器获得这些邻接三角形，这些邻接三角形需要和原三角形一起被提交到vertex buffer或者index buffer，并且拓扑规则需要指定为<strong>D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST_ADJ</strong>。</p>
+<p><strong>Control Point Patch List</strong></p>
+<p>不晓得怎么翻译合适，先不翻了。</p>
+<p><strong>D3D_PRIMITIVE_TOPOLOGY_N_CONTROL_POINT_PATCHLIST</strong></p>
+<p>是一种拓扑类型。vertex数据会被解释为有N个控制点的patch lists。会被用在可选的tessellation阶段，这个在很后面才会解释。</p>
+<p><strong>Indices</strong></p>
+<p>举个栗子说明一下索引</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0541_DIRECTX12554.png"></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0541_DIRECTX12555.png"></p>
+<p>v0点在第二个图形中用了很多次，为了节省vertex buffer，也可以减少显卡的处理压力，只存储一次vertex v0，然后在绘制三角形的时候多次指明使用v0。这一点就是使用索引的意义，使用索引后会变成下面的情况。</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0541_DIRECTX12556.png"></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0541_DIRECTX12557.png"></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0541_DIRECTX12558.png"></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0541_DIRECTX12559.png"></p>
+<p>虽然索引中有一些重复的，但是比起vertex重复要好很多。</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/10/%E8%B1%ABicp%E5%A4%8717048032%E5%8F%B7/">豫ICP备17048032号</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/uncategorized/">uncategorized</a></span><div class="content"></div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/08/%E5%90%8E%E5%A4%84%E7%90%86%EF%BC%9A00%E5%87%86%E5%A4%87%E9%98%B6%E6%AE%B5/">后处理：00准备阶段</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/unity3d/">unity3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/unity3d/Unity-Shader/">Unity Shader</a></span><div class="content"><p>后处理是在最后阶段对像素的直接处理，需要能够获得选然后的图像信息。Unity API提供了这个方法供我们使用。</p>
+<p><a target="_blank" rel="noopener" href="https://docs.unity3d.com/ScriptReference/MonoBehaviour.OnRenderImage.html">https://docs.unity3d.com/ScriptReference/MonoBehaviour.OnRenderImage.html</a></p>
+<p>先写个脚本来满足获取信息的需求。这里考虑到凡是后处理效果都需要进行一些必要的检查，检查目前的效果是否被当前设备支持，所以对这些操作写在一个基类里面方便复用。</p>
+<p>这里实现一个相对简单的基类。</p>
+<p>基本上迁至检测需要考虑的有：</p>
+<ol>
+<li>是否支持DX11</li>
+<li>是否支持HDR贴图</li>
+<li>是否支持深度贴图</li>
+<li>当前的shader状态</li>
+<li>当前的material状态</li>
+</ol>
+<p>具体的方法都卸载了源码的注释中。<a target="_blank" rel="noopener" href="https://github.com/muchenhen/MyUnityShaders/tree/master/Assets/PostEffects">https://github.com/muchenhen/MyUnityShaders/tree/master/Assets/PostEffects</a></p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/07/%E6%8F%8F%E8%BE%B9%E6%95%88%E6%9E%9C/">描边效果</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/unity3d/">unity3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/unity3d/Unity-Shader/">Unity Shader</a></span><div class="content"><p>本文简单归纳总结整理了关于各种思路的ShaderLab中的描边效果的实现。</p>
+<p>描边效果常见于一些非真实感的渲染中。下图是本人在测试各种描边方法实现时在Unity中的表现：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/030720_0937_1.png"></p>
+<h2 id="第一行：Back-Facing描边"><a href="#第一行：Back-Facing描边" class="headerlink" title="第一行：Back Facing描边"></a>第一行：Back Facing描边</h2><p>这种方法的思路十分简单，将每个顶点的位置沿着法线的方向进行扩展。</p>
+<p>过程实现非常简单，理论上讲，先把顶点坐标转换到裁剪空间，然后将法线坐标变换到视角空间后，直接讲顶点的位置的xy分量（xyz也行）加上对应的法线坐标。这个加法的结果就是所有的点沿着法线方向”膨胀”了一定的位移。然后把膨胀后的模型直接渲染成纯色，之后再正常的渲染模型，这样两层叠加后看起来就是喵了个边。</p>
+<p>. <img src="https://www.muchenhen.com/wp-content/uploads/2020/03/030720_0937_2.png"><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/030720_0937_3.png"></p>
+<p>此处实例是将模型简单设置成了白色 描边设置为黑色。如果想要控制描边的粗细，其实就是控制模型膨胀的程度，那么定义一个变量与计算膨胀的顶点坐标中的法线参数相乘，就可以通过这个参数的大小控制描边粗细。</p>
+<p>但是这个描边效果有两个问题：<br>1、对于正方体这种，转角处法线方向突变的情况，相当于周围面片飘了起来<br>2、随着摄像机靠近物体，会发现描边也是跟着变粗的，当然这个不能算问题，可以作为一种特性。</p>
+<p>第一个图的第二行就是解决了上述两个问题的情况</p>
+<h2 id="第二行：临时更改法线信息"><a href="#第二行：临时更改法线信息" class="headerlink" title="第二行：临时更改法线信息"></a>第二行：临时更改法线信息</h2><p>对于第一个问题，很清楚是因为法线完全垂直于平面，往外扩张之后还是垂直的，然后出现转角的时候就出现了断裂。正方体甚至正面完全看不见，因为就是渲染了一个平面。</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/030720_0937_4.png"></p>
+<p>所以我们可以临时修改法线的信息来实这种情况的描边。将每个顶点在同一个位置的不同的法线信息数据进行平均计算，计算出新的临时法线信息。</p>
+<p><strong>此处牵涉到一个新的问题，如果模型有骨骼动画，那么法线的数据会随着骨骼动画变化。如果模型使用了骨骼动画，那么需要将法线和切线数据写进mesh。如果不需要可以直接在顶点着色器中进行变化。如果要对mesh进行改变需要脚本进行。此处选择在脚本中操作。</strong></p>
+<p>实现的主要思路是通过Unity的API读取到mesh的顶点相关信息，然后自定义一个字典来进行每个顶点对应的法线向量的判断，将一个顶点的不同面的法线进行相加然后标准化（此处的几何意义很明显不解释了）。这样可以得到一个比较”温和”的转折处的法线，然后再进行扩张，可以得到很好的效果。</p>
+<p>关于第二个问题其实很简单，因为是在视角空间进行的操作，随意会对摄像机产生随距离变化的情况。如果把描边改成NDC空间就会解决这个问题。</p>
+<p>转换到NDC空间会遇到新的问题，众所周知Unity采用OpenGL的NDC空间，是个标准正方体，但是屏幕一般是16比9，所以我们要对x坐标进行修正。具体实现就是x坐标乘屏幕宽高比。</p>
+<p>完成上述的操作后就获得了比较好的描边效果，这种描边不是完全的轮廓边界，因为在渲染描边的时候Z缓冲写入没有关闭。</p>
+<h2 id="第三行：关闭Z缓冲的Back-Facing"><a href="#第三行：关闭Z缓冲的Back-Facing" class="headerlink" title="第三行：关闭Z缓冲的Back Facing"></a>第三行：关闭Z缓冲的Back Facing</h2><p>如果我不想要前面的部分会出现局部描边，而是完全的只有外部轮廓有描边的话，就需要关闭描边的Z缓冲写入，这样就会被后渲染的图形完全遮挡，就会得到想要的效果。</p>
+<h2 id="第四行：关闭Z缓冲的法线修改"><a href="#第四行：关闭Z缓冲的法线修改" class="headerlink" title="第四行：关闭Z缓冲的法线修改"></a>第四行：关闭Z缓冲的法线修改</h2><p>这个是在临时修改法线的基础上关闭了描边的Zbuffer写入。</p>
+<p>此外需要注意，在进行Z缓冲关闭的时候，由于默认 的渲染顺序是先于skybox的顺序的，所以渲染skybox后会遮掉描边，需要更改渲染队列的顺序，放在skybox之后。</p>
+<p>源码地址：<a target="_blank" rel="noopener" href="https://github.com/muchenhen/MyUnityShaders/tree/master/Assets/Unreality/01%E6%8F%8F%E8%BE%B9%E6%95%88%E6%9E%9C%20%E5%90%84%E7%A7%8D%E5%B0%9D%E8%AF%95">https://github.com/muchenhen/MyUnityShaders/tree/master/Assets/Unreality/01%E6%8F%8F%E8%BE%B9%E6%95%88%E6%9E%9C%20%E5%90%84%E7%A7%8D%E5%B0%9D%E8%AF%95</a></p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/11/12/directx-12-4-3%E5%88%9D%E5%A7%8B%E5%8C%96direct3d/">DIRECTX 12 4.3初始化DIRECT3D</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/DirectX/">DirectX</a></span><div class="content"><p>终于到初始化了，已经第4.3节了<br>初始化也是一个麻烦的过程，但所幸只需要进行一次。初始化Direct3D的过程可以分为以下几个步骤:<br>• 1. 使用D3D12CreateDevice函数创建ID3D12Device。<br>• 2. 创建一个ID3D12Fence对象和查询描述符大小。<br>• 3.检查4X MSAA质量水平支持。<br>• 4. 创建命令队列、命令列表分配器和主命令列表。<br>• 5. 描述并创建交换链。<br>• 6. 创建应用程序需要的描述符堆。<br>• 7. 调整后端缓冲区的大小，并为后端缓冲区创建一个呈现目标视图。<br>• 8. 创建深度/模板缓冲区及其关联的深度/模板视图。<br>• 9. 设置视口和裁剪矩形。</p>
+<p>4.3.1创建设备<br>初始化Direct3D首先创建Direct3D 12设备(ID3D12Device)。该设备表示一个显示适配器。通常，显示适配器是一个物理的3D硬件块(例如，显卡);然而，一个系统也可以有一个软件显示适配器来模拟3D硬件功能(例如，WARP适配器)。Direct3D 12设备用于检查特性支持，并创建所有其他Direct3D接口对象，如资源、标识符和命令列表。设备可以通过以下功能来创建:<br>HRESULT WINAPI D3D12CreateDevice(<br>IUnknown* pAdapter,<br>D3D_FEATURE_LEVEL MinimumFeatureLevel,<br>REFIID riid, // 预期:ID3D12Device<br>void** ppDevice );<br>pAdapter：指定要创建的设备表示的显示适配器。为该参数指定null将使用主显示适配器。<br>MinimumFeatureLevel：应用程序需要支持的最低功能级别;如果适配器不支持此功能级别，则设备创建将失败。<br>riid：要创建的ID3D12Device接口的COM ID。<br>ppDevice：返回创建的设备。<br>下面是这个函数调用的一个例子:<br>e is an example call of this function: #if defined(DEBUG) || defined(_DEBUG) // Enable the D3D12 debug layer.<br>{<br>ComPtr debugController; ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(&amp;debugController))); debugController-&gt;EnableDebugLayer(); } #endif<br>ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&amp;mdxgiFactory)));<br>// Try to create hardware device. HRESULT hardwareResult = D3D12CreateDevice(<br>nullptr, // default adapter D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&amp;md3dDevice));<br>// Fallback to WARP device. if(FAILED(hardwareResult)) {<br>ComPtr pWarpAdapter; ThrowIfFailed(mdxgiFactory-</p>
+<blockquote>
+<p>EnumWarpAdapter(IID_PPV_ARGS(&amp;pWarpAdapter)));<br>ThrowIfFailed(D3D12CreateDevice( pWarpAdapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&amp;md3dDevice)));<br>}<br>首先为调试模式构建启用调试层。当调试层启用后，Direct3D将启用额外的调试并向vc++输出窗口发送调试消息，如下所示:<br>D3D12 ERROR: ID3D12CommandList::Reset: Reset fails because the command list was not closed.</p>
+</blockquote>
+<p>还要注意，如果对D3D12CreateDevice的调用失败，将退回到WARP设备，这是一个软件适配器。WARP代表Windows高级栅格化平台。在Windows 7及以下版本中，WARP设备支持功能级别10.1;在Windows 8上，WARP设备支持高达11.1级的特性。为了创建一个WARP适配器，需要创建一个IDXGIFactory4对象，以便枚举WARP适配器：<br>ComPtr mdxgiFactory;<br>CreateDXGIFactory1(IID_PPV_ARGS(&amp;mdxgiFactory));<br>mdxgiFactory-&gt;EnumWarpAdapter( IID_PPV_ARGS(&amp;pWarpAdapter));<br>mdxgiFactory对象也将用于创建交换链。</p>
+<p>4.3.2 Create the Fence and Descriptor Sizes<br>标题不会翻译，不知道具体使用的哪个名词，容我查一下资料再修改<br>在创建完设备后，需要创建一个用于GPU和CPU同步的Fence。 由于使用了描述符，因此需要知道不同的描述符的大小。 由于描述符大小不同的GPU有不同的值，因此我们需要查询其大小。可以cache描述符大小一边需要的时候取用：<br>ThrowIfFailed(md3dDevice-&gt;CreateFence( 0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&amp;mFence))); mRtvDescriptorSize = md3dDevice-</p>
+<blockquote>
+<p>GetDescriptorHandleIncrementSize( D3D12_DESCRIPTOR_HEAP_TYPE_RTV); mDsvDescriptorSize = md3dDevice-<br>GetDescriptorHandleIncrementSize( D3D12_DESCRIPTOR_HEAP_TYPE_DSV); mCbvSrvDescriptorSize = md3dDevice-<br>GetDescriptorHandleIncrementSize(<br>D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);</p>
+</blockquote>
+<p>4.3.3 Check 4X MSAA Quality Support<br>检查对4X MSAA的支持。选择4X的原因是因为其开销并不是很大，因为所有的Direct3D 11功能设备支持4X MSAA的所有渲染目标格式。因此，它可以保证在Direct3D 11硬件上可用。但是必须检查所支持的质量水平，可以通过以下方法实现:<br>D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS<br>msQualityLevels; msQualityLevels.Format = mBackBufferFormat; msQualityLevels.SampleCount = 4; msQualityLevels.Flags =<br>D3D12_MULTISAMPLE_QUALITY_LEVELS_FLAG_NONE;<br>msQualityLevels.NumQualityLevels = 0; ThrowIfFailed(md3dDevice-&gt;CheckFeatureSupport(<br>D3D12_FEATURE_MULTISAMPLE_QUALITY_LEVELS, &amp;msQualityLevels, sizeof(msQualityLevels)));<br>m4xMsaaQuality = msQualityLevels.NumQualityLevels;<br>assert(m4xMsaaQuality &gt; 0 &amp;&amp; “Unexpected MSAA quality level.”);<br>由于4XMSAA是肯定被支持的，检测出来的等级肯定大于0。 可以在这里设置一个断言。</p>
+<p>4.3.4创建命令队列和命令列表<br>4.2.1讲过的东西<br>queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;<br>queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Device-&gt;CreateCommandQueue(&amp;queueDesc, IID_PPV_ARGS(CommandQueue));</span><br><span class="line"></span><br><span class="line">Device-&gt;CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,</span><br><span class="line">    IID_PPV_ARGS(CommandAllocator));</span><br><span class="line"></span><br><span class="line">Device-&gt;CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT,</span><br><span class="line">    CommandAllocator, nullptr, IID_PPV_ARGS(CommandList));</span><br><span class="line"></span><br><span class="line">CommandList-&gt;Close();</span><br></pre></td></tr></table></figure>
+
+<p>4.3.5描述并创建交换链<br>初始化的下一步是创建交换链。创建交换链的时候首先需要填充DXGI_SWAP_CHAIN_DESC结构。 需要这个结构来描述要创建什么属性的交换链。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">struct DXGI_SWAP_CHAIN_DESC</span><br><span class="line">&#123;</span><br><span class="line">    DXGI_MODE_DESC BufferDesc;</span><br><span class="line">    DXGI_SAMPLE_DESC SampleDesc;</span><br><span class="line">    DXGI_USAGE BufferUsage;</span><br><span class="line">    UINT BufferCount;</span><br><span class="line">    HWND OutputWindow;</span><br><span class="line">    BOOL Windowed;</span><br><span class="line">    DXGI_SWAP_EFFECT SwapEffect;</span><br><span class="line">    UINT Flags;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">struct DXGI_MODE_DESC</span><br><span class="line">&#123;</span><br><span class="line">    UINT Width; &#x2F;&#x2F;缓存的宽度</span><br><span class="line">    UINT Height; &#x2F;&#x2F;缓存的高度</span><br><span class="line">    DXGI_RATIONAL RefreshRate;</span><br><span class="line">    DXGI_FORMAT Format; &#x2F;&#x2F;缓存的格式</span><br><span class="line">    DXGI_MODE_SCANLINE_ORDER ScanlineOrdering;</span><br><span class="line">    DXGI_MODE_SCALING Scaling; &#x2F;&#x2F;如何在显示器上缩放显示</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>会使用较为常用的属性去填充下面的成员。 如果想了解更多填充的属性可以去参阅SDK文档。</p>
+<p>BufferDesc: 描述创建的BackBuffer的属性，主要属性就是宽度高度以及格式。其余的可以参考SDK文档。<br>SampleDesc: 多重采样的数量和质量等级，设置成采样数量为1，质量等级为0。<br>BufferUsage: 设置为DXGI_USAGE_RENDER_TARGET_OUTPUT。<br>BufferCount: 在交换链中要使用多少个缓冲，使用双缓冲设置为2。<br>OutputWindow: 要呈现的窗口的句柄。<br>Windowed: 设置为true就是窗口模式，否则是全屏模式。<br>SwapEffect: 设置为DXGI_SWAP_EFFECT_FLIP_DISCARD。<br>Flags: 一些其他设置。如果设置了DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH，那么在切换到全屏模式的时候就会选择一个最适合当前程序的显示模式，如果你没有设置这个属性，那么切换成全屏的时候就使用当前桌面的显示模式。<br>在填充完毕这个结构后，就可以创建交换链了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">HRESULT IDXGIFactory::CreateSwapChain(</span><br><span class="line">    IUnknown *pDevice, &#x2F;&#x2F;ID3D12CommandQueue</span><br><span class="line">    DXGI_SWAP_CHAIN_DESC *pDesc,</span><br><span class="line">    IDXGISwapChain **ppSwapChain);</span><br></pre></td></tr></table></figure>
+
+<p>下面的代码展示了如何在示例框架中创建交换链。注意，这个函数已经被设计成可以被多次调用。它将在创建新交换链之前破坏旧的交换链。这允许用不同的设置重新创建交换链，而且可以在运行时更改多采样设置。<br>DXGI_FORMAT mBackBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM; void D3DApp::CreateSwapChain() {<br>// Release the previous swapchain we will be recreating. mSwapChain.Reset();<br>DXGI_SWAP_CHAIN_DESC sd; sd.BufferDesc.Width = mClientWidth; sd.BufferDesc.Height = mClientHeight; sd.BufferDesc.RefreshRate.Numerator = 60; sd.BufferDesc.RefreshRate.Denominator = 1; sd.BufferDesc.Format = mBackBufferFormat; sd.BufferDesc.ScanlineOrdering =<br>DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED; sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED; sd.SampleDesc.Count = m4xMsaaState ? 4 : 1; sd.SampleDesc.Quality = m4xMsaaState ? (m4xMsaaQuality - 1) : 0; sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; sd.BufferCount = SwapChainBufferCount; sd.OutputWindow = mhMainWnd; sd.Windowed = true; sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD; sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH; // Note: Swap chain uses queue to perform flush. ThrowIfFailed(mdxgiFactory-&gt;CreateSwapChain( mCommandQueue.Get(), &amp;sd, mSwapChain.GetAddressOf()));<br>}</p>
+<p>4.3.6 Create the Descriptor Heaps<br>需要创建描述符堆来存储描述符。<br>描述符堆由ID3D12DescriptorHeap接口表示。Heap创建方法是<br>ID3D12Device: CreateDescriptorHeap接口。在本章的示例程序中，<br>需要在交换链中使用的缓冲个数相同数量的Render Target View去描述交换链中的缓冲资源，这些资源将存储最后要呈现的内容。 还需要一个Depth/Stencil View去描述一个用于深度测试的Depth/Stencil Buffer资源。 因此需要一个堆存储Render Target View和Depth/Stencil View。</p>
+<p>下面是代码：<br>ComPtr mRtvHeap; ComPtr mDsvHeap; void D3DApp::CreateRtvAndDsvDescriptorHeaps() {<br>D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc; rtvHeapDesc.NumDescriptors = SwapChainBufferCount; rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV; rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE; rtvHeapDesc.NodeMask = 0; ThrowIfFailed(md3dDevice-&gt;CreateDescriptorHeap( &amp;rtvHeapDesc, IID_PPV_ARGS(mRtvHeap.GetAddressOf())));<br>D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc; dsvHeapDesc.NumDescriptors = 1; dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV; dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE; dsvHeapDesc.NodeMask = 0; ThrowIfFailed(md3dDevice-&gt;CreateDescriptorHeap( &amp;dsvHeapDesc, IID_PPV_ARGS(mDsvHeap.GetAddressOf())));<br>}<br>创建堆之后需要能够访问它们存储的描述符。应用程序通过句柄引用描述符。<br>4.3.7创建渲染目标视图<br>必须先为资源创建一个描述符，然后将其绑定到管道阶段。为了将后台缓冲区绑定到管道的输出合并阶段需要为后台缓冲区创建一个呈现目标视图。<br>第一步是获取交换链中的缓冲区资源：<br>HRESULT IDXGISwapChain::GetBuffer( UINT Buffer, REFIID riid,<br>void **ppSurface);<br>Buffer:一想要获取的特定的后置缓冲的索引(如果有多个的话)。<br>riid: ID3D12Resource接口的COM ID，需要获得一个指向它的指针。<br>ppSurface：返回一个指向ID3D12Resource（代表后置缓存）的指针。<br>对IDXGISwapChain::GetBuffer的调用增加了返回缓冲区的COM引用计数，所以必须在完成后释放它。使用ComPtr可以自动完成。<br>创建渲染目标视图可以使用<br>ID3D12Device: CreateRenderTargetView方法:<br>void ID3D12Device::CreateRenderTargetView(<br>ID3D12Resource *pResource, const D3D12_RENDER_TARGET_VIEW_DESC *pDesc,<br>D3D12_CPU_DESCRIPTOR_HANDLE DestDescriptor);</p>
+<p>4.3.8 创建深度/模板缓冲区和视图<br>4.1.5说过深度缓冲是一个2D的texture，存储了最近的可见对象的深度信息。<br>使用D3D12_RESOURCE_DESC结构来创建texture，然后调用ID3D12Device::CreateCommittedResource<br>D3D12_RESOURCE_DESC结构：</p>
+<p>typedef struct D3D12_RESOURCE_DESC {<br>D3D12_RESOURCE_DIMENSION Dimension; UINT64 Alignment; UINT64 Width; UINT Height; UINT16 DepthOrArraySize; UINT16 MipLevels; DXGI_FORMAT Format; DXGI_SAMPLE_DESC SampleDesc; D3D12_TEXTURE_LAYOUT Layout; D3D12_RESOURCE_MISC_FLAG MiscFlags;<br>} D3D12_RESOURCE_DESC;</p>
+<p>其中的各个参数：<br>1. Dimension：资源的维度，它是下列枚举类型之一：<br>enum D3D12_RESOURCE_DIMENSION {<br>D3D12_RESOURCE_DIMENSION_UNKNOWN = 0,<br>D3D12_RESOURCE_DIMENSION_BUFFER = 1,<br>D3D12_RESOURCE_DIMENSION_TEXTURE1D = 2,<br>D3D12_RESOURCE_DIMENSION_TEXTURE2D = 3,<br>D3D12_RESOURCE_DIMENSION_TEXTURE3D = 4<br>} D3D12_RESOURCE_DIMENSION;<br>2. Width：texture在texels中的宽度。对于缓冲区资源，指的是缓冲区中的字节数。<br>3. Height：texture在texels中的高度。<br>4. DepthOrArraySize：texture在texels中的深度，或者是texture数组的大小，数组仅仅只能针对1D和2D的texture，无发建立3Dtextures的数组。<br>5. MipLevels：mipmap级别的数量。mipmap会在纸糊的章节介绍。<br>6. Format：指定texels格式的DXGI_FORMAT枚举类型的成员。<br>7. SampleDesc：多重采样的数量和质量等级。用于深度/模板缓冲的多重采样的参数必须与渲染目标匹配。<br>8. Layout：指定texture layout的D3D12_TEXTURE_LAYOUT枚举类型的成员。<br>9. MiscFlags：杂项资源标志。对于深度/模板缓冲区资源，指定D3D12_RESOURCE_MISC_DEPTH_STENCIL。</p>
+<p>GPU资源以堆的形式存在，堆本质上是带有特定属性的GPU内存块。CreateCommittedResource方法使用指定的属性创建资源并将其提交到特定的堆。<br>HRESULT ID3D12Device::CreateCommittedResource(<br>const D3D12_HEAP_PROPERTIES *pHeapProperties,<br>D3D12_HEAP_MISC_FLAG HeapMiscFlags,<br>const D3D12_RESOURCE_DESC *pResourceDesc,<br>D3D12_RESOURCE_USAGE InitialResourceState,<br>const D3D12_CLEAR_VALUE *pOptimizedClearValue,<br>REFIID riidResource, void **ppvResource);<br>typedef struct D3D12_HEAP_PROPERTIES {<br>D3D12_HEAP_TYPE Type;<br>D3D12_CPU_PAGE_PROPERTIES CPUPageProperties;<br>D3D12_MEMORY_POOL MemoryPoolPreference;<br>UINT CreationNodeMask;<br>UINT VisibleNodeMask;<br>} D3D12_HEAP_PROPERTIES;</p>
+<p>1.pHeapProperties：要提交资源的堆的属性。其中一些属性用于高级用途。需要关心的主要属性是D3D12_HEAP_TYPE，它可以是D3D12_HEAP_PROPERTIES枚举类型的以下成员之一：<br>1.1 D3D12_HEAP_TYPE_DEFAULT: 默认堆。提交资源的地方，这些资源只会被GPU访问。以深度/模板缓冲区为例:GPU读写深度/模板缓冲区。CPU不需要访问它，因此深度/模板缓冲区将被放置在默认堆中。<br>1.2 D3D12_HEAP_TYPE_UPLOAD: Upload heap. 从CPU提交资源，上传数据到GPU资源。<br>1.3 D3D12_HEAP_TYPE_READBACK: Read-back heap. 需要由CPU读取的资源的地方。<br>1.4 D3D12_HEAP_TYPE_CUSTOM:有关高级使用场景，请参阅MSDN文档了解更多信息。<br>2.HeapMiscFlags：提交资源的堆的附加标志。通常使用D3D12_HEAP_MISC_NONE<br>3.pResourceDesc：指向一个D3D12_RESOURCE_DESC实例的指针，该实例描述了想要创建的资源。<br>4.InitialResourceState：使用此参数设置资源创建时的初始状态。对于深度/模板缓冲区，初始状态将是D3D12_RESOURCE_USAGE_INITIAL，然后将其转换为D3D12_RESOURCE_USAGE_DEPTH，以便将其作为深度/模板缓冲区绑定到管道。<br>5.pOptimizedClearValue：指向D3D12_CLEAR_VALUE对象的指针，该对象描述了用于清除资源的优化值。匹配优化清除值的清除调用可能比不匹配优化清除值的清除调用更快。也可以为此指定Null。<br>struct D3D12_CLEAR_VALUE<br>{<br>DXGI_FORMAT Format;<br>union<br>{ FLOAT Color[ 4 ];<br>D3D12_DEPTH_STENCIL_VALUE DepthStencil;<br>};<br>} D3D12_CLEAR_VALUE;<br>6.riidResource： ID3D12Resource接口的COM ID，需要获得一个指向它的指针。<br>7.ppvResource：返回一个ID3D12Resource的指针，该指针表示新创建的资源。</p>
+<p>此外，在使用深度/模板缓冲区之前，须创建一个关联的深度/模板视图来绑定到管道上。这类似于创建render target视图。下面的代码示例展示了如何创建深度/模板纹理及其相应的深度/模板视图：<br>// Create the depth/stencil buffer and view.<br>D3D12_RESOURCE_DESC depthStencilDesc; depthStencilDesc.Dimension =<br>D3D12_RESOURCE_DIMENSION_TEXTURE2D; depthStencilDesc.Alignment = 0;<br>depthStencilDesc.Width = mClientWidth;<br>depthStencilDesc.Height = mClientHeight; depthStencilDesc.DepthOrArraySize = 1;<br>depthStencilDesc.MipLevels = 1;<br>depthStencilDesc.Format = mDepthStencilFormat; depthStencilDesc.SampleDesc.Count = m4xMsaaState ? 4 : 1; depthStencilDesc.SampleDesc.Quality = m4xMsaaState ?<br>(m4xMsaaQuality - 1) : 0;<br>depthStencilDesc.Layout =D3D12_TEXTURE_LAYOUT_UNKNOWN;<br>depthStencilDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;<br>D3D12_CLEAR_VALUE optClear; optClear.Format = mDepthStencilFormat; optClear.DepthStencil.Depth = 1.0f; optClear.DepthStencil.Stencil = 0;<br>ThrowIfFailed(md3dDevice-&gt;CreateCommittedResource(<br>&amp;CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),<br>D3D12_HEAP_FLAG_NONE, &amp;depthStencilDesc,<br>D3D12_RESOURCE_STATE_COMMON, &amp;optClear, IID_PPV_ARGS(mDepthStencilBuffer.GetAddressOf())));<br>// Create descriptor to mip level 0 of entire resource using the<br>// format of the resource.<br>md3dDevice-&gt;CreateDepthStencilView(<br>mDepthStencilBuffer.Get(), nullptr, DepthStencilView());<br>// Transition the resource from its initial state to be used as a depth<br>buffer.<br>mCommandList-&gt;ResourceBarrier(1,<br>&amp;CD3DX12_RESOURCE_BARRIER::Transition( mDepthStencilBuffer.Get(),<br>D3D12_RESOURCE_STATE_COMMON,<br>D3D12_RESOURCE_STATE_DEPTH_WRITE));</p>
+<p>使用CD3DX12_HEAP_PROPERTIES辅助构造函数来创建堆属性结构，其实现方式如下：</p>
+<p>explicit CD3DX12_HEAP_PROPERTIES(<br>D3D12_HEAP_TYPE type, UINT creationNodeMask = 1,<br>UINT nodeMask = 1 )<br>{ Type = type; CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;<br>MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;<br>CreationNodeMask = creationNodeMask;<br>VisibleNodeMask = nodeMask;<br>}</p>
+<p>4.3.9 Set the Viewport</p>
+<p>通常将3D场景绘制到整个后台缓冲区，其中后台缓冲区的大小对应于整个屏幕(全屏模式)或窗口的整个client区域。然而，有时只想把3D场景绘制到一个后缓冲区的子矩形中，比如下图：</p>
+<p>绘制的后缓冲区的子矩形称为viewport，它由以下结构描述：<br>typedef struct D3D12_VIEWPORT {<br>FLOAT TopLeftX;<br>FLOAT TopLeftY;<br>FLOAT Width;<br>FLOAT Height;<br>FLOAT MinDepth;<br>FLOAT MaxDepth;<br>} D3D12_VIEWPORT;<br>前四个数据成员定义了相对于后缓冲区的视口矩形(注意，可以指定分数像素坐标，数据成员的类型是float)。在Direct3D中，深度值以0到1的规格化范围存储在深度缓冲区中。使用MinDepth和MaxDepth成员将深度间隔[0,1]转换为深度间隔[MinDepth, MaxDepth]。能够变换深度范围可以达到一定的效果;例如，可以设置MinDepth=0和MaxDepth=0，这样用这个viewport绘制的所有对象的深度值都将为0，并出现在场景中所有其他对象的前面。但是，通常将MinDepth设置为0，将MaxDepth设置为1，这样就不会修改深度值。填写完D3D12_VIEWPORT结构后，使用ID3D12CommandList::RSSetViewports方法用Direct3D设置viewport。下面的例子创建并设置了一个viewport，它可以绘制到整个后台缓冲区:<br>D3D12_VIEWPORT vp;<br>vp.TopLeftX = 0.0f;<br>vp.TopLeftY = 0.0f;<br>vp.Width = static_cast(mClientWidth);<br>vp.Height = static_cast(mClientHeight);<br>vp.MinDepth = 0.0f;<br>vp.MaxDepth = 1.0f;<br>mCommandList-&gt;RSSetViewports(1, &amp;vp);</p>
+<p>第一个参数是要绑定的视口数量(对于高级效果使用多个视口)，第二个参数是指向视口数组的指针。<br>不能为同一个呈现目标指定多个视图。多个视口用于同时呈现多个呈现目标的高级技术。<br>每当命令列表重置时，视图端口都需要重置。<br>可以使用viewport来实现双人游戏的分屏，创建两个视图，一个用于屏幕的左侧，另一个用于屏幕的右侧。然后可以从Player 1的视角将3D场景绘制到左侧的视图中，并从Player 2的视角将3D场景绘制到右侧的视图中。</p>
+<p>4.3.10 Set the Scissor Rectangles<br>设置裁剪矩形<br>可以对后缓冲区定义一个裁剪矩形，使在这个矩形外的像素被剔除。这可以用于优化。例如，如果知道屏幕的某个区域将包含一个矩形的UI元素，那么就不需要处理UI元素遮住的3D世界的像素。裁剪矩形由D3D12_RECT结构定义，其类型如下:<br>typedef struct tagRECT<br>{<br>LONG left;<br>LONG top;<br>LONG right;<br>LONG bottom;<br>} RECT;<br>D3D设置裁剪矩形使用 ID3D12CommandList::RSSetScissorRects方法。下列的例子创建和设置了一个裁剪矩形覆盖了后缓冲区的左上象限：<br>mScissorRect = { 0, 0, mClientWidth/2, mClientHeight/2 };<br>mCommandList-&gt;RSSetScissorRects(1, &amp;mScissorRect);<br>……<br>4.3结束了，然而我们还是没有任何的示例代码，没有渲染出哪怕一个空窗口</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/11/11/stl%E5%85%B3%E8%81%94%E5%AE%B9%E5%99%A8/">STL关联容器</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/">cpp</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/STL/">STL</a></span><div class="content"><p>底层原理</p>
+<p>map 、set、multiset、multimap的底层原理</p>
+<p>map 、set、multiset、multimap的底层实现都是红黑树，epoll模型的底层数据结构也是红黑树，linux系统中CFS进程调度算法，也用到红黑树。</p>
+<p>关联式容器一句特定的排序准则自动对元素排序，元素可以是任意类型值类型，也可以是key/value pair，key可以是任何类型，映射一个相关的value，value也是任意类型。排序准则以函数形式呈现，映射一个相关的value，或者比较key/value中的key。默认情况都用&lt;进行比较，也可以自定义比较函数。</p>
+<p>关联容器主要优点是可以很快找到一个具有特定value的元素，时间复杂度为logn，缺点是不能直接改动value，因为会破坏已有的顺序。</p>
+<p>set：依据value自动排序，每个元素只有一次，不能重复。</p>
+<p>multset：元素可以重复。其他和set相同。</p>
+<p>map：每个元素都是key/value pair，其中key为排序准则的基准，每个key不能重复。map可以视为关联式数组，索引为任意类型的数组。set可以视为一种特殊的map，元素的value等同于key。</p>
+<p>multimap：和map的唯一区别是元素可以重复。multimap可以当作字典使用。</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/11/11/stl%EF%BC%9Aset%E4%B8%8Emultset-%E5%AE%B9%E5%99%A8/">STL：set与multset 容器</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/">cpp</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/STL/">STL</a></span><div class="content"><p>set的语法定义如下：</p>
+<p>template &lt;class Key,</p>
+<p>    class Traits=less<Key>,</p>
+<p>    class Allocator=allocator<Key>&gt;</p>
+<p>class set</p>
+<p>multiset如下：</p>
+<p>template &lt;class Key, class Compare =less <Key>, class Allocator =allocator <Key>&gt;</p>
+<p>class multiset</p>
+<p>set根据特定的排序准则，自动将元素进行排序。multiset允许有重复元素，set不允许。</p>
+<p>需要头文件<set></p>
+<p>命名空间为std</p>
+<p>只要是可以被排序的元素类型都可以作为set的元素类型。默认排序准则是less（一个函数对象），从小到大。定义里的第三个实参可有可无，默认的内存模型是allocator，同样由标准库提供。</p>
+<p>排序准则必循遵循strict weak ordering，含义如下：</p>
 <ul>
-<li>−1 ≤ x/w ≤ 1</li>
-<li>−1 ≤ y/w ≤ 1</li>
-<li>0 ≤ z/w ≤ 1</li>
+<li>必须是非对称的，比如操作符&lt;，x&lt;y为真则y&lt;x必须是假</li>
+<li>必须是可传递的，比如a&lt;b，b&lt;c，则a&lt;c</li>
+<li>必须是非自反的，x&lt;x为假</li>
+<li>必须是等效传递的，意思是，对于操作符&lt;，若!(a&lt;b) &amp;&amp; !(b&lt;a)为真，且!(b&lt;c) &amp;&amp; !(c&lt;b)为真，那么!(a&lt;c) &amp;&amp; !(c&lt;a)为真。意味着对于判别式op(),op(a,c),op(b,a),op(b,c),op(c,b)都为假，则op(a,c),op(c,a)为假。</li>
 </ul>
-<p>在视锥体中的点应该满足:</p>
-<ul>
-<li>−w ≤ x ≤ w</li>
-<li>−w ≤ y ≤ w</li>
-<li>0 ≤ z ≤ w</li>
-</ul>
-<p>也就是说，这些点由简单的4D平面限定：</p>
-<ul>
-<li>Left: w = −x</li>
-<li>Right: w = x</li>
-<li>Bottom: w = −y</li>
-<li>Top: w = y</li>
-<li>Near: z = 0</li>
-<li>Far: z = w</li>
-</ul>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/20/directx-12-5-9-%E8%A3%81%E5%89%AA/">DIRECTX 12 5.9 裁剪</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-20</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>不在视锥体的近平面远平面上下左右平面之间的都要删除掉：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032020_1012_DIRECTX12591.png"></p>
-<p>Sutherland-Hodgeman 裁剪算法，基本上相当于找到平面和多边形边之间的交点，然后对顶点排序以形成新的剪裁多边形。</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032020_1012_DIRECTX12592.png"></p>
-<p>在齐次空间中, 做除法之前, 4D points (x, y, z, w)</p>
-<p>透视投影之后, points</p>
-<ul>
-<li>−1 ≤ x/w ≤ 1</li>
-<li>−1 ≤ y/w ≤ 1</li>
-<li>0 ≤ z/w ≤ 1</li>
-</ul>
-<p>在视锥体中的点应该满足:</p>
-<ul>
-<li>−w ≤ x ≤ w</li>
-<li>−w ≤ y ≤ w</li>
-<li>0 ≤ z ≤ w</li>
-</ul>
-<p>也就是说，这些点由简单的4D平面限定：</p>
-<ul>
-<li>Left: w = −x</li>
-<li>Right: w = x</li>
-<li>Bottom: w = −y</li>
-<li>Top: w = y</li>
-<li>Near: z = 0</li>
-<li>Far: z = w</li>
-</ul>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/20/directx-12-5-8-%E5%87%A0%E4%BD%95%E7%9D%80%E8%89%B2%E9%98%B6%E6%AE%B5-1/">DIRECTX 12 5.8 几何着色阶段</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-20</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>这个可选的阶段很后面才会详细涉及到。</p>
-<p>该阶段要输入完整完全的图元数据，比如要画一个三角形，这个阶段输入的必须是三个vertex定义完成的一个三角形。</p>
-<p>最主要的优点是几何着色器可以创建或者删除几何体，比如以一个图元可以被扩展为一个或几个其他类型的图元。和顶点着色器不同的是，顶点着色器没法生成或者销毁vertex，传给它一个vertex，它处理之后输出一个vertex。常见的例子是扩展一个point成一个quad或者扩展一个line成一个quad。</p>
-<p>几何着色器输出的vertex positions必须转换到齐次裁剪空间</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/20/directx-12-5-8-%E5%87%A0%E4%BD%95%E7%9D%80%E8%89%B2%E9%98%B6%E6%AE%B5/">DIRECTX 12 5.8 几何着色阶段</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-20</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>这个可选的阶段很后面才会详细涉及到。</p>
-<p>该阶段要输入完整完全的图元数据，比如要画一个三角形，这个阶段输入的必须是三个vertex定义完成的一个三角形。</p>
-<p>最主要的优点是几何着色器可以创建或者删除几何体，比如以一个图元可以被扩展为一个或几个其他类型的图元。和顶点着色器不同的是，顶点着色器没法生成或者销毁vertex，传给它一个vertex，它处理之后输出一个vertex。常见的例子是扩展一个point成一个quad或者扩展一个line成一个quad。</p>
-<p>几何着色器输出的vertex positions必须转换到齐次裁剪空间</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/20/directx-12-5-7-tessellation%E9%98%B6%E6%AE%B5-1/">DIRECTX 12 5.7 Tessellation阶段</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-20</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>Tessellation可以把三角形mesh进一步细分，添加新的三角形。然后，这些新的三角形可以偏移到新的位置以创建更精细的网格细节。</p>
-<p>下面是经过tessellation的对比：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032020_1009_DIRECTX12571.png"></p>
-<p>使用Tessellation的优点：</p>
-<ul>
-<li>可以实现<strong>level-of-detail（LOD）</strong>，距离摄像机近的细分出更多细节，较远的不进行细分。</li>
-<li>在内从中保存低数量的三角形mesh从而节省内存，额外的细分动态添加。</li>
-<li>计算动画和物理的时候用低模，使用细分后的mesh渲染。</li>
-</ul>
-<p>在DirectX11之前，Tessellation需要先由CPU计算后把新的几何体从CPU内存传到GPU内存，很慢，所以不好用。DX11之后已经是在GPU计算，更有效率。</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/20/directx-12-5-7-tessellation%E9%98%B6%E6%AE%B5/">DIRECTX 12 5.7 Tessellation阶段</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-20</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>Tessellation可以把三角形mesh进一步细分，添加新的三角形。然后，这些新的三角形可以偏移到新的位置以创建更精细的网格细节。</p>
-<p>下面是经过tessellation的对比：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032020_1009_DIRECTX12571.png"></p>
-<p>使用Tessellation的优点：</p>
-<ul>
-<li>可以实现<strong>level-of-detail（LOD）</strong>，距离摄像机近的细分出更多细节，较远的不进行细分。</li>
-<li>在内从中保存低数量的三角形mesh从而节省内存，额外的细分动态添加。</li>
-<li>计算动画和物理的时候用低模，使用细分后的mesh渲染。</li>
-</ul>
-<p>在DirectX11之前，Tessellation需要先由CPU计算后把新的几何体从CPU内存传到GPU内存，很慢，所以不好用。DX11之后已经是在GPU计算，更有效率。</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/19/directx-12-5-6-%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8%E9%98%B6%E6%AE%B5-1/">DIRECTX 12 5.6 顶点着色器阶段</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-19</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>图元装配完之后，vertex们就到达了vertex shader阶段。可以将vertex shader阶段视为一个函数，输入的是vertex，输出的是vertex。在硬件的实际计算过程中可以简单的认为是硬件做了如下过程：</p>
-<p>for(UINT i = 0; i &lt; numVertices; ++i)</p>
-<p>outputVertex[i] = VertexShader( inputVertex[i] );</p>
-<p>这个阶段可以实现的效果有：</p>
-<ul>
-<li><p>变换transformation</p>
-</li>
-<li><p>光照lighting</p>
-</li>
-<li><p>置换贴图displacement mapping</p>
-<p>and so on</p>
-</li>
-</ul>
-<p><strong>物体空间和世界空间</strong></p>
-<p><strong>Local Space and World Space</strong></p>
-<p><strong>观察空间</strong></p>
-<p><strong>View Space</strong></p>
-<p><strong>投影与齐次裁剪空间</strong></p>
-<p><strong>Projection and Homogeneous Clip Space</strong></p>
-<p><strong>定义一个视锥体（平截头体）</strong></p>
-<p><strong>Defining a Frustum</strong></p>
-<p><strong>投影矩阵</strong></p>
-<p>这个部分可以参考《3d math primer for graphics and game development》，我就不废话了</p>
-<p><strong>标准化设备坐标系</strong></p>
-<p><strong>Normalized Device Coordinates (NDC)</strong></p>
-<p>前面部分中投影点的坐标是在视图空间中计算的。在视图空间中，投影窗口的高度为2，宽度为2r，其中r是纵横比。问题是尺寸取决于纵横比。这意味着需要告诉硬件纵横比，因为硬件稍后需要执行一些涉及投影窗口尺寸的操作（例如将其映射到后缓冲区）。如果我们能去掉对长宽比的依赖，那就更方便了。解决方案是将投影的x坐标从间隔[-r，r]缩放到[-1，1]，如下所示：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0758_DIRECTX12561.png"></p>
-<p>映射之后坐标就被描述在了NDC中。这里只有x和y轴坐标被标准化，z轴坐标并没有。</p>
-<p>当且仅当满足以下条件时一个点才会在视锥体中：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0758_DIRECTX12562.png"></p>
-<p><strong>用矩阵写出投影方程</strong></p>
-<p><strong>Writing the Projection Equations with a Matrix</strong></p>
-<p>目的是保持一致性，因为别的变换都用矩阵表示了。</p>
-<p>但是Equation是非线性的，需要拆成两部分，非线性的部分除以Z，但是z坐标之后还需要用，先保存在w分量。</p>
-<p><strong>标准化深度值</strong></p>
-<p><strong>Normalized Depth Value</strong></p>
-<p>因为需要进行深度测试，DirectX中希望深度值在[0，1]，这样好处理，所以要把深度值进行标准化。将原区间映射到0~1可以通过缩放和唯一来实现，如下：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0758_DIRECTX12563.png"></p>
-<p>如果近平面映射到0则有：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0758_DIRECTX12564.png"></p>
-<p>如果远平面映射到0则有</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0758_DIRECTX12565.png"></p>
-<p>由1式可以得B = −An，代入2式</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0758_DIRECTX12566.png"></p>
-<p>因此：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0758_DIRECTX12567.png"></p>
-<p>函数图像如下：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0758_DIRECTX12568.png"></p>
-<p>急剧增加且非线性的，和近平面比较近的部分几乎占用了所有的范围，大部分的深度值其实被映射到了一个小的子集里面，会导致深度缓冲的精度问题，毕竟硬件的精度数值式有限的。在实际使用过程中尽量使近平面和远平面接近一点。</p>
-<p><strong>XMMatrixPerspectiveFovLH</strong></p>
-<p>透视投影矩阵的创建可以使用如下的D3D数学函数：</p>
-<p>XMMATRIX XM_CALLCONV XMMatrixPerspectiveFovLH</p>
-<p>(</p>
-<p>float FovAngleY, //从上往下看视锥体的角度</p>
-<p>float AspectRatio, //X:Y 宽高比</p>
-<p>float NearZ, //近平面到裁剪平面的距离 必须大于零</p>
-<p>float FarZ //远平面到裁剪平面的距离 必须大于零</p>
-<p>);</p>
-<p><em>来自 &lt;<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/api/directxmath/nf-directxmath-xmmatrixperspectivefovlh">https://docs.microsoft.com/en-us/windows/win32/api/directxmath/nf-directxmath-xmmatrixperspectivefovlh</a>&gt;</em></p>
-<p>返回透视投影矩阵。</p>
-<p>宽高比与窗口宽高比匹配：</p>
-<p>float D3DApp::AspectRatio()const {</p>
-<p>return static_cast<float>(mClientWidth) / mClientHeight;</p>
+<p>当两个元素被判定为没有任何一个小于另一个，就会被视为重复。</p>
+<p>multiset的等效元素次序是随机但是稳定的。插入和删除元素依然会保持等效元素的相对次序。</p>
+<p>不能直接改变元素值，因为回打乱原有的顺序。两个容器要改变元素值必须先删除旧元素，再插入新元素。两个容器都不提供直接访问元素的操作函数。通过迭代器进行间接访问有一个限制，对于迭代器来说，元素值是常量。</p>
+<h2 id="构造函数与析构函数"><a href="#构造函数与析构函数" class="headerlink" title="构造函数与析构函数"></a>构造函数与析构函数</h2><p>对于排序准则，有两种方式可以定义。</p>
+<p>template参数定义，例如：</p>
+<p>set&lt;int,greater<int>&gt; coll;</p>
+<p>第二个参数可以认为是排序准则的“类型”。实际排序准则是容器产生的函数对象。</p>
+<p>以构造函数参数定义：</p>
+<p>这种情况，同一个类型可以运用可以运用不同的排序准则，而排序准则的初始值或状态也可以不同，如果运行期才获得排序准则，而且需要用到不同的排序准则，这一方式可派上用场。如果没有指定特定的排序准则，就会采用默认排序准则，即函数对象less&lt;&gt;</p>
+<p>排序准则也被用来检验元素相等性。这样做是有一些优点的：</p>
+<p>只需要传递一个实参作为排序准则，不需要针对元素类型提供==运算符，可以堆“相等性”有相反的定义，不造成混淆。但是这种检验会花费较长的时间，因为可能会需要比较第二次。</p>
+<p>需要注意。两个容器用==比较时内部元素会用自己的==运算符。</p>
+<p>构造和析构函数表</p>
+<p>操作</p>
+<p>效果</p>
+<p>set c</p>
+<p>默认构造，不含任何元素建立一个空的</p>
+<p>set c(op)</p>
+<p>复制构造</p>
+<p>set c(c2)</p>
+<p>复制构造，参数是另一个类型相同的容器，会复制每个元素</p>
+<p>set c = c2</p>
+<p>复制构造</p>
+<p>set c(cv)</p>
+<p>move构造（移动构造），c11</p>
+<p>set c = rv</p>
+<p>移动构造，c11</p>
+<p>set c(begin,end)</p>
+<p>左闭右开为初值建立一个容器</p>
+<p>set c(begin,end,op)</p>
+<p>左闭右开为初值，以op为排序准则</p>
+<p>set c(initlist)</p>
+<p>以initlist为初见建立。C11</p>
+<p>set c = initlist</p>
+<p>同上</p>
+<p>c.~set()</p>
+<p>析构函数</p>
+<p>上表中的set可以是如下形式：</p>
+<p>set</p>
+<p>效果</p>
+<p>set<Elem></p>
+<p>一个set，以less&lt;&gt;为准则排序</p>
+<p>set&lt;Elem, Op&gt;</p>
+<p>一个set，以op()为排序准则</p>
+<p>multiset<Elem></p>
+<p>一个multiset，以less&lt;&gt;为排序准则</p>
+<p>multiset<Elem></p>
+<p>一个multiset，以op&lt;&gt;为排序准则</p>
+<h2 id="非变动性操作"><a href="#非变动性操作" class="headerlink" title="非变动性操作"></a>非变动性操作</h2><p>用来查询大小，相互比较。</p>
+<p>注意元素比较动作只适合于类型相同的容器。要比较不同类型的容器，必须采用标准库比较算法。</p>
+<p>操作</p>
+<p>效果</p>
+<p>c.key_comp()</p>
+<p>返回比较准则</p>
+<p>c.value_comp()</p>
+<p>返回针对value的比较准则</p>
+<p>c.empty()</p>
+<p>返回是否为空</p>
+<p>c.size()</p>
+<p>返回目前元素数量</p>
+<p>c.max_size()</p>
+<p>返回元素个数的最大可能</p>
+<p>==</p>
+<p> </p>
+<p>!=</p>
+<p> </p>
+<p>&lt;</p>
+<p> </p>
+<p>&gt;</p>
+<p> </p>
+<p>&lt;=</p>
+<p> </p>
+<p>&gt;=</p>
+<p> </p>
+<p>特殊查找函数</p>
+<p>对于set和multiset，在元素快速查找方面有优化设计，所以提供了特殊的查找函数。这些函数是同名的STL算法的特殊版本，时间复杂度更低。</p>
+<p>操作</p>
+<p>效果</p>
+<p>c.count(value)</p>
+<p>返回值为value的元素个数</p>
+<p>c.find(value)</p>
+<p>返回元素值为value的第一个元素，找不到就返回end()</p>
+<p>c.lower_bound(value)</p>
+<p>返回value的第一个可安插的位置。即元素值&gt;=value的第一个位置</p>
+<p>c.upper_bound(value)</p>
+<p>返回value的最后一个可插入的位置。即元素值&gt;value的第一个位置</p>
+<p>c.equal_range(value)</p>
+<p>返回value可以插入的第一个位置和最后一个位置，也就是元素值==value的区间</p>
+<p>关于上面的几个函数的实例：</p>
+<p>#include<br>#include </p>
+<p>using namespace std;</p>
+<p>int main()<br>{<br>    set c;<br>    c.insert(1);<br>    c.insert(2);</p>
+<pre><code>c.insert(4);
+c.insert(5);
+c.insert(6);
+
+cout &lt;&lt; &quot;lower\_bound(3):&quot; &lt;&lt; \*c.lower\_bound(3) &lt;&lt; endl;
+cout &lt;&lt; &quot;upper\_bound(3):&quot; &lt;&lt; \*c.upper\_bound(3) &lt;&lt; endl;
+cout &lt;&lt; &quot;equal\_range(3):&quot; &lt;&lt; \*c.equal\_range(3).first &lt;&lt; &quot; &quot; 
+                          &lt;&lt; \*c.equal\_range(3).second &lt;&lt; endl;
+
+cout &lt;&lt; endl;
+cout &lt;&lt; &quot;lower\_bound(5):&quot; &lt;&lt; \*c.lower\_bound(5) &lt;&lt; endl;
+cout &lt;&lt; &quot;upper\_bound(5):&quot; &lt;&lt; \*c.upper\_bound(5) &lt;&lt; endl;
+cout &lt;&lt; &quot;equal\_range(5):&quot; &lt;&lt; \*c.equal\_range(5).first &lt;&lt; &quot; &quot;
+                          &lt;&lt; \*c.equal\_range(5).second &lt;&lt; endl;
+
+return 0;</code></pre>
 <p>}</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/19/directx-12-5-6-%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8%E9%98%B6%E6%AE%B5/">DIRECTX 12 5.6 顶点着色器阶段</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-19</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>图元装配完之后，vertex们就到达了vertex shader阶段。可以将vertex shader阶段视为一个函数，输入的是vertex，输出的是vertex。在硬件的实际计算过程中可以简单的认为是硬件做了如下过程：</p>
-<p>for(UINT i = 0; i &lt; numVertices; ++i)</p>
-<p>outputVertex[i] = VertexShader( inputVertex[i] );</p>
-<p>这个阶段可以实现的效果有：</p>
-<ul>
-<li><p>变换transformation</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/11/image-10.png" alt="_ bound (3) : 4 
+1 over 
+_ bound (3) : 4 
+pper 
+equal_range (3) : 4 4 
+_ bound (5) : 5 
+1 over 
+_ bound (5) : 6 
+pper 
+equal_range (5) 6 "></p>
+<h2 id="赋值操作"><a href="#赋值操作" class="headerlink" title="赋值操作"></a>赋值操作</h2><p>两个容器只提供任何容器都提供的基本复制操作，赋值操作的两端容器必须具备相同类型。排序准则本身可以不同，但“类型”必须相同。如果排序准则不同，准则本身也会连同容器一并被赋值或者交换。</p>
+<p>操作</p>
+<p>效果</p>
+<p>c = c2</p>
+<p>很明显的操作我懒得写了……以下省略</p>
+<p>c = rv</p>
+<p>右值以移动构造的方式给c</p>
+<p>c = initlist</p>
+<p> </p>
+<p>c1.swap(c2)</p>
+<p> </p>
+<p>swap(c1,c2)</p>
+<p> </p>
+<h2 id="迭代器相关函数"><a href="#迭代器相关函数" class="headerlink" title="迭代器相关函数"></a>迭代器相关函数</h2><p>两个容器不提供元素直接访问，所以只能采取范围for循环或者使用迭代器。</p>
+<p>需要注意的是，和所有关联式容器类似，迭代器是双向迭代器，对于只能接受随机访问迭代器的算法，这两个容器无法使用。并且从迭代器的角度去看，所有容器内的元素都会被视为常量，这样才能确保元素不会被改动以至于打乱原有的顺序。如果要移除容器内的元素，只能使用容器的成员函数。</p>
+<p>操作</p>
+<p>效果</p>
+<p>c.begin()</p>
+<p>返回一个双向迭代器指向第一个元素</p>
+<p>c.end()</p>
+<p>返回一个双向迭代器指向最后一个元素的下一个位置</p>
+<p>c.cbegin()</p>
+<p>返回一个const双向迭代器指向第一个元素，C11</p>
+<p>c.cend()</p>
+<p>返回一个const双向迭代器指向最后一个元素的下一个位置，C11</p>
+<p>c.rbrgin()</p>
+<p>返回一个反向的迭代器指向反向迭代的第一个元素</p>
+<p>c.rend()</p>
+<p>返回一个反向的迭代器指向反向迭代的最后一个元素的下一个位置</p>
+<p>c.crbegin()</p>
+<p>返回一个const反向迭代器指向反向迭代的第一个元素，C11</p>
+<p>c.crend()</p>
+<p>返回一个const反向迭代器指向反向迭代的最末元素的下一位置，C11</p>
+<h2 id="元素的插入和删除"><a href="#元素的插入和删除" class="headerlink" title="元素的插入和删除"></a>元素的插入和删除</h2><p>对于multiset，因为存在元素的值相同的元素，部分成员函数会保存等值元素之间的相对次序插入的元素会被放在既有的等值元素的末尾。</p>
+<p>操作</p>
+<p>效果</p>
+<p>c.insert(value)</p>
+<p>插入value值返回新元素的位置，无论插入是否成功</p>
+<p>c.insert(pos,value)</p>
+<p>同上，这里的pos是一个提示值，提示了查找插入位置的起点，正确的提示值可以加快查找速度</p>
+<p>c.insert(begin,end)</p>
+<p>区间插入，无返回值</p>
+<p>c.insert(initlist)</p>
+<p>初始列表插入，无返回值，C11</p>
+<p>c.emplace(args……)</p>
+<p>插入一个以args为初值的元素，返回新元素的位置</p>
+<p>c.emplace_hint(pos,args…)</p>
+<p>同上，pos为位置提示</p>
+<p>c.erase(value)</p>
+<p>删除与value相等的所有元素，返回被删除的个数</p>
+<p>c.erase(pos)</p>
+<p>删除迭代器位置pos上的元素，无返回值</p>
+<p>c.erase(begin,end)</p>
+<p>删除区间内的所有元素，无返回值</p>
+<p>c.clear()</p>
+<p>移除所有元素，清空容器</p>
+<p>注意insert()和emplace()返回类型不完全相同。原因是set不允许重复而multiset允许。如果set插入一个已经存在的值，插入动作将失败，所以set返回类型是以pair组织起来的两个值：</p>
+<p>pair的second成员表示是否插入成功</p>
+<p>pair中的first成员表示新元素的位置，或者已经存在的同值元素的位置。</p>
+<p>set提供的接口：</p>
+<p>// (1) 单个元素<br>pair insert(const value_type&amp; Val);</p>
+<p>// (2) single element, perfect forwarded<br>template<br>pair insert(ValTy&amp;&amp; Val);</p>
+<p>// (3) single element with hint<br>iterator insert( const_iterator Where, const value_type&amp; Val);</p>
+<p>// (4) single element, perfect forwarded, with hint<br>template<br>iterator insert( const_iterator Where, ValTy&amp;&amp; Val);</p>
+<p>// (5) range<br>template<br>void insert(InputIterator First,  InputIterator Last);</p>
+<p>// (6) initializer list<br>void insert( initializer_list IList);</p>
+<p>//emplace<br>template<br>pair emplace(<br>    Args&amp;&amp;… args);</p>
+<p>//emplace_hint<br>template<br>iterator emplace_hint(<br>    const_iterator where,<br>    Args&amp;&amp;… args);</p>
+<p>//erase<br>iterator erase(<br>    const_iterator Where);</p>
+<p>iterator erase(<br>    const_iterator First,<br>    const_iterator Last);</p>
+<p>size_type erase(<br>    const key_type&amp; Key);</p>
+<p>multiset提供的节口</p>
+<p>//multiset::insert // (1) single element pair insert( const value_type&amp; Val); // (2) single element, perfect forwarded template pair insert( ValTy&amp;&amp; Val); // (3) single element with hint iterator insert( const_iterator Where, const value_type&amp; Val); // (4) single element, perfect forwarded, with hint template iterator insert( const_iterator Where, ValTy&amp;&amp; Val); // (5) range template void insert( InputIterator First, InputIterator Last); // (6) initializer list void insert( initializer_list IList); //multiset::emplace template iterator emplace(Args&amp;&amp;… args); //multiset::emplace_hint template iterator emplace_hint( const_iterator where, Args&amp;&amp;… args); //multiset::erase iterator erase( const_iterator Where); iterator erase( const_iterator First, const_iterator Last); size_type erase( const key_type&amp; Key);</p>
+<h2 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h2><p>两个容器是以节点为基础的容器，如果节点构建失败，容器仍保持原样。由于析构函数通常不抛出异常，所以节点的删除不可以失败。</p>
+<p>对于多重元素安插动作，保持元素次序这个条件会造成异常抛出时必须完全恢复原状变得不可能。因此只有单一元素插入时才支持除了成功就是无效的操作原则。</p>
+<p>运用实例</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/11/image-11.png" alt="6 一 一 41 3 礻 3 
+5 试 2 除 4 除 4 
+3 子 4 、 7 一 6 
+冂 乙 亠 凵 刂 "></p>
+<p>运行期指定排序准则</p>
+<p>在必须在运行期处理排序准则或者需要对同一种数据类型采用不同的排序准则，就需要一个用来表现排序准则的特殊类型。</p>
+<p>下面是一个实例</p>
+<p>代码托管到了github：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/muchenhen/MySTLSample/tree/master/STL%E5%AE%B9%E5%99%A8/set%E4%B8%8Emultiset">运行时排序准则</a></p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/11/04/directx-12-4-2cpu-gpu%E4%BA%A4%E4%BA%92/">DirectX 12 4.2CPU/GPU交互</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/DirectX/">DirectX</a></span><div class="content"><p>在图形编程中两个处理:CPU和GPU并行工作，有时需要同步。为了获得最佳性能，要尽可能长时间地保持忙碌，并最小化同步。同步是不可取的，因为这意味着一个处理单元是空闲的，需要等待另一个完成一些工作，破坏了并行性。</p>
+<h2 id="4-2-1命令队列和命令列表"><a href="#4-2-1命令队列和命令列表" class="headerlink" title="4.2.1命令队列和命令列表"></a>4.2.1命令队列和命令列表</h2><p><a target="_blank" rel="noopener" href="https://www.muchenhen.com/2019/03/16/%e3%80%90unity%e4%bc%98%e5%8c%96%e3%80%91drawcall/">Unity优化的一种思路-drawcall</a></p>
+<p>GPU有一个命令队列，CPU通过使用命令列表的Direct3D API向队列提交命令。命令被提交到命令队列不会立即被GPU执行，而是一直排在队列中，直到GPU准备好再进行处理。</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/11/image-7.png" alt="CPU submits commands 
+GPU gets and processes 
+next command "></p>
+<p>命令队列为空的话GPU无事可做，命令队列太满的话，GPU无法及时处理，则CPU将在某个时间点不得不空闲。相当于浪费了硬件资源。目标是要让CPU和GPU都保持忙碌的状态。</p>
+<p>在Direct3D 12中，命令队列由ID3D12CommandQueue接口表示。 它是通过填充描述队列的D3D12_COMMAND_QUEUE_DESC结构，然后调用ID3D12Device :: CreateCommandQueue创建的。</p>
+<p>创建命令队列的方式如下所示：</p>
+<p>Microsoft::WRL::ComPtr mCommandQueue;<br>//定义ID3D12CommandQueue的地址</p>
+<p>D3D12_COMMAND_QUEUE_DESC queueDesc = {};<br>//定义CommandQueue的描述符及其一些参数</p>
+<p>queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;<br>queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;</p>
+<p>ThrowIfFailed(md3dDevice-&gt;CreateCommandQueue(&amp;queueDesc, IID_PPV_ARGS(&amp;mCommandQueue)));<br>//通过地址以及描述符创建命令列表</p>
+<p>IID_PPV_ARGS助手宏被定义为：#define IID_PPV_ARGS(ppType) __uuidof(**(ppType)), IID_PPV_ARGS_Helper(ppType)</p>
+<p>其中__uuof（**（ppType））计算为（**（ppType））的COM接口ID，在上面就是COMJ接口:ID3D12CommandQueue。 IID_PPV_ARGS_Helper函数基本上将ppType转换为void **。</p>
+<p>主要方法之一是ExecuteCommandLists方法，它将命令列表中的命令添加到队列中：</p>
+<p>void ID3D12CommandQueue::ExecuteCommandLists(<br>// 数组中列出的命令数<br>UINT Count,<br>//指向命令列表数组中第一个元素的指针</p>
+<p>ID3D12CommandList *const *ppCommandLists);</p>
+<p>命令列表按照从第一个数组元素开始的顺序执行。</p>
+<p>正如上面的方法声明所提示的，图形的命令列表由从ID3D12CommandList接口继承的ID3D12GraphicsCommandList接口表示。 ID3D12GraphicsCommandList接口提供了多种向命令列表添加命令的方法。 例如，下面的代码添加了设置窗口，清除渲染目标视图和发出绘制调用的命令：</p>
+<p>// mCommandList pointer to ID3D12CommandList<br>mCommandList-&gt;RSSetViewports(1, &amp;mScreenViewport);<br>mCommandList-&gt;ClearRenderTargetView(mBackBufferView,Colors::LightSteelBlue, 0, nullptr);</p>
+<p>mCommandList-&gt;DrawIndexedInstanced(36, 1, 0, 0, 0);</p>
+<p>从命令的名字来看是立即执行的命令，但其实不是。上面的这些代码只是把命令添加到了</p>
+<p>命令列表。ExecuteCommandLists方法将命令添加到命令队列，之后GPU处理命令。当完成向命令列表添加命令时，必须通过调用ID3D12GraphicsCommandList::Close方法来表明已经完成了对命令的记录:</p>
+<p>mCommandList-&gt;Close();//记录命令</p>
+<p>在传递给ID3D12CommandQueue :: ExecuteCommandLists之前，命令列表必须关闭。</p>
+<p>与命令列表关联的是称为ID3D12CommandAllocator的内存支持类。 当命令被记录到命令列表中时，它们实际上将被存储在关联的命令分配器中。 当通过ID3D12CommandQueue :: ExecuteCommandLists执行命令列表时，命令队列将引用分配器中的命令。 命令分配器是从ID3D12Device创建的：</p>
+<p>HRESULT ID3D12Device::CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE type,REFIID riid,void **ppCommandAllocator);</p>
+<ol>
+<li>type：可以与此分配器关联的命令列表的类型。<br>两种常见类型是：<ol>
+<li>D3D12_COMMAND_LIST_TYPE_DIRECT：存储GPU直接执行的命令列表（上文到现在描述的命令列表类型）。</li>
+<li>D3D12_COMMAND_LIST_TYPE_BUNDLE：指定命令列表表示一个包。在构建命令列表中有一些CPU开销，所以Direct3D 12提供了一种优化，能够将一系列命令记录到捆绑包中。在记录包之后，驱动程序将预处理这些命令以在渲染过程中优化它们的执行。因此，应该在初始化时记录捆绑包。如果分析显示构建特定命令列表需要花费大量时间，则应该将捆绑的使用视为优化。 Direct3D 12绘图API已经非常高效，所以不需要经常使用bundle。</li>
+</ol>
 </li>
-<li><p>光照lighting</p>
-</li>
-<li><p>置换贴图displacement mapping</p>
-<p>and so on</p>
-</li>
-</ul>
-<p><strong>物体空间和世界空间</strong></p>
-<p><strong>Local Space and World Space</strong></p>
-<p><strong>观察空间</strong></p>
-<p><strong>View Space</strong></p>
-<p><strong>投影与齐次裁剪空间</strong></p>
-<p><strong>Projection and Homogeneous Clip Space</strong></p>
-<p><strong>定义一个视锥体（平截头体）</strong></p>
-<p><strong>Defining a Frustum</strong></p>
-<p><strong>投影矩阵</strong></p>
-<p>这个部分可以参考《3d math primer for graphics and game development》，我就不废话了</p>
-<p><strong>标准化设备坐标系</strong></p>
-<p><strong>Normalized Device Coordinates (NDC)</strong></p>
-<p>前面部分中投影点的坐标是在视图空间中计算的。在视图空间中，投影窗口的高度为2，宽度为2r，其中r是纵横比。问题是尺寸取决于纵横比。这意味着需要告诉硬件纵横比，因为硬件稍后需要执行一些涉及投影窗口尺寸的操作（例如将其映射到后缓冲区）。如果我们能去掉对长宽比的依赖，那就更方便了。解决方案是将投影的x坐标从间隔[-r，r]缩放到[-1，1]，如下所示：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0758_DIRECTX12561.png"></p>
-<p>映射之后坐标就被描述在了NDC中。这里只有x和y轴坐标被标准化，z轴坐标并没有。</p>
-<p>当且仅当满足以下条件时一个点才会在视锥体中：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0758_DIRECTX12562.png"></p>
-<p><strong>用矩阵写出投影方程</strong></p>
-<p><strong>Writing the Projection Equations with a Matrix</strong></p>
-<p>目的是保持一致性，因为别的变换都用矩阵表示了。</p>
-<p>但是Equation是非线性的，需要拆成两部分，非线性的部分除以Z，但是z坐标之后还需要用，先保存在w分量。</p>
-<p><strong>标准化深度值</strong></p>
-<p><strong>Normalized Depth Value</strong></p>
-<p>因为需要进行深度测试，DirectX中希望深度值在[0，1]，这样好处理，所以要把深度值进行标准化。将原区间映射到0~1可以通过缩放和唯一来实现，如下：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0758_DIRECTX12563.png"></p>
-<p>如果近平面映射到0则有：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0758_DIRECTX12564.png"></p>
-<p>如果远平面映射到0则有</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0758_DIRECTX12565.png"></p>
-<p>由1式可以得B = −An，代入2式</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0758_DIRECTX12566.png"></p>
-<p>因此：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0758_DIRECTX12567.png"></p>
-<p>函数图像如下：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0758_DIRECTX12568.png"></p>
-<p>急剧增加且非线性的，和近平面比较近的部分几乎占用了所有的范围，大部分的深度值其实被映射到了一个小的子集里面，会导致深度缓冲的精度问题，毕竟硬件的精度数值式有限的。在实际使用过程中尽量使近平面和远平面接近一点。</p>
-<p><strong>XMMatrixPerspectiveFovLH</strong></p>
-<p>透视投影矩阵的创建可以使用如下的D3D数学函数：</p>
-<p>XMMATRIX XM_CALLCONV XMMatrixPerspectiveFovLH</p>
-<p>(</p>
-<p>float FovAngleY, //从上往下看视锥体的角度</p>
-<p>float AspectRatio, //X:Y 宽高比</p>
-<p>float NearZ, //近平面到裁剪平面的距离 必须大于零</p>
-<p>float FarZ //远平面到裁剪平面的距离 必须大于零</p>
-<p>);</p>
-<p><em>来自 &lt;<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/api/directxmath/nf-directxmath-xmmatrixperspectivefovlh">https://docs.microsoft.com/en-us/windows/win32/api/directxmath/nf-directxmath-xmmatrixperspectivefovlh</a>&gt;</em></p>
-<p>返回透视投影矩阵。</p>
-<p>宽高比与窗口宽高比匹配：</p>
-<p>float D3DApp::AspectRatio()const {</p>
-<p>return static_cast<float>(mClientWidth) / mClientHeight;</p>
+<li>riid：我们想要创建的ID3D12CommandAllocator接口的COM ID</li>
+<li>ppCommandAllocator：输出一个指向创建的命令分配器的指针。</li>
+</ol>
+<p>命令列表也是从ID3D12Device创建的：</p>
+<p>HRESULT ID3D12Device::CreateCommandList(<br>UINT nodeMask,<br>D3D12_COMMAND_LIST_TYPE type,<br>ID3D12CommandAllocator *pCommandAllocator,<br>ID3D12PipelineState *pInitialState,<br>REFIID riid,<br>void **ppCommandList);</p>
+<ol>
+<li>nodeMask：为单GPU系统设置为0。 否则，节点掩码将标识与该命令列表关联的物理GPU。假设单GPU系统。</li>
+<li>键入：命令列表的类型：_COMMAND_LIST_TYPE_DIRECT或D3D12_COMMAND_LIST_TYPE_BUNDLE。</li>
+<li>pCommandAllocator：与创建的命令列表关联的分配器。 命令分配器类型必须与命令列表类型匹配。</li>
+<li>pInitialState：指定命令列表的初始管道状态。 这对bundle来说可以为null，在特殊情况下，为了初始化而执行命令列表并且不包含任何绘图命令。</li>
+<li>riid：要创建的ID3D12CommandList接口的COM ID。</li>
+<li>ppCommandList：输出指向创建的命令列表的指针。</li>
+</ol>
+<p>可以创建与同一分配器关联的多个命令列表，但不能同时进行记录。</p>
+<p>试图用同一个分配器在一行中创建两个命令列表，会错误：</p>
+<p>D3D12 ERROR: ID3D12CommandList::</p>
+<p>{Create,Reset}CommandList: The command allocator is currently in-use by another command list.</p>
+<p>用ID3D12CommandQueue :: ExecuteCommandList（C）之后，通过调用ID3D12CommandList :: Reset方法重用C的内部存储器以记录一组新的命令是安全的。 此方法的参数与ID3D12Device :: CreateCommandList中的匹配参数相同。</p>
+<p>HRESULT ID3D12CommandList::Reset(ID3D12CommandAllocator *pAllocator,ID3D12PipelineState *pInitialState);</p>
+<p>这个方法将命令列表放在与刚刚创建的状态相同的状态，但允许重新使用内部存储器，避免释放旧命令列表并分配新命令列表。 请注意，重置命令列表不会影响命令队列中的命令，因为关联的命令分配器仍然具有命令队列引用的内存中的命令。</p>
+<p>在向GPU提交完整帧的渲染命令后，需要在命令分配器中重用下一帧的内存，ID3D12CommandAllocator :: Reset方法可用于此：</p>
+<p>HRESULT ID3D12CommandAllocator::Reset(void);</p>
+<p>类似于调用std :: vector :: clear，它将vector重新调整为零，但保持当前容量不变。 但是，由于命令队列可能引用了分配器中的数据，因此只有在确定GPU已完成执行分配器中的所有命令后，才能重置命令分配器。</p>
+<h2 id="4-2-2-CPU-GPU同步"><a href="#4-2-2-CPU-GPU同步" class="headerlink" title="4.2.2 CPU / GPU同步"></a>4.2.2 CPU / GPU同步</h2><p>由于有两个处理器并行运行，所以有许多同步问题。</p>
+<p>假设，我们有储存了一些我们要绘制的集合体的位置的资源R，CPU更新R的数据去存储位置p1然后将参照r的绘图命令c添加到命令队列中，以便在位置p1处绘制几何图形。向命令队列添加命令不会阻塞CPU，所以cpu可以继续。在gpu执行draw命令c之前，cpu继续运行并覆盖r的数据以存储新的位置p2，会造成错误。</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/11/image-8.png" alt="c 
+CPU Timeline 
+Add C 
+Store PI 
+Store P2 
+GPU gets and processes 
+next command "></p>
+<p>如图会造成错误，因为C要用p2绘制图形，而R在更新中。</p>
+<p>这种情况的一个解决方案是强制CPU等待，直到GPU完成队列中所有命令的处理，直到达到指定的隔断点，将其成为刷新命令队列。可以使用fence来实现。ID3D12Fence接口用于实现CPU和GPU同步：</p>
+<p>HRESULT ID3D12Device::CreateFence(<br>UINT64 InitialValue,<br>D3D12_FENCE_FLAGS Flags,<br>REFIID riid,<br>void **ppFence);<br>// Example<br>ThrowIfFailed(md3dDevice-&gt;CreateFence(<br>0,<br>D3D12_FENCE_FLAG_NONE,</p>
+<p>IID_PPV_ARGS(&amp;mFence)));</p>
+<p>fence对象维护一个UINT64值，该值只是一个整数，用于及时标识一个fence点。从值0开始，每次需要标记一个新的栅栏点，增加整数。下面的代码展示了如何使用fence刷新命令队列：</p>
+<p>UINT64 mCurrentFence = 0;<br>void D3DApp::FlushCommandQueue()<br>{<br>// 提高围栏值以标记直至此围栏点的命令。<br>mCurrentFence++;<br>//向命令队列添加一条指令来设置一个新的围栏点。<br>//因为我们在GPU时间轴上，所以新的栅栏点不会<br>//直到GPU完成处理此Signal（）前的所有命令为止。<br>ThrowIfFailed(mCommandQueue-&gt;Signal(mFence.Get(),mCurrentFence));<br>//等到GPU完成到这个围栏点的命令。<br>if(mFence-&gt;GetCompletedValue() &lt; mCurrentFence)<br>{<br>HANDLE eventHandle = CreateEventEx(nullptr, false,<br>false, EVENT_ALL_ACCESS);<br>//当GPU击中当前栅栏时触发事件。<br>ThrowIfFailed(mFence-&gt;SetEventOnCompletion(mCurrentFence, eventHandle));<br>//等待GPU击中当前的围栏事件。<br>WaitForSingleObject(eventHandle, INFINITE);<br>CloseHandle(eventHandle);<br>}<br>}</p>
+<p>如图：</p>
+<p>![Fence n<br>GPU Timeline<br>x<br>gpu<br>Command<br>Queue<br>CPU Timeline<br>Fence n+l<br>Signal (fence,<br>xcpu </p>
+<ol>
+<li>](<a target="_blank" rel="noopener" href="https://www.muchenhen.com/wp-content/uploads/2019/11/image-9.png">https://www.muchenhen.com/wp-content/uploads/2019/11/image-9.png</a>)</li>
+</ol>
+<p>如图，GPU已经处理了xgpu的命令，CPU刚刚调用了ID3D12CommandQueue::Signal(fence, n+1)方法。</p>
+<p>这实际上是在队列末尾添加一条指令，将fence值更改为n + 1。</p>
+<p>然而，mFence-&gt;GetCompletedValue()将继续返回n，直到GPU处理队列中在信号(fence, n+1)指令之前添加的所有命令。</p>
+<p>所以在前面的例子中，在CPU发出绘图命令C之后，它将在覆盖R的数据以存储新的位置p2之前刷新命令队列。 这个解决方案并不理想，因为这意味着CPU在等待GPU完成时处于空闲状态。可以在几乎任何点刷新命令队列(不一定每帧只刷新一次);如果有一些初始化GPU命令，可以在进入主渲染循环之前刷新命令队列来执行初始化。</p>
+<h2 id="4-2-3资源转换"><a href="#4-2-3资源转换" class="headerlink" title="4.2.3资源转换"></a>4.2.3资源转换</h2><p>为了实现常见的呈现效果，gpu通常在一个步骤中写入资源r，然后在后面的步骤中读取资源r。但是，如果gpu没有完成对资源r的写入或根本没有开始写入，则从资源r读取将是一种资源危害。要解决此问题，Direct3D将状态与资源关联资源在创建时处于默认状态，由应用程序告诉Direct3D任何状态转换。这使得gpu能够做任何它需要做的工作来进行转换和防止资源危害。例如，如果我们正在写入资源（例如纹理），则将纹理状态设置为渲染目标状态；当需要读取纹理时，将其状态更改为着色器资源状态。通过将转换通知direct3d，gpu可以采取步骤避免危险，例如，在从资源读取之前等待所有写操作完成。由于性能原因，资源转换的负担落在程序员身上。</p>
+<p>资源转换是通过在命令列表上设置转换资源屏障的数组来指定的；它是一个数组，以防使用一个api调用转换多个资源。在代码中，资源屏障由d3d12_resource_barrier_desc结构表示。下面的helper函数（在d3dx12.h中定义）返回给定资源的转换资源屏障描述，并指定before和after状态：</p>
+<p>struct CD3DX12_RESOURCE_BARRIER : public<br>D3D12_RESOURCE_BARRIER<br>{<br>// […] convenience methods<br>static inline CD3DX12_RESOURCE_BARRIER Transition(<br>_In_ ID3D12Resource* pResource,<br>D3D12_RESOURCE_STATES stateBefore,<br>D3D12_RESOURCE_STATES stateAfter,<br>UINT subresource =<br>D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES,<br>D3D12_RESOURCE_BARRIER_FLAGS flags =<br>D3D12_RESOURCE_BARRIER_FLAG_NONE)<br>{<br>CD3DX12_RESOURCE_BARRIER result;<br>ZeroMemory(&amp;result, sizeof(result));<br>D3D12_RESOURCE_BARRIER &amp;barrier = result;<br>result.Type =<br>D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;<br>result.Flags = flags;<br>barrier.Transition.pResource = pResource;<br>barrier.Transition.StateBefore = stateBefore;<br>barrier.Transition.StateAfter = stateAfter;<br>barrier.Transition.Subresource = subresource;<br>return result;<br>}<br>// […] more convenience methods</p>
+<p>};</p>
+<p>CD3DX12_RESOURCE_BARRIER扩展了D3D12_RESOURCE_BARRIER_DESC并添加了便利方法。</p>
+<p>示例应用程序中该函数的一个示例如下:</p>
+<p>mCommandList-&gt;ResourceBarrier(1, &amp;CD3DX12_RESOURCE_BARRIER::Transition( CurrentBackBuffer(), D3D12_RESOURCE_STATE_PRESENT,<br>D3D12_RESOURCE_STATE_RENDER_TARGET));</p>
+<p>此代码将表示在屏幕上显示的图像的纹理从呈现状态转换为呈现目标状态。资源屏障已添加到命令列表中，可以将资源屏障转换视为命令本身，指示GPU正在转换资源的状态，以便可以在执行后续命令时采取必要步骤防止资源危险。</p>
+<p>除了过渡类型外，还有其他类型的资源壁垒。</p>
+<h2 id="4-2-4多线程命令"><a href="#4-2-4多线程命令" class="headerlink" title="4.2.4多线程命令"></a>4.2.4多线程命令</h2><p>direct3d 12是为高效多线程而设计的，命令列表设计是direct3d利用多线程的一种方式。对于包含大量对象的大型场景，构建命令列表以绘制整个场景可能需要CPU时间。因此，并行地构建命令列表是一种可行的办法；例如，您可以生成四个线程，每个线程负责构建一个命令列表来绘制25%的场景对象。</p>
+<p>关于命令列表多线程处理，需要注意以下几点：</p>
+<ol>
+<li>命令列表不是自由线程的；也就是说，多个线程不能共享同一个命令列表并同时调用其方法。所以一般来说，每个线程都会得到自己的命令列表。</li>
+<li>命令分配器不是自由线程；也就是说，多个线程不能共享同一个命令分配器并同时调用其方法。所以一般来说，每个线程都有自己的命令分配器。</li>
+<li>命令队列是自由线程的，因此多个线程可以同时访问命令队列和调用其方法。特别是，每个线程都可以同时将生成的命令列表提交给线程队列。</li>
+<li>出于性能原因，应用程序必须在初始化时间指定它们同时记录的命令列表的最大数量。</li>
+</ol>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/11/03/stl%EF%BC%9Aforward-list%E5%AE%B9%E5%99%A8/">STL：forward_list容器</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/">cpp</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/STL/">STL</a></span><div class="content"><p>该容器从c11才有，内部是一个单向链表。</p>
+<p>需要头文件&lt;forward_list&gt;</p>
+<p>在std中定义如下：</p>
+<p>template &lt;class Type,</p>
+<p>    class Allocator = allocator<Type>&gt;</p>
+<p>class forward_list</p>
+<p>forward_list是一个受限制的list，优点是内存用量较少，行动也比较快。比起list有一些约束：</p>
+<p>不提供双向迭代器，不支持反向迭代器。</p>
+<p>不提供成员函数size()</p>
+<p>没有指向最后一个元素的anchor，所以没有back() push_back() pop_back()</p>
+<p>对于所有插入操作的函数都有特殊版本。例如insert()变为insert_back()，必须传递第一个被处理元素的前一个位置，将新元素插入到第一个实参所表示的元素后。同样，begin()会变成before_begin()，会返回头指针（指向头结点的指针，即单链表的anchor）</p>
+<p>不提供size()函数的原因是设计者要求forward_list()与手写的单向链表相比不造成额外的时间或者空间开销。</p>
+<p>其余事项与list基本相同。</p>
+<p>如果必须计算元素个数，可以使用distance，定义于头文件 <iterator>，返回从 first 到 last 的路程。</p>
+<p>forward_list<int> list = { 1, 2, 3 };</p>
+<p>cout &lt;&lt; distance(list.begin(),list.end());</p>
+<p>输出结果是3</p>
+<p>元素访问</p>
+<p>唯一能够直接访问的元素是第一个元素</p>
+<p>c.front()，不检查是否存在第一个元素</p>
+<h2 id="迭代器相关"><a href="#迭代器相关" class="headerlink" title="迭代器相关"></a>迭代器相关</h2><p>只能以前行方向遍历元素，没有反向迭代器，无法调用双向或者随机迭代器的算法。排序只能用自己的成员函数。</p>
+<p>注意，before_begin()和cbefore_begin()作为第一个参数使用任何STL函数都会导致运行时出错。</p>
+<p>所有以after结尾的插入函数，会将元素插入到指定位置之后，因为forwardlist没有指向前一个元素的指针。如果后缀after的元素传入了end()作为参数，会产生不明确的行为，如果要在尾部插入一个元素，需要传入终端元素的位置。</p>
+<p>和list一样forwardlist可以在常量时间内删除和插入元素。forwardlist提供和list几乎一致的成员函数splice_after()</p>
+<h2 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h2><p>对于和list相同的函数，异常处理方式完全相同。</p>
+<h2 id="成员函数"><a href="#成员函数" class="headerlink" title="成员函数"></a>成员函数</h2><p>创建、复制、删除</p>
+<p>操作</p>
+<p>结果</p>
+<p>forward_list<Elem> c</p>
+<p>默认构造</p>
+<p>forward_list<Elem> c(c2)</p>
+<p>复制构造</p>
+<p>forward_list<Elem> c = c2</p>
+<p>复制构造</p>
+<p>forward_list<Elem> c(rvalue)</p>
+<p>move构造</p>
+<p>forward_list<Elem> c=crvalue</p>
+<p>move构造</p>
+<p>forward_list<Elem> c(n)</p>
+<p>默认构造一个大小为n的forward_list</p>
+<p>forward_list<Elem> c(n,elem)</p>
+<p>生成一个有n个元素的forward_list，每个元素都是elem</p>
+<p>forward_list<Elem> c(begin,end)</p>
+<p>以begin和end的左闭右开区间构造一个forward_list</p>
+<p>forward_list<Elem> c(initforward_list)</p>
+<p>以初值列表构造forward_list</p>
+<p>forward_list<Elem> c = initforward_list</p>
+<p>同上</p>
+<p>c.~forward_list()</p>
+<p>销毁所有元素，释放内存</p>
+<p>非变动性操作</p>
+<p>操作</p>
+<p>效果</p>
+<p>c.empty()</p>
+<p>返回容器是否为空</p>
+<p>c.size()</p>
+<p>返回目前容器内元素个数</p>
+<p>c.max_size()</p>
+<p>返回元素个数的最大可能值</p>
+<p>c1 == c2</p>
+<p> </p>
+<p>!=</p>
+<p> </p>
+<p>&lt;</p>
+<p> </p>
+<p>&gt;</p>
+<p> </p>
+<p>&lt;=</p>
+<p> </p>
+<p>&gt;=</p>
+<p> </p>
+<p>赋值操作</p>
+<p>操作</p>
+<p>效果</p>
+<p>c = c2</p>
+<p>赋值</p>
+<p>c = rv</p>
+<p>将右值move给c</p>
+<p>c = initlist</p>
+<p>初始化表赋给c</p>
+<p>c.assign(n,elem)</p>
+<p>n个elem赋给c</p>
+<p>c.assign(begin,end)</p>
+<p>左闭右开赋给c</p>
+<p>c.assign(initlist)</p>
+<p>初始化表赋给c</p>
+<p>c1.swap(c2)</p>
+<p>交换c1，c2</p>
+<p>swap(c1,c2)</p>
+<p>比上面那个慢，全局函数</p>
+<p>迭代器操作</p>
+<p>操作</p>
+<p>效果</p>
+<p>c.begin()</p>
+<p>返回一个双向迭代器指向第一个元素</p>
+<p>c.end()</p>
+<p>返回指向最后一个元素的双向迭代器</p>
+<p>c.cbegin()</p>
+<p>第一个的const，c11</p>
+<p>c.cend()</p>
+<p>第二的const，c11</p>
+<p>c.before_begin()</p>
+<p>返回一个forward迭代器指向第一个元素的前一个位置</p>
+<p>c.cbefore_begin()</p>
+<p>返回一个const forward迭代器指向第一元素的前一位置</p>
+<p>插入删除</p>
+<p>操作</p>
+<p>效果</p>
+<p>异常处理</p>
+<p>c.push_front()</p>
+<p>头插</p>
+<p>成功或者没有任何效果</p>
+<p>c.pop_front()</p>
+<p>头删，不返回</p>
+<p>不抛出异常</p>
+<p>c.insert_after(pos,elem)</p>
+<p>指定位置后插入</p>
+<p>成功或者没有任何效果</p>
+<p>c.insert_after(pos,n,elem)</p>
+<p>指定位置后插入n个elem，返回第一个新元素的位置</p>
+<p>成功或者没有任何效果</p>
+<p>c.insert_after(pos,begin,end)</p>
+<p>指定位置后插入左闭右开的所有元素，返回第一个新元素位置</p>
+<p>成功或者没有任何效果</p>
+<p>c.insert_after(pos,initlist)</p>
+<p>指定位置后插入初始化列的所有元素并返回第一个新元素的位置</p>
+<p>成功或者没有任何效果</p>
+<p>c.emplace_after(pos,args…)</p>
+<p>在pos后插入以args为初值的元素，并返回新元素位置，c11</p>
+<p> </p>
+<p>c.emplace_front(args…)</p>
+<p>上面的函数的头插实现，不返回，c11</p>
+<p> </p>
+<p>c.erase_after(pos)</p>
+<p>删除指定位之后的元素，不返回任何</p>
+<p>不抛出异常</p>
+<p>c.erase_after(begin,end)</p>
+<p>删除区间，不返回任何</p>
+<p>不抛出异常</p>
+<p>c.remove(val)</p>
+<p>删除所有值为val的元素</p>
+<p>元素比较不抛出异常，这个函数就不抛出异常</p>
+<p>c.remove_if(op)</p>
+<p>上文讲过了</p>
+<p>如上</p>
+<p>c.resize(num)</p>
+<p>元素数量改为num，如果变多，多出来的默认构造</p>
+<p>成功或者没有任何效果</p>
+<p>c.resize(num,elem)</p>
+<p>如果变多，多出来的为elem</p>
+<p>成功或者没有任何效果</p>
+<p>c.clear()</p>
+<p>删除所有元素</p>
+<p>不抛出异常</p>
+<p>特殊变动性操作</p>
+<p>操作</p>
+<p>效果</p>
+<p>异常处理</p>
+<p>c.unique()</p>
+<p>如果存在临近且数值相同的元素，只保留一个</p>
+<p>元素比较不抛出异常，这个函数就不抛出异常</p>
+<p>c.unique(op)</p>
+<p>如果存在相邻元素满足op，就只保留一个</p>
+<p>元素比较不抛出异常，这个函数就不抛出异常</p>
+<p>c.splice_after(pos,c2)</p>
+<p>把c2的所有元素搬到c的pos后</p>
+<p>不抛出异常</p>
+<p>c.splice_after(pos,c2,c2pos)</p>
+<p>把c2的c2pos的元素搬到c的pos后</p>
+<p>同上</p>
+<p>c.splice_after(pos,c2,c2begin,c2end)</p>
+<p>把c2的c2begin和c2end之间的元素左闭右开搬到c的pos后</p>
+<p>同上</p>
+<p>c.sort()</p>
+<p>从小到大对c进行排序</p>
+<p> </p>
+<p>c.sort(op)</p>
+<p>以op准则进行排序</p>
+<p> </p>
+<p>c.merge(c2)</p>
+<p>假设c和c2的容器都包含符合op()的已经排序的元素，将c2的元素搬到c，并保证合并后的list依然是已排序的</p>
+<p>元素比较不抛出异常，这个函数就不抛出异常</p>
+<p>c.merge(c2,op)</p>
+<p>假设c和c2的容器都包含符合op()的已经排序的元素，将c2的元素搬到c，并保证合并后的list依然是符合op的已排序的</p>
+<p>元素比较不抛出异常，这个函数就不抛出异常</p>
+<p>c.reserve()</p>
+<p>将所有元素反序</p>
+<p>不抛出</p>
+<p>实例：</p>
+<p>#include<br>#include<br>#include<br>#include<br>#include </p>
+<p>using namespace std;</p>
+<p>void printLists(const string&amp; s, const forward_list&amp; l1, const forward_list&amp; l2)<br>{<br>    cout &lt;&lt; s &lt;&lt; endl;<br>    cout &lt;&lt; “list1:”;<br>    copy(l1.cbegin(), l1.cend(), ostream_iterator(cout, “ “));<br>    cout &lt;&lt; endl;<br>    cout &lt;&lt; “list2:”;<br>    copy(l2.cbegin(), l2.cend(), ostream_iterator(cout, “ “));<br>    cout &lt;&lt; endl;</p>
 <p>}</p>
-</div><hr></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-chevron-left"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/56/">56</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer class="footer-bg" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div class="layout" id="footer"><div class="copyright">&copy;2017 - 2020 By 木尘痕</div><div class="framework-info"><span>Driven - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="footer_custom_text">千秋竟岁，伏苦飞逐</div><div class="icp"><a><span>豫ICP备17048032号</span></a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_site_uv"><i class="fa fa-user"></i><span id="busuanzi_value_site_uv"></span><span></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i><span id="busuanzi_value_site_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.8.2"></script><script src="/js/fancybox.js?version=1.8.2"></script><script src="/js/sidebar.js?version=1.8.2"></script><script src="/js/copy.js?version=1.8.2"></script><script src="/js/fireworks.js?version=1.8.2"></script><script src="/js/transition.js?version=1.8.2"></script><script src="/js/scroll.js?version=1.8.2"></script><script src="/js/head.js?version=1.8.2"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+<p>int main()<br>{<br>    //创建两个空forwardlist<br>    forward_list list1 = { 1,2,3,4 };<br>    forward_list list2 = { 77,88,99 };<br>    printLists(“初始化：”, list1, list2);</p>
+<pre><code>//在list2的第一个元素前插入6个新元素
+list2.insert\_after(list2.before\_begin(), 99);
+list2.push\_front(10);
+list2.insert\_after(list2.before\_begin(), &#123; 10,11,12,13 &#125;);
+printLists(&quot;6个新元素：&quot;, list1, list2);
+
+//把list2的所有元素插入到list1的开头
+list1.insert\_after(list1.before\_begin(), list2.begin(), list2.end());
+printLists(&quot;插入结果：&quot;, list1, list2);
+
+//删除第二个元素和在99后面的元素
+list2.erase\_after(list2.begin());
+list2.erase\_after(find(list2.begin(), list2.end(), 99), list2.end());
+printLists(&quot;删除第二个和99之后的&quot;, list1, list2);
+
+//将list1排序并赋值给list2，去除重复元素
+list1.sort();
+list2 = list1;
+list2.unique();
+printLists(&quot;排序并去重&quot;, list1, list2);
+
+//合并并排序两个lists到list1
+list1.merge(list2);
+printLists(&quot;合并：&quot;, list1, list2);</code></pre>
+<p>}</p>
+<p>![`刀始<br>list1:1 2 3<br>list2:77 88<br>6수新元素=<br>list1:1 2 3<br>list2:10 11<br>入錯果=<br>listl:10 11<br>list2:10 11<br>list1:1 2 3<br>list2:1 23<br>4<br>99<br>4<br>12<br>12<br>12<br>13<br>13<br>13<br>10 99 77 88 99<br>10 99 77 88 99<br>10 99 77 88 99<br>!]除第二수和99之后的<br>1 2 3 4<br>1 2 3 4<br>listl:10 11<br>list2:10 12<br>*序幷去重<br>12 13 10 99 77 88 99<br>13 10 99<br>口升=<br>list1:<br>list2:<br>1 2<br>4 10 10 11 12 13 77 88 99 99<br>4 10 11 12 13 77 88 99<br>2 3 3 4 4 10 10 10 11 11 12 12<br>13<br>13 77 77 88 88 99 99 99 ](<a target="_blank" rel="noopener" href="https://www.muchenhen.com/wp-content/uploads/2019/11/image-6.png">https://www.muchenhen.com/wp-content/uploads/2019/11/image-6.png</a>)</p>
+</div><hr></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-chevron-left"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/28/">28</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer class="footer-bg" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div class="layout" id="footer"><div class="copyright">&copy;2017 - 2020 By 木尘痕</div><div class="framework-info"><span>Driven - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="footer_custom_text">千秋竟岁，伏苦飞逐</div><div class="icp"><a><span>豫ICP备17048032号</span></a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_site_uv"><i class="fa fa-user"></i><span id="busuanzi_value_site_uv"></span><span></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i><span id="busuanzi_value_site_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.8.2"></script><script src="/js/fancybox.js?version=1.8.2"></script><script src="/js/sidebar.js?version=1.8.2"></script><script src="/js/copy.js?version=1.8.2"></script><script src="/js/fireworks.js?version=1.8.2"></script><script src="/js/transition.js?version=1.8.2"></script><script src="/js/scroll.js?version=1.8.2"></script><script src="/js/head.js?version=1.8.2"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
   $('#nav').addClass('is-mobile')
   $('footer').addClass('is-mobile')
   $('#top-container').addClass('is-mobile')

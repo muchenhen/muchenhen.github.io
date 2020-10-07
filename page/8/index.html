@@ -14,1139 +14,200 @@
     noSupport: 'The browser does not support'
   },
   hexoVersion: '5.1.0'
-} </script><meta name="generator" content="Hexo 5.1.0"></head><body><canvas class="fireworks"></canvas><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="author-info"><div class="author-info__avatar text-center"><img src="https://github.com/muchenhen/muchenhen.github.io/blob/master/XuanGe.jpg?raw=true"></div><div class="author-info__name text-center">木尘痕</div><div class="author-info__description text-center">放一些笔记的地方</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">552</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">21</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">31</span></a></div><hr><div class="author-info-links"><div class="author-info-links__title text-center">Links</div><a class="author-info-links__name text-center" target="_blank" rel="noopener" href="https://alec-ray.github.io/">止戈</a></div></div></div><nav id="nav" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">风生之谷</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">主页</a><a class="site-page" href="/archives">全部文章</a><a class="site-page" href="/tags">标签分类</a><a class="site-page" href="/categories">文章分类</a><a class="site-page" href="/contact">联系</a></span><span class="pull-right"></span></div><div id="site-info"><div id="site-title">风生之谷</div><div id="site-sub-title">一点浩然气 千里快哉风</div></div></nav><div id="content-outer"><div class="layout" id="content-inner"><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/27/stl%E5%BA%8F%E5%88%97%E5%BC%8F%E5%AE%B9%E5%99%A8-1/">STL序列式容器</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-27</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/">cpp</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/STL/">STL</a></span><div class="content"><p><strong>vector：</strong>可变大小数组；支持快速随机访问，在尾部之外的位置插入或者删除元素可能很慢</p>
-<p><strong>deque：</strong>双端队列；支持快速随机访问，在头尾插入/删除速度很快</p>
-<p><strong>list：</strong>双向链表；只支持双向顺序访问，在list任何位置插入/删除速度很快</p>
-<p><strong>forward_list：</strong>单向链表；单向链表，只支持单向顺序访问，在任何位置插入删除都很快</p>
-<p><strong>array</strong>：固定大小数组；支持快速随机访问，不能添加或者删除元素</p>
-<p><strong>string</strong>：与vector相似的容器，但专门用于保存字符。随机访问快，在尾位置插入删除快</p>
-<p><strong>容器选择</strong></p>
-<p><strong>什么情况下用**</strong>vector**<strong>，什么情况下用**</strong>list**<strong>，什么情况下用**</strong>deque**</p>
-<p>vector可以随机存储元素（即可以通过公式直接计算出元素地址，而不需要挨个查找），但在非尾部插入删除数据时，效率很低，适合对象简单，除非必要，我们尽可能选择使用vector而非deque，因为deque的迭代器比vector迭代器复杂很多。</p>
-<p>list不支持随机存储，适用于对象大，对象数量变化频繁，插入和删除频繁，比如写多读少的场景。</p>
-<p>需要从首尾两端进行插入或删除操作的时候需要选择deque。</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/27/stl%E5%BA%8F%E5%88%97%E5%BC%8F%E5%AE%B9%E5%99%A8/">STL序列式容器</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-27</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/">cpp</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/STL/">STL</a></span><div class="content"><p><strong>vector：</strong>可变大小数组；支持快速随机访问，在尾部之外的位置插入或者删除元素可能很慢</p>
-<p><strong>deque：</strong>双端队列；支持快速随机访问，在头尾插入/删除速度很快</p>
-<p><strong>list：</strong>双向链表；只支持双向顺序访问，在list任何位置插入/删除速度很快</p>
-<p><strong>forward_list：</strong>单向链表；单向链表，只支持单向顺序访问，在任何位置插入删除都很快</p>
-<p><strong>array</strong>：固定大小数组；支持快速随机访问，不能添加或者删除元素</p>
-<p><strong>string</strong>：与vector相似的容器，但专门用于保存字符。随机访问快，在尾位置插入删除快</p>
-<p><strong>容器选择</strong></p>
-<p><strong>什么情况下用**</strong>vector**<strong>，什么情况下用**</strong>list**<strong>，什么情况下用**</strong>deque**</p>
-<p>vector可以随机存储元素（即可以通过公式直接计算出元素地址，而不需要挨个查找），但在非尾部插入删除数据时，效率很低，适合对象简单，除非必要，我们尽可能选择使用vector而非deque，因为deque的迭代器比vector迭代器复杂很多。</p>
-<p>list不支持随机存储，适用于对象大，对象数量变化频繁，插入和删除频繁，比如写多读少的场景。</p>
-<p>需要从首尾两端进行插入或删除操作的时候需要选择deque。</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/27/c11-stl%E4%B8%AD%E7%9A%84%E5%AE%B9%E5%99%A8/">C++11 STL中的容器</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-27</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/">cpp</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/STL/">STL</a></span><div class="content"><p>=====================================================</p>
-<p><strong>一、顺序</strong>容器：</p>
-<p><strong>vector：</strong>可变大小数组；支持快速随机访问，在尾部之外的位置插入或者删除元素可能很慢</p>
-<p><strong>deque：</strong>双端队列；支持快速随机访问，在头尾插入/删除速度很快</p>
-<p><strong>list：</strong>双向链表；只支持双向顺序访问，在list任何位置插入/删除速度很快</p>
-<p><strong>forward_list：</strong>单向链表；单向链表，只支持单向顺序访问，在任何位置插入删除都很快</p>
-<p><strong>array</strong>：固定大小数组；支持快速随机访问，不能添加或者删除元素</p>
-<p><strong>string</strong>：与vector相似的容器，但专门用于保存字符。随机访问快，在尾位置插入删除快</p>
-<p>==================================================</p>
-<p><strong>二、关联</strong>容器：</p>
-<p>按<strong>关键字有序</strong>保存元素：（底层实现为<strong>红黑树</strong>）</p>
-<p><strong>map：</strong>关联数组；保存关键字-值对；</p>
-<p><strong>set：</strong>关键字即值，即只保存关键字的容器；</p>
-<p><strong>multimap：</strong>关键字可重复的map；</p>
-<p><strong>multiset：</strong>关键字可重复的set；</p>
-<p>-——————————————————————————-</p>
-<p><strong>无序</strong>集合：</p>
-<p><strong>unordered_map：</strong>用哈希函数组织的map；</p>
-<p><strong>unordered_set：</strong>用哈希函数组织的set；</p>
-<p><strong>unordered_multimap：</strong>哈希组织的map；关键字可以重复出现；</p>
-<p><strong>unordered_multiset：</strong>哈希组织的set；关键字可以重复出现。</p>
-<p>==================================================</p>
-<p>三、其他项：</p>
-<p><strong>stack、queue、valarray、bitset</strong></p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/27/c11-stl%E4%B8%AD%E7%9A%84%E5%AE%B9%E5%99%A8-1/">C++11 STL中的容器</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-27</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/">cpp</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/STL/">STL</a></span><div class="content"><p>=====================================================</p>
-<p><strong>一、顺序</strong>容器：</p>
-<p><strong>vector：</strong>可变大小数组；支持快速随机访问，在尾部之外的位置插入或者删除元素可能很慢</p>
-<p><strong>deque：</strong>双端队列；支持快速随机访问，在头尾插入/删除速度很快</p>
-<p><strong>list：</strong>双向链表；只支持双向顺序访问，在list任何位置插入/删除速度很快</p>
-<p><strong>forward_list：</strong>单向链表；单向链表，只支持单向顺序访问，在任何位置插入删除都很快</p>
-<p><strong>array</strong>：固定大小数组；支持快速随机访问，不能添加或者删除元素</p>
-<p><strong>string</strong>：与vector相似的容器，但专门用于保存字符。随机访问快，在尾位置插入删除快</p>
-<p>==================================================</p>
-<p><strong>二、关联</strong>容器：</p>
-<p>按<strong>关键字有序</strong>保存元素：（底层实现为<strong>红黑树</strong>）</p>
-<p><strong>map：</strong>关联数组；保存关键字-值对；</p>
-<p><strong>set：</strong>关键字即值，即只保存关键字的容器；</p>
-<p><strong>multimap：</strong>关键字可重复的map；</p>
-<p><strong>multiset：</strong>关键字可重复的set；</p>
-<p>-——————————————————————————-</p>
-<p><strong>无序</strong>集合：</p>
-<p><strong>unordered_map：</strong>用哈希函数组织的map；</p>
-<p><strong>unordered_set：</strong>用哈希函数组织的set；</p>
-<p><strong>unordered_multimap：</strong>哈希组织的map；关键字可以重复出现；</p>
-<p><strong>unordered_multiset：</strong>哈希组织的set；关键字可以重复出现。</p>
-<p>==================================================</p>
-<p>三、其他项：</p>
-<p><strong>stack、queue、valarray、bitset</strong></p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/27/dx12%E9%BE%99%E4%B9%A6part%E2%85%A0chapter-1-%E5%90%91%E9%87%8F/">DX12龙书PartⅠChapter 1 向量</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-27</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/DirectX/">DirectX</a></span><div class="content"><p>目的:</p>
-<ul>
-<li>1. 学习向量是如何用几何和数字表示的。</li>
-<li>2. 发现向量上定义的运算及其几何应用。</li>
-<li>3.熟悉DirectXMath类库中的向量函数和类。</li>
-</ul>
-<p>D3D使用左手坐标系</p>
-<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image.png" alt="zł "></p>
-<p><strong>1.6 DIRECTX MATH VECTORS</strong><br><strong>D3D数学向量</strong></p>
-<p>要使用d3d数学库，需要</p>
-<p>#include &lt;DirectXMath.h&gt;<br>#include &lt;DirectXPackedVector.h&gt;</p>
-<p>命名空间</p>
-<p>DirectX<br>DirectX::PackedVector</p>
-<p><strong>XMVECTOR</strong></p>
-<p>库中核心的Vector类型，是对SIMD寄存器的映射。当前CPU是SSE2指令集可以使用时如下定义：</p>
-<p>typedef _m128 XMVECTOR;</p>
-<p>_m128是由Microsoft提供的基本数据类型，用于与SSE、SSE2内部指令一起使用的。在16字节边界上自动对齐。ARM处理器不支持该类型。<br>虽然这是一个128位宽的寄存器，能存储一个四维的Vector，但当我们使用二维或三维的Vector运算时，为了效率，仍然会去使用XMVECTOR类型。<br>XMVECTOR的数据不能直接访问。可以转换成XMFLOAT类型（转换方法见下文），也可通过特定的接口get或set其某个分量：</p>
-<p><strong>加载和存储方法</strong></p>
-<p>We use the following methods to load data from XMFLOATn into XMVECTOR:<br>使用如下的方法去加载数据，从XMFLOAT到XMVECTOR</p>
-<p>// Loads XMFLOAT2 into XMVECTOR<br>//加载2到V<br><strong>XMVECTOR XM_CALLCONV XMLoadFloat2(const XMFLOAT2* pSource);</strong></p>
-<p>// Loads XMFLOAT3 into XMVECTOR<br><strong>XMVECTOR XM_CALLCONV XMLoadFloat3(const XMFLOAT3* pSource);</strong></p>
-<p>// Loads XMFLOAT4 into XMVECTOR<br><strong>XMVECTOR XM_CALLCONV XMLoadFloat4(const XMFLOAT4* pSource);</strong></p>
-<p> We use the following methods to store data from XMVECTOR into XMFLOATn:<br>使用下面的方法存储数据，从V到F</p>
-<p>// Loads XMVECTOR into XMFLOAT2<br><strong>void XM_CALLCONV XMStoreFloat2(XMFLOAT2 *pDestination, FXMVECTOR V);</strong></p>
-<p>// Loads XMVECTOR into XMFLOAT3<br><strong>void XM_CALLCONV XMStoreFloat3(XMFLOAT3 *pDestination, FXMVECTOR V);</strong></p>
-<p>// Loads XMVECTOR into XMFLOAT4<br><strong>void XM_CALLCONV XMStoreFloat4(XMFLOAT4 *pDestination, FXMVECTOR V);</strong></p>
-<p>Sometimes we just want to get or set one component of an XMVECTOR; the following getter and setter functions facilitate this:<br>获得向量的某个组件，get方法</p>
-<p>float XM_CALLCONV XMVectorGetX(FXMVECTOR V);</p>
-<p>float XM_CALLCONV XMVectorGetY(FXMVECTOR V);</p>
-<p> float XM_CALLCONV XMVectorGetZ(FXMVECTOR V);</p>
-<p> float XM_CALLCONV XMVectorGetW(FXMVECTOR V);</p>
-<p>设置向量的某个组件，set方法</p>
-<p>XMVECTOR XM_CALLCONV XMVectorSetX(FXMVECTOR V, float x);</p>
-<p> XMVECTOR XM_CALLCONV XMVectorSetY(FXMVECTOR V, float y);</p>
-<p>XMVECTOR XM_CALLCONV XMVectorSetZ(FXMVECTOR V, float z);</p>
-<p>XMVECTOR XM_CALLCONV XMVectorSetW(FXMVECTOR V, float w);</p>
-<p>XMVECTOR重载了加减乘除等运算符，可以方便的进行运算。</p>
-<p><strong>1.6.3 参数传递</strong></p>
-<p>由于XMVECTOR的数据存储在寄存器，而不在堆栈上，因此参数传递时会有些特殊。基本的想法是，能用寄存器传递的就用寄存器传递，不能的就用栈。具体可以通过寄存器传递的参数数量，根据平台和编译器而定。<br>为此，增加了几种用于参数传递的数据类型，FXMVECTOR、GXMVECTOR、HXMVECTOR、CXMVECTOR。基本的使用规则是：</p>
-<ol>
-<li>前三个XMVECTOR参数使用FXMVECTOR</li>
-<li>第四个XMVECTOR参数使用GXMVECTOR</li>
-<li>第五六个XMVECTOR参数使用HXMVECTOR</li>
-<li>其他使用CXMVECTOR</li>
-</ol>
-<p>而宏XM_CALLCONV，就是用于告诉编译器该函数调用时，有这种特别的参数传递规则。<br>有这样的定义</p>
-<p>void XM_CALLCONV XMStoreFloat2(XMFLOAT2 *pDestination, FXMVECTOR V);</p>
-<p>但是，这些规则在构造函数中并不适用。在构造函数中：</p>
-<ol>
-<li>前三个XMVECTOR参数使用FXMVECTOR</li>
-<li>其他使用CXMVECTOR</li>
-<li>不要使用XM_CALLCONV</li>
-</ol>
-<p>另外，这些规则只是针对于XMVECTOR类型本身。而对于复合类，XMVECTOR&amp;、XMVECTOR*并不会使用寄存器传递，和普通参数同等看待。</p>
-<p><strong>1.6.5重载运算符</strong></p>
-<p>XMVECTOR有几个重载的运算符，用于执行向量的加法、减法和标量乘法。</p>
-<p>XMVECTOR XM_CALLCONV operator+ (FXMVECTOR V);</p>
-<p>XMVECTOR XM_CALLCONV operator- (FXMVECTOR V);</p>
-<p>XMVECTOR&amp; XM_CALLCONV operator+= (XMVECTOR&amp; V1, FXMVECTOR V2);</p>
-<p> XMVECTOR&amp; XM_CALLCONV operator-= (XMVECTOR&amp; V1, FXMVECTOR V2);</p>
-<p>XMVECTOR&amp; XM_CALLCONV operator*= (XMVECTOR&amp; V1, FXMVECTOR V2);</p>
-<p>XMVECTOR&amp; XM_CALLCONV operator/= (XMVECTOR&amp; V1, FXMVECTOR V2);</p>
-<p>XMVECTOR&amp; operator*= (XMVECTOR&amp; V, float S);</p>
-<p> XMVECTOR&amp; operator/= (XMVECTOR&amp; V, float S);</p>
-<p>XMVECTOR XM_CALLCONV operator+ (FXMVECTOR V1, FXMVECTOR V2);</p>
-<p>XMVECTOR XM_CALLCONV operator- (FXMVECTOR V1, FXMVECTOR V2);</p>
-<p> XMVECTOR XM_CALLCONV operator* (FXMVECTOR V1, FXMVECTOR V2);</p>
-<p>XMVECTOR XM_CALLCONV operator/ (FXMVECTOR V1, FXMVECTOR V2);</p>
-<p> XMVECTOR XM_CALLCONV operator* (FXMVECTOR V, float S);</p>
-<p> XMVECTOR XM_CALLCONV operator* (float S, FXMVECTOR V);</p>
-<p>XMVECTOR XM_CALLCONV operator/ (FXMVECTOR V, float S);</p>
-<p><strong>1.6.6其他参数</strong></p>
-<p><strong>定义以下常量用于涉及π近似不同的表达式**</strong>:**</p>
-<p>const float XM_PI = 3.141592654f;</p>
-<p>const float XM_2PI = 6.283185307f;</p>
-<p>const float XM_1DIVPI = 0.318309886f;</p>
-<p>const float XM_1DIV2PI = 0.159154943f;</p>
-<p>const float XM_PIDIV2 = 1.570796327f;</p>
-<p>const float XM_PIDIV4 = 0.785398163f;</p>
-<p><strong>弧度和角度转换的内联函数：</strong></p>
-<p>inline float XMConvertToRadians(float fDegrees) { return fDegrees * (XM_PI / 180.0f); } inline float XMConvertToDegrees(float fRadians) { return fRadians * (180.0f / XM_PI); }</p>
-<p><strong>min**</strong>/max**<strong>函数：</strong></p>
-<p>template<class T> inline T XMMin(T a, T b) { return (a &lt; b) ? a : b; }</p>
-<p>template<class T> inline T XMMax(T a, T b) { return (a &gt; b) ? a : b; }</p>
-<p><strong>1.6.7 Setter 函数</strong></p>
-<p>DirectX Math提供了以下函数来设置XMVECTOR的内容:</p>
-<p>// Returns the zero vector 0  置0</p>
-<p>XMVECTOR XM_CALLCONV XMVectorZero();</p>
-<p>// Returns the vector (1, 1, 1, 1)  置1</p>
-<p>XMVECTOR XM_CALLCONV XMVectorSplatOne();</p>
-<p>// Returns the vector (x, y, z, w)</p>
-<p>XMVECTOR XM_CALLCONV XMVectorSet(float x, float y, float z, float w);</p>
-<p>// Returns the vector (s, s, s, s)</p>
-<p>XMVECTOR XM_CALLCONV XMVectorReplicate(float Value);</p>
-<p>// Returns the vector (vx, vx, vx, vx)</p>
-<p>XMVECTOR XM_CALLCONV XMVectorSplatX(FXMVECTOR V);</p>
-<p>// Returns the vector (vy, vy, vy, vy)</p>
-<p>XMVECTOR XM_CALLCONV XMVectorSplatY(FXMVECTOR V);</p>
-<p>// Returns the vector (vz, vz, vz, vz)</p>
-<p>XMVECTOR XM_CALLCONV XMVectorSplatZ(FXMVECTOR V);</p>
-<p><strong>1.6.8向量函数</strong></p>
-<p>DirectX Math提供以下函数来执行各种向量操作。用3D版本来说明，但也有类似的2D和4D版本;2D和4D版本的名称与3D版本相同，只是分别用2和4代替了3。</p>
-<p>XMVECTOR XM_CALLCONV XMVector3Length( // Returns ||v||</p>
-<p>FXMVECTOR V); // Input v</p>
-<p>XMVECTOR XM_CALLCONV XMVector3LengthSq( // Returns ||v||2</p>
-<p>FXMVECTOR V); // Input v</p>
-<p>XMVECTOR XM_CALLCONV XMVector3Dot( // Returns v1·v2</p>
-<p>FXMVECTOR V1, // Input v1</p>
-<p>FXMVECTOR V2); // Input v2</p>
-<p>XMVECTOR XM_CALLCONV XMVector3Cross( // Returns v1 × v2</p>
-<p>FXMVECTOR V1, // Input v1</p>
-<p>FXMVECTOR V2); // Input v2</p>
-<p>XMVECTOR XM_CALLCONV XMVector3Normalize( // Returns</p>
-<p>v/||v|| FXMVECTOR V); // Input v</p>
-<p>XMVECTOR XM_CALLCONV XMVector3Orthogonal( // Returns a</p>
-<p>vector orthogonal to v FXMVECTOR V); // Input v</p>
-<p> XMVECTOR XM_CALLCONV</p>
-<p>XMVector3AngleBetweenVectors( // Returns the angle between v1 and</p>
-<p>v2</p>
-<p>FXMVECTOR V1, // Input v1</p>
-<p>FXMVECTOR V2); // Input v2</p>
-<p> void XM_CALLCONV XMVector3ComponentsFromNormal(</p>
-<p>XMVECTOR* pParallel, // Returns projn(v)</p>
-<p>XMVECTOR* pPerpendicular, // Returns perpn(v)</p>
-<p>FXMVECTOR V, // Input v</p>
-<p>FXMVECTOR Normal); // Input n</p>
-<p>bool XM_CALLCONV XMVector3Equal( // Returns v1 = v2</p>
-<p>FXMVECTOR V1, // Input v1</p>
-<p>FXMVECTOR V2); // Input v2</p>
-<p> bool XM_CALLCONV XMVector3NotEqual( // Returns v1 ≠ v2</p>
-<p>FXMVECTOR V1, // Input v1</p>
-<p>FXMVECTOR V2); // Input v2</p>
-<p><strong>Sample</strong> Code:</p>
-<p>#include  // for XMVerifyCPUSupport<br>#include<br>#include<br>#include<br>using namespace std;<br>using namespace DirectX;<br>using namespace DirectX::PackedVector;</p>
-<p>// Overload the  “&lt;&lt;” operators so that we can use cout to<br>// output XMVECTOR objects.</p>
-<p>//重载流运算符<br>ostream&amp; XM_CALLCONV operator &lt;&lt; (ostream&amp; os, FXMVECTOR v)<br>{<br>    XMFLOAT3 dest;<br>    XMStoreFloat3(&amp;dest, v);</p>
-<pre><code>os &lt;&lt; &quot;(&quot; &lt;&lt; dest.x &lt;&lt; &quot;, &quot; &lt;&lt; dest.y &lt;&lt; &quot;, &quot; &lt;&lt; dest.z &lt;&lt; &quot;)&quot;;
-return os;</code></pre>
-<p>}</p>
-<p>int main()<br>{<br>    cout.setf(ios_base::boolalpha);</p>
-<pre><code>// Check support for SSE2 (Pentium4, AMD K8, and above).
-//检查是否支持SSE2
-
-if (!XMVerifyCPUSupport())
-&#123;
-    cout &lt;&lt; &quot;directx math not supported&quot; &lt;&lt; endl;
-    return 0;
+} </script><meta name="generator" content="Hexo 5.1.0"></head><body><canvas class="fireworks"></canvas><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="author-info"><div class="author-info__avatar text-center"><img src="https://github.com/muchenhen/muchenhen.github.io/blob/master/XuanGe.jpg?raw=true"></div><div class="author-info__name text-center">木尘痕</div><div class="author-info__description text-center">放一些笔记的地方</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">274</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">22</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">32</span></a></div><hr><div class="author-info-links"><div class="author-info-links__title text-center">Links</div><a class="author-info-links__name text-center" target="_blank" rel="noopener" href="https://alec-ray.github.io/">止戈</a></div></div></div><nav id="nav" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">风生之谷</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">Home</a><a class="site-page" href="/archives">Archives</a><a class="site-page" href="/tags">tags</a><a class="site-page" href="/categories">categories</a><a class="site-page" href="/contact">contact</a><a class="site-page" href="/">主页</a><a class="site-page" href="/archives">全部文章</a><a class="site-page" href="/tags">标签分类</a><a class="site-page" href="/categories">文章分类</a><a class="site-page" href="/contact">联系</a></span><span class="pull-right"></span></div><div id="site-info"><div id="site-title">风生之谷</div><div id="site-sub-title">一点浩然气 千里快哉风</div></div></nav><div id="content-outer"><div class="layout" id="content-inner"><div class="recent-post-item article-container"><a class="article-title" href="/2018/11/03/7-28-%E7%8C%B4%E5%AD%90%E9%80%89%E5%A4%A7%E7%8E%8B/">PTA题目集：7-28 猴子选大王</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a></span><div class="content"><p>7-28 猴子选大王 （20 分）</p>
+<p>一群猴子要选新猴王。新猴王的选择方法是：让N只候选猴子围成一圈，从某位置起顺序编号为1~N号。从第1号开始报数，每轮从1报到3，凡报到3的猴子即退出圈子，接着又从紧邻的下一只猴子开始同样的报数。如此不断循环，最后剩下的一只猴子就选为猴王。请问是原来第几号猴子当选猴王？</p>
+<p>输入格式：</p>
+<p>输入在一行中给一个正整数N（≤1000）。</p>
+<p>输出格式：</p>
+<p>在一行中输出当选猴王的编号。</p>
+<p>输入样例：</p>
+<p>11</p>
+<p>输出样例：</p>
+<p>7</p>
+<p>来自 &lt;<a target="_blank" rel="noopener" href="https://pintia.cn/problem-sets/14/problems/808">https://pintia.cn/problem-sets/14/problems/808</a>&gt;</p>
+<p>#include using namespace std;<br>int main() {<br>    int N;<br>    cin &gt;&gt; N;<br>    int s = 0;<br>    for (int i = 1; i &lt;= N; i++)<br>    {<br>        s = (s + 3) % i;<br>    }<br>    cout &lt;&lt; s + 1;<br>    return 0;<br>}</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/10/28/pta%E9%A2%98%E7%9B%AE%E9%9B%86%EF%BC%9A7-26-%E5%8D%95%E8%AF%8D%E9%95%BF%E5%BA%A6/">PTA题目集：7-26 单词长度</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a></span><div class="content"><p>7-26 单词长度 （15 分）</p>
+<p>你的程序要读入一行文本，其中以空格分隔为若干个单词，以.结束。你要输出每个单词的长度。这里的单词与语言无关，可以包括各种符号，比如it’s算一个单词，长度为4。注意，行中可能出现连续的空格；最后的.不计算在内。</p>
+<p>输入格式：</p>
+<p>输入在一行中给出一行文本，以.结束</p>
+<p><strong>提示：</strong>用scanf(“%c”,…);来读入一个字符，直到读到.为止。</p>
+<p>输出格式：</p>
+<p>在一行中输出这行文本对应的单词的长度，每个长度之间以空格隔开，行末没有最后的空格。</p>
+<p>输入样例：</p>
+<p>It’s great to see you here.</p>
+<p>输出样例：</p>
+<p>4 5 2 3 3 4</p>
+<p>来自 &lt;<a target="_blank" rel="noopener" href="https://pintia.cn/problem-sets/14/problems/806">https://pintia.cn/problem-sets/14/problems/806</a>&gt;</p>
+<p><strong>注意输出格式</strong></p>
+<p>#include using namespace std;<br>int main()<br>{<br>    char c;<br>    int cot = 0, ans[100] = { 0 }, i = 0;<br>    while ((c=getchar()) != ‘.’)<br>    {<br>        if (c != ‘ ‘)<br>        {<br>            cot++;<br>            ans[i] = cot;<br>        }</p>
+<pre><code>    else if (cot != 0)
+    &#123;
+        ans\[i\] = cot;
+        i++;
+        cot = 0;
+    &#125;
 &#125;
-
-XMVECTOR n = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
-XMVECTOR u = XMVectorSet(1.0f, 2.0f, 3.0f, 0.0f);
-XMVECTOR v = XMVectorSet(-2.0f, 1.0f, -3.0f, 0.0f);
-XMVECTOR w = XMVectorSet(0.707f, 0.707f, 0.0f, 0.0f);
-
-// Vector addition: XMVECTOR operator + 
-// 向量加法
-XMVECTOR a = u + v;
-
-// Vector subtraction: XMVECTOR operator - 
-// 向量减法
-XMVECTOR b = u - v;
-
-// Scalar multiplication: XMVECTOR operator \* 
-// 数乘
-XMVECTOR c = 10.0f\*u;
-
-// ||u||
-// 向量的模
-XMVECTOR L = XMVector3Length(u);
-
-// d = u / ||u||
-// 向量单位化
-XMVECTOR d = XMVector3Normalize(u);
-
-// s = u dot v
-// 点乘
-XMVECTOR s = XMVector3Dot(u, v);
-
-// e = u x v
-// 叉乘
-XMVECTOR e = XMVector3Cross(u, v);
-
-// Find proj\_n(w) and perp\_n(w)
-// w对于n的两个投影分量
-XMVECTOR projW;
-XMVECTOR perpW;
-XMVector3ComponentsFromNormal(&amp;projW, &amp;perpW, w, n);
-
-// Does projW + perpW == w?
-// 两个投影分量对应的向量，加法结果是原向量，三角形法则
-bool equal = XMVector3Equal(projW + perpW, w) != 0;
-bool notEqual = XMVector3NotEqual(projW + perpW, w) != 0;
-
-// The angle between projW and perpW should be 90 degrees.
-// 两个投影分量是垂直的
-XMVECTOR angleVec = XMVector3AngleBetweenVectors(projW, perpW);
-float angleRadians = XMVectorGetX(angleVec);
-float angleDegrees = XMConvertToDegrees(angleRadians);
-
-cout &lt;&lt; &quot;u                   = &quot; &lt;&lt; u &lt;&lt; endl;
-cout &lt;&lt; &quot;v                   = &quot; &lt;&lt; v &lt;&lt; endl;
-cout &lt;&lt; &quot;w                   = &quot; &lt;&lt; w &lt;&lt; endl;
-cout &lt;&lt; &quot;n                   = &quot; &lt;&lt; n &lt;&lt; endl;
-cout &lt;&lt; &quot;a = u + v           = &quot; &lt;&lt; a &lt;&lt; endl;
-cout &lt;&lt; &quot;b = u - v           = &quot; &lt;&lt; b &lt;&lt; endl;
-cout &lt;&lt; &quot;c = 10 \* u          = &quot; &lt;&lt; c &lt;&lt; endl;
-cout &lt;&lt; &quot;d = u / ||u||       = &quot; &lt;&lt; d &lt;&lt; endl;
-cout &lt;&lt; &quot;e = u x v           = &quot; &lt;&lt; e &lt;&lt; endl;
-cout &lt;&lt; &quot;L  = ||u||          = &quot; &lt;&lt; L &lt;&lt; endl;
-cout &lt;&lt; &quot;s = u.v             = &quot; &lt;&lt; s &lt;&lt; endl;
-cout &lt;&lt; &quot;projW               = &quot; &lt;&lt; projW &lt;&lt; endl;
-cout &lt;&lt; &quot;perpW               = &quot; &lt;&lt; perpW &lt;&lt; endl;
-cout &lt;&lt; &quot;projW + perpW == w  = &quot; &lt;&lt; equal &lt;&lt; endl;
-cout &lt;&lt; &quot;projW + perpW != w  = &quot; &lt;&lt; notEqual &lt;&lt; endl;
-cout &lt;&lt; &quot;angle               = &quot; &lt;&lt; angleDegrees &lt;&lt; endl;
-
-return 0;</code></pre>
-<p>}</p>
-<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-3.png" alt="0) 
-10 * u 
-=(1,2,3) 
-(-2, 1, -3) 
-(0. 707, 0. 707, 
-(10, 20, 30) 
-d = u 
-u 
-rajW 
-erpW 
-rajW 
-rajW 
-angle 
-/IIuII 
-V 
-perpW 
-perpW 
-(0. 267261, 0. 534522, 0. 801784) 
-(-9, -3, 5) 
-(3. 74166, 3. 74166, 3. 74166) 
-(0. 707, 0, 0) 
-(0, 0. 707, 0) 
-false "></p>
-<p>总结：</p>
-<p>1. 对局部或全局变量使用XMVECTOR。<br>2. 对类数据成员使用XMFLOAT2、XMFLOAT3和XMFLOAT4。<br>3.在进行计算之前，使用加载函数将XMFLOATn转换为XMVECTOR<br>4. 使用XMVECTOR实例进行计算。<br>5. 使用存储函数将XMVECTOR转换为XMFLOATn</p>
-<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-1.png" alt="I. 
-2. 
-3. 
-4. 
-5. 
-Use XMVECTOR for local or global variables. 
-Use XMFLOAT2, XMFLOAT3, and XMFLOAT4 for class data members. 
-Use loading functions to convert from XMFLOATn to XMVECTOR before 
-doing calculations. 
-Do calculations with XMVECTOR instances. 
-Use storage functions to convert from XMVECTOR to XMFLOATn. "></p>
-<p>矢量用于模拟同时具有大小和方向的物理量。几何上，我们用有向线段表示一个向量。矢量平行于自身平移时处于标准位置，使其尾部与坐标系的原点重合。一个处于标准位置的向量可以通过指定其头部相对于一个坐标系的坐标来进行数值描述。</p>
-<p>![operations: </p>
-<ol>
-<li></li>
-<li></li>
-<li></li>
-<li></li>
-<li></li>
-<li></li>
-<li>Addition: u + V = (ux + vx, uy + vy, Liz + vz)<br>Subtraction: u — V = (ux — vx, uy — vy, Liz — vz)<br>Scalar Multiplication: ku = (ku ku kuz)<br>x2 + + z2<br>Length: Ilu<br>Normalization:<br>Dot Product:<br>Cross Product:<br>(xyz<br>I lull ‘ llull ‘ lull<br>Ilull<br>uv<br>—uV u V —uyvx) ](<a target="_blank" rel="noopener" href="http://www.muchenhen.com/wp-content/uploads/2019/10/image-2.png">http://www.muchenhen.com/wp-content/uploads/2019/10/image-2.png</a>)</li>
-</ol>
-<p>提供了以下有用的函数来计算一个向量的长度，一个向量的长度的平方，计算两个向量的点积，计算两个向量的外积，以及对一个向量进行归一化:</p>
-<p>XMVECTOR XM_CALLCONV XMVector3Length(FXMVECTOR V);</p>
-<p>XMVECTOR XM_CALLCONV XMVector3LengthSq(FXMVECTOR V);</p>
-<p>XMVECTOR XM_CALLCONV XMVector3Dot(FXMVECTOR V1, FXMVECTOR V2);</p>
-<p>XMVECTOR XM_CALLCONV XMVector3Cross(FXMVECTOR V1, FXMVECTOR V2);</p>
-<p>XMVECTOR XM_CALLCONV XMVector3Normalize(FXMVECTOR V);</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/27/dx12%E9%BE%99%E4%B9%A6part%E2%85%A0chapter-1-%E5%90%91%E9%87%8F-1/">DX12龙书PartⅠChapter 1 向量</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-27</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/DirectX/">DirectX</a></span><div class="content"><p>目的:</p>
-<ul>
-<li>1. 学习向量是如何用几何和数字表示的。</li>
-<li>2. 发现向量上定义的运算及其几何应用。</li>
-<li>3.熟悉DirectXMath类库中的向量函数和类。</li>
-</ul>
-<p>D3D使用左手坐标系</p>
-<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image.png" alt="zł "></p>
-<p><strong>1.6 DIRECTX MATH VECTORS</strong><br><strong>D3D数学向量</strong></p>
-<p>要使用d3d数学库，需要</p>
-<p>#include &lt;DirectXMath.h&gt;<br>#include &lt;DirectXPackedVector.h&gt;</p>
-<p>命名空间</p>
-<p>DirectX<br>DirectX::PackedVector</p>
-<p><strong>XMVECTOR</strong></p>
-<p>库中核心的Vector类型，是对SIMD寄存器的映射。当前CPU是SSE2指令集可以使用时如下定义：</p>
-<p>typedef _m128 XMVECTOR;</p>
-<p>_m128是由Microsoft提供的基本数据类型，用于与SSE、SSE2内部指令一起使用的。在16字节边界上自动对齐。ARM处理器不支持该类型。<br>虽然这是一个128位宽的寄存器，能存储一个四维的Vector，但当我们使用二维或三维的Vector运算时，为了效率，仍然会去使用XMVECTOR类型。<br>XMVECTOR的数据不能直接访问。可以转换成XMFLOAT类型（转换方法见下文），也可通过特定的接口get或set其某个分量：</p>
-<p><strong>加载和存储方法</strong></p>
-<p>We use the following methods to load data from XMFLOATn into XMVECTOR:<br>使用如下的方法去加载数据，从XMFLOAT到XMVECTOR</p>
-<p>// Loads XMFLOAT2 into XMVECTOR<br>//加载2到V<br><strong>XMVECTOR XM_CALLCONV XMLoadFloat2(const XMFLOAT2* pSource);</strong></p>
-<p>// Loads XMFLOAT3 into XMVECTOR<br><strong>XMVECTOR XM_CALLCONV XMLoadFloat3(const XMFLOAT3* pSource);</strong></p>
-<p>// Loads XMFLOAT4 into XMVECTOR<br><strong>XMVECTOR XM_CALLCONV XMLoadFloat4(const XMFLOAT4* pSource);</strong></p>
-<p> We use the following methods to store data from XMVECTOR into XMFLOATn:<br>使用下面的方法存储数据，从V到F</p>
-<p>// Loads XMVECTOR into XMFLOAT2<br><strong>void XM_CALLCONV XMStoreFloat2(XMFLOAT2 *pDestination, FXMVECTOR V);</strong></p>
-<p>// Loads XMVECTOR into XMFLOAT3<br><strong>void XM_CALLCONV XMStoreFloat3(XMFLOAT3 *pDestination, FXMVECTOR V);</strong></p>
-<p>// Loads XMVECTOR into XMFLOAT4<br><strong>void XM_CALLCONV XMStoreFloat4(XMFLOAT4 *pDestination, FXMVECTOR V);</strong></p>
-<p>Sometimes we just want to get or set one component of an XMVECTOR; the following getter and setter functions facilitate this:<br>获得向量的某个组件，get方法</p>
-<p>float XM_CALLCONV XMVectorGetX(FXMVECTOR V);</p>
-<p>float XM_CALLCONV XMVectorGetY(FXMVECTOR V);</p>
-<p> float XM_CALLCONV XMVectorGetZ(FXMVECTOR V);</p>
-<p> float XM_CALLCONV XMVectorGetW(FXMVECTOR V);</p>
-<p>设置向量的某个组件，set方法</p>
-<p>XMVECTOR XM_CALLCONV XMVectorSetX(FXMVECTOR V, float x);</p>
-<p> XMVECTOR XM_CALLCONV XMVectorSetY(FXMVECTOR V, float y);</p>
-<p>XMVECTOR XM_CALLCONV XMVectorSetZ(FXMVECTOR V, float z);</p>
-<p>XMVECTOR XM_CALLCONV XMVectorSetW(FXMVECTOR V, float w);</p>
-<p>XMVECTOR重载了加减乘除等运算符，可以方便的进行运算。</p>
-<p><strong>1.6.3 参数传递</strong></p>
-<p>由于XMVECTOR的数据存储在寄存器，而不在堆栈上，因此参数传递时会有些特殊。基本的想法是，能用寄存器传递的就用寄存器传递，不能的就用栈。具体可以通过寄存器传递的参数数量，根据平台和编译器而定。<br>为此，增加了几种用于参数传递的数据类型，FXMVECTOR、GXMVECTOR、HXMVECTOR、CXMVECTOR。基本的使用规则是：</p>
-<ol>
-<li>前三个XMVECTOR参数使用FXMVECTOR</li>
-<li>第四个XMVECTOR参数使用GXMVECTOR</li>
-<li>第五六个XMVECTOR参数使用HXMVECTOR</li>
-<li>其他使用CXMVECTOR</li>
-</ol>
-<p>而宏XM_CALLCONV，就是用于告诉编译器该函数调用时，有这种特别的参数传递规则。<br>有这样的定义</p>
-<p>void XM_CALLCONV XMStoreFloat2(XMFLOAT2 *pDestination, FXMVECTOR V);</p>
-<p>但是，这些规则在构造函数中并不适用。在构造函数中：</p>
-<ol>
-<li>前三个XMVECTOR参数使用FXMVECTOR</li>
-<li>其他使用CXMVECTOR</li>
-<li>不要使用XM_CALLCONV</li>
-</ol>
-<p>另外，这些规则只是针对于XMVECTOR类型本身。而对于复合类，XMVECTOR&amp;、XMVECTOR*并不会使用寄存器传递，和普通参数同等看待。</p>
-<p><strong>1.6.5重载运算符</strong></p>
-<p>XMVECTOR有几个重载的运算符，用于执行向量的加法、减法和标量乘法。</p>
-<p>XMVECTOR XM_CALLCONV operator+ (FXMVECTOR V);</p>
-<p>XMVECTOR XM_CALLCONV operator- (FXMVECTOR V);</p>
-<p>XMVECTOR&amp; XM_CALLCONV operator+= (XMVECTOR&amp; V1, FXMVECTOR V2);</p>
-<p> XMVECTOR&amp; XM_CALLCONV operator-= (XMVECTOR&amp; V1, FXMVECTOR V2);</p>
-<p>XMVECTOR&amp; XM_CALLCONV operator*= (XMVECTOR&amp; V1, FXMVECTOR V2);</p>
-<p>XMVECTOR&amp; XM_CALLCONV operator/= (XMVECTOR&amp; V1, FXMVECTOR V2);</p>
-<p>XMVECTOR&amp; operator*= (XMVECTOR&amp; V, float S);</p>
-<p> XMVECTOR&amp; operator/= (XMVECTOR&amp; V, float S);</p>
-<p>XMVECTOR XM_CALLCONV operator+ (FXMVECTOR V1, FXMVECTOR V2);</p>
-<p>XMVECTOR XM_CALLCONV operator- (FXMVECTOR V1, FXMVECTOR V2);</p>
-<p> XMVECTOR XM_CALLCONV operator* (FXMVECTOR V1, FXMVECTOR V2);</p>
-<p>XMVECTOR XM_CALLCONV operator/ (FXMVECTOR V1, FXMVECTOR V2);</p>
-<p> XMVECTOR XM_CALLCONV operator* (FXMVECTOR V, float S);</p>
-<p> XMVECTOR XM_CALLCONV operator* (float S, FXMVECTOR V);</p>
-<p>XMVECTOR XM_CALLCONV operator/ (FXMVECTOR V, float S);</p>
-<p><strong>1.6.6其他参数</strong></p>
-<p><strong>定义以下常量用于涉及π近似不同的表达式**</strong>:**</p>
-<p>const float XM_PI = 3.141592654f;</p>
-<p>const float XM_2PI = 6.283185307f;</p>
-<p>const float XM_1DIVPI = 0.318309886f;</p>
-<p>const float XM_1DIV2PI = 0.159154943f;</p>
-<p>const float XM_PIDIV2 = 1.570796327f;</p>
-<p>const float XM_PIDIV4 = 0.785398163f;</p>
-<p><strong>弧度和角度转换的内联函数：</strong></p>
-<p>inline float XMConvertToRadians(float fDegrees) { return fDegrees * (XM_PI / 180.0f); } inline float XMConvertToDegrees(float fRadians) { return fRadians * (180.0f / XM_PI); }</p>
-<p><strong>min**</strong>/max**<strong>函数：</strong></p>
-<p>template<class T> inline T XMMin(T a, T b) { return (a &lt; b) ? a : b; }</p>
-<p>template<class T> inline T XMMax(T a, T b) { return (a &gt; b) ? a : b; }</p>
-<p><strong>1.6.7 Setter 函数</strong></p>
-<p>DirectX Math提供了以下函数来设置XMVECTOR的内容:</p>
-<p>// Returns the zero vector 0  置0</p>
-<p>XMVECTOR XM_CALLCONV XMVectorZero();</p>
-<p>// Returns the vector (1, 1, 1, 1)  置1</p>
-<p>XMVECTOR XM_CALLCONV XMVectorSplatOne();</p>
-<p>// Returns the vector (x, y, z, w)</p>
-<p>XMVECTOR XM_CALLCONV XMVectorSet(float x, float y, float z, float w);</p>
-<p>// Returns the vector (s, s, s, s)</p>
-<p>XMVECTOR XM_CALLCONV XMVectorReplicate(float Value);</p>
-<p>// Returns the vector (vx, vx, vx, vx)</p>
-<p>XMVECTOR XM_CALLCONV XMVectorSplatX(FXMVECTOR V);</p>
-<p>// Returns the vector (vy, vy, vy, vy)</p>
-<p>XMVECTOR XM_CALLCONV XMVectorSplatY(FXMVECTOR V);</p>
-<p>// Returns the vector (vz, vz, vz, vz)</p>
-<p>XMVECTOR XM_CALLCONV XMVectorSplatZ(FXMVECTOR V);</p>
-<p><strong>1.6.8向量函数</strong></p>
-<p>DirectX Math提供以下函数来执行各种向量操作。用3D版本来说明，但也有类似的2D和4D版本;2D和4D版本的名称与3D版本相同，只是分别用2和4代替了3。</p>
-<p>XMVECTOR XM_CALLCONV XMVector3Length( // Returns ||v||</p>
-<p>FXMVECTOR V); // Input v</p>
-<p>XMVECTOR XM_CALLCONV XMVector3LengthSq( // Returns ||v||2</p>
-<p>FXMVECTOR V); // Input v</p>
-<p>XMVECTOR XM_CALLCONV XMVector3Dot( // Returns v1·v2</p>
-<p>FXMVECTOR V1, // Input v1</p>
-<p>FXMVECTOR V2); // Input v2</p>
-<p>XMVECTOR XM_CALLCONV XMVector3Cross( // Returns v1 × v2</p>
-<p>FXMVECTOR V1, // Input v1</p>
-<p>FXMVECTOR V2); // Input v2</p>
-<p>XMVECTOR XM_CALLCONV XMVector3Normalize( // Returns</p>
-<p>v/||v|| FXMVECTOR V); // Input v</p>
-<p>XMVECTOR XM_CALLCONV XMVector3Orthogonal( // Returns a</p>
-<p>vector orthogonal to v FXMVECTOR V); // Input v</p>
-<p> XMVECTOR XM_CALLCONV</p>
-<p>XMVector3AngleBetweenVectors( // Returns the angle between v1 and</p>
-<p>v2</p>
-<p>FXMVECTOR V1, // Input v1</p>
-<p>FXMVECTOR V2); // Input v2</p>
-<p> void XM_CALLCONV XMVector3ComponentsFromNormal(</p>
-<p>XMVECTOR* pParallel, // Returns projn(v)</p>
-<p>XMVECTOR* pPerpendicular, // Returns perpn(v)</p>
-<p>FXMVECTOR V, // Input v</p>
-<p>FXMVECTOR Normal); // Input n</p>
-<p>bool XM_CALLCONV XMVector3Equal( // Returns v1 = v2</p>
-<p>FXMVECTOR V1, // Input v1</p>
-<p>FXMVECTOR V2); // Input v2</p>
-<p> bool XM_CALLCONV XMVector3NotEqual( // Returns v1 ≠ v2</p>
-<p>FXMVECTOR V1, // Input v1</p>
-<p>FXMVECTOR V2); // Input v2</p>
-<p><strong>Sample</strong> Code:</p>
-<p>#include  // for XMVerifyCPUSupport<br>#include<br>#include<br>#include<br>using namespace std;<br>using namespace DirectX;<br>using namespace DirectX::PackedVector;</p>
-<p>// Overload the  “&lt;&lt;” operators so that we can use cout to<br>// output XMVECTOR objects.</p>
-<p>//重载流运算符<br>ostream&amp; XM_CALLCONV operator &lt;&lt; (ostream&amp; os, FXMVECTOR v)<br>{<br>    XMFLOAT3 dest;<br>    XMStoreFloat3(&amp;dest, v);</p>
-<pre><code>os &lt;&lt; &quot;(&quot; &lt;&lt; dest.x &lt;&lt; &quot;, &quot; &lt;&lt; dest.y &lt;&lt; &quot;, &quot; &lt;&lt; dest.z &lt;&lt; &quot;)&quot;;
-return os;</code></pre>
-<p>}</p>
-<p>int main()<br>{<br>    cout.setf(ios_base::boolalpha);</p>
-<pre><code>// Check support for SSE2 (Pentium4, AMD K8, and above).
-//检查是否支持SSE2
-
-if (!XMVerifyCPUSupport())
+i = 0;
+if (ans\[0\] == 0)
+    //cout&lt;</code></pre>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/10/28/pta%E9%A2%98%E7%9B%AE%E9%9B%86%EF%BC%9A7-27-%E5%86%92%E6%B3%A1%E6%B3%95%E6%8E%92%E5%BA%8F/">PTA题目集：7-27 冒泡法排序</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a></span><div class="content"><p>7-27 冒泡法排序 （20 分）</p>
+<p>将_N_个整数按从小到大排序的冒泡排序法是这样工作的：从头到尾比较相邻两个元素，如果前面的元素大于其紧随的后面元素，则交换它们。通过一遍扫描，则最后一个元素必定是最大的元素。然后用同样的方法对前_N_−1个元素进行第二遍扫描。依此类推，最后只需处理两个元素，就完成了对_N_个数的排序。</p>
+<p>本题要求对任意给定的_K_（&lt;_N_），输出扫描完第_K_遍后的中间结果数列。</p>
+<p>输入格式：</p>
+<p>输入在第1行中给出<em>N_和_K_（1≤_K</em>&lt;_N_≤100），在第2行中给出_N_个待排序的整数，数字间以空格分隔。</p>
+<p>输出格式：</p>
+<p>在一行中输出冒泡排序法扫描完第_K_遍后的中间结果数列，数字间以空格分隔，但末尾不得有多余空格。</p>
+<p>输入样例：</p>
+<p>6 2<br>2 3 5 1 6 4</p>
+<p>输出样例：</p>
+<p>2 1 3 4 5 6</p>
+<p>来自 &lt;<a target="_blank" rel="noopener" href="https://pintia.cn/problem-sets/14/problems/807">https://pintia.cn/problem-sets/14/problems/807</a>&gt;</p>
+<p><strong>只需要把经典冒泡排序内层循环的次数改一下就行了</strong></p>
+<p>#include using namespace std;<br>int main() {<br>    int a[11] = { 0 };<br>    int t = 0;//交换用的临时值<br>    int n;//n个数排序<br>    int k;<br>    cin &gt;&gt; n &gt;&gt; k;<br>    for (int i = 1; i &lt;= n; i++)//输入需要排序的数列<br>        cin &gt;&gt; a[i];<br>    for (int i = 1; i &lt; k+1 ; i++)//需要进行n趟排序<br>    {<br>        for (int j = 1; j &lt;= n - i; j++)//从第一位开始比较直到最后一个未归位的数，第i趟的时候只需要比较n-i次<br>        {<br>            if (a[j] &gt; a[j + 1])//比较并交换位置<br>            {<br>                t = a[j];<br>                a[j] = a[j + 1];<br>                a[j + 1] = t;<br>            }<br>        }<br>    }<br>    for (int i = 1; i &lt;= n; i++)<br>    {<br>        if (i != n)<br>            cout &lt;&lt; a[i] &lt;&lt; “ “;<br>        else<br>            cout &lt;&lt; a[i];<br>    }<br>    return 0;<br>}</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/10/28/%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8F/">插入排序</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a></span><div class="content"><p>直接插入排序（Straight Insertion Sort）是一种最简单的排序方法，其基本操作是将一条记录插入到已排好的有序表中，从而得到一个新的、记录数量增1的有序表。</p>
+<p>时间复杂度为O(n*n)</p>
+<p><strong>原理：</strong></p>
+<p>1、将指针指向某个元素，假设该元素左侧的元素全部有序，将该元素抽取出来，然后按照从右往左的顺序分别与其左边的元素比较，遇到比其大的元素便将元素右移，直到找到比该元素小的元素或者找到最左面发现其左侧的元素都比它大，停止；</p>
+<p>2、此时会出现一个空位，将该元素放入到空位中，此时该元素左侧的元素都比它小，右侧的元素都比它大；</p>
+<p>3、指针向后移动一位，重复上述过程。每操作一轮，左侧有序元素都增加一个，右侧无序元素都减少一个。</p>
+<p><strong>例子：</strong><br>　　待比较数据：7, 6, 9, 8, 5,1</p>
+<p>　　第一轮：指针指向第二个元素6，假设6左面的元素为有序的，将6抽离出来，形成7,<em>,9,8,5,1，从7开始，6和7比较，发现7&gt;6。将7右移，形成</em>,7,9,8,5,1，6插入到7前面的空位，结果：6,7,9,8,5,1</p>
+<p>　　第二轮：指针指向第三个元素9，此时其左面的元素6,7为有序的，将9抽离出来，形成6,7,_,8,5,1，从7开始，依次与9比较，发现9左侧的元素都比9小，于是无需移动，把9放到空位中，结果仍为：6,7,9,8,5,1</p>
+<p>　　第三轮：指针指向第四个元素8，此时其左面的元素6,7,9为有序的，将8抽离出来，形成6,7,9,<em>,5,1，从9开始，依次与8比较，发现8&lt;9，将9向后移，形成6,7,</em>,9,5,1，8插入到空位中，结果为：6,7,8,9,5,1</p>
+<p>　　第四轮：指针指向第五个元素5，此时其左面的元素6,7,8,9为有序的，将5抽离出来，形成6,7,8,9,<em>,1，从9开始依次与5比较，发现5比其左侧所有元素都小，5左侧元素全部向右移动，形成</em>,6,7,8,9,1，将5放入空位，结果5,6,7,8,9,1。</p>
+<p>第五轮：同上，1被移到最左面，最后结果：1,5,6,7,8,9。</p>
+<p><strong>源码</strong></p>
+<p>#include using namespace std;<br>int main() {<br>    int min;<br>    int a[101] = {0};<br>    int n = 0;<br>    int temp = 0;<br>    int i, j;<br>    cin &gt;&gt; n;<br>    for (int i = 0; i &lt; n; i++)<br>    {<br>        cin &gt;&gt; a[i];<br>    }<br>    min = a[0];<br>    for (i = 0; i &lt; n; i++)<br>    {<br>        for (j = i-1; j &gt;= 0; j–)<br>        {<br>            if (a[i] &gt; a[j])<br>                break;<br>        }<br>        temp = a[i];<br>        for (int k = i - 1; k &gt; j; k–)<br>            a[k + 1] = a[k];<br>        a[j + 1] = temp;<br>    }<br>    for (int i = 0; i &lt; n; i++)<br>    {<br>        cout &lt;&lt; a[i] &lt;&lt; “ “;<br>    }<br>    return 0;<br>}</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/10/27/c%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F%E6%8E%A7%E5%88%B6%E7%AE%80%E4%BB%8B%EF%BC%88%E4%B8%80%EF%BC%89/">C++输出格式控制简介（一）</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a></span><div class="content"><p>为了使数据按指定格式输出，需要头文件iomanip</p>
+<p>下面先举个例子：</p>
+<p>#include #include using namespace std;<br>int main() {<br>    int n;<br>    cin &gt;&gt; n;<br>    for (int i=1; i &lt;= n; i++) {<br>        for (int j=1; j &lt;= i; j++)<br>        {<br>            cout &lt;&lt; j &lt;&lt; “*“ &lt;&lt; i &lt;&lt; “=” &lt; 输出如下：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/10/QQ%E6%88%AA%E5%9B%BE20181027114005.png"></p>
+<p><strong>1、setiosflags()</strong><br>设置输出格式状态，括号中应给出格式状态，内容与控制符setiosflags括号中的内容相同</p>
+<p>ios::left</p>
+<p>输出数据在本域宽范围内向左对齐</p>
+<p>ios::right</p>
+<p>输出数据在本域宽范围内向右对齐</p>
+<p>ios::internal</p>
+<p>数值的符号位在域宽内左对齐，数值右对齐，中间由填充字符填充</p>
+<p>ios::dec</p>
+<p>设置整数的基数为10</p>
+<p>ios::oct</p>
+<p>设置整数的基数为8</p>
+<p>ios::hex</p>
+<p>设置整数的基数为16</p>
+<p>ios::showbase</p>
+<p>强制输出整数的基数(八进制数以0打头，十六进制数以0x打头)</p>
+<p>ios::showpoint</p>
+<p>强制输出浮点数的小点和尾数0</p>
+<p>ios::uppercase</p>
+<p>在以科学记数法格式E和以十六进制输出字母时以大写表示</p>
+<p>ios::showpos</p>
+<p>对正数显示“+”号</p>
+<p>ios::scientific</p>
+<p>浮点数以科学记数法格式输出</p>
+<p>ios::fixed</p>
+<p>浮点数以定点格式(小数形式)输出</p>
+<p>ios::unitbuf</p>
+<p>每次输出之后刷新所有的流</p>
+<p>ios::stdio</p>
+<p>每次输出之后清除stdout, stderr</p>
+<p><strong>2、stew()</strong><br>通俗地讲就是预设宽度，用来控制输出间隔，setw()只对其后面紧跟的输出产生作用，如例子中的i*j在输出中会占4个位字符，默认填充的是空格。</p>
+<p>配合setfill()可以使用另外的字符进行填充，如</p>
+<p>cout&lt; 将上面的例子修改后输出如下：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/10/QQ%E6%88%AA%E5%9B%BE20181027114203.png"></p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/10/27/pta%E9%A2%98%E7%9B%AE%E9%9B%86%EF%BC%9A7-25-%E5%BF%B5%E6%95%B0%E5%AD%97/">PTA题目集：7-25 念数字</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a></span><div class="content"><p>7-25 念数字 （15 分）</p>
+<p>输入一个整数，输出每个数字对应的拼音。当整数为负数时，先输出fu字。十个数字对应的拼音如下：</p>
+<p>0: ling<br>1: yi<br>2: er<br>3: san<br>4: si<br>5: wu<br>6: liu<br>7: qi<br>8: ba<br>9: jiu</p>
+<p>输入格式：</p>
+<p>输入在一行中给出一个整数，如：1234。</p>
+<p><strong>提示：整数包括负数、零和正数。</strong></p>
+<p>输出格式：</p>
+<p>在一行中输出这个整数对应的拼音，每个数字的拼音之间用空格分开，行末没有最后的空格。如 yi er san si。</p>
+<p>输入样例：</p>
+<p>-600</p>
+<p>输出样例：</p>
+<p>fu liu ling ling</p>
+<p>来自 &lt;<a target="_blank" rel="noopener" href="https://pintia.cn/problem-sets/14/problems/805">https://pintia.cn/problem-sets/14/problems/805</a>&gt;</p>
+<p><strong>使用库函数将int型转换成一个char数组，然后进行逐个判断。设置一个标志用来检测是否输出到最后一个数，如果输出到最后一个数字就不打印空格。</strong></p>
+<p>#include #include #include using namespace std;<br>void print(char b[],int i) {</p>
+<pre><code>switch (b\[i\])
 &#123;
-    cout &lt;&lt; &quot;directx math not supported&quot; &lt;&lt; endl;
-    return 0;
-&#125;
-
-XMVECTOR n = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
-XMVECTOR u = XMVectorSet(1.0f, 2.0f, 3.0f, 0.0f);
-XMVECTOR v = XMVectorSet(-2.0f, 1.0f, -3.0f, 0.0f);
-XMVECTOR w = XMVectorSet(0.707f, 0.707f, 0.0f, 0.0f);
-
-// Vector addition: XMVECTOR operator + 
-// 向量加法
-XMVECTOR a = u + v;
-
-// Vector subtraction: XMVECTOR operator - 
-// 向量减法
-XMVECTOR b = u - v;
-
-// Scalar multiplication: XMVECTOR operator \* 
-// 数乘
-XMVECTOR c = 10.0f\*u;
-
-// ||u||
-// 向量的模
-XMVECTOR L = XMVector3Length(u);
-
-// d = u / ||u||
-// 向量单位化
-XMVECTOR d = XMVector3Normalize(u);
-
-// s = u dot v
-// 点乘
-XMVECTOR s = XMVector3Dot(u, v);
-
-// e = u x v
-// 叉乘
-XMVECTOR e = XMVector3Cross(u, v);
-
-// Find proj\_n(w) and perp\_n(w)
-// w对于n的两个投影分量
-XMVECTOR projW;
-XMVECTOR perpW;
-XMVector3ComponentsFromNormal(&amp;projW, &amp;perpW, w, n);
-
-// Does projW + perpW == w?
-// 两个投影分量对应的向量，加法结果是原向量，三角形法则
-bool equal = XMVector3Equal(projW + perpW, w) != 0;
-bool notEqual = XMVector3NotEqual(projW + perpW, w) != 0;
-
-// The angle between projW and perpW should be 90 degrees.
-// 两个投影分量是垂直的
-XMVECTOR angleVec = XMVector3AngleBetweenVectors(projW, perpW);
-float angleRadians = XMVectorGetX(angleVec);
-float angleDegrees = XMConvertToDegrees(angleRadians);
-
-cout &lt;&lt; &quot;u                   = &quot; &lt;&lt; u &lt;&lt; endl;
-cout &lt;&lt; &quot;v                   = &quot; &lt;&lt; v &lt;&lt; endl;
-cout &lt;&lt; &quot;w                   = &quot; &lt;&lt; w &lt;&lt; endl;
-cout &lt;&lt; &quot;n                   = &quot; &lt;&lt; n &lt;&lt; endl;
-cout &lt;&lt; &quot;a = u + v           = &quot; &lt;&lt; a &lt;&lt; endl;
-cout &lt;&lt; &quot;b = u - v           = &quot; &lt;&lt; b &lt;&lt; endl;
-cout &lt;&lt; &quot;c = 10 \* u          = &quot; &lt;&lt; c &lt;&lt; endl;
-cout &lt;&lt; &quot;d = u / ||u||       = &quot; &lt;&lt; d &lt;&lt; endl;
-cout &lt;&lt; &quot;e = u x v           = &quot; &lt;&lt; e &lt;&lt; endl;
-cout &lt;&lt; &quot;L  = ||u||          = &quot; &lt;&lt; L &lt;&lt; endl;
-cout &lt;&lt; &quot;s = u.v             = &quot; &lt;&lt; s &lt;&lt; endl;
-cout &lt;&lt; &quot;projW               = &quot; &lt;&lt; projW &lt;&lt; endl;
-cout &lt;&lt; &quot;perpW               = &quot; &lt;&lt; perpW &lt;&lt; endl;
-cout &lt;&lt; &quot;projW + perpW == w  = &quot; &lt;&lt; equal &lt;&lt; endl;
-cout &lt;&lt; &quot;projW + perpW != w  = &quot; &lt;&lt; notEqual &lt;&lt; endl;
-cout &lt;&lt; &quot;angle               = &quot; &lt;&lt; angleDegrees &lt;&lt; endl;
-
-return 0;</code></pre>
+case &#39;-&#39;:cout &lt;&lt; &quot;fu&quot;; break;
+case &#39;0&#39;:cout &lt;&lt; &quot;ling&quot;; break;
+case &#39;1&#39;:cout &lt;&lt; &quot;yi&quot;; break;
+case &#39;2&#39;:cout &lt;&lt; &quot;er&quot;; break;
+case &#39;3&#39;:cout &lt;&lt; &quot;san&quot;; break;
+case &#39;4&#39;:cout &lt;&lt; &quot;si&quot;; break;
+case &#39;5&#39;:cout &lt;&lt; &quot;wu&quot;; break;
+case &#39;6&#39;:cout &lt;&lt; &quot;liu&quot;; break;
+case &#39;7&#39;:cout &lt;&lt; &quot;qi&quot;; break;
+case &#39;8&#39;:cout &lt;&lt; &quot;ba&quot;; break;
+case &#39;9&#39;:cout &lt;&lt; &quot;jiu&quot;; break;
+&#125;</code></pre>
+<p>}<br>int main() {<br>    int a;<br>    cin &gt;&gt; a;<br>    char b[20] = {‘x’};<br>    snprintf(b, sizeof(b), “%d”, a);<br>    //_itoa_s(a, b, 10);<br>    int k = 0;<br>    for (int i = 0; i &lt; strlen(b); i++)<br>    {<br>        if (k) {<br>            printf(“ “);<br>            print(b, i);<br>        }<br>        else {<br>            k = 1;<br>            print(b, i);<br>        }<br>    }</p>
+<pre><code>return 0;</code></pre>
 <p>}</p>
-<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-3.png" alt="0) 
-10 * u 
-=(1,2,3) 
-(-2, 1, -3) 
-(0. 707, 0. 707, 
-(10, 20, 30) 
-d = u 
-u 
-rajW 
-erpW 
-rajW 
-rajW 
-angle 
-/IIuII 
-V 
-perpW 
-perpW 
-(0. 267261, 0. 534522, 0. 801784) 
-(-9, -3, 5) 
-(3. 74166, 3. 74166, 3. 74166) 
-(0. 707, 0, 0) 
-(0, 0. 707, 0) 
-false "></p>
-<p>总结：</p>
-<p>1. 对局部或全局变量使用XMVECTOR。<br>2. 对类数据成员使用XMFLOAT2、XMFLOAT3和XMFLOAT4。<br>3.在进行计算之前，使用加载函数将XMFLOATn转换为XMVECTOR<br>4. 使用XMVECTOR实例进行计算。<br>5. 使用存储函数将XMVECTOR转换为XMFLOATn</p>
-<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-1.png" alt="I. 
-2. 
-3. 
-4. 
-5. 
-Use XMVECTOR for local or global variables. 
-Use XMFLOAT2, XMFLOAT3, and XMFLOAT4 for class data members. 
-Use loading functions to convert from XMFLOATn to XMVECTOR before 
-doing calculations. 
-Do calculations with XMVECTOR instances. 
-Use storage functions to convert from XMVECTOR to XMFLOATn. "></p>
-<p>矢量用于模拟同时具有大小和方向的物理量。几何上，我们用有向线段表示一个向量。矢量平行于自身平移时处于标准位置，使其尾部与坐标系的原点重合。一个处于标准位置的向量可以通过指定其头部相对于一个坐标系的坐标来进行数值描述。</p>
-<p>![operations: </p>
-<ol>
-<li></li>
-<li></li>
-<li></li>
-<li></li>
-<li></li>
-<li></li>
-<li>Addition: u + V = (ux + vx, uy + vy, Liz + vz)<br>Subtraction: u — V = (ux — vx, uy — vy, Liz — vz)<br>Scalar Multiplication: ku = (ku ku kuz)<br>x2 + + z2<br>Length: Ilu<br>Normalization:<br>Dot Product:<br>Cross Product:<br>(xyz<br>I lull ‘ llull ‘ lull<br>Ilull<br>uv<br>—uV u V —uyvx) ](<a target="_blank" rel="noopener" href="http://www.muchenhen.com/wp-content/uploads/2019/10/image-2.png">http://www.muchenhen.com/wp-content/uploads/2019/10/image-2.png</a>)</li>
-</ol>
-<p>提供了以下有用的函数来计算一个向量的长度，一个向量的长度的平方，计算两个向量的点积，计算两个向量的外积，以及对一个向量进行归一化:</p>
-<p>XMVECTOR XM_CALLCONV XMVector3Length(FXMVECTOR V);</p>
-<p>XMVECTOR XM_CALLCONV XMVector3LengthSq(FXMVECTOR V);</p>
-<p>XMVECTOR XM_CALLCONV XMVector3Dot(FXMVECTOR V1, FXMVECTOR V2);</p>
-<p>XMVECTOR XM_CALLCONV XMVector3Cross(FXMVECTOR V1, FXMVECTOR V2);</p>
-<p>XMVECTOR XM_CALLCONV XMVector3Normalize(FXMVECTOR V);</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/27/dx12%E9%BE%99%E4%B9%A6part%E2%85%A0chapter-0-dx%E6%95%B0%E5%AD%A6%E5%BA%93-1/">DX12龙书PartⅠChapter 0 DX数学库</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-27</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/DirectX/">DirectX</a></span><div class="content"><p>DirectX Math Library 是一个3D数学库，包含在Windows SDK中。</p>
-<p>该库使用了SSE2（Streaming SIMD Extensions 2）指令集。使用128位宽的SIMD（Single Instruction Multiple Data）寄存器，因此做向量计算会更快。</p>
-<p>注：在X86平台下，需要在VS中手动设置，启用SSE2（Enable Enhanced Instruction Set）。在任何平台下，都要手动启用fast floating point model。在project prote具体方法请查阅资料。</p>
-<p>在VS2019中的Win32默认为启动的。</p>
-<p>关于检查自己的硬件是否支持可以在main函数中添加如下代码：</p>
-<p> if (!XMVerifyCPUSupport())<br>    {<br>        cout &lt;&lt; “directx math not supported” &lt;&lt; endl;<br>        return 0;<br>    }</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/27/dx12%E9%BE%99%E4%B9%A6part%E2%85%A0chapter-0-dx%E6%95%B0%E5%AD%A6%E5%BA%93/">DX12龙书PartⅠChapter 0 DX数学库</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-27</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/DirectX/">DirectX</a></span><div class="content"><p>DirectX Math Library 是一个3D数学库，包含在Windows SDK中。</p>
-<p>该库使用了SSE2（Streaming SIMD Extensions 2）指令集。使用128位宽的SIMD（Single Instruction Multiple Data）寄存器，因此做向量计算会更快。</p>
-<p>注：在X86平台下，需要在VS中手动设置，启用SSE2（Enable Enhanced Instruction Set）。在任何平台下，都要手动启用fast floating point model。在project prote具体方法请查阅资料。</p>
-<p>在VS2019中的Win32默认为启动的。</p>
-<p>关于检查自己的硬件是否支持可以在main函数中添加如下代码：</p>
-<p> if (!XMVerifyCPUSupport())<br>    {<br>        cout &lt;&lt; “directx math not supported” &lt;&lt; endl;<br>        return 0;<br>    }</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/03/21/%E3%80%90unity%E4%BC%98%E5%8C%96%E3%80%91profiler%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E5%99%A8-1/">【Unity优化】Profiler性能分析器</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-03-21</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/unity3d/">unity3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/unity3d/Unity%E4%BC%98%E5%8C%96/">Unity优化</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/Unity%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">Unity学习笔记</a></span><div class="content"><p><strong>【Unity优化】Profiler性能分析器</strong> <strong>【总结，来自Unity Documentation】</strong> <strong>本文导图：</strong> [caption id=”attachment_1204” align=”aligncenter” width=”3863”]<a target="_blank" rel="noopener" href="http://www.muchenhen.com/wp-content/uploads/2019/03/UnityProfiler.png"><img src="http://www.muchenhen.com/wp-content/uploads/2019/03/UnityProfiler.png" alt="点击查看原图"></a> 点击查看原图[/caption] **Profiler概述 ** Profiler窗口可以帮助我们分析和优化游戏。在这个窗口上有游戏的不同部分所消耗的时间，例如显示渲染、动画和游戏逻辑分别消耗的时间。可以用来分析GPU、CPU、内存、渲染、音频的性能。 Profiler会对性能有一点影响，但是这个影响很小，不会影响到游戏的帧率。 可以对比代码更改前后的性能指标来进行优化分析。 **Profiler窗口 ** **Window &gt; Analysis &gt; Profiler 来打开窗口。 ** <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil1.jpg"> **控制栏 ** <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil2.png"> 窗口顶部右侧的传输控件，当游戏运行并收集数据时，单击其中任何一项会暂停游戏。可以分别查看上一帧、下一帧、记录的第一帧、最后一步的帧。 但是Profiler不记录所有的帧数据。Current会显示实时信息。Active Profiler会允许可以在编辑器或单独设备中进行分析。Save以及将记录的帧数据保存成文件，Load可以读取之前保存的。如果在按下shift按钮时单击”Load”，文件内容将附加到内存中的当前概要文件帧。 **Deep Profiling ** 打开后会分析每一个脚本，记录每一个函数的调用。深度分析会产生更大的开销，游戏运行速度会明显变慢。如果脚本代码过于复杂，就根本无法执行深度分析。 手动分析脚本代码块的开销要比使用深度分析小。使用Profiler.BeginSample 和 Profiler.EndSample脚本函数来启用和禁用对代码块的分析。 **Color Blind Mode ** 色盲模式。 **View SyncTime ** 以固定帧率或者垂直空白间隔的同步运行时，Unity在”Wait for Target FPS”中记录等待时间。Profiler中默认不显示。如果要查看就打开View SyncTime。 **Profiler Timeline ** <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil3.jpg">  Profiler窗口的上部显示随时间变化的性能数据。运行游戏时每一帧的数据都会被记录并显示最近的几百帧的数据。单击左侧的特定框架将在窗口的下方显示其详细信息。时间线上的纵轴的比例会自动调整。时间轴由几个区域组成:CPU使用、渲染和内存。如果要获得更多关于CPU使用区域的细节，可以删除内存和渲染区域。注意，标签区域中的彩色方块可以控制是否显示该数据相关的时间轴，点击方块变灰，就会在图中隐藏。 **WebGL ** 区别是不能附加到WebGL中正在运行的播放器上，并且目前无法分析WebGL的DrawCall。 **Remote Profiling ** **远程分析 ** 可以分析在另一台设备上运行的游戏，要将Unity编辑器连接到另一台设备。 **iOS ** ios启动远程分析的步骤：</p>
-<ol>
-<li><p>将ios设备连接到同一WiFi网络，或者将设备通过数据线连接。</p>
-</li>
-<li><p>File &gt; Build Settings选中Autoconnect Profiler。</p>
-</li>
-<li><p>选择Build &amp; Run。</p>
-</li>
-<li><p>当应用在设备上运行起来的时候启动Profiler窗口。</p>
-</li>
-</ol>
-<p>有时无法自动连接，在Profiler窗口活动Profiler下拉菜单选择适当的设备启动Profiler连接。 <strong>Android</strong> WiFi或ADB 使用WiFi：</p>
-<ol>
-<li><p>禁用Android设备上的移动数据。</p>
-</li>
-<li><p>将Android设备连接到本地WiFi网络。</p>
-</li>
-<li><p>用数据线连接设备。</p>
-</li>
-<li><p>选中Unity的Build Settings对话框中的Development Build和Autoconnect Profiler，然后单击Build &amp; Run</p>
-</li>
-<li><p>当应用程序在设备上启动时，在Unity编辑器中打开Profiler窗口。</p>
-</li>
-</ol>
-<p>如果无法自动连接，在Profiler窗口活动Profiler下拉菜单选择适当的设备启动Profiler连接。 ADB：</p>
-<ol>
-<li><p>数据线连接设备并确保ABD识别到设备。</p>
-</li>
-<li><p>选中Unity的Build Settings对话框中的Development Build和Autoconnect Profiler，然后单击Build &amp; Run，会自动创建一个ABD通道</p>
-</li>
-<li><p>当应用程序在设备上启动时，在Unity编辑器中打开Profiler窗口。</p>
-</li>
-<li><p>从Profiler窗口Active Profiler下拉菜单中选择AndroidProfiler</p>
-</li>
-</ol>
-<p>如果要配置另一个应用程序或重启adb服务器，必须手动设置此通道。 注意:下拉菜单中的条目只有在选择的目标为Android时才可见。如果正在使用防火墙，需要确保端口54998到55511在防火墙的出站规则中是打开的，Unity用于远程分析的端口。 <strong>CPU Usage Profiler</strong> <strong>CPU使用分析器</strong> <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil4.png"> CPU使用情况分析器显示时间都被用在了游戏的哪些地方。 被选中时，下面的窗格显示所选帧的分级时间数据。有两种模式。Hierarchy mode，显示分级时间数据。Group Hierarchy mode，将时间数据分组为逻辑组(如呈现、物理、脚本)。因为任何组的子组也可以位于不同的组中，所以组时间的百分比通常加起来超过100%。上下拖动图表标签可以重新排列CPU图表的排列方式。 **选择个别项目 ** <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil5.png"> 选中项目的细节信息会显示在右侧窗口。 左侧的Self列指的是在特定函数中花费的时间，不包括调用子函数的时间。Total是总计。Time ms和Self ms列显示相同的信息，但单位是毫秒。GC Alloc列显示了在当前帧中分配了多少内存，该帧稍后由垃圾收集器（Garbage Collection）收集，将此值保持为零，以防止垃圾收集器在帧之间引起停顿。 Others记录的是所有不属于呈现、脚本、物理、Garbage Collection或VSync的区域的总数，括动画、AI、音频、粒子、网络、加载和PlayerLoop。 **Physics markers ** **物理标记 ** 各种高级物理分析器标记的含义。</p>
-<ul>
-<li><p><strong>Physics.Simulate:</strong> 从FixedUpdate调用。通过指示物理引擎(PhysX)运行其模拟来更新物理的当前状态。</p>
-</li>
-<li><p><strong>Physics.Processing:</strong> 从FixedUpdate调用。这是所有非布料物理工作处理的地方。展开此标记可以显示物理引擎内部正在进行的工作的底层细节。</p>
-</li>
-<li><p><strong>Physics.ProcessingCloth:</strong> 从FixedUpdate调用。所有的布料物理工作都在这里进行。扩展此标记将显示物理引擎内部正在进行的工作的低层细节。</p>
-</li>
-<li><p><strong>Physics.FetchResults:</strong> 从FixedUpdate调用。从物理引擎中收集物理模拟结果。</p>
-</li>
-<li><p><strong>Physics.UpdateBodies:</strong> 从FixedUpdate调用。这是所有物理实体更新它们的<strong>位置</strong>和<strong>旋转</strong>的地方，也是传递这些更新的消息的地方。</p>
-</li>
-<li><p><strong>Physics.ProcessReports:</strong> 从FixedUpdate调用。此阶段在物理FixedUpdate结束后运行，在此阶段处理响应模拟结果的所有不同阶段。Joint中断、Contacts和Triggers在这里更新和发送消息。有四个不同的子阶段:</p>
-<ul>
-<li><p><strong>Physics.TriggerEnterExits:</strong> 从FixedUpdate调用。处理OnTriggerEnter和OnTriggerExit事件。</p>
-</li>
-<li><p><strong>Physics.TriggerStays:</strong> 从FixedUpdate调用。处理OnTriggerStay事件。</p>
-</li>
-<li><p><strong>Physics.Contacts:</strong> 从FixedUpdate调用。处理OnCollisionEnter、OnCollisionExit和OnCollisionStay事件。</p>
-</li>
-<li><p><strong>Physics.JointBreaks:</strong> 从FixedUpdate调用。处理与正在断开的连接相关的更新和消息。</p>
-</li>
-</ul>
-</li>
-<li><p>**Physics.UpdateCloth:**从Update调用。有关布料和它们的皮肤网格的更新。</p>
-</li>
-<li><p><strong>Physics.Interpolation:</strong> 从Update调用。这个阶段处理所有物理对象的位置和旋转的插值。</p>
-</li>
-</ul>
-<p><strong>Performance warnings</strong> <strong>性能警告</strong> <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil6.png"> CPU分析器能够检测并警告一些常见的性能问题。出现在下面的窗格的警告列中。 分析器可以检测到的具体问题：</p>
-<ul>
-<li><p><strong>Rigidbody.SetKinematic</strong> [Re-create non-convex MeshCollider for Rigidbody]</p>
-</li>
-<li><p><strong>Animation.DestroyAnimationClip</strong> [Triggers RebuildInternalState]</p>
-</li>
-<li><p><strong>Animation.AddClip</strong> [Triggers RebuildInternalState]</p>
-</li>
-<li><p><strong>Animation.RemoveClip</strong> [Triggers RebuildInternalState]</p>
-</li>
-<li><p><strong>Animation.Clone</strong> [Triggers RebuildInternalState]</p>
-</li>
-<li><p><strong>Animation.Deactivate</strong> [Triggers RebuildInternalState]</p>
-</li>
-</ul>
-<p><strong>CPU Profiler Timeline</strong> <strong>CPU分析器时间线</strong> Mem Record: Native memory performance profiling Mem记录：本地内存性能分析 <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil7.png"> 本机内存性能分析允许分析Unity本机内存管理系统中的活动，并评估它如何影响运行时性能。在Unity内存管理中搜索不需要的或资源密集型的分配模式时十分有用。 要使用此项需要手动记录。Window &gt; Analysis &gt; Profiler选择CPU Usage Profiler然后点击Timeline再选择Mem Record，然后选择记录模式：</p>
-<p><strong>选项</strong></p>
-<p><strong>功能</strong></p>
-<p><strong>对性能的影响</strong></p>
-<p><strong>None</strong></p>
-<p>模式禁用。这是默认选择。</p>
-<p>不存在</p>
-<p><strong>Sample only</strong></p>
-<p>记录内存分配、re-allocations, de-allocations、活动类型和系统。</p>
-<p>低</p>
-<p><strong>Callstack (fast)</strong></p>
-<p>具有与Sample相同的功能，而且还记录了一个。实际上callstack从本机分配站点到callstack从本机符号转换为脚本符号的地方，我们只能看到callstack到最深的脚本符号。</p>
-<p>中等</p>
-<p><strong>Callstack (full)</strong></p>
-<p>具有与Sample相同的功能，还记录了具有完整的脚本到本机和本机到脚本转换的callstack。</p>
-<p>高</p>
-<p>注意:当active Profiler只连接到独立播放器时，只支持低影响的Sample only模式。 所记录的内存分配示例以鲜红色显示在Profiler窗口中。 <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil8.png"> 单击Mem Record旁边的High Detail按钮以启用High Detail模式。选择一个示例来显示分配类型和系统。如果为所选分配示例记录了callstack，则还将解析并显示关联的callstack符号： <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil9.jpg"> <strong>High Detail view of Timeline ** **时间轴的高细节视图 ** Window &gt; Analysis &gt; Profiler选择CPU Usage Profiler然后选择底部的菜单点击Timeline再点击High Detail。 该模式给每次样本记录至少一个像素的宽度。可以全面查看框架中的所有活动，包括短期活动，如线程同步或内存分配。 两种模式的比较： 高细节视图 <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil10.png"> 标准视图： <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil11.png"> **Rendering Profiler</strong> **渲染分析器 ** 时间轴显示所Batches、SetPass Calls、Draw Calls、三角形和顶点的数量。下面的窗格显示了更多的渲染统计信息，与GameView呈现Rendering Statistics窗口中显示的统计信息匹配。 **Memory Profiler ** **内存分析器 ** 两种模式： 简单： 显示了内存是如何在每帧的基础上实时地在Unity中使用的。 Unity为分配预留内存池，以避免过于频繁地向操作系统请求内存。这将显示一个预留大小，以及使用了多少。 <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil12.png"> 包含的内容有：</p>
-<ul>
-<li><p><strong>Unity</strong> 在本地Unity代码中被分配追踪的内存容量</p>
-</li>
-<li><p><strong>Mono</strong>使用的总的堆的大小，还有管理代码使用的堆大小。这个内存是garbage-collected</p>
-</li>
-<li><p><strong>GfxDriver</strong> 驱动程序在纹理、渲染目标、着色器和网格数据上使用的内存估计量</p>
-</li>
-<li><p><strong>FMOD</strong> 音频驱动程序的估计内存使用量</p>
-</li>
-<li><p><strong>Profiler</strong> 用于分析器数据的内存</p>
-</li>
-</ul>
-<p>显示的数字与任务管理器或活动监视器不同，因为内存分析器无法跟踪某些使用情况。这包括一些驱动程序使用的内存，以及可执行代码使用的内存。 内存统计数据显示了一些最常见的Asset/object类型：</p>
-<ul>
-<li><p><strong>Textures</strong></p>
-</li>
-<li><p><strong>Meshes</strong></p>
-</li>
-<li><p><strong>Materials</strong></p>
-</li>
-<li><p><strong>Animations</strong></p>
-</li>
-<li><p><strong>Audio</strong></p>
-</li>
-<li><p><strong>Object Count</strong> 创建的对象的总数</p>
-</li>
-</ul>
-<p><strong>Detailed</strong> 细节 允许获取当前状态的快照。获取这些数据需要一些时间，因此细节视图很难提供实时的详细信息。在获取一个示例之后，Profiler窗口将更新为一个树状视图。 <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil13.png"> 显示单个Assets和GameObject内存使用情况，还显示了GameObject存在内存中的原因。常见的原因有：</p>
-<ul>
-<li><p><strong>Assets</strong>: 从用户或本机代码引用的Asset</p>
-</li>
-<li><p><strong>Built-in Resources</strong>: Unity Editor 资源或 Unity 默认资源</p>
-</li>
-<li><p><strong>Not Saved</strong>: 被标记为 DontSave的GameObjects</p>
-</li>
-<li><p><strong>Scene Memory</strong>: GameObject 和附加的 components</p>
-</li>
-<li><p><strong>Other</strong>: GameObjects 未在上述类别中标记</p>
-</li>
-</ul>
-<p><strong>Audio Profiler</strong> <strong>音频分析器</strong> 监视音频系统的重要性能，如总负载和声音计数。</p>
-<ul>
-<li><p><strong>Playing Sources</strong> 特定帧在场景中总的播放中的资源。监视音频是否超载。</p>
-</li>
-<li><p><strong>Paused Sources</strong> 特定帧在场景中总的暂停的资源。</p>
-</li>
-<li><p><strong>Audio Voice</strong> 实际使用的音频（FMOD通道）声音数量。 PlayOneShot 是在 Playing Sources没有显示的声音。</p>
-</li>
-<li><p><strong>Audio Memory</strong> 是被音频引擎总共使用的RAM。</p>
-</li>
-</ul>
-<p><strong>Channel view</strong> <strong>通道视图</strong> 当单击一行时，首先突出显示AudioClipAsset，然后在层次结构中显示被播放的AudioSource。 <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil14.jpg"> **Channels and groups view ** **通道和组视图 ** <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil15.png"> </p>
-<p><strong>Physics Profiler</strong></p>
-<p><strong>物理分析器</strong> 物理分析器显示物理引擎处理过的关于物理的统计信息。 <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil16.png"></p>
-<p><strong>性能</strong></p>
-<p><strong>功能</strong></p>
-<p><strong>Active Dynamic</strong></p>
-<p>处于活跃状态的non-Kinematic <strong>Rigidbody</strong> 数量<strong>。</strong></p>
-<p><strong>Active Kinematic</strong></p>
-<p>活跃的 Kinematic Rigidbody 数量。 注意带有joints的 Kinematic Rigidbody 组件在一帧中可能会处理多次。 当 <a target="_blank" rel="noopener" href="https://docs.unity3d.com/ScriptReference/Rigidbody.MovePosition.html">MovePosition</a> 或者 <a target="_blank" rel="noopener" href="https://docs.unity3d.com/ScriptReference/Rigidbody.MoveRotation.html">MoveRotation</a>在一帧中调用的时候，Kinematic Rigidbody 处于活跃状态, 并且在下一帧继续保持活跃。</p>
-<p><strong>Static Colliders</strong></p>
-<p>在自身或者其父GameObject没有附加Rigidbody组件但附加了Colllider组件的GameObject的数量。 如果一个GameObject 或者其父对象有Rigidbody组件，则不会计数在Static Coliders。</p>
-<p><strong>Rigidbody</strong></p>
-<p>物理引擎处理的Rigidbody组件数量, 与其是否是休眠状态无关。</p>
-<p><strong>Trigger Overlaps</strong></p>
-<p>重叠触发器的数量(成对计算)。</p>
-<p><strong>Active Constraints</strong></p>
-<p>物理引擎处理的primitive constraint 数量。Constraints被用作关节和碰撞响应的构建块。</p>
-<p><strong>Contacts</strong></p>
-<p>场景中所有对撞机之间的接触对的总数，包括触发器重叠对的数量。注意，一旦碰撞器对之间的距离低于某个用户可配置的限制，就会为每个碰撞器对创建接触对，因此可能会看到为尚未接触或重叠的刚体组件生成的接触。</p>
-<p><strong>注意：</strong> 这些数字可能与场景中带有物理组件的游戏对象的确切数量不相符。这是因为一些物理组件的处理速度不同，这取决于其他组件对其的影响(例如，附加的关节组件)。物理分析器没有显示睡眠Rigidbody组件的数量。这些组件不参与物理引擎，因此不被物理分析器处理。 <strong>使用物理分析器来理解性能问题</strong> 物理模拟运行在一个独立的固定频率更新周期从主逻辑的更新循环，并每次只能通过一个提前时间调用Time.fixedDeltaTime。这类似于Update和FixedUpdate之间的区别。 <strong>GPU Profiler</strong> <strong>GPU分析器</strong> <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil17.jpg"></p>
-<p>显示了游戏中GPU时间都用在了哪里。</p>
-<p>注意，当<strong>Graphics Jobs (Experimental)**在</strong>Player<strong>设置中启用的时候GPU分析会被禁用。 **远程分析支持</strong></p>
-<p><strong>平台</strong></p>
-<p><strong>图形API</strong></p>
-<p><strong>状态</strong></p>
-<p><strong>Windows</strong></p>
-<p><strong>D3D9,D3D11,D3D12, OpenGL core, OpenGL ES 2.0, OpenGL ES 3.x, Vulkan</strong></p>
-<p><strong>支持</strong></p>
-<p><strong>Mac OS X</strong></p>
-<p><strong>OpenGL core</strong></p>
-<p><strong>支持</strong></p>
-<p><strong>Metal</strong></p>
-<p><strong>不可用。 使用 XCode’s GPU Frame Debugger UI代替。</strong></p>
-<p><strong>Linux</strong></p>
-<p><strong>OpenGL core, Vulkan</strong></p>
-<p><strong>支持</strong></p>
-<p><strong>PlayStation 4</strong></p>
-<p><strong>libgnm</strong></p>
-<p><strong>支持</strong></p>
-<p><strong>Xbox One</strong></p>
-<p><strong>D3D11</strong></p>
-<p><strong>支持</strong></p>
-<p><strong>WebGL</strong></p>
-<p><strong>WebGL 1.0 and WebGL 2.0</strong></p>
-<p><strong>不可用</strong></p>
-<p><strong>Android</strong></p>
-<p><strong>OpenGL ES 2.0, OpenGL ES 3.x</strong></p>
-<p><strong>只支持运行NVIDIA或Intel GPUs的设备。</strong></p>
-<p><strong>Vulkan</strong></p>
-<p><strong>支持</strong></p>
-<p><strong>iOS, tvOS</strong></p>
-<p><strong>Metal, OpenGL ES 2.0, OpenGL ES 3.0</strong></p>
-<p><strong>不可用。使用XCode’s GPU Frame Debugger UI 代替。</strong></p>
-<p><strong>Tizen</strong></p>
-<p><strong>OpenGL ES 2.0</strong></p>
-<p><strong>不可用</strong></p>
-<p><strong>在Unity编辑器中进行概要分析</strong> 编辑器只支持使用Direct3D 9和Direct3D 11 api在Windows上进行概要分析。它便于快速分析，因为这不需要构建播放器。但是，分析器受到运行Unity编辑器的开销的影响，会降低分析结果的准确性。</p>
-<p><strong>Global Illumination Profiler</strong></p>
-<p>全局光照分析器 <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil18.png"></p>
-<p><strong>名称</strong></p>
-<p><strong>描述</strong></p>
-<p><strong>Total CPU Time</strong></p>
-<p>所有线程的Enlighten CPU总时间。</p>
-<p><strong>Probe Update Time</strong></p>
-<p>更新 <strong>Light Probes</strong>的时间。</p>
-<p><strong>Setup Time</strong></p>
-<p>Setup 阶段花费的时间。</p>
-<p><strong>Environment Time</strong></p>
-<p>处理环境光照花费的时间。</p>
-<p><strong>Input Lighting Time</strong></p>
-<p>用于处理输入照明的时间。</p>
-<p><strong>Systems Time</strong></p>
-<p>用于更新系统的时间。</p>
-<p><strong>Solve Tasks Time</strong></p>
-<p>用于运行辐射求解器任务的时间。</p>
-<p><strong>Dynamic Objects Time</strong></p>
-<p>用于更新Dynamic <strong>GameObjects</strong> 的时间。</p>
-<p><strong>Time Between Updates</strong></p>
-<p>更新Global Illumination之间的时间</p>
-<p><strong>Other Commands Time</strong></p>
-<p>用于处理其他命令的时间。</p>
-<p><strong>Blocked Command Write Time</strong></p>
-<p>在阻塞状态下等待命令缓冲区的时间。</p>
-<p><strong>Blocked Buffer Writes</strong></p>
-<p>正在阻塞的命令缓冲区的写入数。</p>
-<p><strong>Total Light Probes</strong></p>
-<p>场景中Light Probes的总数。</p>
-<p><strong>Solved Light Probes</strong></p>
-<p>自上次更新以来已解决的Light Probes数量。</p>
-<p><strong>Probe Sets</strong></p>
-<p>场景中设置的Light Probes数量。</p>
-<p><strong>Systems</strong></p>
-<p>场景中Enlighten Systems的数量。</p>
-<p><strong>Pending Material GPU Renders</strong></p>
-<p>在GPU上排队渲染的Albedo/Emission渲染数。</p>
-<p><strong>Pending Material Updates</strong></p>
-<p>等待处理的材料更新数量。</p>
-<p><strong>UI Profiler</strong></p>
-<p><strong>UI 处理器</strong> 专门用于游戏内UI的模块。 通过Profiler窗口的菜单访问：Add Profiler &gt; UI and UI Details <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil19.jpg"> UI Details图表有一个可切换的标记组，类似于CPU图表提供的标记组。在预览面板中，有一个按钮分离和两个下拉菜单。</p>
-<ul>
-<li><p>标记切换在UI详细信息图表上显示或隐藏事件标记。</p>
-</li>
-<li><p>Detach 会在一个单独的窗口中弹出预览。</p>
-</li>
-<li><p>两个下拉菜单选择预览背景。</p>
-</li>
-</ul>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/03/21/%E3%80%90unity%E4%BC%98%E5%8C%96%E3%80%91profiler%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E5%99%A8/">【Unity优化】Profiler性能分析器</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-03-21</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/unity3d/">unity3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/unity3d/Unity%E4%BC%98%E5%8C%96/">Unity优化</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/Unity%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">Unity学习笔记</a></span><div class="content"><p><strong>【Unity优化】Profiler性能分析器</strong> <strong>【总结，来自Unity Documentation】</strong> <strong>本文导图：</strong> [caption id=”attachment_1204” align=”aligncenter” width=”3863”]<a target="_blank" rel="noopener" href="http://www.muchenhen.com/wp-content/uploads/2019/03/UnityProfiler.png"><img src="http://www.muchenhen.com/wp-content/uploads/2019/03/UnityProfiler.png" alt="点击查看原图"></a> 点击查看原图[/caption] **Profiler概述 ** Profiler窗口可以帮助我们分析和优化游戏。在这个窗口上有游戏的不同部分所消耗的时间，例如显示渲染、动画和游戏逻辑分别消耗的时间。可以用来分析GPU、CPU、内存、渲染、音频的性能。 Profiler会对性能有一点影响，但是这个影响很小，不会影响到游戏的帧率。 可以对比代码更改前后的性能指标来进行优化分析。 **Profiler窗口 ** **Window &gt; Analysis &gt; Profiler 来打开窗口。 ** <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil1.jpg"> **控制栏 ** <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil2.png"> 窗口顶部右侧的传输控件，当游戏运行并收集数据时，单击其中任何一项会暂停游戏。可以分别查看上一帧、下一帧、记录的第一帧、最后一步的帧。 但是Profiler不记录所有的帧数据。Current会显示实时信息。Active Profiler会允许可以在编辑器或单独设备中进行分析。Save以及将记录的帧数据保存成文件，Load可以读取之前保存的。如果在按下shift按钮时单击”Load”，文件内容将附加到内存中的当前概要文件帧。 **Deep Profiling ** 打开后会分析每一个脚本，记录每一个函数的调用。深度分析会产生更大的开销，游戏运行速度会明显变慢。如果脚本代码过于复杂，就根本无法执行深度分析。 手动分析脚本代码块的开销要比使用深度分析小。使用Profiler.BeginSample 和 Profiler.EndSample脚本函数来启用和禁用对代码块的分析。 **Color Blind Mode ** 色盲模式。 **View SyncTime ** 以固定帧率或者垂直空白间隔的同步运行时，Unity在”Wait for Target FPS”中记录等待时间。Profiler中默认不显示。如果要查看就打开View SyncTime。 **Profiler Timeline ** <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil3.jpg">  Profiler窗口的上部显示随时间变化的性能数据。运行游戏时每一帧的数据都会被记录并显示最近的几百帧的数据。单击左侧的特定框架将在窗口的下方显示其详细信息。时间线上的纵轴的比例会自动调整。时间轴由几个区域组成:CPU使用、渲染和内存。如果要获得更多关于CPU使用区域的细节，可以删除内存和渲染区域。注意，标签区域中的彩色方块可以控制是否显示该数据相关的时间轴，点击方块变灰，就会在图中隐藏。 **WebGL ** 区别是不能附加到WebGL中正在运行的播放器上，并且目前无法分析WebGL的DrawCall。 **Remote Profiling ** **远程分析 ** 可以分析在另一台设备上运行的游戏，要将Unity编辑器连接到另一台设备。 **iOS ** ios启动远程分析的步骤：</p>
-<ol>
-<li><p>将ios设备连接到同一WiFi网络，或者将设备通过数据线连接。</p>
-</li>
-<li><p>File &gt; Build Settings选中Autoconnect Profiler。</p>
-</li>
-<li><p>选择Build &amp; Run。</p>
-</li>
-<li><p>当应用在设备上运行起来的时候启动Profiler窗口。</p>
-</li>
-</ol>
-<p>有时无法自动连接，在Profiler窗口活动Profiler下拉菜单选择适当的设备启动Profiler连接。 <strong>Android</strong> WiFi或ADB 使用WiFi：</p>
-<ol>
-<li><p>禁用Android设备上的移动数据。</p>
-</li>
-<li><p>将Android设备连接到本地WiFi网络。</p>
-</li>
-<li><p>用数据线连接设备。</p>
-</li>
-<li><p>选中Unity的Build Settings对话框中的Development Build和Autoconnect Profiler，然后单击Build &amp; Run</p>
-</li>
-<li><p>当应用程序在设备上启动时，在Unity编辑器中打开Profiler窗口。</p>
-</li>
-</ol>
-<p>如果无法自动连接，在Profiler窗口活动Profiler下拉菜单选择适当的设备启动Profiler连接。 ADB：</p>
-<ol>
-<li><p>数据线连接设备并确保ABD识别到设备。</p>
-</li>
-<li><p>选中Unity的Build Settings对话框中的Development Build和Autoconnect Profiler，然后单击Build &amp; Run，会自动创建一个ABD通道</p>
-</li>
-<li><p>当应用程序在设备上启动时，在Unity编辑器中打开Profiler窗口。</p>
-</li>
-<li><p>从Profiler窗口Active Profiler下拉菜单中选择AndroidProfiler</p>
-</li>
-</ol>
-<p>如果要配置另一个应用程序或重启adb服务器，必须手动设置此通道。 注意:下拉菜单中的条目只有在选择的目标为Android时才可见。如果正在使用防火墙，需要确保端口54998到55511在防火墙的出站规则中是打开的，Unity用于远程分析的端口。 <strong>CPU Usage Profiler</strong> <strong>CPU使用分析器</strong> <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil4.png"> CPU使用情况分析器显示时间都被用在了游戏的哪些地方。 被选中时，下面的窗格显示所选帧的分级时间数据。有两种模式。Hierarchy mode，显示分级时间数据。Group Hierarchy mode，将时间数据分组为逻辑组(如呈现、物理、脚本)。因为任何组的子组也可以位于不同的组中，所以组时间的百分比通常加起来超过100%。上下拖动图表标签可以重新排列CPU图表的排列方式。 **选择个别项目 ** <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil5.png"> 选中项目的细节信息会显示在右侧窗口。 左侧的Self列指的是在特定函数中花费的时间，不包括调用子函数的时间。Total是总计。Time ms和Self ms列显示相同的信息，但单位是毫秒。GC Alloc列显示了在当前帧中分配了多少内存，该帧稍后由垃圾收集器（Garbage Collection）收集，将此值保持为零，以防止垃圾收集器在帧之间引起停顿。 Others记录的是所有不属于呈现、脚本、物理、Garbage Collection或VSync的区域的总数，括动画、AI、音频、粒子、网络、加载和PlayerLoop。 **Physics markers ** **物理标记 ** 各种高级物理分析器标记的含义。</p>
-<ul>
-<li><p><strong>Physics.Simulate:</strong> 从FixedUpdate调用。通过指示物理引擎(PhysX)运行其模拟来更新物理的当前状态。</p>
-</li>
-<li><p><strong>Physics.Processing:</strong> 从FixedUpdate调用。这是所有非布料物理工作处理的地方。展开此标记可以显示物理引擎内部正在进行的工作的底层细节。</p>
-</li>
-<li><p><strong>Physics.ProcessingCloth:</strong> 从FixedUpdate调用。所有的布料物理工作都在这里进行。扩展此标记将显示物理引擎内部正在进行的工作的低层细节。</p>
-</li>
-<li><p><strong>Physics.FetchResults:</strong> 从FixedUpdate调用。从物理引擎中收集物理模拟结果。</p>
-</li>
-<li><p><strong>Physics.UpdateBodies:</strong> 从FixedUpdate调用。这是所有物理实体更新它们的<strong>位置</strong>和<strong>旋转</strong>的地方，也是传递这些更新的消息的地方。</p>
-</li>
-<li><p><strong>Physics.ProcessReports:</strong> 从FixedUpdate调用。此阶段在物理FixedUpdate结束后运行，在此阶段处理响应模拟结果的所有不同阶段。Joint中断、Contacts和Triggers在这里更新和发送消息。有四个不同的子阶段:</p>
-<ul>
-<li><p><strong>Physics.TriggerEnterExits:</strong> 从FixedUpdate调用。处理OnTriggerEnter和OnTriggerExit事件。</p>
-</li>
-<li><p><strong>Physics.TriggerStays:</strong> 从FixedUpdate调用。处理OnTriggerStay事件。</p>
-</li>
-<li><p><strong>Physics.Contacts:</strong> 从FixedUpdate调用。处理OnCollisionEnter、OnCollisionExit和OnCollisionStay事件。</p>
-</li>
-<li><p><strong>Physics.JointBreaks:</strong> 从FixedUpdate调用。处理与正在断开的连接相关的更新和消息。</p>
-</li>
-</ul>
-</li>
-<li><p>**Physics.UpdateCloth:**从Update调用。有关布料和它们的皮肤网格的更新。</p>
-</li>
-<li><p><strong>Physics.Interpolation:</strong> 从Update调用。这个阶段处理所有物理对象的位置和旋转的插值。</p>
-</li>
-</ul>
-<p><strong>Performance warnings</strong> <strong>性能警告</strong> <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil6.png"> CPU分析器能够检测并警告一些常见的性能问题。出现在下面的窗格的警告列中。 分析器可以检测到的具体问题：</p>
-<ul>
-<li><p><strong>Rigidbody.SetKinematic</strong> [Re-create non-convex MeshCollider for Rigidbody]</p>
-</li>
-<li><p><strong>Animation.DestroyAnimationClip</strong> [Triggers RebuildInternalState]</p>
-</li>
-<li><p><strong>Animation.AddClip</strong> [Triggers RebuildInternalState]</p>
-</li>
-<li><p><strong>Animation.RemoveClip</strong> [Triggers RebuildInternalState]</p>
-</li>
-<li><p><strong>Animation.Clone</strong> [Triggers RebuildInternalState]</p>
-</li>
-<li><p><strong>Animation.Deactivate</strong> [Triggers RebuildInternalState]</p>
-</li>
-</ul>
-<p><strong>CPU Profiler Timeline</strong> <strong>CPU分析器时间线</strong> Mem Record: Native memory performance profiling Mem记录：本地内存性能分析 <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil7.png"> 本机内存性能分析允许分析Unity本机内存管理系统中的活动，并评估它如何影响运行时性能。在Unity内存管理中搜索不需要的或资源密集型的分配模式时十分有用。 要使用此项需要手动记录。Window &gt; Analysis &gt; Profiler选择CPU Usage Profiler然后点击Timeline再选择Mem Record，然后选择记录模式：</p>
-<p><strong>选项</strong></p>
-<p><strong>功能</strong></p>
-<p><strong>对性能的影响</strong></p>
-<p><strong>None</strong></p>
-<p>模式禁用。这是默认选择。</p>
-<p>不存在</p>
-<p><strong>Sample only</strong></p>
-<p>记录内存分配、re-allocations, de-allocations、活动类型和系统。</p>
-<p>低</p>
-<p><strong>Callstack (fast)</strong></p>
-<p>具有与Sample相同的功能，而且还记录了一个。实际上callstack从本机分配站点到callstack从本机符号转换为脚本符号的地方，我们只能看到callstack到最深的脚本符号。</p>
-<p>中等</p>
-<p><strong>Callstack (full)</strong></p>
-<p>具有与Sample相同的功能，还记录了具有完整的脚本到本机和本机到脚本转换的callstack。</p>
-<p>高</p>
-<p>注意:当active Profiler只连接到独立播放器时，只支持低影响的Sample only模式。 所记录的内存分配示例以鲜红色显示在Profiler窗口中。 <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil8.png"> 单击Mem Record旁边的High Detail按钮以启用High Detail模式。选择一个示例来显示分配类型和系统。如果为所选分配示例记录了callstack，则还将解析并显示关联的callstack符号： <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil9.jpg"> <strong>High Detail view of Timeline ** **时间轴的高细节视图 ** Window &gt; Analysis &gt; Profiler选择CPU Usage Profiler然后选择底部的菜单点击Timeline再点击High Detail。 该模式给每次样本记录至少一个像素的宽度。可以全面查看框架中的所有活动，包括短期活动，如线程同步或内存分配。 两种模式的比较： 高细节视图 <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil10.png"> 标准视图： <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil11.png"> **Rendering Profiler</strong> **渲染分析器 ** 时间轴显示所Batches、SetPass Calls、Draw Calls、三角形和顶点的数量。下面的窗格显示了更多的渲染统计信息，与GameView呈现Rendering Statistics窗口中显示的统计信息匹配。 **Memory Profiler ** **内存分析器 ** 两种模式： 简单： 显示了内存是如何在每帧的基础上实时地在Unity中使用的。 Unity为分配预留内存池，以避免过于频繁地向操作系统请求内存。这将显示一个预留大小，以及使用了多少。 <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil12.png"> 包含的内容有：</p>
-<ul>
-<li><p><strong>Unity</strong> 在本地Unity代码中被分配追踪的内存容量</p>
-</li>
-<li><p><strong>Mono</strong>使用的总的堆的大小，还有管理代码使用的堆大小。这个内存是garbage-collected</p>
-</li>
-<li><p><strong>GfxDriver</strong> 驱动程序在纹理、渲染目标、着色器和网格数据上使用的内存估计量</p>
-</li>
-<li><p><strong>FMOD</strong> 音频驱动程序的估计内存使用量</p>
-</li>
-<li><p><strong>Profiler</strong> 用于分析器数据的内存</p>
-</li>
-</ul>
-<p>显示的数字与任务管理器或活动监视器不同，因为内存分析器无法跟踪某些使用情况。这包括一些驱动程序使用的内存，以及可执行代码使用的内存。 内存统计数据显示了一些最常见的Asset/object类型：</p>
-<ul>
-<li><p><strong>Textures</strong></p>
-</li>
-<li><p><strong>Meshes</strong></p>
-</li>
-<li><p><strong>Materials</strong></p>
-</li>
-<li><p><strong>Animations</strong></p>
-</li>
-<li><p><strong>Audio</strong></p>
-</li>
-<li><p><strong>Object Count</strong> 创建的对象的总数</p>
-</li>
-</ul>
-<p><strong>Detailed</strong> 细节 允许获取当前状态的快照。获取这些数据需要一些时间，因此细节视图很难提供实时的详细信息。在获取一个示例之后，Profiler窗口将更新为一个树状视图。 <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil13.png"> 显示单个Assets和GameObject内存使用情况，还显示了GameObject存在内存中的原因。常见的原因有：</p>
-<ul>
-<li><p><strong>Assets</strong>: 从用户或本机代码引用的Asset</p>
-</li>
-<li><p><strong>Built-in Resources</strong>: Unity Editor 资源或 Unity 默认资源</p>
-</li>
-<li><p><strong>Not Saved</strong>: 被标记为 DontSave的GameObjects</p>
-</li>
-<li><p><strong>Scene Memory</strong>: GameObject 和附加的 components</p>
-</li>
-<li><p><strong>Other</strong>: GameObjects 未在上述类别中标记</p>
-</li>
-</ul>
-<p><strong>Audio Profiler</strong> <strong>音频分析器</strong> 监视音频系统的重要性能，如总负载和声音计数。</p>
-<ul>
-<li><p><strong>Playing Sources</strong> 特定帧在场景中总的播放中的资源。监视音频是否超载。</p>
-</li>
-<li><p><strong>Paused Sources</strong> 特定帧在场景中总的暂停的资源。</p>
-</li>
-<li><p><strong>Audio Voice</strong> 实际使用的音频（FMOD通道）声音数量。 PlayOneShot 是在 Playing Sources没有显示的声音。</p>
-</li>
-<li><p><strong>Audio Memory</strong> 是被音频引擎总共使用的RAM。</p>
-</li>
-</ul>
-<p><strong>Channel view</strong> <strong>通道视图</strong> 当单击一行时，首先突出显示AudioClipAsset，然后在层次结构中显示被播放的AudioSource。 <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil14.jpg"> **Channels and groups view ** **通道和组视图 ** <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil15.png"> </p>
-<p><strong>Physics Profiler</strong></p>
-<p><strong>物理分析器</strong> 物理分析器显示物理引擎处理过的关于物理的统计信息。 <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil16.png"></p>
-<p><strong>性能</strong></p>
-<p><strong>功能</strong></p>
-<p><strong>Active Dynamic</strong></p>
-<p>处于活跃状态的non-Kinematic <strong>Rigidbody</strong> 数量<strong>。</strong></p>
-<p><strong>Active Kinematic</strong></p>
-<p>活跃的 Kinematic Rigidbody 数量。 注意带有joints的 Kinematic Rigidbody 组件在一帧中可能会处理多次。 当 <a target="_blank" rel="noopener" href="https://docs.unity3d.com/ScriptReference/Rigidbody.MovePosition.html">MovePosition</a> 或者 <a target="_blank" rel="noopener" href="https://docs.unity3d.com/ScriptReference/Rigidbody.MoveRotation.html">MoveRotation</a>在一帧中调用的时候，Kinematic Rigidbody 处于活跃状态, 并且在下一帧继续保持活跃。</p>
-<p><strong>Static Colliders</strong></p>
-<p>在自身或者其父GameObject没有附加Rigidbody组件但附加了Colllider组件的GameObject的数量。 如果一个GameObject 或者其父对象有Rigidbody组件，则不会计数在Static Coliders。</p>
-<p><strong>Rigidbody</strong></p>
-<p>物理引擎处理的Rigidbody组件数量, 与其是否是休眠状态无关。</p>
-<p><strong>Trigger Overlaps</strong></p>
-<p>重叠触发器的数量(成对计算)。</p>
-<p><strong>Active Constraints</strong></p>
-<p>物理引擎处理的primitive constraint 数量。Constraints被用作关节和碰撞响应的构建块。</p>
-<p><strong>Contacts</strong></p>
-<p>场景中所有对撞机之间的接触对的总数，包括触发器重叠对的数量。注意，一旦碰撞器对之间的距离低于某个用户可配置的限制，就会为每个碰撞器对创建接触对，因此可能会看到为尚未接触或重叠的刚体组件生成的接触。</p>
-<p><strong>注意：</strong> 这些数字可能与场景中带有物理组件的游戏对象的确切数量不相符。这是因为一些物理组件的处理速度不同，这取决于其他组件对其的影响(例如，附加的关节组件)。物理分析器没有显示睡眠Rigidbody组件的数量。这些组件不参与物理引擎，因此不被物理分析器处理。 <strong>使用物理分析器来理解性能问题</strong> 物理模拟运行在一个独立的固定频率更新周期从主逻辑的更新循环，并每次只能通过一个提前时间调用Time.fixedDeltaTime。这类似于Update和FixedUpdate之间的区别。 <strong>GPU Profiler</strong> <strong>GPU分析器</strong> <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil17.jpg"></p>
-<p>显示了游戏中GPU时间都用在了哪里。</p>
-<p>注意，当<strong>Graphics Jobs (Experimental)**在</strong>Player<strong>设置中启用的时候GPU分析会被禁用。 **远程分析支持</strong></p>
-<p><strong>平台</strong></p>
-<p><strong>图形API</strong></p>
-<p><strong>状态</strong></p>
-<p><strong>Windows</strong></p>
-<p><strong>D3D9,D3D11,D3D12, OpenGL core, OpenGL ES 2.0, OpenGL ES 3.x, Vulkan</strong></p>
-<p><strong>支持</strong></p>
-<p><strong>Mac OS X</strong></p>
-<p><strong>OpenGL core</strong></p>
-<p><strong>支持</strong></p>
-<p><strong>Metal</strong></p>
-<p><strong>不可用。 使用 XCode’s GPU Frame Debugger UI代替。</strong></p>
-<p><strong>Linux</strong></p>
-<p><strong>OpenGL core, Vulkan</strong></p>
-<p><strong>支持</strong></p>
-<p><strong>PlayStation 4</strong></p>
-<p><strong>libgnm</strong></p>
-<p><strong>支持</strong></p>
-<p><strong>Xbox One</strong></p>
-<p><strong>D3D11</strong></p>
-<p><strong>支持</strong></p>
-<p><strong>WebGL</strong></p>
-<p><strong>WebGL 1.0 and WebGL 2.0</strong></p>
-<p><strong>不可用</strong></p>
-<p><strong>Android</strong></p>
-<p><strong>OpenGL ES 2.0, OpenGL ES 3.x</strong></p>
-<p><strong>只支持运行NVIDIA或Intel GPUs的设备。</strong></p>
-<p><strong>Vulkan</strong></p>
-<p><strong>支持</strong></p>
-<p><strong>iOS, tvOS</strong></p>
-<p><strong>Metal, OpenGL ES 2.0, OpenGL ES 3.0</strong></p>
-<p><strong>不可用。使用XCode’s GPU Frame Debugger UI 代替。</strong></p>
-<p><strong>Tizen</strong></p>
-<p><strong>OpenGL ES 2.0</strong></p>
-<p><strong>不可用</strong></p>
-<p><strong>在Unity编辑器中进行概要分析</strong> 编辑器只支持使用Direct3D 9和Direct3D 11 api在Windows上进行概要分析。它便于快速分析，因为这不需要构建播放器。但是，分析器受到运行Unity编辑器的开销的影响，会降低分析结果的准确性。</p>
-<p><strong>Global Illumination Profiler</strong></p>
-<p>全局光照分析器 <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil18.png"></p>
-<p><strong>名称</strong></p>
-<p><strong>描述</strong></p>
-<p><strong>Total CPU Time</strong></p>
-<p>所有线程的Enlighten CPU总时间。</p>
-<p><strong>Probe Update Time</strong></p>
-<p>更新 <strong>Light Probes</strong>的时间。</p>
-<p><strong>Setup Time</strong></p>
-<p>Setup 阶段花费的时间。</p>
-<p><strong>Environment Time</strong></p>
-<p>处理环境光照花费的时间。</p>
-<p><strong>Input Lighting Time</strong></p>
-<p>用于处理输入照明的时间。</p>
-<p><strong>Systems Time</strong></p>
-<p>用于更新系统的时间。</p>
-<p><strong>Solve Tasks Time</strong></p>
-<p>用于运行辐射求解器任务的时间。</p>
-<p><strong>Dynamic Objects Time</strong></p>
-<p>用于更新Dynamic <strong>GameObjects</strong> 的时间。</p>
-<p><strong>Time Between Updates</strong></p>
-<p>更新Global Illumination之间的时间</p>
-<p><strong>Other Commands Time</strong></p>
-<p>用于处理其他命令的时间。</p>
-<p><strong>Blocked Command Write Time</strong></p>
-<p>在阻塞状态下等待命令缓冲区的时间。</p>
-<p><strong>Blocked Buffer Writes</strong></p>
-<p>正在阻塞的命令缓冲区的写入数。</p>
-<p><strong>Total Light Probes</strong></p>
-<p>场景中Light Probes的总数。</p>
-<p><strong>Solved Light Probes</strong></p>
-<p>自上次更新以来已解决的Light Probes数量。</p>
-<p><strong>Probe Sets</strong></p>
-<p>场景中设置的Light Probes数量。</p>
-<p><strong>Systems</strong></p>
-<p>场景中Enlighten Systems的数量。</p>
-<p><strong>Pending Material GPU Renders</strong></p>
-<p>在GPU上排队渲染的Albedo/Emission渲染数。</p>
-<p><strong>Pending Material Updates</strong></p>
-<p>等待处理的材料更新数量。</p>
-<p><strong>UI Profiler</strong></p>
-<p><strong>UI 处理器</strong> 专门用于游戏内UI的模块。 通过Profiler窗口的菜单访问：Add Profiler &gt; UI and UI Details <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/032119_1317_UnityProfil19.jpg"> UI Details图表有一个可切换的标记组，类似于CPU图表提供的标记组。在预览面板中，有一个按钮分离和两个下拉菜单。</p>
-<ul>
-<li><p>标记切换在UI详细信息图表上显示或隐藏事件标记。</p>
-</li>
-<li><p>Detach 会在一个单独的窗口中弹出预览。</p>
-</li>
-<li><p>两个下拉菜单选择预览背景。</p>
-</li>
-</ul>
-</div><hr></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/7/"><i class="fa fa-chevron-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><span class="page-number current">8</span><a class="page-number" href="/page/9/">9</a><span class="space">&hellip;</span><a class="page-number" href="/page/56/">56</a><a class="extend next" rel="next" href="/page/9/"><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer class="footer-bg" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div class="layout" id="footer"><div class="copyright">&copy;2017 - 2020 By 木尘痕</div><div class="framework-info"><span>Driven - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="footer_custom_text">千秋竟岁，伏苦飞逐</div><div class="icp"><a><span>豫ICP备17048032号</span></a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_site_uv"><i class="fa fa-user"></i><span id="busuanzi_value_site_uv"></span><span></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i><span id="busuanzi_value_site_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.8.2"></script><script src="/js/fancybox.js?version=1.8.2"></script><script src="/js/sidebar.js?version=1.8.2"></script><script src="/js/copy.js?version=1.8.2"></script><script src="/js/fireworks.js?version=1.8.2"></script><script src="/js/transition.js?version=1.8.2"></script><script src="/js/scroll.js?version=1.8.2"></script><script src="/js/head.js?version=1.8.2"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/10/27/pta%E9%A2%98%E7%9B%AE%E9%9B%86%EF%BC%9A7-24-%E7%BA%A6%E5%88%86%E6%9C%80%E7%AE%80%E5%88%86%E5%BC%8F/">PTA题目集：7-24 约分最简分式</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a></span><div class="content"><p>7-24 约分最简分式 （15 分）</p>
+<p>分数可以表示为分子/分母的形式。编写一个程序，要求用户输入一个分数，然后将其约分为最简分式。最简分式是指分子和分母不具有可以约分的成分了。如6/12可以被约分为1/2。当分子大于分母时，不需要表达为整数又分数的形式，即11/8还是11/8；而当分子分母相等时，仍然表达为1/1的分数形式。</p>
+<p>输入格式：</p>
+<p>输入在一行中给出一个分数，分子和分母中间以斜杠/分隔，如：12/34表示34分之12。分子和分母都是正整数（不包含0，如果不清楚正整数的定义的话）。</p>
+<p><strong>提示：</strong>在scanf的格式字符串中加入/，让scanf来处理这个斜杠。</p>
+<p>输出格式：</p>
+<p>在一行中输出这个分数对应的最简分式，格式与输入的相同，即采用分子/分母的形式表示分数。如 5/6表示6分之5。</p>
+<p>输入样例：</p>
+<p>66/120</p>
+<p>输出样例：</p>
+<p>11/20</p>
+<p>来自 &lt;<a target="_blank" rel="noopener" href="https://pintia.cn/problem-sets/14/problems/804">https://pintia.cn/problem-sets/14/problems/804</a>&gt;</p>
+<p><strong>求GCD就可以了</strong></p>
+<p>#include #include using namespace std;<br>int GCD(int x,int y) {<br>    if (x &lt; y)<br>        swap(x, y);<br>    for (int i = y; i &gt; 0; i–) {<br>        if (x%i == 0 &amp;&amp; y%i==0)<br>            return i;<br>    }<br>}<br>int main() {<br>    int x,y;<br>    cin &gt;&gt; x;<br>    cin.get();<br>    cin &gt;&gt; y;<br>    int gcd = GCD(x, y);<br>    cout &lt;&lt; x / gcd &lt;&lt; “/“ &lt;&lt; y / gcd;<br>    return 0;<br>}</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/10/27/pta%E9%A2%98%E7%9B%AE%E9%9B%86%EF%BC%9A7-23-%E5%B8%81%E5%80%BC%E8%BD%AC%E6%8D%A2/">PTA题目集：7-23 币值转换</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a></span><div class="content"><p>7-23 币值转换 （20 分）</p>
+<p>输入一个整数（位数不超过9位）代表一个人民币值（单位为元），请转换成财务要求的大写中文格式。如23108元，转换后变成“贰万叁仟壹百零捌”元。为了简化输出，用小写英文字母a-j顺序代表大写数字0-9，用S、B、Q、W、Y分别代表拾、百、仟、万、亿。于是23108元应被转换输出为“cWdQbBai”元。</p>
+<p>输入格式：</p>
+<p>输入在一行中给出一个不超过9位的非负整数。</p>
+<p>输出格式：</p>
+<p>在一行中输出转换后的结果。注意“零”的用法必须符合中文习惯。</p>
+<p>输入样例1：</p>
+<p>813227345</p>
+<p>输出样例1：</p>
+<p>iYbQdBcScWhQdBeSf</p>
+<p>输入样例2：</p>
+<p>6900</p>
+<p>输出样例2：</p>
+<p>gQjB</p>
+<p>来自 &lt;<a target="_blank" rel="noopener" href="https://pintia.cn/problem-sets/14/problems/803">https://pintia.cn/problem-sets/14/problems/803</a>&gt;</p>
+<p>#include<br>#include<br>#include<br>using namespace std;<br>int main () {<br>    int len, i = 0, flag = 0;<br>    string s;<br>    char unit[9] = {‘0’,’S’, ‘B’, ‘Q’, ‘W’, ‘S’, ‘B’, ‘Q’, ‘Y’};<br>    cin &gt;&gt; s;<br>    len = s.length();<br>    if( s == “0” ) {  //只有0时，输出a （规则4）<br>        printf(“a”);<br>    }<br>    else {<br>        while( i &lt; len ) {<br>            //连续遇到0，直到第一次遇到不是0（规则2，3）且不是倒数第4位 （规则1）<br>            if ( s[i] != ‘0’ &amp;&amp; flag &amp;&amp; i != len - 4 )<br>                printf(“a”);<br>            //连续遇到0，且是倒数第4位，则输出W。（比如100001，十万零一）<br>            else if ( flag &amp;&amp; i == len - 4 )<br>                printf(“W”);<br>            if ( s[i] != ‘0’ ) {  //如果不是0<br>                printf( “%c”, s[i] + 49 );<br>                if ( unit[len - i - 1] != ‘0’ ) //如果不是个位，输出权位<br>                    printf( “%c”, unit[len - i - 1] );<br>                flag = 0;    //标记遇到不是0<br>                i++;<br>            }<br>            else {    //碰到0，或者连续碰到0<br>                i++;<br>                flag = 1;    //标记遇到0<br>            }<br>        }<br>    }<br>    return 0;<br>}</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/10/27/pta%E9%A2%98%E7%9B%AE%E9%9B%86%EF%BC%9A7-22-%E9%BE%9F%E5%85%94%E8%B5%9B%E8%B7%91/">PTA题目集：7-22 龟兔赛跑</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a></span><div class="content"><p>7-22 龟兔赛跑 （20 分）</p>
+<p>乌龟与兔子进行赛跑，跑场是一个矩型跑道，跑道边可以随地进行休息。乌龟每分钟可以前进3米，兔子每分钟前进9米；兔子嫌乌龟跑得慢，觉得肯定能跑赢乌龟，于是，每跑10分钟回头看一下乌龟，若发现自己超过乌龟，就在路边休息，每次休息30分钟，否则继续跑10分钟；而乌龟非常努力，一直跑，不休息。假定乌龟与兔子在同一起点同一时刻开始起跑，请问T分钟后乌龟和兔子谁跑得快？</p>
+<p>输入格式：</p>
+<p>输入在一行中给出比赛时间T（分钟）。</p>
+<p>输出格式：</p>
+<p>在一行中输出比赛的结果：乌龟赢输出@_@，兔子赢输出^_^，平局则输出-_-；后跟1空格，再输出胜利者跑完的距离。</p>
+<p>输入样例：</p>
+<p>242</p>
+<p>输出样例：</p>
+<p>@_@ 726</p>
+<p>来自 &lt;<a target="_blank" rel="noopener" href="https://pintia.cn/problem-sets/14/problems/802">https://pintia.cn/problem-sets/14/problems/802</a>&gt;</p>
+<p><strong>需要考虑好会出现的情况。<br>当时间小于10的时候，兔子一定会赢，时间每过去十分钟就要比较乌龟的兔子的路程，同时也需要考虑剩余的时间的长短，基本上可以分为四种情况：<br>设乌龟路程为x，兔子路程为y，剩余时间t，每过十分钟有<br>x&gt;y&amp;&amp;t&lt;10<br>x&gt;y&amp;&amp;t&gt;=10<br>x&lt;y&amp;&amp;t&gt;=30<br>x&lt;6&amp;&amp;t&lt;30</strong></p>
+<p>#include using namespace std;<br>int main(int argc, char const *argv[])<br>{<br>    int T;<br>    cin&gt;&gt;T;<br>    if(T&lt;=10){<br>        cout&lt;&lt;”^_^ “&lt;y&amp;&amp;r&lt;10)<br>            {<br>                x+=3*r;<br>                y+=9*r;<br>                break;<br>            }<br>            else if(x&gt;y &amp;&amp; r&gt;=10)<br>            {<br>                x+=27;<br>                y+=81;<br>                t+=9;<br>            }<br>            else if(x=30)<br>            {<br>                x+=87;<br>                y-=9;<br>                t+=29;<br>            }<br>            else if(xy){<br>        cout&lt;&lt;”@_@ “&lt;</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/10/27/pta%E9%A2%98%E7%9B%AE%E9%9B%86%EF%BC%9A7-21-%E6%B1%82%E7%89%B9%E6%AE%8A%E6%96%B9%E7%A8%8B%E7%9A%84%E6%AD%A3%E6%95%B4%E6%95%B0%E8%A7%A3/">PTA题目集：7-21 求特殊方程的正整数解 </a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a></span><div class="content"><p>7-21 求特殊方程的正整数解 （15 分）</p>
+<p>本题要求对任意给定的正整数_N_，求方程_X_​2​​+_Y_​2​​=_N_的全部正整数解。</p>
+<p>输入格式：</p>
+<p>输入在一行中给出正整数_N_（≤10000）。</p>
+<p>输出格式：</p>
+<p>输出方程_X_​2​​+_Y_​2​​=_N_的全部正整数解，其中_X_≤_Y_。每组解占1行，两数字间以1空格分隔，按_X_的递增顺序输出。如果没有解，则输出No Solution。</p>
+<p>输入样例1：</p>
+<p>884</p>
+<p>输出样例1：</p>
+<p>10 28<br>20 22</p>
+<p>输入样例2：</p>
+<p>11</p>
+<p>输出样例2：</p>
+<p>No Solution</p>
+<p>来自 &lt;<a target="_blank" rel="noopener" href="https://pintia.cn/problem-sets/14/problems/801">https://pintia.cn/problem-sets/14/problems/801</a>&gt;</p>
+<p><strong>枚举，和之前一道题很像</strong></p>
+<p>#include using namespace std;<br>int main() {<br>    int n;<br>    cin &gt;&gt; n;<br>    int flag=0;<br>    for (int i = 0; i &lt; 100; i++)<br>    {<br>        for (int j = 0; j &lt; 100; j++)<br>        {<br>            if (i*i + j * j == n&amp;&amp;i&lt;=j)<br>            {<br>                cout &lt;&lt; i &lt;&lt; “ “ &lt;&lt; j &lt;&lt; endl;<br>                flag++;<br>            }<br>        }<br>    }<br>    if (flag == 0)<br>        cout &lt;&lt; “No Solution”;<br>    return 0;<br>}</p>
+</div><hr></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/7/"><i class="fa fa-chevron-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><span class="page-number current">8</span><a class="page-number" href="/page/9/">9</a><span class="space">&hellip;</span><a class="page-number" href="/page/28/">28</a><a class="extend next" rel="next" href="/page/9/"><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer class="footer-bg" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div class="layout" id="footer"><div class="copyright">&copy;2017 - 2020 By 木尘痕</div><div class="framework-info"><span>Driven - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="footer_custom_text">千秋竟岁，伏苦飞逐</div><div class="icp"><a><span>豫ICP备17048032号</span></a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_site_uv"><i class="fa fa-user"></i><span id="busuanzi_value_site_uv"></span><span></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i><span id="busuanzi_value_site_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.8.2"></script><script src="/js/fancybox.js?version=1.8.2"></script><script src="/js/sidebar.js?version=1.8.2"></script><script src="/js/copy.js?version=1.8.2"></script><script src="/js/fireworks.js?version=1.8.2"></script><script src="/js/transition.js?version=1.8.2"></script><script src="/js/scroll.js?version=1.8.2"></script><script src="/js/head.js?version=1.8.2"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
   $('#nav').addClass('is-mobile')
   $('footer').addClass('is-mobile')
   $('#top-container').addClass('is-mobile')

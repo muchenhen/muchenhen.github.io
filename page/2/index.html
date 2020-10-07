@@ -14,105 +14,7 @@
     noSupport: 'The browser does not support'
   },
   hexoVersion: '5.1.0'
-} </script><meta name="generator" content="Hexo 5.1.0"></head><body><canvas class="fireworks"></canvas><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="author-info"><div class="author-info__avatar text-center"><img src="https://github.com/muchenhen/muchenhen.github.io/blob/master/XuanGe.jpg?raw=true"></div><div class="author-info__name text-center">木尘痕</div><div class="author-info__description text-center">放一些笔记的地方</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">552</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">21</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">31</span></a></div><hr><div class="author-info-links"><div class="author-info-links__title text-center">Links</div><a class="author-info-links__name text-center" target="_blank" rel="noopener" href="https://alec-ray.github.io/">止戈</a></div></div></div><nav id="nav" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">风生之谷</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">主页</a><a class="site-page" href="/archives">全部文章</a><a class="site-page" href="/tags">标签分类</a><a class="site-page" href="/categories">文章分类</a><a class="site-page" href="/contact">联系</a></span><span class="pull-right"></span></div><div id="site-info"><div id="site-title">风生之谷</div><div id="site-sub-title">一点浩然气 千里快哉风</div></div></nav><div id="content-outer"><div class="layout" id="content-inner"><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/29/dx12-6-4-%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8%E5%AE%9E%E4%BE%8B/">DX12 6.4 顶点着色器实例</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-29</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>shader使用叫做HLSL的语言携带的，语法有点像C++。</p>
-<p>着色器通常以扩展名为.hlsl的基于文本的文件编写。</p>
-<p>cbuffer cbPerObject : register(b0)</p>
-<p>{</p>
-<p>float4x4 gWorldViewProj;</p>
-<p>};</p>
-<p>void VS(</p>
-<p>float3 iPosL : POSITION,</p>
-<p>float4 iColor : COLOR,</p>
-<p>out float4 oPosH : SV_POSITION,</p>
-<p>out float4 oColor : COLOR</p>
-<p>)</p>
-<p>{</p>
-<p>// 转换到齐次裁剪空间.</p>
-<p>oPosH = mul(float4(iPosL, 1.0f), gWorldViewProj);</p>
-<p>// 传递顶点颜色到像素着色器.</p>
-<p>oColor = iColor;</p>
-<p>}</p>
-<p>这个顶点着色器是上面代码中命名为VS的这个函数，函数名字是可以任意合法的名字。这个函数有四个参数，前两个是<strong>输入参数</strong>，后两个是<strong>输出参数</strong>，由out关键字指示。HLSL种没有引用和指针，一个函数要返回多个值时必须使用结构或输出参数。在HLSL中，函数总是内联的。</p>
-<p>前两个输入参数构成顶点着色器的输入签名，并对应于用于绘制的自定义顶点结构中的数据成员。参数语义”：POSITION”和”：COLOR”用于将顶点结构中的元素映射到顶点着色器输入参数，如图所示：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032920_0744_DX12641.png"></p>
-<p>输出参数还具有附加的语义（”<strong>：SV_POSITION</strong>“和”<strong>：COLOR</strong>“）。这些用于将顶点着色器输出映射到下一阶段的相应输入（几何体着色器或像素着色器）。注意，SV_POSITION语义是特殊的（SV代表系统值）。它用于表示顶点着色器输出元素，该元素在齐次剪辑空间中保留顶点位置。我们<strong>必须</strong>将SV_POSITION语义附加到位置输出，因为GPU需要知道这个值，因为它涉及其他属性不涉及的操作，例如剪裁、深度测试和光栅化。非系统值的输出参数的语义名称可以是任何有效的语义名称。这牵涉到不同平台的兼容性，在PS主机上如果不使用SV_POSITION，那么代码可能无法正常运行。</p>
-<p>这行代码**oPosH = mul(float4(iPosL, 1.0f), gWorldViewProj);**将顶点从局部空间转换到其次参见空间，通过矩阵乘法，乘gWorldViewProj矩阵。</p>
-<p>构造函数语法<strong>float4（iPosL，1.0f）</strong>构造一个4D向量，相当于<strong>float4（iPosL.x，iPosL.y，iPosL.z，1.0f）；</strong>因为我们知道顶点的位置是<strong>点</strong>而不是向量，所以我们在第四个组件（w=1）中放置1。float2和float3类型分别表示二维和三维向量。矩阵变量<strong>gWorldViewProj</strong>存在于所谓的常量缓冲区（constant buffer）中，这将在下一节中讨论。内建函数mul用于向量矩阵乘法。顺便说一下，mul函数对于不同大小的矩阵乘法是重载的；例如可以使用它来乘法两个4×4矩阵、两个3×3矩阵或一个1×3向量和一个3×3矩阵。材质球体中的最后一行只是将输入颜色复制到输出参数，以便将颜色输入管道的下一阶段：</p>
-<p><strong>oColor = iColor;</strong></p>
-<p>可以使用返回类型和输入签名的结构（与长参数列表相反）等效地重写上面的顶点着色器：</p>
-<p>cbuffer cbPerObject : register(b0)</p>
-<p>{</p>
-<p>float4x4 gWorldViewProj;</p>
-<p>};</p>
-<p>struct VertexIn {</p>
-<p>float3 PosL : POSITION;</p>
-<p>float4 Color : COLOR;</p>
-<p>};</p>
-<p>struct VertexOut {</p>
-<p>float4 PosH : SV_POSITION;</p>
-<p>float4 Color : COLOR;</p>
-<p>};</p>
-<p>VertexOut VS(VertexIn vin)</p>
-<p>{</p>
-<p>VertexOut vout;</p>
-<p>// 转换到齐次裁剪空间</p>
-<p>vout.PosH = mul(float4(vin.PosL, 1.0f), gWorldViewProj);</p>
-<p>// 顶点颜色传递到像素着色器.</p>
-<p>vout.Color = vin.Color;</p>
-<p>return vout;</p>
-<p>}</p>
-<p>如果没有几何着色器，则顶点着色器必须在具有SV_position语义的齐次裁剪空间中输出顶点位置，因为这是硬件在离开顶点着色器（如果没有几何着色器）时希望的顶点所处的空间。如果有一个几何着色器，输出齐次裁剪空间位置的工作可以推迟到几何着色器。</p>
-<p>顶点着色器或者几何着色器不进行透视除法，只进行投影矩阵部分，透视除法会稍后被硬件完成。</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/29/dx12-6-4-%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8%E5%AE%9E%E4%BE%8B-1/">DX12 6.4 顶点着色器实例</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-29</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>shader使用叫做HLSL的语言携带的，语法有点像C++。</p>
-<p>着色器通常以扩展名为.hlsl的基于文本的文件编写。</p>
-<p>cbuffer cbPerObject : register(b0)</p>
-<p>{</p>
-<p>float4x4 gWorldViewProj;</p>
-<p>};</p>
-<p>void VS(</p>
-<p>float3 iPosL : POSITION,</p>
-<p>float4 iColor : COLOR,</p>
-<p>out float4 oPosH : SV_POSITION,</p>
-<p>out float4 oColor : COLOR</p>
-<p>)</p>
-<p>{</p>
-<p>// 转换到齐次裁剪空间.</p>
-<p>oPosH = mul(float4(iPosL, 1.0f), gWorldViewProj);</p>
-<p>// 传递顶点颜色到像素着色器.</p>
-<p>oColor = iColor;</p>
-<p>}</p>
-<p>这个顶点着色器是上面代码中命名为VS的这个函数，函数名字是可以任意合法的名字。这个函数有四个参数，前两个是<strong>输入参数</strong>，后两个是<strong>输出参数</strong>，由out关键字指示。HLSL种没有引用和指针，一个函数要返回多个值时必须使用结构或输出参数。在HLSL中，函数总是内联的。</p>
-<p>前两个输入参数构成顶点着色器的输入签名，并对应于用于绘制的自定义顶点结构中的数据成员。参数语义”：POSITION”和”：COLOR”用于将顶点结构中的元素映射到顶点着色器输入参数，如图所示：</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032920_0744_DX12641.png"></p>
-<p>输出参数还具有附加的语义（”<strong>：SV_POSITION</strong>“和”<strong>：COLOR</strong>“）。这些用于将顶点着色器输出映射到下一阶段的相应输入（几何体着色器或像素着色器）。注意，SV_POSITION语义是特殊的（SV代表系统值）。它用于表示顶点着色器输出元素，该元素在齐次剪辑空间中保留顶点位置。我们<strong>必须</strong>将SV_POSITION语义附加到位置输出，因为GPU需要知道这个值，因为它涉及其他属性不涉及的操作，例如剪裁、深度测试和光栅化。非系统值的输出参数的语义名称可以是任何有效的语义名称。这牵涉到不同平台的兼容性，在PS主机上如果不使用SV_POSITION，那么代码可能无法正常运行。</p>
-<p>这行代码**oPosH = mul(float4(iPosL, 1.0f), gWorldViewProj);**将顶点从局部空间转换到其次参见空间，通过矩阵乘法，乘gWorldViewProj矩阵。</p>
-<p>构造函数语法<strong>float4（iPosL，1.0f）</strong>构造一个4D向量，相当于<strong>float4（iPosL.x，iPosL.y，iPosL.z，1.0f）；</strong>因为我们知道顶点的位置是<strong>点</strong>而不是向量，所以我们在第四个组件（w=1）中放置1。float2和float3类型分别表示二维和三维向量。矩阵变量<strong>gWorldViewProj</strong>存在于所谓的常量缓冲区（constant buffer）中，这将在下一节中讨论。内建函数mul用于向量矩阵乘法。顺便说一下，mul函数对于不同大小的矩阵乘法是重载的；例如可以使用它来乘法两个4×4矩阵、两个3×3矩阵或一个1×3向量和一个3×3矩阵。材质球体中的最后一行只是将输入颜色复制到输出参数，以便将颜色输入管道的下一阶段：</p>
-<p><strong>oColor = iColor;</strong></p>
-<p>可以使用返回类型和输入签名的结构（与长参数列表相反）等效地重写上面的顶点着色器：</p>
-<p>cbuffer cbPerObject : register(b0)</p>
-<p>{</p>
-<p>float4x4 gWorldViewProj;</p>
-<p>};</p>
-<p>struct VertexIn {</p>
-<p>float3 PosL : POSITION;</p>
-<p>float4 Color : COLOR;</p>
-<p>};</p>
-<p>struct VertexOut {</p>
-<p>float4 PosH : SV_POSITION;</p>
-<p>float4 Color : COLOR;</p>
-<p>};</p>
-<p>VertexOut VS(VertexIn vin)</p>
-<p>{</p>
-<p>VertexOut vout;</p>
-<p>// 转换到齐次裁剪空间</p>
-<p>vout.PosH = mul(float4(vin.PosL, 1.0f), gWorldViewProj);</p>
-<p>// 顶点颜色传递到像素着色器.</p>
-<p>vout.Color = vin.Color;</p>
-<p>return vout;</p>
-<p>}</p>
-<p>如果没有几何着色器，则顶点着色器必须在具有SV_position语义的齐次裁剪空间中输出顶点位置，因为这是硬件在离开顶点着色器（如果没有几何着色器）时希望的顶点所处的空间。如果有一个几何着色器，输出齐次裁剪空间位置的工作可以推迟到几何着色器。</p>
-<p>顶点着色器或者几何着色器不进行透视除法，只进行投影矩阵部分，透视除法会稍后被硬件完成。</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/27/6-3-indices-and-index-buffers-1/">6.3 Indices and Index Buffers</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-27</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>为了让GPU获得顶点索引的数组，这些数据需要放到GPU资源（ID3D12Resource）缓冲中，将存储索引信息的buffer称作索引缓冲Index buffer。</p>
+} </script><meta name="generator" content="Hexo 5.1.0"></head><body><canvas class="fireworks"></canvas><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="author-info"><div class="author-info__avatar text-center"><img src="https://github.com/muchenhen/muchenhen.github.io/blob/master/XuanGe.jpg?raw=true"></div><div class="author-info__name text-center">木尘痕</div><div class="author-info__description text-center">放一些笔记的地方</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">274</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">22</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">32</span></a></div><hr><div class="author-info-links"><div class="author-info-links__title text-center">Links</div><a class="author-info-links__name text-center" target="_blank" rel="noopener" href="https://alec-ray.github.io/">止戈</a></div></div></div><nav id="nav" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">风生之谷</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">Home</a><a class="site-page" href="/archives">Archives</a><a class="site-page" href="/tags">tags</a><a class="site-page" href="/categories">categories</a><a class="site-page" href="/contact">contact</a><a class="site-page" href="/">主页</a><a class="site-page" href="/archives">全部文章</a><a class="site-page" href="/tags">标签分类</a><a class="site-page" href="/categories">文章分类</a><a class="site-page" href="/contact">联系</a></span><span class="pull-right"></span></div><div id="site-info"><div id="site-title">风生之谷</div><div id="site-sub-title">一点浩然气 千里快哉风</div></div></nav><div id="content-outer"><div class="layout" id="content-inner"><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/27/6-3-indices-and-index-buffers/">6.3 Indices and Index Buffers</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>为了让GPU获得顶点索引的数组，这些数据需要放到GPU资源（ID3D12Resource）缓冲中，将存储索引信息的buffer称作索引缓冲Index buffer。</p>
 <p>可以使用<strong>d3dUtil::CreateDefaultBuffer</strong>函数来创建索引缓冲。其实这个函数可以创建各种类型的默认缓冲。</p>
 <p>当然，为了把索引信息绑定到渲染管线，也需要给索引缓冲创建view，index buffer view用<strong>D3D12_INDEX_BUFFER_VIEW</strong>结构体来表示：</p>
 <p>typedef struct D3D12_INDEX_BUFFER_VIEW {</p>
@@ -174,69 +76,7 @@
 <p>mCmdList-&gt;DrawIndexedInstanced(numSphereIndices, 1, 0, 0, 0);</p>
 <p>mCmdList-&gt;DrawIndexedInstanced(numBoxIndices, 1, firstBoxIndex, firstBoxVertexPos, 0);</p>
 <p>mCmdList-&gt;DrawIndexedInstanced(numCylIndices, 1, firstCylIndex, firstCylVertexPos, 0);</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/27/6-3-indices-and-index-buffers/">6.3 Indices and Index Buffers</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-27</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>为了让GPU获得顶点索引的数组，这些数据需要放到GPU资源（ID3D12Resource）缓冲中，将存储索引信息的buffer称作索引缓冲Index buffer。</p>
-<p>可以使用<strong>d3dUtil::CreateDefaultBuffer</strong>函数来创建索引缓冲。其实这个函数可以创建各种类型的默认缓冲。</p>
-<p>当然，为了把索引信息绑定到渲染管线，也需要给索引缓冲创建view，index buffer view用<strong>D3D12_INDEX_BUFFER_VIEW</strong>结构体来表示：</p>
-<p>typedef struct D3D12_INDEX_BUFFER_VIEW {</p>
-<p>D3D12_GPU_VIRTUAL_ADDRESS BufferLocation;</p>
-<p>UINT SizeInBytes;</p>
-<p>DXGI_FORMAT Format;</p>
-<p>} D3D12_INDEX_BUFFER_VIEW;</p>
-<p><em>来自 &lt;<a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows/win32/api/d3d12/ns-d3d12-d3d12_index_buffer_view">https://docs.microsoft.com/zh-cn/windows/win32/api/d3d12/ns-d3d12-d3d12_index_buffer_view</a>&gt;</em></p>
-<p>参数：</p>
-<ol>
-<li>索引缓冲的GPU虚拟地址，使用<strong>ID3D12Resource::GetGPUVirtualAddress</strong>函数来设置</li>
-<li>索引缓冲的大小，字节单位</li>
-<li>这里索引格式只有两个可选，<strong>DXGI_FORMAT_R16_UINT</strong>或者<strong>DXGI_FORMAT_R32_UINT</strong></li>
-</ol>
-<p>在使用索引资源之间还需要绑定到渲染管线，使用<strong>ID3D12CommandList::SetIndexBuffer</strong>函数将索引资源绑定到输入装配阶段。下面举个例子，创建了一个cube的索引缓冲并为其创建了view然后绑定到管线：</p>
-<p>std::uint16_t indices[] = {</p>
-<p>// front face</p>
-<p>0, 1, 2, 0, 2, 3,</p>
-<p>// back face</p>
-<p>4, 6, 5, 4, 7, 6,</p>
-<p>// left face</p>
-<p>4, 5, 1, 4, 1, 0,</p>
-<p>// right face</p>
-<p>3, 2, 6,3, 6, 7,</p>
-<p>// top face</p>
-<p>1, 5, 6, 1, 6, 2,</p>
-<p>// bottom face</p>
-<p>4, 0, 3, 4, 3, 7</p>
-<p>};</p>
-<p>const UINT ibByteSize = 36 * sizeof(std::uint16_t);</p>
-<p>ComPtr<ID3D12Resource> IndexBufferGPU = nullptr;</p>
-<p>ComPtr<ID3D12Resource> IndexBufferUploader = nullptr;</p>
-<p>IndexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(), mCommandList.Get(), indices), ibByteSize, IndexBufferUploader);</p>
-<p>D3D12_INDEX_BUFFER_VIEW ibv;</p>
-<p>ibv.BufferLocation = IndexBufferGPU-&gt;GetGPUVirtualAddress(); ibv.Format = DXGI_FORMAT_R16_UINT;</p>
-<p>ibv.SizeInBytes = ibByteSize;</p>
-<p>mCommandList-&gt;IASetIndexBuffer(&amp;ibv);</p>
-<p>最后在使用索引时，必须使用<strong>ID3D12GraphicsCommandList::DrawIndexedInstanced</strong>函数：</p>
-<p>void DrawIndexedInstanced(</p>
-<p>UINT IndexCountPerInstance,</p>
-<p>UINT InstanceCount,</p>
-<p>UINT StartIndexLocation,</p>
-<p>INT BaseVertexLocation,</p>
-<p>UINT StartInstanceLocation</p>
-<p>);</p>
-<p>参数：</p>
-<ol>
-<li>要绘制的索引数量</li>
-<li>要绘制的实例数。现在设置为1，高级特性需要的参数</li>
-<li>GPU从索引缓冲区中读取的第一个索引的位置。</li>
-<li>在从顶点缓冲区读取顶点之前添加到每个索引的值。</li>
-<li>在从顶点缓冲区读取每个实例数据之前添加到每个索引的值。现在设置为0</li>
-</ol>
-<p>现在假设有下面的场景：</p>
-<p>假设要绘制三个物体，一个球，一个正方体，一个圆柱体。首先每个物体都有自己的顶点缓冲和索引缓冲，三个物体之间的数据时相互独立的，没有关系的，自己的索引针对于自己的顶点。那么现在假设可以将三个物体的顶点信息进行关联，放在一个更大的单独的缓冲区中，但是如果三个物体的顶点数据被关联起来了，那么原有的索引，可能就失效了，就不能正确绘制了，这很容易理解。</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032720_0544_63Indicesan1.png"></p>
-<p>将每个物体单独的顶点缓冲和索引缓冲叫做local，而联系之后的称作global。</p>
-<p>可以看出至少球体的索引还是正确的，但是box和圆柱就需要更新索引缓冲，需要将firstBoxVertexPos加到所有的box的索引上。将一个物体的第一个顶点在global vertex buffer中的位置称作base vertex location。当然，DX可以帮助更新索引，将base vertex location作为DrawIndexedInstanced的第四个参数。然后可以按照下面的样子调用三个物体的绘制。</p>
-<p>mCmdList-&gt;DrawIndexedInstanced(numSphereIndices, 1, 0, 0, 0);</p>
-<p>mCmdList-&gt;DrawIndexedInstanced(numBoxIndices, 1, firstBoxIndex, firstBoxVertexPos, 0);</p>
-<p>mCmdList-&gt;DrawIndexedInstanced(numCylIndices, 1, firstCylIndex, firstCylVertexPos, 0);</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/27/dx12-6-1-vertices-%E5%92%8C-input-layouts-1/">DX12 6.1 Vertices 和 Input Layouts</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-27</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>一个vertex可以包含除了位置之外额外的数据，可以创建自定义的vertex格式，但首先要创建一个包含我们需要的vertex的数据的结构体。比如下面两个自定义的结构体：</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/27/dx12-6-1-vertices-%E5%92%8C-input-layouts/">DX12 6.1 Vertices 和 Input Layouts</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>一个vertex可以包含除了位置之外额外的数据，可以创建自定义的vertex格式，但首先要创建一个包含我们需要的vertex的数据的结构体。比如下面两个自定义的结构体：</p>
 <p>struct Vertex1 {</p>
 <p>XMFLOAT3 Pos;</p>
 <p>XMFLOAT4 Color;</p>
@@ -290,61 +130,7 @@
 <li><p>InstanceDataStepRate 目前设置为0，其他的值用于一些高级特性。对于包含每个顶点数据的元素，此值必须为0 。</p>
 </li>
 </ul>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/27/dx12-6-1-vertices-%E5%92%8C-input-layouts/">DX12 6.1 Vertices 和 Input Layouts</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-27</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>一个vertex可以包含除了位置之外额外的数据，可以创建自定义的vertex格式，但首先要创建一个包含我们需要的vertex的数据的结构体。比如下面两个自定义的结构体：</p>
-<p>struct Vertex1 {</p>
-<p>XMFLOAT3 Pos;</p>
-<p>XMFLOAT4 Color;</p>
-<p>};</p>
-<p>struct Vertex2 {</p>
-<p>XMFLOAT3 Pos;</p>
-<p>XMFLOAT3 Normal;</p>
-<p>XMFLOAT2 Tex0;</p>
-<p>XMFLOAT2 Tex1;</p>
-<p>};</p>
-<p>一旦定义了一个vertex结构体，需要告诉DirectX对于结构体的每个组件应该怎么处理。需要提供给DX一个”说明”，这个说明由D3D12_INPUT_LAYOUT_DESC结构体表示：</p>
-<p>typedef struct D3D12_INPUT_LAYOUT_DESC {</p>
-<p>const D3D12_INPUT_ELEMENT_DESC *pInputElementDescs;</p>
-<p>UINT NumElements;</p>
-<p>} D3D12_INPUT_LAYOUT_DESC;</p>
-<p><em>来自 &lt;<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/api/d3d12/ns-d3d12-d3d12_input_layout_desc">https://docs.microsoft.com/en-us/windows/win32/api/d3d12/ns-d3d12-d3d12_input_layout_desc</a>&gt;</em></p>
-<p>两个参数，第一个是 D3D12_INPUT_ELEMENT_DESC类型的数组，描述输入阶段的数据类型，第二个参数是unsigned int型，pInputElementDescs成员指向的输入元素数组中的输入数据类型的数量。</p>
-<p>关于第一个参数的类型</p>
-<p>D3D12_INPUT_ELEMENT_DESC structure</p>
-<p>typedef struct D3D12_INPUT_ELEMENT_DESC {</p>
-<p>LPCSTR SemanticName;</p>
-<p>UINT SemanticIndex;</p>
-<p>DXGI_FORMAT Format;</p>
-<p>UINT InputSlot;</p>
-<p>UINT AlignedByteOffset;</p>
-<p>D3D12_INPUT_CLASSIFICATION InputSlotClass;</p>
-<p>UINT InstanceDataStepRate;</p>
-<p>} D3D12_INPUT_ELEMENT_DESC;</p>
-<p><em>来自 &lt;<a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows/win32/api/d3d12/ns-d3d12-d3d12_input_element_desc">https://docs.microsoft.com/zh-cn/windows/win32/api/d3d12/ns-d3d12-d3d12_input_element_desc</a>&gt;</em></p>
-<p>关于该结构体的几个参数：</p>
-<ul>
-<li><p>SemanticName 在着色器input-signature中与此元素关联的HLSL语义。要与元素关联的字符串。这可以是任何有效的变量名。语义用于将顶点结构中的元素映射到顶点着色器输入签名中的元素</p>
-<ul>
-<li><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032720_0142_DX1261Verti1.png"></li>
-<li>vertex结构体中的每个元素都由数组中相应的元素描述</li>
-</ul>
-</li>
-<li><p>SemanticIndex 元素的语义索引。语义索引使用整数索引号修改语义。只有在多个元素具有相同语义的情况下才需要语义索引。例如，上图需要两个TEXCOORD，则第一个的索引是0，第二个的索引是1，此外图中POSITION相当于POSITION0</p>
-</li>
-<li><p>Format 指定元素数据格式的 DXGI_FORMAT美剧类型成员，指定了此vertex元素在DirectX的数据格式。</p>
-</li>
-<li><p>InputSlot 指定此元素将来自的input slot的索引。值在01~15之间。具体的在这里先不深入。</p>
-</li>
-<li><p>AlignedByteOffset 从指定的input slot的C++顶点结构的开始到顶点分量的开始，以字节为单位的偏移量。例如，在下面的顶点结构中，元素Pos有一个0字节的偏移量，因为它开始与顶点结构的开始重合；元素Normal有一个12字节的偏移量，必须跳过Pos的字节才能到达Normal的开头；元素Tex0有一个24字节的偏移量，需要跳过Pos和Normal的字节才能到达Tex0的开头；元素Tex1有一个32字节的偏移量，需要跳过Pos、Normal和Tex0到达Tex1开头。</p>
-<ul>
-<li><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032720_0142_DX1261Verti2.png"></li>
-</ul>
-</li>
-<li><p>InputSlotClass 目前设置为D3D12_INPUT_PER_VERTEX_DATA，该参数是一些可选的用于高级特性的实例，这个值用于标识单个的input slot的输入数据类的值。</p>
-</li>
-<li><p>InstanceDataStepRate 目前设置为0，其他的值用于一些高级特性。对于包含每个顶点数据的元素，此值必须为0 。</p>
-</li>
-</ul>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/26/dx12-6-2-vertex-buffer-1/">DX12 6.2 VERTEX BUFFER</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-26</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>为了让GPU可以获取vertex数组，需要将vertex存储在buffer（GPU资源ID3D12Resource）中，存储vertex的buffer称作vertex buffer。</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/26/dx12-6-2-vertex-buffer/">DX12 6.2 VERTEX BUFFER</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>为了让GPU可以获取vertex数组，需要将vertex存储在buffer（GPU资源ID3D12Resource）中，存储vertex的buffer称作vertex buffer。</p>
 <p>要创建一个ID3D12Resource的话，需要填写一个用来描述buffer资源的结构体，这个结构体的名字叫做<strong>D3D12_RESOURCE_DESC</strong></p>
 <p>之后再调用<strong>ID3D12Device::CreateCommittedResource</strong>从而创建一个ID3D12Resource</p>
 <p>而在DirectX12中提供了一个C++类：<strong>CD3DX12_RESOURCE_DESC</strong></p>
@@ -468,135 +254,229 @@
 <p>第一个和第三个参数在vertex buffer中定义了一个连续的要绘制的vertex集合。</p>
 <p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032620_1121_DX1262VERTE1.png"></p>
 <p>这个函数没有指明使用哪种装配方式，图元装配拓扑规则是函数<strong>ID3D12GraphicsCommandList::IASetPrimitiveTopology</strong>设置的。</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/26/dx12-6-2-vertex-buffer/">DX12 6.2 VERTEX BUFFER</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-26</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>为了让GPU可以获取vertex数组，需要将vertex存储在buffer（GPU资源ID3D12Resource）中，存储vertex的buffer称作vertex buffer。</p>
-<p>要创建一个ID3D12Resource的话，需要填写一个用来描述buffer资源的结构体，这个结构体的名字叫做<strong>D3D12_RESOURCE_DESC</strong></p>
-<p>之后再调用<strong>ID3D12Device::CreateCommittedResource</strong>从而创建一个ID3D12Resource</p>
-<p>而在DirectX12中提供了一个C++类：<strong>CD3DX12_RESOURCE_DESC</strong></p>
-<p>更详细的可以访问MSDN，会发现该类还提供了<strong>方便的构造其他类型资源的函数</strong></p>
-<p>A helper structure to enable easy initialization of a <a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/desktop/api/d3d12/ns-d3d12-d3d12_resource_desc"></a> <a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/desktop/api/d3d12/ns-d3d12-d3d12_resource_desc"><strong>D3D12_RESOURCE_DESC</strong> structure.</a></p>
-<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/desktop/api/d3d12/ns-d3d12-d3d12_resource_desc"><em>来自 &lt;</em></a><em><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/direct3d12/cd3dx12-resource-desc">https://docs.microsoft.com/en-us/windows/win32/direct3d12/cd3dx12-resource-desc</a>&gt;</em></p>
-<p>该类派生自D3D12_RESOURCE_DESC，提供了方便的构造函数和方法。特别是提供了一个方法来简化填写描述缓冲区D3D12_RESOURCE_DESC结构体的构造函数：</p>
-<p><strong>static inline CD3DX12_RESOURCE_DESC Buffer</strong></p>
-<p>CD3DX12_RESOURCE_DESC static inline Buffer</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/22/dx12-5-1112-%E5%83%8F%E7%B4%A0%E7%9D%80%E8%89%B2%E5%99%A8%E9%98%B6%E6%AE%B5%E5%92%8C%E8%BE%93%E5%87%BA%E5%90%88%E5%B9%B6%E9%98%B6%E6%AE%B5/">DX12 5.11&amp;12 像素着色器阶段和输出合并阶段</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>像素着色器是编写的在GPU上执行的程序。对每个像素片段执行像素着色器，并使用插值顶点属性作为输入来计算颜色。像素着色器可以简单地返回一个恒定的颜色，也可以做更复杂的事情，如逐像素光照、反射和阴影效果。</p>
+<p>像素着色器生成像素片段之后，数据转移到output merger（OM）阶段，在这个阶段会进行深度测试或者模板缓冲测试，舍弃掉一些写像素片段，混合blend也是在这个阶段完成。</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/22/directx12-5-10-%E5%85%89%E6%A0%85%E5%8C%96%E9%98%B6%E6%AE%B5/">DIRECTX12 5.10 光栅化阶段</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>光栅化阶段的主要工作是从投影的三维三角形计算像素颜色。</p>
+<p><strong>视口变换</strong></p>
+<p><strong>Viewport Transform</strong></p>
+<p>裁剪完成后，硬件进行透视除法，将均匀的裁剪空间转换为标准化的设备坐标（NDC）。一旦顶点位于NDC空间中，形成2D图像的2D x和y坐标就被转换为后缓冲区上称为viewport的矩形。在这个转换之后，x和y坐标是以像素为单位的。通常，viewport转换不会修改z坐标，因为它用于深度缓冲，但可以通过修改D3D12_viewport结构的MinDepth和MaxDepth值来实现。MinDepth和MaxDepth值必须是介于0和1之间。</p>
+<p><strong>背面剔除</strong></p>
+<p><strong>Backface Culling</strong></p>
+<p>一个平面有两个”面”，对正面和反面的区分按照以下规则：</p>
+<p>如果一个三角形由三个vertex：v0, v1, v2构成，然后计算法线向量n，</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032220_0605_DIRECTX12511.png"></p>
+<p>法向量从正面 发出：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032220_0605_DIRECTX12512.png"></p>
+<p>大对数对象是封闭的实体对象，因为前向三角形遮挡了后向三角形，所以绘制它们是没有意义的。背面剔除是指从管道中丢弃背面三角形的过程。这可能会将需要处理的三角形数量减少一半。</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032220_0605_DIRECTX12513.png"></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032220_0605_DIRECTX12514.png"></p>
+<p>在不使用透明度的情况下，就像右边只能看到三个面。后面的三个三角形可以在处理过程中丢弃掉。</p>
+<p>默认情况下，Direct3D将顺时针顺序（相对于查看器）的三角形视为前向，而具有逆时针顺序（相对于查看器）的三角形视为后向。</p>
+<p><strong>顶点属性插值</strong></p>
+<p><strong>Vertex Attribute Interpolation</strong></p>
+<p>vertex中附加的其他属性，在经过视口变换之后，这些属性需要被插值到三角形覆盖的每一个像素。除了顶点属性外，顶点深度值还需要插值，以便每个像素都有深度缓冲算法的深度值。顶点属性需要在屏幕空间中进行插值，这样才能保证属性值在3D空间中基于三角形进行的线性插值的结果还能用。这就需要被称为<strong>透视正确插值</strong>的操作。具体的数学推导请参阅《introduce 3D math》那本书。</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032220_0605_DIRECTX12515.png"></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032220_0605_DIRECTX12516.png"></p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/20/directx-12-5-9-%E8%A3%81%E5%89%AA/">DIRECTX 12 5.9 裁剪</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>不在视锥体的近平面远平面上下左右平面之间的都要删除掉：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032020_1012_DIRECTX12591.png"></p>
+<p>Sutherland-Hodgeman 裁剪算法，基本上相当于找到平面和多边形边之间的交点，然后对顶点排序以形成新的剪裁多边形。</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032020_1012_DIRECTX12592.png"></p>
+<p>在齐次空间中, 做除法之前, 4D points (x, y, z, w)</p>
+<p>透视投影之后, points</p>
+<ul>
+<li>−1 ≤ x/w ≤ 1</li>
+<li>−1 ≤ y/w ≤ 1</li>
+<li>0 ≤ z/w ≤ 1</li>
+</ul>
+<p>在视锥体中的点应该满足:</p>
+<ul>
+<li>−w ≤ x ≤ w</li>
+<li>−w ≤ y ≤ w</li>
+<li>0 ≤ z ≤ w</li>
+</ul>
+<p>也就是说，这些点由简单的4D平面限定：</p>
+<ul>
+<li>Left: w = −x</li>
+<li>Right: w = x</li>
+<li>Bottom: w = −y</li>
+<li>Top: w = y</li>
+<li>Near: z = 0</li>
+<li>Far: z = w</li>
+</ul>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/20/directx-12-5-8-%E5%87%A0%E4%BD%95%E7%9D%80%E8%89%B2%E9%98%B6%E6%AE%B5/">DIRECTX 12 5.8 几何着色阶段</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>这个可选的阶段很后面才会详细涉及到。</p>
+<p>该阶段要输入完整完全的图元数据，比如要画一个三角形，这个阶段输入的必须是三个vertex定义完成的一个三角形。</p>
+<p>最主要的优点是几何着色器可以创建或者删除几何体，比如以一个图元可以被扩展为一个或几个其他类型的图元。和顶点着色器不同的是，顶点着色器没法生成或者销毁vertex，传给它一个vertex，它处理之后输出一个vertex。常见的例子是扩展一个point成一个quad或者扩展一个line成一个quad。</p>
+<p>几何着色器输出的vertex positions必须转换到齐次裁剪空间</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/20/directx-12-5-7-tessellation%E9%98%B6%E6%AE%B5/">DIRECTX 12 5.7 Tessellation阶段</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>Tessellation可以把三角形mesh进一步细分，添加新的三角形。然后，这些新的三角形可以偏移到新的位置以创建更精细的网格细节。</p>
+<p>下面是经过tessellation的对比：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032020_1009_DIRECTX12571.png"></p>
+<p>使用Tessellation的优点：</p>
+<ul>
+<li>可以实现<strong>level-of-detail（LOD）</strong>，距离摄像机近的细分出更多细节，较远的不进行细分。</li>
+<li>在内从中保存低数量的三角形mesh从而节省内存，额外的细分动态添加。</li>
+<li>计算动画和物理的时候用低模，使用细分后的mesh渲染。</li>
+</ul>
+<p>在DirectX11之前，Tessellation需要先由CPU计算后把新的几何体从CPU内存传到GPU内存，很慢，所以不好用。DX11之后已经是在GPU计算，更有效率。</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/19/directx-12-5-6-%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8%E9%98%B6%E6%AE%B5/">DIRECTX 12 5.6 顶点着色器阶段</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>图元装配完之后，vertex们就到达了vertex shader阶段。可以将vertex shader阶段视为一个函数，输入的是vertex，输出的是vertex。在硬件的实际计算过程中可以简单的认为是硬件做了如下过程：</p>
+<p>for(UINT i = 0; i &lt; numVertices; ++i)</p>
+<p>outputVertex[i] = VertexShader( inputVertex[i] );</p>
+<p>这个阶段可以实现的效果有：</p>
+<ul>
+<li><p>变换transformation</p>
+</li>
+<li><p>光照lighting</p>
+</li>
+<li><p>置换贴图displacement mapping</p>
+<p>and so on</p>
+</li>
+</ul>
+<p><strong>物体空间和世界空间</strong></p>
+<p><strong>Local Space and World Space</strong></p>
+<p><strong>观察空间</strong></p>
+<p><strong>View Space</strong></p>
+<p><strong>投影与齐次裁剪空间</strong></p>
+<p><strong>Projection and Homogeneous Clip Space</strong></p>
+<p><strong>定义一个视锥体（平截头体）</strong></p>
+<p><strong>Defining a Frustum</strong></p>
+<p><strong>投影矩阵</strong></p>
+<p>这个部分可以参考《3d math primer for graphics and game development》，我就不废话了</p>
+<p><strong>标准化设备坐标系</strong></p>
+<p><strong>Normalized Device Coordinates (NDC)</strong></p>
+<p>前面部分中投影点的坐标是在视图空间中计算的。在视图空间中，投影窗口的高度为2，宽度为2r，其中r是纵横比。问题是尺寸取决于纵横比。这意味着需要告诉硬件纵横比，因为硬件稍后需要执行一些涉及投影窗口尺寸的操作（例如将其映射到后缓冲区）。如果我们能去掉对长宽比的依赖，那就更方便了。解决方案是将投影的x坐标从间隔[-r，r]缩放到[-1，1]，如下所示：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0758_DIRECTX12561.png"></p>
+<p>映射之后坐标就被描述在了NDC中。这里只有x和y轴坐标被标准化，z轴坐标并没有。</p>
+<p>当且仅当满足以下条件时一个点才会在视锥体中：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0758_DIRECTX12562.png"></p>
+<p><strong>用矩阵写出投影方程</strong></p>
+<p><strong>Writing the Projection Equations with a Matrix</strong></p>
+<p>目的是保持一致性，因为别的变换都用矩阵表示了。</p>
+<p>但是Equation是非线性的，需要拆成两部分，非线性的部分除以Z，但是z坐标之后还需要用，先保存在w分量。</p>
+<p><strong>标准化深度值</strong></p>
+<p><strong>Normalized Depth Value</strong></p>
+<p>因为需要进行深度测试，DirectX中希望深度值在[0，1]，这样好处理，所以要把深度值进行标准化。将原区间映射到0~1可以通过缩放和唯一来实现，如下：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0758_DIRECTX12563.png"></p>
+<p>如果近平面映射到0则有：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0758_DIRECTX12564.png"></p>
+<p>如果远平面映射到0则有</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0758_DIRECTX12565.png"></p>
+<p>由1式可以得B = −An，代入2式</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0758_DIRECTX12566.png"></p>
+<p>因此：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0758_DIRECTX12567.png"></p>
+<p>函数图像如下：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0758_DIRECTX12568.png"></p>
+<p>急剧增加且非线性的，和近平面比较近的部分几乎占用了所有的范围，大部分的深度值其实被映射到了一个小的子集里面，会导致深度缓冲的精度问题，毕竟硬件的精度数值式有限的。在实际使用过程中尽量使近平面和远平面接近一点。</p>
+<p><strong>XMMatrixPerspectiveFovLH</strong></p>
+<p>透视投影矩阵的创建可以使用如下的D3D数学函数：</p>
+<p>XMMATRIX XM_CALLCONV XMMatrixPerspectiveFovLH</p>
 <p>(</p>
-<p>UINT64 width,</p>
-<p>D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE,</p>
-<p>UINT64 alignment = 0</p>
+<p>float FovAngleY, //从上往下看视锥体的角度</p>
+<p>float AspectRatio, //X:Y 宽高比</p>
+<p>float NearZ, //近平面到裁剪平面的距离 必须大于零</p>
+<p>float FarZ //远平面到裁剪平面的距离 必须大于零</p>
 <p>);</p>
-<p>对于缓冲区，width是指缓冲区中的字节数。例如，如果缓冲区存储了64个浮点，那么宽度将是64*sizeof（float）。</p>
-<p>对于静态的几何体（每帧不更改的几何体）会存放在默认堆区<strong>D3D12_HEAP_TYPE_DEFAULT</strong>。</p>
-<p>对于不变动的几何体，比如树啊建筑啊这些东西，初始化顶点缓冲区后，只有GPU需要从顶点缓冲区读取数据来绘制几何体，因此默认堆是有意义的。默认堆区的存在可以提供客观的性能优势。</p>
-<p>但是，<strong>CPU无法向默认堆区中的顶点缓冲区写入数据</strong>。如果不能写入数据，那么就没办法初始化一个顶点缓冲资源。不能初始化就意味着GPU没数据可以读取……</p>
-<p>那么要怎样才能让CPU把数据写进堆区的顶点缓冲里面呢？其实看见D3D12_HEAP_TYPE_DEFAULT这个应该能想到type后面这个东西不止defualt，事实也确实如此：</p>
-<p>typedef enum D3D12_HEAP_TYPE {</p>
-<p>D3D12_HEAP_TYPE_DEFAULT,</p>
-<p>D3D12_HEAP_TYPE_UPLOAD,</p>
-<p>D3D12_HEAP_TYPE_READBACK,</p>
-<p>D3D12_HEAP_TYPE_CUSTOM } ;</p>
-<p><em>来自 &lt;<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_heap_type">https://docs.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_heap_type</a>&gt;</em></p>
-<p>可以看到有四个不同的类型，这是个枚举类型。其中第二个<strong>D3D12_HEAP_TYPE_UPLOAD</strong>是用来将数据从CPU复制到GPU的，船舰一个upload buffer，然后将vertex数据从系统内存复制到upload buffer，接下来就可以从upload buffer把数据复制到现行的vertex buffer。</p>
-<p>但是如果想创建一个upload buffer，必须先初始化一个DEFAULT类型的buffer，在这里使用下面这个方法来简化工作，可以避免在需要创建defualt类型buffer的时候进行一些重复的工作：</p>
-<p>static Microsoft::WRL::ComPtr<ID3D12Resource> CreateDefaultBuffer(</p>
-<p>ID3D12Device* device,</p>
-<p>ID3D12GraphicsCommandList* cmdList,</p>
-<p>const void* initData,</p>
-<p>UINT64 byteSize,</p>
-<p>Microsoft::WRL::ComPtr<ID3D12Resource>&amp; uploadBuffer);</p>
-<p>具体的函数实现有点长，懒得调代码格式，可以直接看源码，这里我已经完善了一些注释</p>
-<p>其中<strong>D3D12_SUBRESOURCE_DATA</strong>需要拿出来说一下，这个前面的章节没提过</p>
-<p>typedef struct D3D12_SUBRESOURCE_DATA</p>
-<p>{</p>
-<p>const void *pData;</p>
-<p>LONG_PTR RowPitch;</p>
-<p>LONG_PTR SlicePitch;</p>
-<p>}         D3D12_SUBRESOURCE_DATA;</p>
-<p>参数：</p>
-<ol>
-<li>一个指针，指向了系统内存里面存储了用来初始化buffer的数据的数组。如果buffer可以存储n个vertex，那么数组至少要有n个顶点才能初始化完整的buffer</li>
-<li>对于buffer来说的，将要复制的数据的大小的字节数</li>
-<li>同上</li>
-</ol>
-<p>下面的代码展示了这个类如何被用来创建一个默认buffer来存储一个正方体的八个vertex，每个顶点都有不同的颜色：</p>
-<p>Vertex vertices[] =</p>
-<p>{</p>
-<p>{ XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(Colors::White) },</p>
-<p>{ XMFLOAT3(-1.0f, +1.0f, -1.0f), XMFLOAT4(Colors::Black) },</p>
-<p>{ XMFLOAT3(+1.0f, +1.0f, -1.0f), XMFLOAT4(Colors::Red) },</p>
-<p>{ XMFLOAT3(+1.0f, -1.0f, -1.0f), XMFLOAT4(Colors::Green) },</p>
-<p>{ XMFLOAT3(-1.0f, -1.0f, +1.0f), XMFLOAT4(Colors::Blue) },</p>
-<p>{ XMFLOAT3(-1.0f, +1.0f, +1.0f), XMFLOAT4(Colors::Yellow) },</p>
-<p>{ XMFLOAT3(+1.0f, +1.0f, +1.0f), XMFLOAT4(Colors::Cyan) },</p>
-<p>{ XMFLOAT3(+1.0f, -1.0f, +1.0f), XMFLOAT4(Colors::Magenta) }</p>
-<p>};//8个顶点的位置和颜色</p>
-<p>const UINT64 vbByteSize = 8 * sizeof(Vertex);//8个顶点需要这么多的字节</p>
-<p>ComPtr<ID3D12Resource> VertexBufferGPU = nullptr; //默认缓冲</p>
-<p>ComPtr<ID3D12Resource> VertexBufferUploader = nullptr;//upload缓冲区</p>
-<p>VertexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(), mCommandList.Get(),vertices, vbByteSize, VertexBufferUploader);//调用前面说的方法</p>
-<p>到此为止算是创建了一个vertex buffer，但是还需要将vertex buffer绑定到渲染管线上。想要绑定到渲染管线上需要创建一个vertex buffer view。</p>
-<p>typedef struct D3D12_VERTEX_BUFFER_VIEW {</p>
-<p>D3D12_GPU_VIRTUAL_ADDRESS BufferLocation;</p>
-<p>UINT SizeInBytes;</p>
-<p>UINT StrideInBytes;</p>
-<p>} D3D12_VERTEX_BUFFER_VIEW;</p>
-<p>参数：</p>
-<ol>
-<li>想要创建view的目标vertex buffer的虚拟地址</li>
-<li>指明缓冲区有多少字节的大小</li>
-<li>指明每个vertex元素有多少字节的大小</li>
-</ol>
-<p>好了，创建完vertex buffer，再为这个buffer创建一个vertex buffer view，我们就可以将这个buffer绑定到渲染管线的一个input slot上，然后将vertex数据送到渲染管线的输入装配阶段。要实现这一步需要以下这个函数：</p>
-<p>void IASetVertexBuffers(</p>
-<p>UINT StartSlot,</p>
-<p>UINT NumViews,</p>
-<p>const D3D12_VERTEX_BUFFER_VIEW *pViews</p>
-<p>);</p>
-<p><em>来自 &lt;<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/api/d3d12/nf-d3d12-id3d12graphicscommandlist-iasetvertexbuffers">https://docs.microsoft.com/en-us/windows/win32/api/d3d12/nf-d3d12-id3d12graphicscommandlist-iasetvertexbuffers</a>&gt;</em></p>
-<p>参数：</p>
-<ol>
-<li>绑定vertex buffer的起始的input slot，一共有16个，从0开始。</li>
-<li>绑定到input slot中的vertex buffer的数量，举例：如果第一个参数是n，那么绑定x个顶点缓冲，会依次绑定到n，n+1，n+2……n+x-1索引的input slot</li>
-<li>指向存放vertex buffer view数组的第一个元素的指针。</li>
-</ol>
-<p>下面是一个小例子：</p>
-<p>D3D12_VERTEX_BUFFER_VIEW vbv;//定义一个view</p>
-<p>vbv.BufferLocation = VertexBufferGPU-&gt;GetGPUVirtualAddress();//获得了顶点缓冲的虚拟地址</p>
-<p>vbv.StrideInBytes = sizeof(Vertex);//计算每个vertex占用的字节</p>
-<p>vbv.SizeInBytes = 8 * sizeof(Vertex);//计算缓冲区总共有多少字节</p>
-<p>D3D12_VERTEX_BUFFER_VIEW vertexBuffers[1] = { vbv };//定义一个view的数组，将前面定义的view作为容器内元素进行初始化</p>
-<p>mCommandList-&gt;IASetVertexBuffers(0, 1, vertexBuffers);//调用函数</p>
-<p>IASetVertexBuffers是很好用的，它支持设置一整个数组的vertex buffer到不同的input slot，在这里只用一个。</p>
-<p>一旦一个vertex buffer绑定到了一个input slot上，除非手动更改不然会一直保持绑定状态。所以如果要使用不止一个vertex buffer，可以按照如下方法编写代码：</p>
-<p>ID3D12Resource* mVB1;//存储第一种类型的顶点数据</p>
-<p>ID3D12Resource* mVB2;//存储另一种类型的顶点数据</p>
-<p>D3D12_VERTEX_BUFFER_VIEW_DESC mVBView1;//为第一个vertex buffer创建的view</p>
-<p>D3D12_VERTEX_BUFFER_VIEW_DESC mVBView2;//第二个view</p>
-<p>/*创建vertex buffer和view*/</p>
-<p>mCommandList-&gt;IASetVertexBuffers(0, 1, &amp;mVBView1);//使用第一种顶点数据类型绘制</p>
-<p>mCommandList-&gt;IASetVertexBuffers(0, 1, &amp;mVBView2);//使用第二种绘制</p>
-<p>将一个vertex buffer设置到input slot后并没有绘制，仅仅是将vertex数据准备好发送到渲染管线，最后一步实际进行绘制vertex是完成调用ID3D12GraphicsCommandList::DrawInstanced函数之后：</p>
-<p><strong>ID3D12GraphicsCommandList::DrawInstanced</strong></p>
-<p>void DrawInstanced(</p>
-<p>UINT VertexCountPerInstance,</p>
-<p>UINT InstanceCount,</p>
-<p>UINT StartVertexLocation,</p>
-<p>UINT StartInstanceLocation</p>
-<p>)<strong>;</strong></p>
-<p><em>来自 &lt;<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/api/d3d12/nf-d3d12-id3d12graphicscommandlist-drawinstanced">https://docs.microsoft.com/en-us/windows/win32/api/d3d12/nf-d3d12-id3d12graphicscommandlist-drawinstanced</a>&gt;</em></p>
-<p>参数：</p>
-<ol>
-<li>要绘制的vertex数量</li>
-<li>用于一种高级特性，暂时用不到</li>
-<li>指定第一个要绘制的vertex的索引，会从指定的这个开始绘制</li>
-<li>同2，现在设置为0</li>
-</ol>
-<p>第一个和第三个参数在vertex buffer中定义了一个连续的要绘制的vertex集合。</p>
-<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032620_1121_DX1262VERTE1.png"></p>
-<p>这个函数没有指明使用哪种装配方式，图元装配拓扑规则是函数<strong>ID3D12GraphicsCommandList::IASetPrimitiveTopology</strong>设置的。</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/22/dx12-5-1112-%E5%83%8F%E7%B4%A0%E7%9D%80%E8%89%B2%E5%99%A8%E9%98%B6%E6%AE%B5%E5%92%8C%E8%BE%93%E5%87%BA%E5%90%88%E5%B9%B6%E9%98%B6%E6%AE%B5/">DX12 5.11&amp;12 像素着色器阶段和输出合并阶段</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-22</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>像素着色器是编写的在GPU上执行的程序。对每个像素片段执行像素着色器，并使用插值顶点属性作为输入来计算颜色。像素着色器可以简单地返回一个恒定的颜色，也可以做更复杂的事情，如逐像素光照、反射和阴影效果。</p>
-<p>像素着色器生成像素片段之后，数据转移到output merger（OM）阶段，在这个阶段会进行深度测试或者模板缓冲测试，舍弃掉一些写像素片段，混合blend也是在这个阶段完成。</p>
-</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/22/dx12-5-1112-%E5%83%8F%E7%B4%A0%E7%9D%80%E8%89%B2%E5%99%A8%E9%98%B6%E6%AE%B5%E5%92%8C%E8%BE%93%E5%87%BA%E5%90%88%E5%B9%B6%E9%98%B6%E6%AE%B5-1/">DX12 5.11&amp;12 像素着色器阶段和输出合并阶段</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-22</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>像素着色器是编写的在GPU上执行的程序。对每个像素片段执行像素着色器，并使用插值顶点属性作为输入来计算颜色。像素着色器可以简单地返回一个恒定的颜色，也可以做更复杂的事情，如逐像素光照、反射和阴影效果。</p>
-<p>像素着色器生成像素片段之后，数据转移到output merger（OM）阶段，在这个阶段会进行深度测试或者模板缓冲测试，舍弃掉一些写像素片段，混合blend也是在这个阶段完成。</p>
-</div><hr></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/"><i class="fa fa-chevron-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/56/">56</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer class="footer-bg" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div class="layout" id="footer"><div class="copyright">&copy;2017 - 2020 By 木尘痕</div><div class="framework-info"><span>Driven - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="footer_custom_text">千秋竟岁，伏苦飞逐</div><div class="icp"><a><span>豫ICP备17048032号</span></a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_site_uv"><i class="fa fa-user"></i><span id="busuanzi_value_site_uv"></span><span></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i><span id="busuanzi_value_site_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.8.2"></script><script src="/js/fancybox.js?version=1.8.2"></script><script src="/js/sidebar.js?version=1.8.2"></script><script src="/js/copy.js?version=1.8.2"></script><script src="/js/fireworks.js?version=1.8.2"></script><script src="/js/transition.js?version=1.8.2"></script><script src="/js/scroll.js?version=1.8.2"></script><script src="/js/head.js?version=1.8.2"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+<p><em>来自 &lt;<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/api/directxmath/nf-directxmath-xmmatrixperspectivefovlh">https://docs.microsoft.com/en-us/windows/win32/api/directxmath/nf-directxmath-xmmatrixperspectivefovlh</a>&gt;</em></p>
+<p>返回透视投影矩阵。</p>
+<p>宽高比与窗口宽高比匹配：</p>
+<p>float D3DApp::AspectRatio()const {</p>
+<p>return static_cast<float>(mClientWidth) / mClientHeight;</p>
+<p>}</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/19/c%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%EF%BC%9A%E5%9B%9B%E7%A7%8D%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E8%BF%90%E7%AE%97%E7%AC%A6/">C++面向对象：四种类型转换运算符</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-10-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a></span><div class="content"><p>隐式类型转换是安全的，显式类型转换是有风险的</p>
+<p>C风格的强制类型转换统一使用( )，而( )在代码中随处可见，所以也不利于使用文本检索工具</p>
+<p>有几种特定于c++语言的类型转换操作符。这些操作符旨在<strong>消除旧式C语言强制类型转换中固有的一些模糊性和危险</strong>。</p>
+<p>c++类型转换的几种分类</p>
+<p><strong>关键字</strong></p>
+<p><strong>说明</strong></p>
+<p>static_cast</p>
+<p>用于良性转换，一般不会导致意外发生，风险很低。用于非多态的转换。</p>
+<p>const_cast</p>
+<p>用于 const 与非 const、volatile 与非 volatile 之间的转换。</p>
+<p>reinterpret_cast</p>
+<p>高度危险的转换，这种转换仅仅是对二进制位的重新解释，不会借助已有的转换规则对数据进行调整，但是可以实现最灵活的 C++ 类型转换。</p>
+<p>dynamic_cast</p>
+<p>借助 RTTI，用于类型安全的向下转型（Downcasting）。<br>用于多态类型的转换。</p>
+<p>safe_cast</p>
+<p>Used in C++/CLI to produce verifiable MSIL.</p>
+<p><em>来自 &lt;<a target="_blank" rel="noopener" href="http://c.biancheng.net/cpp/biancheng/view/3297.html">http://c.biancheng.net/cpp/biancheng/view/3297.html</a>&gt;</em></p>
+<p><strong>dynamic_cast Operator</strong></p>
+<p><strong>语法</strong></p>
+<p>dynamic_cast &lt; type-id &gt; ( expression )</p>
+<p>type-id 必须是一个指针或引用指向之前定义好的类类型，或者是一个指向void的指针</p>
+<p>如果type-id是指针 expression也得是指针</p>
+<p>如果type-id是引用 expression需要是左值</p>
+<p>当type-id是指向值类型的内部指针时，动态强制转换将不再抛出异常，而强制转换在运行时失败。强制转换将返回0指针值，而不是抛出。</p>
+<p>如果type-id是一个指向明确可访问的表达式直接或间接基类的指针，那么结果就是指向type-id类型的惟一子对象的指针。</p>
+<p>比如：</p>
+<p>class B { };</p>
+<p>class C : public B { };</p>
+<p>class D : public C { };</p>
+<p>void f(D* pd) {</p>
+<p>C* pc = dynamic_cast&lt;C*&gt;(pd); // ok: C是一个直接基类</p>
+<p>// pc指向pd的C子对象</p>
+<p>B* pb = dynamic_cast&lt;B*&gt;(pd); // ok: B是D的间接基类</p>
+<p>// pb指向pd的B子对象</p>
+<p>}</p>
+<p>dynamic_cast与static_cast是相对的</p>
+<p>dynamic_cast 用于在类的继承层次之间进行类型转换，它既允许向上转型（Upcasting），也允许向下转型（Downcasting）。向上转型是无条件的，不会进行任何检测，所以都能成功；向下转型的前提必须是安全的，要借助 RTTI 进行检测，所有只有一部分能成功。</p>
+<p><strong>static_cast Operator</strong></p>
+<p><strong>语法</strong></p>
+<p>static_cast <type-id> ( expression )</p>
+<p>在标准c++中，不进行任何运行时类型检查来帮助确保转换的安全性。</p>
+<p>该运算符可以用于将基类指针转换为派生类指针等操作，这样的转换并不总是安全的。该操作符只能用于良性转化，比如：</p>
+<ul>
+<li>原有的自动类型转换，例如 short 转 int、int 转 double、const 转非 const、向上转型等</li>
+<li>void 指针和具体类型指针之间的转换，例如void *转int *、char *转void *等</li>
+<li>有转换构造函数或者类型转换函数的类与其它类型之间的转换，例如 double 转 Complex（调用转换构造函数）、Complex 转 double（调用类型转换函数）。</li>
+</ul>
+<p><strong>静态和动态的区别</strong></p>
+<p>一般情况下 静态操作符可以转换数值类数据类型，比如enums转ints 转floats。静态强制转换没有动态强制转换安全，因为静态强制转换<strong>没有运行时类型检查</strong>。对于不明确的指针的动态强制转换会失败，但是静态强制转换会不检查就返回，仿佛没有错误。但是动态强制转换只能用于指针和引用，并且运行时类型检查时有一定开销的。</p>
+<p>下面有一个例子：</p>
+<p>class B {};</p>
+<p>class D : public B {};</p>
+<p>void f(B* pb, D* pd) {</p>
+<p>D* pd2 = static_cast&lt;D*&gt;(pb); // 不安全, 将B类型强制转换为D类型，D中可能有B没有的字段和方法</p>
+<p>B* pb2 = static_cast&lt;B*&gt;(pd); // 安全，因为派生类D一定有基类B的字段和方法。</p>
+<p>}</p>
+<p>动态强制转换和静态强制转换操作符在类层次结构中移动指针。但是，静态强制转换仅依赖于cast语句中提供的信息，因此可能不安全。例如：</p>
+<p>class B {</p>
+<p>public:</p>
+<p>virtual void Test(){}</p>
+<p>};</p>
+<p>class D : public B {};</p>
+<p>void f(B* pb) {</p>
+<p>D* pd1 = dynamic_cast&lt;D*&gt;(pb);</p>
+<p>D* pd2 = static_cast&lt;D*&gt;(pb);</p>
+<p>}</p>
+<p>如果pb确实指向类型为D的对象，那么pd1和pd2将获得相同的值。如果pb == 0，它们也会得到相同的值。</p>
+<p>如果pb指向的是B类型的对象，而不是完整的D类，那么动态强制转换将知道足够多的信息以返回0。但是，静态强制转换依赖于程序员的断言，即pb指向类型为D的对象，并且只返回一个指向假定的D对象的指针。</p>
+<p>因此，静态强制转换可以执行隐式转换的逆转换，在这种情况下，结果是未定义的。由程序员来验证静态强制转换的结果是否安全。</p>
+<p>这种行为也适用于类类型之外的类型。例如，可以使用静态强制转换将int转换为char。但是，得到的char可能没有足够的位来容纳整个int值。同样，由程序员来验证静态强制转换的结果是否安全。</p>
+<p>静态强制转换操作符还可用于执行任何隐式转换，包括标准转换和用户定义转换。例如</p>
+<p>typedef unsigned char BYTE;</p>
+<p>void f() {</p>
+<p>char ch;</p>
+<p>int i = 65;</p>
+<p>float f = 2.5;</p>
+<p>double dbl;</p>
+<p>ch = static_cast<char>(i); // int 转 char</p>
+<p>dbl = static_cast<double>(f); // float转 double</p>
+<p>i = static_cast<BYTE>(ch);</p>
+<p>}</p>
+<p>任何表达式都可以通过静态强制转换操作符显式转换为void类型。目标void类型可以选择包含const、volatile或unaligned属性。</p>
+<p>静态强制转换操作符不能丢弃常量、易失性或未对齐的属性。</p>
+<p>需要注意的是，static_cast 不能用于无关类型之间的转换，因为这些转换都是有风险的：</p>
+<ul>
+<li>两个具体类型指针之间的转换，例如int *转double *、Student *转int *等。不同类型的数据存储格式不一样，长度也不一样，用 A 类型的指针指向 B 类型的数据后，会按照 A 类型的方式来处理数据：如果是读取操作，可能会得到一堆没有意义的值；如果是写入操作，可能会使 B 类型的数据遭到破坏，当再次以 B 类型的方式读取数据时会得到一堆没有意义的值。</li>
+<li>int 和指针之间的转换。将一个具体的地址赋值给指针变量是非常危险的，因为该地址上的内存可能没有分配，也可能没有读写权限，恰好是可用内存反而是小概率事件。</li>
+</ul>
+<p><strong>reinterpret_cast Operator</strong></p>
+<p><strong>语法</strong></p>
+<p>reinterpret_cast &lt; type-id &gt; ( expression )</p>
+<p>这个运算符用不好会造成不安全，尽量能用其他的代替就用其他的。</p>
+<p>这种转换仅仅是对二进制位的重新解释，不会借助已有的转换规则对数据进行调整，所以风险很高。</p>
+<p>reinterpret cast操作符可用于将char*转换为int*，或将一个类*转换为不相关的类*，这些操作符本质上是不安全的。</p>
+<p>重新解释强制类型转换的结果除了被强制转换回其原始类型外，不能安全地用于其他任何事情。</p>
+</div><hr></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/"><i class="fa fa-chevron-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/28/">28</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer class="footer-bg" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div class="layout" id="footer"><div class="copyright">&copy;2017 - 2020 By 木尘痕</div><div class="framework-info"><span>Driven - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="footer_custom_text">千秋竟岁，伏苦飞逐</div><div class="icp"><a><span>豫ICP备17048032号</span></a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_site_uv"><i class="fa fa-user"></i><span id="busuanzi_value_site_uv"></span><span></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i><span id="busuanzi_value_site_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.8.2"></script><script src="/js/fancybox.js?version=1.8.2"></script><script src="/js/sidebar.js?version=1.8.2"></script><script src="/js/copy.js?version=1.8.2"></script><script src="/js/fireworks.js?version=1.8.2"></script><script src="/js/transition.js?version=1.8.2"></script><script src="/js/scroll.js?version=1.8.2"></script><script src="/js/head.js?version=1.8.2"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
   $('#nav').addClass('is-mobile')
   $('footer').addClass('is-mobile')
   $('#top-container').addClass('is-mobile')
