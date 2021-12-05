@@ -1,0 +1,126 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="STL容器共通操作"><meta name="keywords" content=""><meta name="author" content="木尘痕"><meta name="copyright" content="木尘痕"><title>STL容器共通操作 | 风生之谷</title><link rel="shortcut icon" href="https://raw.githubusercontent.com/muchenhen/muchenhen.github.io/master/xuange.ico"><link rel="stylesheet" href="/css/index.css?version=1.9.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css?version=1.9.0"><meta name="format-detection" content="telephone=no"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  hexoVersion: '5.4.0'
+} </script><meta name="generator" content="Hexo 5.4.0"></head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="toggle-sidebar-info text-center"><span data-toggle="Toggle article">Toggle site</span><hr></div><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar"></div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-number">1.</span> <span class="toc-text">初始化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#swap"><span class="toc-number">2.</span> <span class="toc-text">swap()</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%A7%E5%B0%8F%E7%9B%B8%E5%85%B3%E7%9A%84%E6%93%8D%E4%BD%9C%E5%87%BD%E6%95%B0"><span class="toc-number">3.</span> <span class="toc-text">大小相关的操作函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AF%94%E8%BE%83"><span class="toc-number">4.</span> <span class="toc-text">比较</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%83%E7%B4%A0%E8%AE%BF%E9%97%AE"><span class="toc-number">5.</span> <span class="toc-text">元素访问</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E5%AE%B9%E5%99%A8%E7%B1%BB%E5%85%B1%E9%80%9A%E6%93%8D%E4%BD%9C%E8%A1%A8"><span class="toc-number">6.</span> <span class="toc-text">常见容器类共通操作表</span></a></li></ol></div></div><div class="author-info hide"><div class="author-info__avatar text-center"><img src="https://github.com/muchenhen/muchenhen.github.io/blob/master/XuanGe.jpg?raw=true"></div><div class="author-info__name text-center">木尘痕</div><div class="author-info__description text-center">放一些笔记的地方</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">172</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">17</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">31</span></a></div><hr><div class="author-info-links"><div class="author-info-links__title text-center">Links</div><a class="author-info-links__name text-center" target="_blank" rel="noopener" href="https://alec-ray.github.io/">止戈</a></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">风生之谷</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">主页</a><a class="site-page" href="/archives">全部文章</a><a class="site-page" href="/tags">标签分类</a><a class="site-page" href="/categories">文章分类</a><a class="site-page" href="/contact">联系</a></span><span class="pull-right"></span></div><div id="post-info"><div id="post-title">STL容器共通操作</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-28</time><span class="post-meta__separator">|</span><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/C/">C++</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/cpp/">cpp</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/cpp/STL/">STL</a></div></div></div><div class="layout" id="content-inner"><article id="post"><div class="article-container" id="post-content"><h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><p>每个容器都提供默认构造函数，拷贝构造函数，析构函数。</p>
+<p><strong>初值列</strong></p>
+<p>可以以一个区间或者初值列作为容器初值。</p>
+<p>比如常量容器的初始化：</p>
+<p>//用初始值初始化一个vector（c++11）<br>const vector<int> v1 = {1, 2, 3, 4 };<br>//也可用不同的语法<br>const vector<int> v2 {1, 2, 3, 4 };</p>
+<p>array&lt;&gt;容器使用初值列有特殊规则。将会在array容器中解释。</p>
+<p>以某个给定区间初始化的构造函数，参数可以是来自另一个容器、来自c风格的数组、标准输入的元素。可以是不同容器，不同元素类型，前提是来源和目标的元素类型可以自动转换</p>
+<p>//int元素的list容器<br>listl;<br>//拷贝构造给一个float的vector容器<br>vectorc(l.begin(), l.end());<br>//c++11也可以使用move迭代器来搬移所有元素<br>vectorc2(make_move_iterator(l.begin()), make_move_iterator(l.end()));<br>//用c风格数组完成初始化<br>int carray[] = { 1,2,3,4 };<br>setc3(begin(carray), end(carray));//c++11中iterator定义了begin和end两个函数<br>//以标准输入设备完成初始化动作<br>deque c5{ istream_iterator(cin),istream_iterator() };<br>//c++11中可以使用一个move构造函数将容器初始化<br>vectorv1;<br>vectorv2 = move(v1);//新建容器会有之前的值，被当作初值的容器内容会不明确<br>                         //因为move函数是调动指针，不是逐一复制元素，效率较高<br>                         //在不需要某个容器又需要复制时使用move </p>
+<h2 id="swap"><a href="#swap" class="headerlink" title="swap()"></a>swap()</h2><p>用来置换两个容器的内容，事实上知识只换了若干内部的指针，可以保证常数时间复杂度。执行之后原本存在的迭代器和引用都指向原先所指的元素，不过这些元素已经位于另一个容器中了</p>
+<p>array&lt;&gt;容器的该函数行为略有不同。因为此容器无法只在内部置换指针，所以array&lt;&gt;的swap()是线性时间复杂度，而且操作之后原本存在的迭代器和引用指向同一容器中的不同元素。</p>
+<h2 id="大小相关的操作函数"><a href="#大小相关的操作函数" class="headerlink" title="大小相关的操作函数"></a>大小相关的操作函数</h2><p>所有容器都提供三个与大小相关的操作函数</p>
+<p>**empty()**：是size()==0同义快速形式，一般比后者效率高。</p>
+<p>**size()**：返回当前容器的元素个数。</p>
+<p>**max_size()**：返回容器所能容纳的元素个数的最大值。</p>
+<h2 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h2><p>除了无序容器之外，常用的比较操作符==,!=,&lt;,&lt;=,&gt;,&gt;=都依据以下三个规则定义：</p>
+<p>比较的两个容器必须属于同一类型</p>
+<p>如果两个容器的元素全部依序相等，则这两个容器相等</p>
+<p>无序容器只定义了==,!=</p>
+<p>两个容器内的每一个元素都在另一个容器有相等元素，==就返回true，元素次序无关紧要。</p>
+<p>如果要比较两个容器，必须使用STL比较算法</p>
+<h2 id="元素访问"><a href="#元素访问" class="headerlink" title="元素访问"></a>元素访问</h2><p>所有容器都支持基于范围的for循环</p>
+<p>c++11中常用的容器访问操作</p>
+<pre><code>//定义一个vector容器
+vectornums = &#123; 1,2,3,4,5,6 &#125;;
+//访问每个元素并输出
+for (const auto&amp; elem : nums)
+&#123;
+    cout &lt;&lt; elem &lt;&lt; &quot; &quot;;
+&#125;
+//如果要改变元素就不写const
+for (auto&amp; elem : nums)
+&#123;
+    elem = 0;
+&#125;
+//对指定位置进行插入删除等操作,可以使用cbegin()和cend()产生的只读迭代器
+for (auto pos = nums.cbegin(); pos != nums.cend(); ++pos)
+&#123;
+    cout &lt;&lt; \*pos &lt;&lt; endl;
+&#125;
+//使用begin()和end()产生的迭代器进行修改
+for (auto pos = nums.begin(); pos != nums.end(); pos++)
+&#123;
+    \*pos = 0;
+&#125; 
+</code></pre>
+<h2 id="常见容器类共通操作表"><a href="#常见容器类共通操作表" class="headerlink" title="常见容器类共通操作表"></a>常见容器类共通操作表</h2><p>操作</p>
+<p>必要</p>
+<p>效果</p>
+<p>ContType c</p>
+<p>1</p>
+<p>默认构造函数,建立一个空容器，array会有默认元素</p>
+<p>ContType c(c2)</p>
+<p>1</p>
+<p>拷贝构造</p>
+<p>ContTypr c = c2</p>
+<p>1</p>
+<p>拷贝构造</p>
+<p>ContType c(begin,end)</p>
+<p> </p>
+<p>以区间内所有元素拷贝</p>
+<p>ContType c(initlist)</p>
+<p> </p>
+<p>以初值列为初值，不适用于array，c++11</p>
+<p>ContType c = initlist</p>
+<p> </p>
+<p>同上，但适用于array</p>
+<p>c.~ContType()</p>
+<p>1</p>
+<p>删除所有元素并释放内存</p>
+<p>c.empty()</p>
+<p>1</p>
+<p>判断容器是否为空</p>
+<p>c.size()</p>
+<p>1</p>
+<p>返回容器中元素数量</p>
+<p>c.max_size()</p>
+<p>1</p>
+<p>返回元素数量可能的最大值</p>
+<p>c1 == c2</p>
+<p>1</p>
+<p>判断两个容器是否相等</p>
+<p>c1 != c2</p>
+<p>1</p>
+<p>判断是否不等</p>
+<p>&gt;,&lt;,&gt;=,&lt;=</p>
+<p> </p>
+<p>不适用于无序容器</p>
+<p>c = c2</p>
+<p>1</p>
+<p>c2所有元素值赋给c</p>
+<p>c1.swap(c2)</p>
+<p>1</p>
+<p>置换c1和c2的数据</p>
+<p>swap(c1,c2)</p>
+<p>1</p>
+<p>同上，但是个全局函数</p>
+<p>c.begin()</p>
+<p>1</p>
+<p>返回指向第一个元素的迭代器</p>
+<p>c.end()</p>
+<p>1</p>
+<p>返回指向最后一个元素的下一个位置的迭代器</p>
+<p>c.cbegin()</p>
+<p>1</p>
+<p>返回一个const迭代器，指向第一个元素，c++11</p>
+<p>c.cend()</p>
+<p>1</p>
+<p>返回一个const迭代器，指向最后一个元素的下一个位置，c++11</p>
+<p>c.clear()</p>
+<p> </p>
+<p>移除所有元素，令容器为空，不适用于array</p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">木尘痕</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://muchenhen.com/2019/10/28/stl容器共通操作/">http://muchenhen.com/2019/10/28/stl容器共通操作/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-meta__tag-list"></div><nav id="pagination"><div class="prev-post pull-left"><a href="/2019/10/28/latex%E6%B5%8B%E8%AF%95/"><i class="fa fa-chevron-left">  </i><span>Latex测试</span></a></div><div class="next-post pull-right"><a href="/2019/10/27/stl%EF%BC%9Avector%E5%AE%B9%E5%99%A8/"><span>STL：vector容器</span><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer class="footer-bg" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div class="layout" id="footer"><div class="copyright">&copy;2016 - 2021 By 木尘痕</div><div class="framework-info"><span>Driven - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="footer_custom_text">天道作何，吞恨者多 <a target="_blank" rel="noopener" href="https://beian.miit.gov.cn">豫ICP备17048032号-1</a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.9.0"></script><script src="/js/fancybox.js?version=1.9.0"></script><script src="/js/sidebar.js?version=1.9.0"></script><script src="/js/copy.js?version=1.9.0"></script><script src="/js/fireworks.js?version=1.9.0"></script><script src="/js/transition.js?version=1.9.0"></script><script src="/js/scroll.js?version=1.9.0"></script><script src="/js/head.js?version=1.9.0"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+  $('#nav').addClass('is-mobile')
+  $('footer').addClass('is-mobile')
+  $('#top-container').addClass('is-mobile')
+}</script></body></html>

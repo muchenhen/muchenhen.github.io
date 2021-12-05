@@ -1,0 +1,777 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="放一些笔记的地方"><meta name="keywords" content=""><meta name="author" content="木尘痕"><meta name="copyright" content="木尘痕"><title>一点浩然气 千里快哉风 | 风生之谷</title><link rel="shortcut icon" href="https://raw.githubusercontent.com/muchenhen/muchenhen.github.io/master/xuange.ico"><link rel="stylesheet" href="/css/index.css?version=1.9.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css?version=1.9.0"><meta name="format-detection" content="telephone=no"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  hexoVersion: '5.4.0'
+} </script><meta name="generator" content="Hexo 5.4.0"></head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="false"><div class="author-info"><div class="author-info__avatar text-center"><img src="https://github.com/muchenhen/muchenhen.github.io/blob/master/XuanGe.jpg?raw=true"></div><div class="author-info__name text-center">木尘痕</div><div class="author-info__description text-center">放一些笔记的地方</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">172</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">17</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">31</span></a></div><hr><div class="author-info-links"><div class="author-info-links__title text-center">Links</div><a class="author-info-links__name text-center" target="_blank" rel="noopener" href="https://alec-ray.github.io/">止戈</a></div></div></div><nav id="nav" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">风生之谷</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">主页</a><a class="site-page" href="/archives">全部文章</a><a class="site-page" href="/tags">标签分类</a><a class="site-page" href="/categories">文章分类</a><a class="site-page" href="/contact">联系</a></span><span class="pull-right"></span></div><div id="site-info"><div id="site-title">风生之谷</div><div id="site-sub-title">一点浩然气 千里快哉风</div></div></nav><div id="content-outer"><div class="layout" id="content-inner"><div class="recent-post-item article-container"><a class="article-title" href="/2019/03/12/opengl%E7%BB%98%E5%88%B6%E9%9A%8F%E6%97%B6%E9%97%B4%E5%8F%98%E6%8D%A2%E9%A2%9C%E8%89%B2%E7%9A%84%E4%B8%89%E8%A7%92%E5%BD%A2/">OpenGL绘制随时间变换颜色的三角形</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-03-12</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/OpenGL/">OpenGL</a></span><div class="content"><p>主要知识点是uniform全局声明，uniform可以随时更新任意着色器中的对应的变量的值，只要使用函数glUniform+后缀，在主函数中进行赋值。</p>
+<p>源码以及详细的注释：</p>
+<p>#include #include #include #include void framebuffer_size_callback(GLFWwindow* window, int width, int height);<br>void processInput(GLFWwindow *window);</p>
+<p>// 设置窗口<br>const unsigned int SCR_WIDTH = 800;<br>const unsigned int SCR_HEIGHT = 600;</p>
+<p>const char *vertexShaderSource = “#version 460 core\n”<br>“layout (location = 0) in vec3 aPos;\n”<br>“void main()\n”<br>“{\n”<br>“   gl_Position = vec4(aPos, 1.0);\n”<br>“}\0”;</p>
+<p>const char *fragmentShaderSource = “#version 460 core\n”<br>“out vec4 FragColor;\n”<br>“uniform vec4 ourColor;\n” // 着色器中的uniform是全局的，可以在主函数中设置方法来更新该值，随时传递进着色器<br>“void main()\n”<br>“{\n”<br>“   FragColor = ourColor;\n”<br>“}\n\0”;</p>
+<p>int main()<br>{<br>    glfwInit();<br>    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);<br>    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);<br>    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);</p>
+<pre><code>//创建窗口
+GLFWwindow\* window = glfwCreateWindow(800, 600, &quot;变换颜色的三角形&quot;, NULL, NULL);
+if (window == NULL)
+&#123;
+    std::cout &lt;&lt; &quot;Failed to create GLFW window&quot; &lt;&lt; std::endl;
+    glfwTerminate();
+    return -1;
+&#125;
+glfwMakeContextCurrent(window);
+glfwSetFramebufferSizeCallback(window, framebuffer\_size\_callback);
+
+// 加载glad
+if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+&#123;
+    std::cout &lt;&lt; &quot;Failed to initialize GLAD&quot; &lt;&lt; std::endl;
+    return -1;
+&#125;
+
+// 创建并编译着色器程序
+// 顶点着色器
+int vertexShader = glCreateShader(GL\_VERTEX\_SHADER);
+glShaderSource(vertexShader, 1, &amp;vertexShaderSource, NULL);
+glCompileShader(vertexShader);
+// 检查着色器编译错误
+int success;
+char infoLog\[512\];
+glGetShaderiv(vertexShader, GL\_COMPILE\_STATUS, &amp;success);
+if (!success)
+&#123;
+    glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+    std::cout &lt;&lt; &quot;ERROR::SHADER::VERTEX::COMPILATION\_FAILED\\n&quot; &lt;&lt; infoLog &lt;&lt; std::endl;
+&#125;
+// 片段着色器
+int fragmentShader = glCreateShader(GL\_FRAGMENT\_SHADER);
+glShaderSource(fragmentShader, 1, &amp;fragmentShaderSource, NULL);
+glCompileShader(fragmentShader);
+// 检查着色器编译错误
+glGetShaderiv(fragmentShader, GL\_COMPILE\_STATUS, &amp;success);
+if (!success)
+&#123;
+    glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+    std::cout &lt;&lt; &quot;ERROR::SHADER::FRAGMENT::COMPILATION\_FAILED\\n&quot; &lt;&lt; infoLog &lt;&lt; std::endl;
+&#125;
+// 连接着色器
+int shaderProgram = glCreateProgram();
+glAttachShader(shaderProgram, vertexShader);
+glAttachShader(shaderProgram, fragmentShader);
+glLinkProgram(shaderProgram);
+// 检查连接错误
+glGetProgramiv(shaderProgram, GL\_LINK\_STATUS, &amp;success);
+if (!success) &#123;
+    glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+    std::cout &lt;&lt; &quot;ERROR::SHADER::PROGRAM::LINKING\_FAILED\\n&quot; &lt;&lt; infoLog &lt;&lt; std::endl;
+&#125;
+glDeleteShader(vertexShader);
+glDeleteShader(fragmentShader);
+
+// 设置顶点数据和缓存 配置顶点属性
+float vertices\[\] = &#123;
+     0.5f, -0.5f, 0.0f,  // 右顶点
+    -0.5f, -0.5f, 0.0f,  // 左顶点
+     0.0f,  0.5f, 0.0f   // 上顶点 
+&#125;;
+
+unsigned int VBO, VAO;
+glGenVertexArrays(1, &amp;VAO);
+glGenBuffers(1, &amp;VBO);
+// 绑定顶点数组对象, 绑定并设置缓存, 配置顶点属性
+glBindVertexArray(VAO);
+
+glBindBuffer(GL\_ARRAY\_BUFFER, VBO);
+glBufferData(GL\_ARRAY\_BUFFER, sizeof(vertices), vertices, GL\_STATIC\_DRAW);
+
+glVertexAttribPointer(0, 3, GL\_FLOAT, GL\_FALSE, 3 \* sizeof(float), (void\*)0);
+glEnableVertexAttribArray(0);
+
+// 绑定VAO
+glBindVertexArray(VAO);
+
+
+// 渲染循环
+while (!glfwWindowShouldClose(window))
+&#123;
+    // 输入
+    processInput(window);
+
+    // 渲染
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClear(GL\_COLOR\_BUFFER\_BIT);
+
+    // 激活渲染程序
+    glUseProgram(shaderProgram);
+
+    // 更新着色器 uniform
+    //132与133通过获得时间作为自变量，使用sin函数生成变化的因变量，将这个变量值赋给greenValue
+    float timeValue = glfwGetTime();
+    float greenValue = sin(timeValue) / 2.0f + 0.5f;
+    //下面这一行的函数通过着色器中的shader的名字获得Location，将位置付给变量vertexColorLaction
+    int vertexColorLocation = glGetUniformLocation(shaderProgram, &quot;ourColor&quot;);
+    //通过查询到的着色器地址，指定要修改该位置的四个变量值
+    //五个参数分别是地址和四个float型，在着色器中定义的全局uniform ourcolor变量就是四个float型
+    //RGBA的数值，其中G值来自于上面设定的greenValue，随时间变化
+    glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+    //该函数修改了着色器中的uniform值
+
+    // 绘制三角形
+    glDrawArrays(GL\_TRIANGLES, 0, 3);
+
+    glfwSwapBuffers(window);
+    glfwPollEvents();
+&#125;
+
+glDeleteVertexArrays(1, &amp;VAO);
+glDeleteBuffers(1, &amp;VBO);
+
+glfwTerminate();
+return 0;
+</code></pre>
+<p>}</p>
+<p>void processInput(GLFWwindow *window)<br>{<br>    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)<br>        glfwSetWindowShouldClose(window, true);<br>}</p>
+<p>void framebuffer_size_callback(GLFWwindow* window, int width, int height)<br>{<br>    glViewport(0, 0, width, height);<br>}</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/03/12/opengl%E7%9D%80%E8%89%B2%E5%99%A8/">OpenGL着色器</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-03-12</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/OpenGL/">OpenGL</a></span><div class="content"><p>【总结】 来自learnopengl 着色器 [caption id=”attachment_1111” align=”aligncenter” width=”1919”]<a target="_blank" rel="noopener" href="http://www.muchenhen.com/wp-content/uploads/2019/03/%E7%9D%80%E8%89%B2%E5%99%A8.png"><img src="http://www.muchenhen.com/wp-content/uploads/2019/03/%E7%9D%80%E8%89%B2%E5%99%A8.png"></a> 点击查看原图[/caption] Outline： </p>
+<ul>
+<li>数据类型<ul>
+<li>向量<ul>
+<li>  vecn n个float分量的默认向量</li>
+<li>  bvecn n个bool分量的向量</li>
+<li>  ivecn n个int分量的向量</li>
+<li>  uvecn n个unsigned int分量的向量</li>
+<li>  dvecn n个double分量的向量</li>
+<li>  向量的重组 Swizzling</li>
+</ul>
+</li>
+<li>  矩阵</li>
+</ul>
+</li>
+<li>输入和输出<ul>
+<li>关键字<ul>
+<li>  in</li>
+<li>  out</li>
+<li>  layout标识</li>
+<li>  location</li>
+</ul>
+</li>
+<li>顶点输入<ul>
+<li>  标准化设备坐标</li>
+<li>  顶点缓冲对象 VBO</li>
+<li>  顶点数组对象 VAO</li>
+<li>  索引缓冲对象 EBO</li>
+</ul>
+</li>
+<li>绘制模式<ul>
+<li>  FILL</li>
+<li>  LINE</li>
+<li>  POINT</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>uniform 全局变量关键字<ul>
+<li>  后缀f</li>
+<li>  后缀i</li>
+<li>  后缀ui</li>
+<li>  后缀3f</li>
+<li>  后缀fv</li>
+</ul>
+</li>
+<li>构建着色器类<ul>
+<li>  程序ID</li>
+<li>  构造函数</li>
+<li>  激活程序</li>
+<li>  工具函数</li>
+<li>  从文件读取</li>
+</ul>
+</li>
+</ul>
+<p>【典型着色器结构】</p>
+<p>#version version_number<br>in type in_variable_name;<br>in type in_variable_name;<br>out type out_variable_name;<br>uniform type uniform_name;<br>int main() {<br>// 处理输入并进行一些图形操作<br>// 输出处理过的结果到输出变量<br> out_variable_name = weird_stuff_we_processed; }</p>
+<p>输入变量叫做顶点属性Vertex Attribute，可以声明的顶点属性上限由硬件决定，OpenGL确保至少会有16个包含4分量顶点属性可用。 【输入与输出】 in和out关键字设定输入和输出，进行数据和传递。输出变量与输入变量匹配时，就可以将数据传递下去。顶点着色器有特殊的输入，需要直接从顶点数据中接受输入，layout指定输入变量。片段着色器的特殊输出，需要一个vec4的颜色输出，才能最终输出一个颜色。 【uniform】 uniform是全局的，在每个着色器程序中必须是唯一的，可以被任意着色器在任意阶段访问。uniform会一直保存它的数据。如果声明了一个uniform但没有使用，编译的时候会被自动移出掉。应用实例可以在颜色逐渐变化的三角形中查看。</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/03/11/opengl%E8%B6%85%E7%AE%80%E6%B4%81%E7%9A%84%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">OpenGL超简洁的环境配置</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-03-11</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/OpenGL/">OpenGL</a></span><span class="article-meta tags"><span class="article-meta__separator">|</span><i class="fa fa-tag article-meta__icon" aria-hidden="true"></i><a class="article-meta__tags" href="/tags/OpenGL/">OpenGL</a><span class="article-meta__link">-</span><i class="fa fa-tag article-meta__icon" aria-hidden="true"></i><a class="article-meta__tags" href="/tags/vs2017/">vs2017</a></span><div class="content"><p>【总结】 来自learnopengl 请现在一个方便的位置创建一个文件夹，比如我创建了一个名叫LearnOpenGL的文件夹，并在其中创建include和libs子文件夹 <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/031119_1059_OpenGL1.png"> **GLFW ** <a target="_blank" rel="noopener" href="https://www.glfw.org/download.html">https://www.glfw.org/download.html</a> 前往这个页面看到如图： <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/031119_1059_OpenGL2.png"> 不想自己编译的话请下载 32-bit Windows binaries 据说64位版本经常有奇怪的错误 下载并解压 <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/031119_1059_OpenGL3.png"> 将此文件夹中的GLFW文件夹复制到我们自己创建的include中 <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/031119_1059_OpenGL4.png"> 将该文件夹中的两个lib文件复制到我们创建的libs中 dll文件复制到C:\Windows\System32\glfw3.dll **GLAD ** 该库用来简化运行时获取函数地址并将其保存在一个函数指针的功能的代码 前往： <a target="_blank" rel="noopener" href="https://glad.dav1d.de/">https://glad.dav1d.de/</a> 如图改变选项 <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/031119_1059_OpenGL5.png"> 最后点击GENERATE 下载并解压后： <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/031119_1059_OpenGL6.png"> 将include中的文件都复制到我们创建的include中 Src中的glad.c放在LearnOpenGL中，因为需要经常使用 <strong>stb_image.h</strong> 是Sean Barrett的一个非常流行的单头文件图像加载库，它能够加载大部分流行的文件格式，并且能够很简单得整合到你的工程之中。 下载地址：<a target="_blank" rel="noopener" href="https://github.com/nothings/stb/blob/master/stb_image.h">https://github.com/nothings/stb/blob/master/stb_image.h</a> 放在include中 <strong>GLM</strong> 专门为OpenGL量身定做的数学库 <a target="_blank" rel="noopener" href="https://glm.g-truc.net/0.9.8/index.html">https://glm.g-truc.net/0.9.8/index.html</a> 下载完后放到include中 然后打开VS新建一个空项目 打开属性管理器 打开Microsoft.Cpp.Win32.user <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/031119_1059_OpenGL7.png"> 在包含目录中添加include路径 在库目录添加libs路径 然后如图 <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/031119_1059_OpenGL8.png"> 连接器-输入-附加依赖项输入如图 完成配置，使用如下代码测试： 记得将glad.c添加到项目中（添加文件-现有项）</p>
+<p>#include<br>#include </p>
+<p>#include </p>
+<p>void framebuffer_size_callback(GLFWwindow* window, int width, int height);<br>void processInput(GLFWwindow *window);</p>
+<p>const unsigned int SCR_WIDTH = 800;<br>const unsigned int SCR_HEIGHT = 600;</p>
+<p>/* 顶点着色器中定义的两个in关键字的3维向量<br>layout标记的0位置的作为顶点参数<br>           1位置的aColor作为颜色参数<br>    定义out ourColor为输出到片段着色器的颜色，在main中将aColor的值赋给ourColor<br>*/<br>const char *vertexShaderSource = “#version 460 core\n”<br>“layout (location = 0) in vec3 aPos;\n”<br>“layout (location = 1) in vec3 aColor;\n”<br>“out vec3 ourColor;\n”<br>“void main()\n”<br>“{\n”<br>“   gl_Position = vec4(aPos, 1.0);\n”<br>“   ourColor = aColor;\n”<br>“}\0”;</p>
+<p>//in ourColor为输入的颜色参数，由顶点着色器中输出<br>const char *fragmentShaderSource = “#version 460 core\n”<br>“out vec4 FragColor;\n”<br>“in vec3 ourColor;\n”<br>“void main()\n”<br>“{\n”<br>“   FragColor = vec4(ourColor, 1.0f);\n”<br>“}\n\0”;</p>
+<p>int main()<br>{<br>    glfwInit();<br>    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);<br>    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);<br>    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);</p>
+<pre><code>GLFWwindow\* window = glfwCreateWindow(SCR\_WIDTH, SCR\_HEIGHT, &quot;顶点颜色复制的三角形&quot;, NULL, NULL);
+if (window == NULL)
+&#123;
+    std::cout &lt;&lt; &quot;Failed to create GLFW window&quot; &lt;&lt; std::endl;
+    glfwTerminate();
+    return -1;
+&#125;
+glfwMakeContextCurrent(window);
+glfwSetFramebufferSizeCallback(window, framebuffer\_size\_callback);
+
+if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+&#123;
+    std::cout &lt;&lt; &quot;Failed to initialize GLAD&quot; &lt;&lt; std::endl;
+    return -1;
+&#125;
+
+// 编译着色器
+// 顶点着色器
+int vertexShader = glCreateShader(GL\_VERTEX\_SHADER);
+glShaderSource(vertexShader, 1, &amp;vertexShaderSource, NULL);
+glCompileShader(vertexShader);
+
+int success;
+char infoLog\[512\];
+glGetShaderiv(vertexShader, GL\_COMPILE\_STATUS, &amp;success);
+if (!success)
+&#123;
+    glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+    std::cout &lt;&lt; &quot;ERROR::SHADER::VERTEX::COMPILATION\_FAILED\\n&quot; &lt;&lt; infoLog &lt;&lt; std::endl;
+&#125;
+// 片段着色器
+int fragmentShader = glCreateShader(GL\_FRAGMENT\_SHADER);
+glShaderSource(fragmentShader, 1, &amp;fragmentShaderSource, NULL);
+glCompileShader(fragmentShader);
+
+glGetShaderiv(fragmentShader, GL\_COMPILE\_STATUS, &amp;success);
+if (!success)
+&#123;
+    glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+    std::cout &lt;&lt; &quot;ERROR::SHADER::FRAGMENT::COMPILATION\_FAILED\\n&quot; &lt;&lt; infoLog &lt;&lt; std::endl;
+&#125;
+// 连接着色器
+int shaderProgram = glCreateProgram();
+glAttachShader(shaderProgram, vertexShader);
+glAttachShader(shaderProgram, fragmentShader);
+glLinkProgram(shaderProgram);
+
+glGetProgramiv(shaderProgram, GL\_LINK\_STATUS, &amp;success);
+if (!success) &#123;
+    glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+    std::cout &lt;&lt; &quot;ERROR::SHADER::PROGRAM::LINKING\_FAILED\\n&quot; &lt;&lt; infoLog &lt;&lt; std::endl;
+&#125;
+glDeleteShader(vertexShader);
+glDeleteShader(fragmentShader);
+
+// 设置顶点数据和缓存 配置顶点属性
+// ------------------------------------------------------------------
+float vertices\[\] = &#123;
+    // 每六个参数为一个点 每个点的前3个参数为位置，后3个为颜色
+     0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  // 右
+    -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // 左
+     0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f   // 上
+
+&#125;;
+
+unsigned int VBO, VAO;
+glGenVertexArrays(1, &amp;VAO);
+glGenBuffers(1, &amp;VBO);
+
+glBindVertexArray(VAO);
+
+glBindBuffer(GL\_ARRAY\_BUFFER, VBO);
+glBufferData(GL\_ARRAY\_BUFFER, sizeof(vertices), vertices, GL\_STATIC\_DRAW);
+
+//定义顶点属性数组，这个三角形的顶点数组紧密排列，六个为一个顶点，第4个参数步长为6个float
+glVertexAttribPointer(0, 3, GL\_FLOAT, GL\_FALSE, 6 \* sizeof(float), (void\*)0);
+glEnableVertexAttribArray(0);
+//最后一个参数为偏移量，颜色值从第四个开始，偏移量为3个float
+glVertexAttribPointer(1, 3, GL\_FLOAT, GL\_FALSE, 6 \* sizeof(float), (void\*)(3 \* sizeof(float)));
+glEnableVertexAttribArray(1);
+
+glUseProgram(shaderProgram);
+
+// 渲染循环
+while (!glfwWindowShouldClose(window))
+&#123;
+    processInput(window);
+
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClear(GL\_COLOR\_BUFFER\_BIT);
+
+    //画三角形
+    glBindVertexArray(VAO);
+    glDrawArrays(GL\_TRIANGLES, 0, 3);
+
+    glfwSwapBuffers(window);
+    glfwPollEvents();
+&#125;
+
+glDeleteVertexArrays(1, &amp;VAO);
+glDeleteBuffers(1, &amp;VBO);
+
+glfwTerminate();
+return 0;
+</code></pre>
+<p>}</p>
+<p>void processInput(GLFWwindow *window)<br>{<br>    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)<br>        glfwSetWindowShouldClose(window, true);<br>}</p>
+<p>void framebuffer_size_callback(GLFWwindow* window, int width, int height)<br>{<br>    glViewport(0, 0, width, height);<br>}</p>
+<p>成功的话会如图： <img src="https://www.muchenhen.com/wp-content/uploads/2019/03/031119_1059_OpenGL9.png"></p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/03/01/%E7%94%A8opengl%E7%BB%98%E5%88%B6%E4%B8%A4%E4%B8%AA%E7%9B%B8%E8%BF%9E%E4%B8%89%E8%A7%92%E5%BD%A2/">用OpenGL绘制两个相连三角形</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-03-01</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/OpenGL/">OpenGL</a></span><div class="content"><p><img src="https://www.muchenhen.com/wp-content/uploads/2019/03/QQ%E6%88%AA%E5%9B%BE20190301165057.png"></p>
+<p>源码：</p>
+<p>#include #include #include void framebuffer_size_callback(GLFWwindow* window, int width, int height);<br>void processInput(GLFWwindow *window);</p>
+<p>// 设置窗口大小<br>const unsigned int SCR_WIDTH = 800;<br>const unsigned int SCR_HEIGHT = 600;</p>
+<p>//编写顶点着色器<br>const char *vertexShaderSource = “#version 460 core\n”<br>“layout (location = 0) in vec3 aPos;\n”<br>“void main()\n”<br>“{\n”<br>“   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n”<br>“}\0”;</p>
+<p>//编写片段着色器<br>const char *fragmentShaderSource = “#version 460 core\n”<br>“out vec4 FragColor;\n”<br>“void main()\n”<br>“{\n”<br>“   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n”<br>“}\n\0”;</p>
+<p>int main()<br>{<br>    glfwInit();<br>    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);<br>    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);<br>    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);</p>
+<pre><code>//创建窗口
+GLFWwindow\* window = glfwCreateWindow(SCR\_WIDTH, SCR\_HEIGHT, &quot;相连的三角行&quot;, NULL, NULL);
+//检查窗口创建
+if (window == NULL)
+&#123;
+    std::cout &lt;&lt; &quot;Failed to create GLFW window&quot; &lt;&lt; std::endl;
+    glfwTerminate();
+    return -1;
+&#125;
+glfwMakeContextCurrent(window);
+glfwSetFramebufferSizeCallback(window, framebuffer\_size\_callback);
+
+if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+&#123;
+    std::cout &lt;&lt; &quot;Failed to initialize GLAD&quot; &lt;&lt; std::endl;
+    return -1;
+&#125;
+
+// 创建并编译着色器
+// 顶点着色器
+int vertexShader = glCreateShader(GL\_VERTEX\_SHADER);
+glShaderSource(vertexShader, 1, &amp;vertexShaderSource, NULL);
+glCompileShader(vertexShader);
+// 检查编译错误
+int success;
+char infoLog\[512\];
+glGetShaderiv(vertexShader, GL\_COMPILE\_STATUS, &amp;success);
+if (!success)
+&#123;
+    glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+    std::cout &lt;&lt; &quot;ERROR::SHADER::VERTEX::COMPILATION\_FAILED\\n&quot; &lt;&lt; infoLog &lt;&lt; std::endl;
+&#125;
+// 片段着色器
+int fragmentShader = glCreateShader(GL\_FRAGMENT\_SHADER);
+glShaderSource(fragmentShader, 1, &amp;fragmentShaderSource, NULL);
+glCompileShader(fragmentShader);
+//检查编译错误
+glGetShaderiv(fragmentShader, GL\_COMPILE\_STATUS, &amp;success);
+if (!success)
+&#123;
+    glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+    std::cout &lt;&lt; &quot;ERROR::SHADER::FRAGMENT::COMPILATION\_FAILED\\n&quot; &lt;&lt; infoLog &lt;&lt; std::endl;
+&#125;
+//链接着色器
+int shaderProgram = glCreateProgram();
+glAttachShader(shaderProgram, vertexShader);
+glAttachShader(shaderProgram, fragmentShader);
+glLinkProgram(shaderProgram);
+//检查连接错误
+glGetProgramiv(shaderProgram, GL\_LINK\_STATUS, &amp;success);
+if (!success) &#123;
+    glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+    std::cout &lt;&lt; &quot;ERROR::SHADER::PROGRAM::LINKING\_FAILED\\n&quot; &lt;&lt; infoLog &lt;&lt; std::endl;
+&#125;
+glDeleteShader(vertexShader);
+glDeleteShader(fragmentShader);
+
+// 设置顶点数据和缓存，配置顶点属性
+// 添加一个新的顶点数组，形成两个三角形，共6个顶点
+float vertices\[\] = &#123;
+    //第一个三角形
+    -0.9f, -0.5f, 0.0f,  // left 
+    -0.0f, -0.5f, 0.0f,  // right
+    -0.45f, 0.5f, 0.0f,  // top 
+    //第二个三角形
+     0.0f, -0.5f, 0.0f,  // left
+     0.9f, -0.5f, 0.0f,  // right
+     0.45f, 0.5f, 0.0f   // top 
+&#125;;
+
+unsigned int VBO, VAO;
+glGenVertexArrays(1, &amp;VAO);
+glGenBuffers(1, &amp;VBO);
+//绑定顶点数组对象
+glBindVertexArray(VAO);
+//绑定并设置顶点缓存
+glBindBuffer(GL\_ARRAY\_BUFFER, VBO);
+glBufferData(GL\_ARRAY\_BUFFER, sizeof(vertices), vertices, GL\_STATIC\_DRAW);
+//配置顶点属性
+glVertexAttribPointer(0, 3, GL\_FLOAT, GL\_FALSE, 3 \* sizeof(float), (void\*)0);
+glEnableVertexAttribArray(0);
+
+glBindBuffer(GL\_ARRAY\_BUFFER, 0);
+
+glBindVertexArray(0);
+
+//渲染循环
+while (!glfwWindowShouldClose(window))
+&#123;
+    //输入
+    processInput(window);
+
+    //渲染
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClear(GL\_COLOR\_BUFFER\_BIT);
+
+    //画图
+    glUseProgram(shaderProgram);
+    glBindVertexArray(VAO);
+    glDrawArrays(GL\_TRIANGLES, 0, 6); //两个三角形共六个顶点
+
+    //交换缓冲区
+    glfwSwapBuffers(window);
+    glfwPollEvents();
+&#125;
+
+//取消用过的资源的分配
+glDeleteVertexArrays(1, &amp;VAO);
+glDeleteBuffers(1, &amp;VBO);
+
+// glfw终止，清除所有分配的资源
+glfwTerminate();
+return 0;
+</code></pre>
+<p>}</p>
+<p>//检测并响应按键输入<br>void processInput(GLFWwindow *window)<br>{<br>    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)<br>        glfwSetWindowShouldClose(window, true);<br>}</p>
+<p>//改变窗口大小时调用<br>void framebuffer_size_callback(GLFWwindow* window, int width, int height)<br>{<br>    glViewport(0, 0, width, height);<br>}</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/03/01/opengl%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF%E6%A6%82%E8%A6%81/">OpenGL渲染管线概要</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-03-01</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/OpenGL/">OpenGL</a></span><div class="content"><p><a target="_blank" rel="noopener" href="http://www.muchenhen.com/wp-content/uploads/2019/03/%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF%E6%A6%82%E8%A6%81.png"><img src="http://www.muchenhen.com/wp-content/uploads/2019/03/%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF%E6%A6%82%E8%A6%81.png"></a>渲染管线概要 </p>
+<ul>
+<li>顶点数据 Vertex Data 一系列顶点的集合<ul>
+<li>  顶点 Vertex 一个3D坐标的数据的集合</li>
+<li>  顶点属性 Vertex Atrribute 用来表示顶点数据，例如一个3D位置和一些颜色值</li>
+</ul>
+</li>
+<li>顶点输入<ul>
+<li>  数组 保存每一个顶点的3D位置</li>
+<li>  标准化设备坐标 Normalized Device Coordinates 3个轴为-1.0到1.0，坐标值必须在此范围之内</li>
+<li>  顶点着色器 在GPU上创建内存储存顶点数据，解释这些内存并指定如何发送给显卡，接着会处理在内存中指定数量的顶点。</li>
+<li>顶点缓冲对象 Vertex Buffer Objects 管理VS创建的内存，在显存中储存大量顶点。<ul>
+<li>  glGenBuffers函数 使用glGenBuffers函数和一个缓冲ID生成一个VBO对象： unsigned int VBO; glGenBuffers(1, &amp;VBO);</li>
+<li>  顶点缓冲类型 GL_ARRAY_BUFFER</li>
+<li>  glBindBuffer函数 绑定不同类型的缓冲，把新创建的缓冲绑定到GL_ARRAY_BUFFER目标上 glBindBuffer(GL_ARRAY_BUFFER, VBO); ​</li>
+<li>glBufferData函数 把之前定义的顶点数据复制到缓冲的内存中： glBufferData(GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW);<ul>
+<li>  目标的缓冲类型</li>
+<li>  指定传输数据大小，单位为字节</li>
+<li>  希望发送的实际数据</li>
+<li>指定显卡如何管理给定数据<ul>
+<li>  GL_STATIC_DRAW 数据不会或几乎不会改变</li>
+<li>  GL_DYNAMIC_DRAW 数据会被改变很多</li>
+<li>  GL_STREAM_DRAW 数据每次绘制时都会改变</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>图元 Primitive 指定数据所表示的渲染类型<ul>
+<li>  GL_POINTS 一系列点</li>
+<li>  GL_TRIANGLES 一系列三角形</li>
+<li>  GL_LINE_STRIP 一系列连续直线</li>
+<li>  GL_LINES 每一对顶点被解释为一条直线</li>
+</ul>
+</li>
+<li>渲染管线 Graphics Pipeline<ul>
+<li>顶点着色器 Vertex Shader 把3D坐标转为另一种3D坐标 允许对顶点属性进行一些基本处理​<ul>
+<li>  编写</li>
+<li>编译<ul>
+<li>  glCreateShader函数 创建着色器，将着色器类型以参数形式传给函数</li>
+<li>glShaderSource函数<ul>
+<li>  要编译的着色器对象</li>
+<li>  指定传递的源码字符串数量</li>
+<li>  顶点着色器的真正的源码</li>
+<li>  NULL</li>
+</ul>
+</li>
+<li>  glCompileShader函数</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>  图元装配 Primitive Assembly 将所有点装配成指定图元</li>
+<li>  几何着色器 Geometry Shader 输入：图元形式的一系列顶点集合 输出：通过产生新顶点构造出新的或是其他的图元生成其他形状​</li>
+<li>  光栅化 Rasterization Stage 将图元映射为屏幕上的像素，生成片段</li>
+<li>  裁切 Clipping 丢弃视图之外的像素</li>
+<li>片段着色器 Fragment Shader 计算一个像素的最终颜色，通常包含3D场景的数据，如光照、阴影、光的颜色<ul>
+<li>  片段 Fragment 光栅化生成</li>
+<li>  输出变量 输出一个四分量向量，表示颜色的RGBA值</li>
+<li>编译<ul>
+<li>  glCreatShader</li>
+<li>  glShaderSource</li>
+<li>  glCompileShader</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>  Alpha测试与混合 Blending 深度值判断消隐，并根据透明度进行混合​</li>
+</ul>
+</li>
+<li>着色器程序 着色器程序对象Shader Program Object是多个着色器合并之后并最终链接完成的版本<ul>
+<li>创建一个程序对象 unsigned int shaderProgram;​<ul>
+<li>  glCreateProgram函数 创建一个程序并返回新创建程序对象的ID引用</li>
+<li>glAttachShader函数<ul>
+<li>  程序对象</li>
+<li>  着色器对象</li>
+</ul>
+</li>
+<li>  glLinkProgram函数 得到的结果是一个程序对象</li>
+<li>  glUseProgram函数 激活这个程序对象，该函数调用之后，每一个着色器调用和渲染调用都会使用这个程序对象</li>
+<li>  glDeleteShader函数 着色器对象链接到程序对象后删除着色器对象</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>顶点属性<ul>
+<li>顶点数据缓冲<ul>
+<li>  紧密排列 Tightly Packed</li>
+</ul>
+</li>
+<li>glVertexAttribPointer函数 每个顶点属性从一个VBO管理的内存中获得它的数据，而具体是从哪个VBO（程序中可以有多个VBO）获取则是通过在调用glVetexAttribPointer时绑定到GL_ARRAY_BUFFER的VBO决定的。由于在调用glVetexAttribPointer之前绑定的是先前定义的VBO对象，顶点属性0现在会链接到它的顶点数据。<ul>
+<li>  配置的顶点属性 在定义顶点着色器中定义的position顶点属性的位置值Location</li>
+<li>  顶点属性的大小 三维的vec3则由三个值组成，大小是3</li>
+<li>  数据类型 如GL_FLOAT</li>
+<li>  是否标准化 GL_TRUE所有数据会被映射到0到1，signed为-1到1</li>
+<li>  步长 Stride 连续顶点属性组之间的间隔。当数组为紧密排列时可以设置为0让OpenGL决定步长</li>
+<li>  偏移量 Offset 参数类型为 void*，表示位置数据在缓冲中起始位置的偏移量</li>
+</ul>
+</li>
+<li>  glEnableVertexAttribArray函数 启用顶点属性</li>
+</ul>
+</li>
+<li>顶点数组对象 Vertex Array Object 可以像顶点缓冲对象那样被绑定，任何随后的顶点属性调用都会储存在这个VAO中。这样的好处就是，当配置顶点属性指针时，你只需要将那些调用执行一次，之后再绘制物体的时候只需要绑定相应的VAO就行了。这使在不同顶点数据和属性配置之间切换变得非常简单，只需要绑定不同的VAO就行了。刚刚设置的所有状态都将存储在VAO中。<ul>
+<li>创建<ul>
+<li>  glGenVertexArrays函数</li>
+</ul>
+</li>
+<li>绑定VAO<ul>
+<li>  glBindVertexArray函数</li>
+</ul>
+</li>
+<li>顶点数组复制<ul>
+<li>  glBindBuffer函数</li>
+<li>  glBufferData函数</li>
+</ul>
+</li>
+<li>设置顶点属性指针<ul>
+<li>  glVertexAttribPointer函数</li>
+<li>  glEnableVertexAttribArray函数</li>
+</ul>
+</li>
+<li>绘制物体<ul>
+<li>  glUseProgram函数</li>
+<li>  glBindVertexArray函数</li>
+<li>  glDrawArrays绘制函数 使用当前激活的着色器，之前定义的顶点属性配置和VBO的顶点数据来绘制图元</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>索引缓冲对象 Elment Buffer Object 也叫做Index Buffer Object​ EBO是一个专门存储所以的缓冲，OpenGL调用这些顶点的索引来决定该绘制哪个顶点。​<ul>
+<li>  创建</li>
+<li>  绑定</li>
+<li>  顶点数组复制</li>
+<li>索引数组复制到索引缓冲<ul>
+<li>  glBindBuffer函数</li>
+<li>  glBufferData函数</li>
+</ul>
+</li>
+<li>  设置顶点属性指针</li>
+<li>绘制<ul>
+<li>  glDrawElements函数</li>
+<li>  glBindVertexArray函数</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/01/06/%E4%B8%89%E7%BB%B4%E7%A9%BA%E9%97%B4%E5%87%A0%E4%BD%95%E5%8F%98%E6%8D%A2%E7%9F%A9%E9%98%B5/">三维空间几何变换矩阵</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-01-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/">cg</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/%E6%95%B0%E5%AD%A6%E6%96%B9%E6%B3%95/">数学方法</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学</a></span><div class="content"><p>三维空间几何变换矩阵</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/301.png"></p>
+<p>你大概可以根据字母猜出来，一部分线性变换，一部分平移变换，一部分透视变换，一个整体比例变换。（猜不出来当我没说）</p>
+<p><strong>_特别注意_：OpenGL为右手坐标系！</strong></p>
+<p><strong>平移变换</strong></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/302.png"></p>
+<p>变换矩阵为：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/303.png"></p>
+<p><strong>比例变换</strong></p>
+<p>变换矩阵为：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/304.png"></p>
+<p><strong>旋转变换</strong></p>
+<p>绕Z轴：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/305.png"></p>
+<p>这些考试应该够了剩下的日后补充。</p>
+<p><strong>举个栗子：</strong></p>
+<p>已知空间中一条线段的两个顶点为d1(5.0f,3.0f,-2.0f) d2(6.0f,4.0f,-2.0f)计算出其绕(y=3,z=0)的轴旋转90°后再缩小0.5倍后的新的线段的两个顶点坐标，</p>
+<p>要求写出每一个计算后得到的新矩阵。</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/306.png"></p>
+<p>我就不写计算过程了，需要验证的自己计算一下：</p>
+<p>缩小0.5倍：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/307.png"></p>
+<p>沿Y轴平移3：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/308.png"></p>
+<p>绕X旋转90：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/309.png"></p>
+<p>沿Y轴平移-3：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/310.png"></p>
+<p>写出每一个计算后得到的新矩阵：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/311.png"></p>
+<p>则转换后的点</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/312.png"></p>
+<p><strong>如有错误请<a target="_blank" rel="noopener" href="https://www.muchenhen.com/%e8%81%94%e7%b3%bb/">联系</a>。</strong></p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/01/06/%E4%BA%8C%E7%BB%B4%E7%A9%BA%E9%97%B4%E5%87%A0%E4%BD%95%E5%8F%98%E6%8D%A2%E7%9F%A9%E9%98%B5/">二维空间几何变换矩阵</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-01-06</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/">cg</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/%E6%95%B0%E5%AD%A6%E6%96%B9%E6%B3%95/">数学方法</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学</a></span><div class="content"><p>二维变换矩阵</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/001.png"></p>
+<p>从变换功能上可以将T2D分为四个子矩阵，其中</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/002.png"></p>
+<p>控制旋转，缩放，对称，错切</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/003.png"></p>
+<p>控制平移</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/004.png"></p>
+<p>控制投影</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/005.png"></p>
+<p>控制整体图形作伸缩变换</p>
+<p><strong>平移变换矩阵</strong></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/006.png"></p>
+<p>则变换矩阵为</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/007.png"></p>
+<p>接下来的只给出变换矩阵，具体推导过程和上面的相似</p>
+<p><strong>_特别注意_：由于矩阵乘法不具有交换律，有些资料里变换矩阵在前面，所以长得不一样！但是结果是一样的！！！</strong></p>
+<p><strong>比例变换矩阵</strong></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/008.png"></p>
+<p><strong>旋转变换矩阵</strong></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/009.png"></p>
+<p>如图α为起始角，β为逆时针旋转角</p>
+<p>逆时针变换矩阵：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/010.png"></p>
+<p>顺时针变换矩阵：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/013.png"></p>
+<p><strong>对称变换矩阵</strong></p>
+<p>关于原点对称矩阵：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/014.png"></p>
+<p>关于Y轴对称矩阵：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/015.png"></p>
+<p>关于X轴对称矩阵：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/016.png"></p>
+<p><strong>错切变换矩阵</strong></p>
+<p>这个有点麻烦应该不会考先不写了。</p>
+<p><strong>举个栗子：</strong></p>
+<p>已知三角形ABC的各顶点坐标为A(1,2)、B(5,2)、C(3,5)，现有直线L，L上的两点P、Q的坐标分别为P(0,-1)和Q(1,0)，将三角形ABC相对直线L作对称变换后得到三角形A′B′C′，按步骤列出变换矩阵，并计算三角形A′B′C′各顶点的坐标值。</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/017.png"></p>
+<p>将坐标轴平移</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/018.png"></p>
+<p>以y=x对称变换</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/019.png"></p>
+<p>坐标轴平移回去</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/020.png"></p>
+<p>则</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/021.png"></p>
+<p>可以求得：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/022.png"></p>
+<p><strong>_特别注意：_当变换矩阵在前时，最后的变换矩阵相乘的时候需要反着来！</strong></p>
+<p><strong>如有发现错误请</strong><a target="_blank" rel="noopener" href="https://www.muchenhen.com/%E8%81%94%E7%B3%BB/"><strong>联系</strong></a><strong>。</strong></p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/12/16/%E5%9B%BE%E5%83%8F%E7%94%9F%E6%88%9001%E7%9B%B4%E7%BA%BF%E6%AE%B5%E6%89%AB%E6%8F%8F%E8%BD%AC%E6%8D%A2/">图像生成01直线段扫描转换</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-12-16</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学</a></span><div class="content"><p>三个常用的直线扫描转换算法</p>
+<p><strong>数值微分法</strong></p>
+<p>简要描述：</p>
+<p>根据端点算出直线斜率。从端点开始，x坐标每次加一，用增量的思想，取整数点。由于整型会面对舍入运算，需要对y值增加0.5 。</p>
+<p>计算举例：</p>
+<p>设两个端点为(0,0)(5,3)，计算出k值为0.6，计算过程如下：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1001-1.png"></p>
+<p>对于k&gt;1的情况，需要把xy交换，y每次增加1，x每次增加k分之q1。</p>
+<p>适用于任意斜率的伪代码如下：</p>
+<p>voidDDALine(int x0,int y0,int x1,int y1)<br>{<br>Int dx,dy,n,k;<br>float xinc,yinc,x,y;<br>dx=x1-x0;<br>dy=y1-y0;<br>if(abs(dx)&gt;abs(dy))//用来判断直线斜率<br>n=abs(dx);<br>else<br>n=abs(dy);<br>xinc=(float)dx/n;//求出x的增量<br>yinc=(float)dy/n;//求出y的增量<br>x=(float)x0;<br>y=(float)y0;<br>for(k=1;k&lt;=n;k++)//开始从起点循环<br>{<br>Drawpixel(int(x+0.5),int(y+0.5),color);//画点<br>x+=xinc;<br>y+=yinc;<br>}<br>}</p>
+<p><strong>中点画线法</strong></p>
+<p>该算法也采用了增量思想。</p>
+<p>以k小于1的直线为例，设起点的坐标为x0,y0 ,则下一个点的坐标的x值增加1，y的值只能增加0或者1，在0和1中选择接近理想直线的点。</p>
+<p>选择点的方法是与“中点”的值进行比较。假设下一个点为P1(xp1,yp1) 或P2(xp1,yp2) , 理想直线的点为Q(xq,yq)，P1与P2的中点为M。则M坐标应为(x0+1,y0+0.5) , yp1=y0+0 ,yp2=y0+1 ,比较yq与y0+0.5，若yq比y0+0.5大，则应该取上方的点，否则取下方的点。</p>
+<p>算法实现时的判定使用直线一般式方程，设终点为x1,y1 ，F(x,y)=ax+by+c，其中a为y1-y0，b为x1-x0，c为x0y1-x1y0。直线上的点F(x,y)=0,直线上的点大于0，直线下小于0。</p>
+<p>计算过程举例：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1002.png"></p>
+<p>任意斜率伪码：</p>
+<p>MidpointLine(int x0, int y0, int x1, int y1, int color)<br>{<br>    int a,b,delta1,delta2,d,x,y;//a是直线x的系数，b是直线y的系数，来自一般式方程<br>    a=y0-y1;//一般式的a就是等于俩端点y值的差,按例子中是2，此处取负值是为了应对任意斜率的直线<br>    b=x1-x0;//b就是俩端点x的差<br>    d=2*a+b;//d是我们构造的判别式的值，用来判断取哪个点，具体取法在下面的选择分支里，为了避免浮点数计算0.5没了所以变成了2a+b<br>    delta1=2*a;//d的其中一个增量，对应的是d大于等于0，上面翻倍了这里也要翻倍<br>    delta2=2*(a+b);//另一个情况的增量，也是翻倍了<br>    x=x0;//从端点开始画点了<br>    y=y0;//同上<br>    Drawpixel(x,y,color);//先把端点画上<br>    while(x <strong>Bresenham画线算法</strong></p>
+<p>总体思路与中点画线法相同，但是在判断点的坐标时采用了不同方法。设起始坐标(x0,y0)，则计算下一个点(x0+1,y1)中的y值，设理想y值为ny，若ny-y1&lt;1，则说明下一个点应该取y0，否则应该取y0+1。</p>
+<p>Bresenham (GLint x1,GLint y1,GLint x2,GLint y2)<br>{<br>    if(x20.0)<br>    {<br>        p=2*dy-dx;<br>        while(x=1的情况<br>    if(k&gt;=1.0)<br>    {<br>        p=dy;<br>        while(yk&gt;-1的情况<br>    if(k&gt;-1&amp;&amp;k&lt;0)<br>    {<br>        p=2*dy+dx;<br>        while(x=0)<br>                p+=twoDy;<br>            else<br>            {<br>                y–;<br>                p+=twoSum;<br>            }<br>            setPixel(x,y);<br>        }<br>    }<br>    //k&lt;-1的情况<br>    if(k&lt;=-1)<br>    {<br>        p=2*dx-dy;<br>        while(y&gt;y2)<br>        {<br>            y–;<br>            if(p&gt;=0)<br>                p-=twoDx;<br>            else<br>            {<br>                x++;<br>                p-=twoSum;<br>            }<br>            setPixel(x,y);<br>        }<br>    }<br>}</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/12/15/1-4%E5%8F%82%E6%95%B0%E6%9B%B2%E7%BA%BF%E5%AE%9A%E4%B9%89%E5%8F%8A%E5%85%B6%E7%9B%B8%E5%85%B3/">曲线1.4参数曲线定义及其相关</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-12-15</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/">cg</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/%E6%95%B0%E5%AD%A6%E6%96%B9%E6%B3%95/">数学方法</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学</a></span><div class="content"><p><strong>——脑子不够未完待续啊——</strong></p>
+<p>一条用参数的三维曲线是一个有界的点集，可以写成一个带参数的、连续的、单值的数学函数，形式为：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1401.png"></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1402.png"></p>
+<p><strong>位置矢量</strong></p>
+<p>如图，该曲线的端点在t=0,t=1处，曲线上任意一点的位置矢量（即其坐标）可以用矢量p(t)表示：</p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2018/12/1403.png"></p>
+<p><strong>切矢量</strong></p>
+<p>若曲线上r，Q两点的参数分别是t和t+Δt，则可以表示下面矢量：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1404.png"></p>
+<p>其大小以链接rQ的弦长表示。如果曲线在r有确定的切线，则当Q趋于r，即Δt趋于0时，导数矢量dp/dt的方向趋于该点的切线方向。如果以弧长c作为参数，即p(c)，在极限情况下，|Δp|和Δc可认为相等，则有：</p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2018/12/1405.png"></p>
+<p>是单位长度矢向量，其方向为曲线的切线方向，称为**<em>单位切向量</em>**。</p>
+<p>当切矢量的数值超过曲线弦长（曲线两端点之间的距离）几倍时，曲线会出现回转或过顶点等现象，而小于弦长许多时，也会使曲线变得过于平坦。</p>
+<p><strong>曲率</strong></p>
+<p>与曲线在空间中弯曲和扭转相关的特征量。对于一个曲线路径，可在它的每一点构造一个正交坐标系，该坐标系的一个轴与曲线在该点的切线方向平行。</p>
+<p>通过微分来定义，表明曲线偏离直线的程度。数学上表明曲线在某一点的弯曲程度的数值。</p>
+<p>曲率越大，表示曲线的弯曲程度越大。曲率的倒数就是曲率半径。</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1406.png"></p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2018/12/15/%E6%9B%B2%E7%BA%BF1-5%E6%8F%92%E5%80%BC%E3%80%81%E9%80%BC%E8%BF%91%E3%80%81%E6%8B%9F%E5%90%88%E3%80%81%E5%85%89%E9%A1%BA/">曲线1.5插值、逼近、拟合、光顺</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-12-15</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/">cg</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cg/%E6%95%B0%E5%AD%A6%E6%96%B9%E6%B3%95/">数学方法</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学</a></span><div class="content"><p><strong>插值</strong></p>
+<p>插值是一种函数逼近的重要方法。</p>
+<p>例如给定函数f(x)在区间[a,b]中互异的n个点的值：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1501.png"></p>
+<p>基于这个列表数据，寻找一个函数（简称Y函数）去逼近f(x)（简称X函数）。若要求Y函数在xi处与X函数相等，称这样的函数逼近问题为插值问题，称Y函数为X函数的插值函数，xi为插值节点。</p>
+<p>在插值节点处两个函数相等，在其他处用Y函数近似替代X函数。</p>
+<p><strong>线性插值</strong></p>
+<p>假设给定函数f(x)在两个不同点x1和x2的值：</p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2018/12/1502.png"></p>
+<p>现在要求用一个线性函数来近似代替，线性函数如下：</p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2018/12/1503.png"></p>
+<p>选择线性函数的系数a，b使得：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1504.png"></p>
+<p>则称该线性函数为原函数的线性插值函数，如下图所示：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1505.png"></p>
+<p>线性插值函数可以写成：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1506.png"></p>
+<p>记：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1507.png"></p>
+<p>记上式为插值函数的截断误差，[x1,x2]为插值区间。当x在区间之外时，用插值函数近似替代原函数，称为外插。</p>
+<p><strong>抛物线插值</strong></p>
+<p>又称为二次插值。若已知函数f(x)存在三个互异点x1，x2，x3的函数值为y1、y2、y3，要求构造一个函数：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1508.png"></p>
+<p>要使在节点处原函数与二次插值函数的值相等，如下图：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1509.png"></p>
+<p>根据在x1，x2，x3处的值相等可以构造线性方程组，就可以求出abc构造出插值函数。</p>
+<p><strong>逼近</strong></p>
+<p>在插值点过多时，构造插值函数很困难，而且过多的插值点也会存在误差，没有必要寻找一个插值函数通过所有的插值点。方便起见往往选择一个次数较低的函数，在某种意义上最佳逼近这些插值点。逼近的方法很多，最常用的是**<em>最小二乘法</em>**。</p>
+<p>假设一直一组插值点：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1510.png"></p>
+<p>要求构造一个m（m&lt;n-1）次多项式函数y=F(x)逼近这些点。逼近结果的好坏使用各点偏差的平方和或加权的方差最小：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1511.png"></p>
+<p>或：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1512.png"></p>
+<p>其中dk是加权因子，对可靠的点赋较大的比重，一般dk&gt;0。令F(x)为一个m次多项式：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1513.png"></p>
+<p>这里的最小二乘法问题就是要定出系数aj，使偏差平方和（上面的式子）达到极小。</p>
+<p><strong>光顺</strong></p>
+<p>通俗含义是指曲线的拐点不能太多。（据说拐来拐去看着不顺眼？？？）</p>
+<p>平面曲线相对光顺的条件是：</p>
+<ol>
+<li> 具有二阶几何连续</li>
+<li> 不存在多余拐点和奇异点</li>
+<li> 曲率变化较小</li>
+</ol>
+<p>例如平面上的三次参数曲线段：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1514.png"></p>
+<p>其相应的拐点方程是：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1515.png"></p>
+<p>其中：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1516.png"></p>
+<p>如果p≠0，构造表达式：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1517.png"></p>
+<p>是一个权值为-2的相对不变量，并由它可得知：</p>
+<ol>
+<li> 当I&gt;0时，相应曲线有两个实拐点。</li>
+<li> 当I=0时，曲线上出现一个尖点</li>
+<li> 当I&lt;0时，曲线上会出现一个二重点</li>
+</ol>
+<p>对于第一种情况，如果曲线段两端的曲率时异号，曲线段上不可避免会有一个拐点。如果曲线段两端点的曲率异号，在p、q、r满足某些条件时，曲线段上有两个拐点，并称之为多余拐点。为了使曲线光顺，必须寻找能消除多余拐点的插值方法。通常在不改变两个端点的切线方向的条件下，把切向量的模分别乘以x，y（x,y&gt;0），这样可以保证在(x,y)平面的第一象限内找到一个矩形区域，使得在其中构造的三次参数样条曲线没有多余的拐点、尖点和二重点。对于不同的函数表示的曲线和曲面使用的光顺算法不同。</p>
+<p><strong>拟合</strong></p>
+<p>拟合没有完整的数学表示和定义。拟合是指在曲线、曲面的设计过程中，使用插值或者逼近的方法使生成的曲线达到某些设计要求，在允许的范围内贴近原始的插值点或控制点序列。对于曲线和曲面，光滑指的是在切矢量上的连续性，或更精确的要求是指曲率的连续性。</p>
+</div><hr></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/5/"><i class="fa fa-chevron-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="extend next" rel="next" href="/page/7/"><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer class="footer-bg" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div class="layout" id="footer"><div class="copyright">&copy;2016 - 2021 By 木尘痕</div><div class="framework-info"><span>Driven - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="footer_custom_text">天道作何，吞恨者多 <a target="_blank" rel="noopener" href="https://beian.miit.gov.cn">豫ICP备17048032号-1</a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_site_uv"><i class="fa fa-user"></i><span id="busuanzi_value_site_uv"></span><span></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i><span id="busuanzi_value_site_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.9.0"></script><script src="/js/fancybox.js?version=1.9.0"></script><script src="/js/sidebar.js?version=1.9.0"></script><script src="/js/copy.js?version=1.9.0"></script><script src="/js/fireworks.js?version=1.9.0"></script><script src="/js/transition.js?version=1.9.0"></script><script src="/js/scroll.js?version=1.9.0"></script><script src="/js/head.js?version=1.9.0"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+  $('#nav').addClass('is-mobile')
+  $('footer').addClass('is-mobile')
+  $('#top-container').addClass('is-mobile')
+}</script></body></html>

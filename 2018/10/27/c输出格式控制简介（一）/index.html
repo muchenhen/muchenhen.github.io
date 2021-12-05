@@ -1,0 +1,52 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="C++输出格式控制简介（一）"><meta name="keywords" content=""><meta name="author" content="木尘痕"><meta name="copyright" content="木尘痕"><title>C++输出格式控制简介（一） | 风生之谷</title><link rel="shortcut icon" href="https://raw.githubusercontent.com/muchenhen/muchenhen.github.io/master/xuange.ico"><link rel="stylesheet" href="/css/index.css?version=1.9.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css?version=1.9.0"><meta name="format-detection" content="telephone=no"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  hexoVersion: '5.4.0'
+} </script><meta name="generator" content="Hexo 5.4.0"></head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="toggle-sidebar-info text-center"><span data-toggle="Toggle article">Toggle site</span><hr></div><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar"></div></div><div class="sidebar-toc__content"></div></div><div class="author-info hide"><div class="author-info__avatar text-center"><img src="https://github.com/muchenhen/muchenhen.github.io/blob/master/XuanGe.jpg?raw=true"></div><div class="author-info__name text-center">木尘痕</div><div class="author-info__description text-center">放一些笔记的地方</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">172</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">17</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">31</span></a></div><hr><div class="author-info-links"><div class="author-info-links__title text-center">Links</div><a class="author-info-links__name text-center" target="_blank" rel="noopener" href="https://alec-ray.github.io/">止戈</a></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">风生之谷</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">主页</a><a class="site-page" href="/archives">全部文章</a><a class="site-page" href="/tags">标签分类</a><a class="site-page" href="/categories">文章分类</a><a class="site-page" href="/contact">联系</a></span><span class="pull-right"></span></div><div id="post-info"><div id="post-title">C++输出格式控制简介（一）</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-10-27</time><span class="post-meta__separator">|</span><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/C/">C++</a></div></div></div><div class="layout" id="content-inner"><article id="post"><div class="article-container" id="post-content"><p>为了使数据按指定格式输出，需要头文件iomanip</p>
+<p>下面先举个例子：</p>
+<p>#include #include using namespace std;<br>int main() {<br>    int n;<br>    cin &gt;&gt; n;<br>    for (int i=1; i &lt;= n; i++) {<br>        for (int j=1; j &lt;= i; j++)<br>        {<br>            cout &lt;&lt; j &lt;&lt; “*“ &lt;&lt; i &lt;&lt; “=” &lt; 输出如下：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/10/QQ%E6%88%AA%E5%9B%BE20181027114005.png"></p>
+<p><strong>1、setiosflags()</strong><br>设置输出格式状态，括号中应给出格式状态，内容与控制符setiosflags括号中的内容相同</p>
+<p>ios::left</p>
+<p>输出数据在本域宽范围内向左对齐</p>
+<p>ios::right</p>
+<p>输出数据在本域宽范围内向右对齐</p>
+<p>ios::internal</p>
+<p>数值的符号位在域宽内左对齐，数值右对齐，中间由填充字符填充</p>
+<p>ios::dec</p>
+<p>设置整数的基数为10</p>
+<p>ios::oct</p>
+<p>设置整数的基数为8</p>
+<p>ios::hex</p>
+<p>设置整数的基数为16</p>
+<p>ios::showbase</p>
+<p>强制输出整数的基数(八进制数以0打头，十六进制数以0x打头)</p>
+<p>ios::showpoint</p>
+<p>强制输出浮点数的小点和尾数0</p>
+<p>ios::uppercase</p>
+<p>在以科学记数法格式E和以十六进制输出字母时以大写表示</p>
+<p>ios::showpos</p>
+<p>对正数显示“+”号</p>
+<p>ios::scientific</p>
+<p>浮点数以科学记数法格式输出</p>
+<p>ios::fixed</p>
+<p>浮点数以定点格式(小数形式)输出</p>
+<p>ios::unitbuf</p>
+<p>每次输出之后刷新所有的流</p>
+<p>ios::stdio</p>
+<p>每次输出之后清除stdout, stderr</p>
+<p><strong>2、stew()</strong><br>通俗地讲就是预设宽度，用来控制输出间隔，setw()只对其后面紧跟的输出产生作用，如例子中的i*j在输出中会占4个位字符，默认填充的是空格。</p>
+<p>配合setfill()可以使用另外的字符进行填充，如</p>
+<p>cout&lt; 将上面的例子修改后输出如下：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/10/QQ%E6%88%AA%E5%9B%BE20181027114203.png"></p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">木尘痕</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://muchenhen.com/2018/10/27/c输出格式控制简介（一）/">http://muchenhen.com/2018/10/27/c输出格式控制简介（一）/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-meta__tag-list"></div><nav id="pagination"><div class="prev-post pull-left"><a href="/2018/10/28/%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8F/"><i class="fa fa-chevron-left">  </i><span>插入排序</span></a></div><div class="next-post pull-right"><a href="/2018/10/24/%E5%A4%9A%E8%BE%B9%E5%BD%A2%E7%9A%84%E5%8C%BA%E5%9F%9F%E5%A1%AB%E5%85%85/"><span>多边形的区域填充</span><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer class="footer-bg" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div class="layout" id="footer"><div class="copyright">&copy;2016 - 2021 By 木尘痕</div><div class="framework-info"><span>Driven - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="footer_custom_text">天道作何，吞恨者多 <a target="_blank" rel="noopener" href="https://beian.miit.gov.cn">豫ICP备17048032号-1</a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.9.0"></script><script src="/js/fancybox.js?version=1.9.0"></script><script src="/js/sidebar.js?version=1.9.0"></script><script src="/js/copy.js?version=1.9.0"></script><script src="/js/fireworks.js?version=1.9.0"></script><script src="/js/transition.js?version=1.9.0"></script><script src="/js/scroll.js?version=1.9.0"></script><script src="/js/head.js?version=1.9.0"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+  $('#nav').addClass('is-mobile')
+  $('footer').addClass('is-mobile')
+  $('#top-container').addClass('is-mobile')
+}</script></body></html>

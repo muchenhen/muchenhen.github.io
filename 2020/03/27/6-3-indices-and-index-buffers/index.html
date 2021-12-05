@@ -1,0 +1,77 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="6.3 Indices and Index Buffers"><meta name="keywords" content=""><meta name="author" content="木尘痕"><meta name="copyright" content="木尘痕"><title>6.3 Indices and Index Buffers | 风生之谷</title><link rel="shortcut icon" href="https://raw.githubusercontent.com/muchenhen/muchenhen.github.io/master/xuange.ico"><link rel="stylesheet" href="/css/index.css?version=1.9.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css?version=1.9.0"><meta name="format-detection" content="telephone=no"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  hexoVersion: '5.4.0'
+} </script><meta name="generator" content="Hexo 5.4.0"></head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="toggle-sidebar-info text-center"><span data-toggle="Toggle article">Toggle site</span><hr></div><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar"></div></div><div class="sidebar-toc__content"></div></div><div class="author-info hide"><div class="author-info__avatar text-center"><img src="https://github.com/muchenhen/muchenhen.github.io/blob/master/XuanGe.jpg?raw=true"></div><div class="author-info__name text-center">木尘痕</div><div class="author-info__description text-center">放一些笔记的地方</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">172</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">17</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">31</span></a></div><hr><div class="author-info-links"><div class="author-info-links__title text-center">Links</div><a class="author-info-links__name text-center" target="_blank" rel="noopener" href="https://alec-ray.github.io/">止戈</a></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">风生之谷</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">主页</a><a class="site-page" href="/archives">全部文章</a><a class="site-page" href="/tags">标签分类</a><a class="site-page" href="/categories">文章分类</a><a class="site-page" href="/contact">联系</a></span><span class="pull-right"></span></div><div id="post-info"><div id="post-title">6.3 Indices and Index Buffers</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-27</time><span class="post-meta__separator">|</span><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></div></div></div><div class="layout" id="content-inner"><article id="post"><div class="article-container" id="post-content"><p>为了让GPU获得顶点索引的数组，这些数据需要放到GPU资源（ID3D12Resource）缓冲中，将存储索引信息的buffer称作索引缓冲Index buffer。</p>
+<p>可以使用<strong>d3dUtil::CreateDefaultBuffer</strong>函数来创建索引缓冲。其实这个函数可以创建各种类型的默认缓冲。</p>
+<p>当然，为了把索引信息绑定到渲染管线，也需要给索引缓冲创建view，index buffer view用<strong>D3D12_INDEX_BUFFER_VIEW</strong>结构体来表示：</p>
+<p>typedef struct D3D12_INDEX_BUFFER_VIEW {</p>
+<p>D3D12_GPU_VIRTUAL_ADDRESS BufferLocation;</p>
+<p>UINT SizeInBytes;</p>
+<p>DXGI_FORMAT Format;</p>
+<p>} D3D12_INDEX_BUFFER_VIEW;</p>
+<p><em>来自 &lt;<a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows/win32/api/d3d12/ns-d3d12-d3d12_index_buffer_view">https://docs.microsoft.com/zh-cn/windows/win32/api/d3d12/ns-d3d12-d3d12_index_buffer_view</a>&gt;</em></p>
+<p>参数：</p>
+<ol>
+<li> 索引缓冲的GPU虚拟地址，使用<strong>ID3D12Resource::GetGPUVirtualAddress</strong>函数来设置</li>
+<li> 索引缓冲的大小，字节单位</li>
+<li> 这里索引格式只有两个可选，<strong>DXGI_FORMAT_R16_UINT</strong>或者<strong>DXGI_FORMAT_R32_UINT</strong></li>
+</ol>
+<p>在使用索引资源之间还需要绑定到渲染管线，使用<strong>ID3D12CommandList::SetIndexBuffer</strong>函数将索引资源绑定到输入装配阶段。下面举个例子，创建了一个cube的索引缓冲并为其创建了view然后绑定到管线：</p>
+<p>std::uint16_t indices[] = {</p>
+<p>// front face</p>
+<p>0, 1, 2, 0, 2, 3,</p>
+<p>// back face</p>
+<p>4, 6, 5, 4, 7, 6,</p>
+<p>// left face</p>
+<p>4, 5, 1, 4, 1, 0,</p>
+<p>// right face</p>
+<p>3, 2, 6,3, 6, 7,</p>
+<p>// top face</p>
+<p>1, 5, 6, 1, 6, 2,</p>
+<p>// bottom face</p>
+<p>4, 0, 3, 4, 3, 7</p>
+<p>};</p>
+<p>const UINT ibByteSize = 36 * sizeof(std::uint16_t);</p>
+<p>ComPtr<ID3D12Resource> IndexBufferGPU = nullptr;</p>
+<p>ComPtr<ID3D12Resource> IndexBufferUploader = nullptr;</p>
+<p>IndexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(), mCommandList.Get(), indices), ibByteSize, IndexBufferUploader);</p>
+<p>D3D12_INDEX_BUFFER_VIEW ibv;</p>
+<p>ibv.BufferLocation = IndexBufferGPU-&gt;GetGPUVirtualAddress(); ibv.Format = DXGI_FORMAT_R16_UINT;</p>
+<p>ibv.SizeInBytes = ibByteSize;</p>
+<p>mCommandList-&gt;IASetIndexBuffer(&amp;ibv);</p>
+<p>最后在使用索引时，必须使用<strong>ID3D12GraphicsCommandList::DrawIndexedInstanced</strong>函数：</p>
+<p>void DrawIndexedInstanced(</p>
+<p>UINT IndexCountPerInstance,</p>
+<p>UINT InstanceCount,</p>
+<p>UINT StartIndexLocation,</p>
+<p>INT BaseVertexLocation,</p>
+<p>UINT StartInstanceLocation</p>
+<p>);</p>
+<p>参数：</p>
+<ol>
+<li> 要绘制的索引数量</li>
+<li> 要绘制的实例数。现在设置为1，高级特性需要的参数</li>
+<li> GPU从索引缓冲区中读取的第一个索引的位置。</li>
+<li> 在从顶点缓冲区读取顶点之前添加到每个索引的值。</li>
+<li> 在从顶点缓冲区读取每个实例数据之前添加到每个索引的值。现在设置为0</li>
+</ol>
+<p>现在假设有下面的场景：</p>
+<p>假设要绘制三个物体，一个球，一个正方体，一个圆柱体。首先每个物体都有自己的顶点缓冲和索引缓冲，三个物体之间的数据时相互独立的，没有关系的，自己的索引针对于自己的顶点。那么现在假设可以将三个物体的顶点信息进行关联，放在一个更大的单独的缓冲区中，但是如果三个物体的顶点数据被关联起来了，那么原有的索引，可能就失效了，就不能正确绘制了，这很容易理解。</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032720_0544_63Indicesan1.png"></p>
+<p>将每个物体单独的顶点缓冲和索引缓冲叫做local，而联系之后的称作global。</p>
+<p>可以看出至少球体的索引还是正确的，但是box和圆柱就需要更新索引缓冲，需要将firstBoxVertexPos加到所有的box的索引上。将一个物体的第一个顶点在global vertex buffer中的位置称作base vertex location。当然，DX可以帮助更新索引，将base vertex location作为DrawIndexedInstanced的第四个参数。然后可以按照下面的样子调用三个物体的绘制。</p>
+<p>mCmdList-&gt;DrawIndexedInstanced(numSphereIndices, 1, 0, 0, 0);</p>
+<p>mCmdList-&gt;DrawIndexedInstanced(numBoxIndices, 1, firstBoxIndex, firstBoxVertexPos, 0);</p>
+<p>mCmdList-&gt;DrawIndexedInstanced(numCylIndices, 1, firstCylIndex, firstCylVertexPos, 0);</p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">木尘痕</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://muchenhen.com/2020/03/27/6-3-indices-and-index-buffers/">http://muchenhen.com/2020/03/27/6-3-indices-and-index-buffers/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-meta__tag-list"></div><nav id="pagination"><div class="prev-post pull-left"><a href="/2020/03/29/dx12-6-4-%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8%E5%AE%9E%E4%BE%8B/"><i class="fa fa-chevron-left">  </i><span>DX12 6.4 顶点着色器实例</span></a></div><div class="next-post pull-right"><a href="/2020/03/27/dx12-6-1-vertices-%E5%92%8C-input-layouts/"><span>DX12 6.1 Vertices 和 Input Layouts</span><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer class="footer-bg" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div class="layout" id="footer"><div class="copyright">&copy;2016 - 2021 By 木尘痕</div><div class="framework-info"><span>Driven - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="footer_custom_text">天道作何，吞恨者多 <a target="_blank" rel="noopener" href="https://beian.miit.gov.cn">豫ICP备17048032号-1</a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.9.0"></script><script src="/js/fancybox.js?version=1.9.0"></script><script src="/js/sidebar.js?version=1.9.0"></script><script src="/js/copy.js?version=1.9.0"></script><script src="/js/fireworks.js?version=1.9.0"></script><script src="/js/transition.js?version=1.9.0"></script><script src="/js/scroll.js?version=1.9.0"></script><script src="/js/head.js?version=1.9.0"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+  $('#nav').addClass('is-mobile')
+  $('footer').addClass('is-mobile')
+  $('#top-container').addClass('is-mobile')
+}</script></body></html>

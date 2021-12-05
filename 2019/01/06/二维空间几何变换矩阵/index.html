@@ -1,0 +1,65 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="二维空间几何变换矩阵"><meta name="keywords" content=""><meta name="author" content="木尘痕"><meta name="copyright" content="木尘痕"><title>二维空间几何变换矩阵 | 风生之谷</title><link rel="shortcut icon" href="https://raw.githubusercontent.com/muchenhen/muchenhen.github.io/master/xuange.ico"><link rel="stylesheet" href="/css/index.css?version=1.9.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css?version=1.9.0"><meta name="format-detection" content="telephone=no"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  hexoVersion: '5.4.0'
+} </script><meta name="generator" content="Hexo 5.4.0"></head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="toggle-sidebar-info text-center"><span data-toggle="Toggle article">Toggle site</span><hr></div><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar"></div></div><div class="sidebar-toc__content"></div></div><div class="author-info hide"><div class="author-info__avatar text-center"><img src="https://github.com/muchenhen/muchenhen.github.io/blob/master/XuanGe.jpg?raw=true"></div><div class="author-info__name text-center">木尘痕</div><div class="author-info__description text-center">放一些笔记的地方</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">172</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">17</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">31</span></a></div><hr><div class="author-info-links"><div class="author-info-links__title text-center">Links</div><a class="author-info-links__name text-center" target="_blank" rel="noopener" href="https://alec-ray.github.io/">止戈</a></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">风生之谷</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">主页</a><a class="site-page" href="/archives">全部文章</a><a class="site-page" href="/tags">标签分类</a><a class="site-page" href="/categories">文章分类</a><a class="site-page" href="/contact">联系</a></span><span class="pull-right"></span></div><div id="post-info"><div id="post-title">二维空间几何变换矩阵</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-01-06</time><span class="post-meta__separator">|</span><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/cg/">cg</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/cg/%E6%95%B0%E5%AD%A6%E6%96%B9%E6%B3%95/">数学方法</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学</a></div></div></div><div class="layout" id="content-inner"><article id="post"><div class="article-container" id="post-content"><p>二维变换矩阵</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/001.png"></p>
+<p>从变换功能上可以将T2D分为四个子矩阵，其中</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/002.png"></p>
+<p>控制旋转，缩放，对称，错切</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/003.png"></p>
+<p>控制平移</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/004.png"></p>
+<p>控制投影</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/005.png"></p>
+<p>控制整体图形作伸缩变换</p>
+<p><strong>平移变换矩阵</strong></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/006.png"></p>
+<p>则变换矩阵为</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/007.png"></p>
+<p>接下来的只给出变换矩阵，具体推导过程和上面的相似</p>
+<p><strong>_特别注意_：由于矩阵乘法不具有交换律，有些资料里变换矩阵在前面，所以长得不一样！但是结果是一样的！！！</strong></p>
+<p><strong>比例变换矩阵</strong></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/008.png"></p>
+<p><strong>旋转变换矩阵</strong></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/009.png"></p>
+<p>如图α为起始角，β为逆时针旋转角</p>
+<p>逆时针变换矩阵：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/010.png"></p>
+<p>顺时针变换矩阵：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/013.png"></p>
+<p><strong>对称变换矩阵</strong></p>
+<p>关于原点对称矩阵：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/014.png"></p>
+<p>关于Y轴对称矩阵：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/015.png"></p>
+<p>关于X轴对称矩阵：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/016.png"></p>
+<p><strong>错切变换矩阵</strong></p>
+<p>这个有点麻烦应该不会考先不写了。</p>
+<p><strong>举个栗子：</strong></p>
+<p>已知三角形ABC的各顶点坐标为A(1,2)、B(5,2)、C(3,5)，现有直线L，L上的两点P、Q的坐标分别为P(0,-1)和Q(1,0)，将三角形ABC相对直线L作对称变换后得到三角形A′B′C′，按步骤列出变换矩阵，并计算三角形A′B′C′各顶点的坐标值。</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/017.png"></p>
+<p>将坐标轴平移</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/018.png"></p>
+<p>以y=x对称变换</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/019.png"></p>
+<p>坐标轴平移回去</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/020.png"></p>
+<p>则</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/021.png"></p>
+<p>可以求得：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/01/022.png"></p>
+<p><strong>_特别注意：_当变换矩阵在前时，最后的变换矩阵相乘的时候需要反着来！</strong></p>
+<p><strong>如有发现错误请</strong><a target="_blank" rel="noopener" href="https://www.muchenhen.com/%E8%81%94%E7%B3%BB/"><strong>联系</strong></a><strong>。</strong></p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">木尘痕</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://muchenhen.com/2019/01/06/二维空间几何变换矩阵/">http://muchenhen.com/2019/01/06/二维空间几何变换矩阵/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-meta__tag-list"></div><nav id="pagination"><div class="prev-post pull-left"><a href="/2019/01/06/%E4%B8%89%E7%BB%B4%E7%A9%BA%E9%97%B4%E5%87%A0%E4%BD%95%E5%8F%98%E6%8D%A2%E7%9F%A9%E9%98%B5/"><i class="fa fa-chevron-left">  </i><span>三维空间几何变换矩阵</span></a></div><div class="next-post pull-right"><a href="/2018/12/16/%E5%9B%BE%E5%83%8F%E7%94%9F%E6%88%9001%E7%9B%B4%E7%BA%BF%E6%AE%B5%E6%89%AB%E6%8F%8F%E8%BD%AC%E6%8D%A2/"><span>图像生成01直线段扫描转换</span><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer class="footer-bg" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div class="layout" id="footer"><div class="copyright">&copy;2016 - 2021 By 木尘痕</div><div class="framework-info"><span>Driven - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="footer_custom_text">天道作何，吞恨者多 <a target="_blank" rel="noopener" href="https://beian.miit.gov.cn">豫ICP备17048032号-1</a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.9.0"></script><script src="/js/fancybox.js?version=1.9.0"></script><script src="/js/sidebar.js?version=1.9.0"></script><script src="/js/copy.js?version=1.9.0"></script><script src="/js/fireworks.js?version=1.9.0"></script><script src="/js/transition.js?version=1.9.0"></script><script src="/js/scroll.js?version=1.9.0"></script><script src="/js/head.js?version=1.9.0"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+  $('#nav').addClass('is-mobile')
+  $('footer').addClass('is-mobile')
+  $('#top-container').addClass('is-mobile')
+}</script></body></html>

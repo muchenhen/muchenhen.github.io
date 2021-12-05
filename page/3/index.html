@@ -1,0 +1,352 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="放一些笔记的地方"><meta name="keywords" content=""><meta name="author" content="木尘痕"><meta name="copyright" content="木尘痕"><title>一点浩然气 千里快哉风 | 风生之谷</title><link rel="shortcut icon" href="https://raw.githubusercontent.com/muchenhen/muchenhen.github.io/master/xuange.ico"><link rel="stylesheet" href="/css/index.css?version=1.9.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css?version=1.9.0"><meta name="format-detection" content="telephone=no"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  hexoVersion: '5.4.0'
+} </script><meta name="generator" content="Hexo 5.4.0"></head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="false"><div class="author-info"><div class="author-info__avatar text-center"><img src="https://github.com/muchenhen/muchenhen.github.io/blob/master/XuanGe.jpg?raw=true"></div><div class="author-info__name text-center">木尘痕</div><div class="author-info__description text-center">放一些笔记的地方</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">172</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">17</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">31</span></a></div><hr><div class="author-info-links"><div class="author-info-links__title text-center">Links</div><a class="author-info-links__name text-center" target="_blank" rel="noopener" href="https://alec-ray.github.io/">止戈</a></div></div></div><nav id="nav" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">风生之谷</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">主页</a><a class="site-page" href="/archives">全部文章</a><a class="site-page" href="/tags">标签分类</a><a class="site-page" href="/categories">文章分类</a><a class="site-page" href="/contact">联系</a></span><span class="pull-right"></span></div><div id="site-info"><div id="site-title">风生之谷</div><div id="site-sub-title">一点浩然气 千里快哉风</div></div></nav><div id="content-outer"><div class="layout" id="content-inner"><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/20/directx-12-5-7-tessellation%E9%98%B6%E6%AE%B5/">DIRECTX 12 5.7 Tessellation阶段</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-20</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>Tessellation可以把三角形mesh进一步细分，添加新的三角形。然后，这些新的三角形可以偏移到新的位置以创建更精细的网格细节。</p>
+<p>下面是经过tessellation的对比：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032020_1009_DIRECTX12571.png"></p>
+<p>使用Tessellation的优点：</p>
+<ul>
+<li>  可以实现<strong>level-of-detail（LOD）</strong>，距离摄像机近的细分出更多细节，较远的不进行细分。</li>
+<li>  在内从中保存低数量的三角形mesh从而节省内存，额外的细分动态添加。</li>
+<li>  计算动画和物理的时候用低模，使用细分后的mesh渲染。</li>
+</ul>
+<p>在DirectX11之前，Tessellation需要先由CPU计算后把新的几何体从CPU内存传到GPU内存，很慢，所以不好用。DX11之后已经是在GPU计算，更有效率。</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/19/directx-12-5-6-%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8%E9%98%B6%E6%AE%B5/">DIRECTX 12 5.6 顶点着色器阶段</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-19</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>图元装配完之后，vertex们就到达了vertex shader阶段。可以将vertex shader阶段视为一个函数，输入的是vertex，输出的是vertex。在硬件的实际计算过程中可以简单的认为是硬件做了如下过程：</p>
+<p>for(UINT i = 0; i &lt; numVertices; ++i)</p>
+<p>outputVertex[i] = VertexShader( inputVertex[i] );</p>
+<p>这个阶段可以实现的效果有：</p>
+<ul>
+<li>  变换transformation</li>
+<li>  光照lighting</li>
+<li>置换贴图displacement mapping  and so on</li>
+</ul>
+<p><strong>物体空间和世界空间</strong></p>
+<p><strong>Local Space and World Space</strong></p>
+<p><strong>观察空间</strong></p>
+<p><strong>View Space</strong></p>
+<p><strong>投影与齐次裁剪空间</strong></p>
+<p><strong>Projection and Homogeneous Clip Space</strong></p>
+<p><strong>定义一个视锥体（平截头体）</strong></p>
+<p><strong>Defining a Frustum</strong></p>
+<p><strong>投影矩阵</strong></p>
+<p>这个部分可以参考《3d math primer for graphics and game development》，我就不废话了</p>
+<p><strong>标准化设备坐标系</strong></p>
+<p><strong>Normalized Device Coordinates (NDC)</strong></p>
+<p>前面部分中投影点的坐标是在视图空间中计算的。在视图空间中，投影窗口的高度为2，宽度为2r，其中r是纵横比。问题是尺寸取决于纵横比。这意味着需要告诉硬件纵横比，因为硬件稍后需要执行一些涉及投影窗口尺寸的操作（例如将其映射到后缓冲区）。如果我们能去掉对长宽比的依赖，那就更方便了。解决方案是将投影的x坐标从间隔[-r，r]缩放到[-1，1]，如下所示：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0758_DIRECTX12561.png"></p>
+<p>映射之后坐标就被描述在了NDC中。这里只有x和y轴坐标被标准化，z轴坐标并没有。</p>
+<p>当且仅当满足以下条件时一个点才会在视锥体中：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0758_DIRECTX12562.png"></p>
+<p><strong>用矩阵写出投影方程</strong></p>
+<p><strong>Writing the Projection Equations with a Matrix</strong></p>
+<p>目的是保持一致性，因为别的变换都用矩阵表示了。</p>
+<p>但是Equation是非线性的，需要拆成两部分，非线性的部分除以Z，但是z坐标之后还需要用，先保存在w分量。</p>
+<p><strong>标准化深度值</strong></p>
+<p><strong>Normalized Depth Value</strong></p>
+<p>因为需要进行深度测试，DirectX中希望深度值在[0，1]，这样好处理，所以要把深度值进行标准化。将原区间映射到0~1可以通过缩放和唯一来实现，如下：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0758_DIRECTX12563.png"></p>
+<p>如果近平面映射到0则有：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0758_DIRECTX12564.png"></p>
+<p>如果远平面映射到0则有</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0758_DIRECTX12565.png"></p>
+<p>由1式可以得B = −An，代入2式</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0758_DIRECTX12566.png"></p>
+<p>因此：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0758_DIRECTX12567.png"></p>
+<p>函数图像如下：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0758_DIRECTX12568.png"></p>
+<p>急剧增加且非线性的，和近平面比较近的部分几乎占用了所有的范围，大部分的深度值其实被映射到了一个小的子集里面，会导致深度缓冲的精度问题，毕竟硬件的精度数值式有限的。在实际使用过程中尽量使近平面和远平面接近一点。</p>
+<p><strong>XMMatrixPerspectiveFovLH</strong></p>
+<p>透视投影矩阵的创建可以使用如下的D3D数学函数：</p>
+<p>XMMATRIX XM_CALLCONV XMMatrixPerspectiveFovLH</p>
+<p>(</p>
+<p>float FovAngleY, //从上往下看视锥体的角度</p>
+<p>float AspectRatio, //X:Y 宽高比</p>
+<p>float NearZ, //近平面到裁剪平面的距离 必须大于零</p>
+<p>float FarZ //远平面到裁剪平面的距离 必须大于零</p>
+<p>);</p>
+<p><em>来自 &lt;<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/api/directxmath/nf-directxmath-xmmatrixperspectivefovlh">https://docs.microsoft.com/en-us/windows/win32/api/directxmath/nf-directxmath-xmmatrixperspectivefovlh</a>&gt;</em></p>
+<p>返回透视投影矩阵。</p>
+<p>宽高比与窗口宽高比匹配：</p>
+<p>float D3DApp::AspectRatio()const {</p>
+<p>return static_cast<float>(mClientWidth) / mClientHeight;</p>
+<p>}</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/19/c%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%EF%BC%9A%E5%9B%9B%E7%A7%8D%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E8%BF%90%E7%AE%97%E7%AC%A6/">C++面向对象：四种类型转换运算符</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-19</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a></span><div class="content"><p>隐式类型转换是安全的，显式类型转换是有风险的</p>
+<p>C风格的强制类型转换统一使用( )，而( )在代码中随处可见，所以也不利于使用文本检索工具</p>
+<p>有几种特定于c++语言的类型转换操作符。这些操作符旨在<strong>消除旧式C语言强制类型转换中固有的一些模糊性和危险</strong>。</p>
+<p>c++类型转换的几种分类</p>
+<p><strong>关键字</strong></p>
+<p><strong>说明</strong></p>
+<p>static_cast</p>
+<p>用于良性转换，一般不会导致意外发生，风险很低。用于非多态的转换。</p>
+<p>const_cast</p>
+<p>用于 const 与非 const、volatile 与非 volatile 之间的转换。</p>
+<p>reinterpret_cast</p>
+<p>高度危险的转换，这种转换仅仅是对二进制位的重新解释，不会借助已有的转换规则对数据进行调整，但是可以实现最灵活的 C++ 类型转换。</p>
+<p>dynamic_cast</p>
+<p>借助 RTTI，用于类型安全的向下转型（Downcasting）。<br>用于多态类型的转换。</p>
+<p>safe_cast</p>
+<p>Used in C++/CLI to produce verifiable MSIL.</p>
+<p><em>来自 &lt;<a target="_blank" rel="noopener" href="http://c.biancheng.net/cpp/biancheng/view/3297.html">http://c.biancheng.net/cpp/biancheng/view/3297.html</a>&gt;</em></p>
+<p><strong>dynamic_cast Operator</strong></p>
+<p><strong>语法</strong></p>
+<p>dynamic_cast &lt; type-id &gt; ( expression )</p>
+<p>type-id 必须是一个指针或引用指向之前定义好的类类型，或者是一个指向void的指针</p>
+<p>如果type-id是指针 expression也得是指针</p>
+<p>如果type-id是引用 expression需要是左值</p>
+<p>当type-id是指向值类型的内部指针时，动态强制转换将不再抛出异常，而强制转换在运行时失败。强制转换将返回0指针值，而不是抛出。</p>
+<p>如果type-id是一个指向明确可访问的表达式直接或间接基类的指针，那么结果就是指向type-id类型的惟一子对象的指针。</p>
+<p>比如：</p>
+<p>class B { };</p>
+<p>class C : public B { };</p>
+<p>class D : public C { };</p>
+<p>void f(D* pd) {</p>
+<p>C* pc = dynamic_cast&lt;C*&gt;(pd); // ok: C是一个直接基类</p>
+<p>// pc指向pd的C子对象</p>
+<p>B* pb = dynamic_cast&lt;B*&gt;(pd); // ok: B是D的间接基类</p>
+<p>// pb指向pd的B子对象</p>
+<p>}</p>
+<p>dynamic_cast与static_cast是相对的</p>
+<p>dynamic_cast 用于在类的继承层次之间进行类型转换，它既允许向上转型（Upcasting），也允许向下转型（Downcasting）。向上转型是无条件的，不会进行任何检测，所以都能成功；向下转型的前提必须是安全的，要借助 RTTI 进行检测，所有只有一部分能成功。</p>
+<p><strong>static_cast Operator</strong></p>
+<p><strong>语法</strong></p>
+<p>static_cast <type-id> ( expression )</p>
+<p>在标准c++中，不进行任何运行时类型检查来帮助确保转换的安全性。</p>
+<p>该运算符可以用于将基类指针转换为派生类指针等操作，这样的转换并不总是安全的。该操作符只能用于良性转化，比如：</p>
+<ul>
+<li>  原有的自动类型转换，例如 short 转 int、int 转 double、const 转非 const、向上转型等</li>
+<li>  void 指针和具体类型指针之间的转换，例如void *转int *、char *转void *等</li>
+<li>  有转换构造函数或者类型转换函数的类与其它类型之间的转换，例如 double 转 Complex（调用转换构造函数）、Complex 转 double（调用类型转换函数）。</li>
+</ul>
+<p><strong>静态和动态的区别</strong></p>
+<p>一般情况下 静态操作符可以转换数值类数据类型，比如enums转ints 转floats。静态强制转换没有动态强制转换安全，因为静态强制转换<strong>没有运行时类型检查</strong>。对于不明确的指针的动态强制转换会失败，但是静态强制转换会不检查就返回，仿佛没有错误。但是动态强制转换只能用于指针和引用，并且运行时类型检查时有一定开销的。</p>
+<p>下面有一个例子：</p>
+<p>class B {};</p>
+<p>class D : public B {};</p>
+<p>void f(B* pb, D* pd) {</p>
+<p>D* pd2 = static_cast&lt;D*&gt;(pb); // 不安全, 将B类型强制转换为D类型，D中可能有B没有的字段和方法</p>
+<p>B* pb2 = static_cast&lt;B*&gt;(pd); // 安全，因为派生类D一定有基类B的字段和方法。</p>
+<p>}</p>
+<p>动态强制转换和静态强制转换操作符在类层次结构中移动指针。但是，静态强制转换仅依赖于cast语句中提供的信息，因此可能不安全。例如：</p>
+<p>class B {</p>
+<p>public:</p>
+<p>virtual void Test(){}</p>
+<p>};</p>
+<p>class D : public B {};</p>
+<p>void f(B* pb) {</p>
+<p>D* pd1 = dynamic_cast&lt;D*&gt;(pb);</p>
+<p>D* pd2 = static_cast&lt;D*&gt;(pb);</p>
+<p>}</p>
+<p>如果pb确实指向类型为D的对象，那么pd1和pd2将获得相同的值。如果pb == 0，它们也会得到相同的值。</p>
+<p>如果pb指向的是B类型的对象，而不是完整的D类，那么动态强制转换将知道足够多的信息以返回0。但是，静态强制转换依赖于程序员的断言，即pb指向类型为D的对象，并且只返回一个指向假定的D对象的指针。</p>
+<p>因此，静态强制转换可以执行隐式转换的逆转换，在这种情况下，结果是未定义的。由程序员来验证静态强制转换的结果是否安全。</p>
+<p>这种行为也适用于类类型之外的类型。例如，可以使用静态强制转换将int转换为char。但是，得到的char可能没有足够的位来容纳整个int值。同样，由程序员来验证静态强制转换的结果是否安全。</p>
+<p>静态强制转换操作符还可用于执行任何隐式转换，包括标准转换和用户定义转换。例如</p>
+<p>typedef unsigned char BYTE;</p>
+<p>void f() {</p>
+<p>char ch;</p>
+<p>int i = 65;</p>
+<p>float f = 2.5;</p>
+<p>double dbl;</p>
+<p>ch = static_cast<char>(i); // int 转 char</p>
+<p>dbl = static_cast<double>(f); // float转 double</p>
+<p>i = static_cast<BYTE>(ch);</p>
+<p>}</p>
+<p>任何表达式都可以通过静态强制转换操作符显式转换为void类型。目标void类型可以选择包含const、volatile或unaligned属性。</p>
+<p>静态强制转换操作符不能丢弃常量、易失性或未对齐的属性。</p>
+<p>需要注意的是，static_cast 不能用于无关类型之间的转换，因为这些转换都是有风险的：</p>
+<ul>
+<li>  两个具体类型指针之间的转换，例如int *转double *、Student *转int *等。不同类型的数据存储格式不一样，长度也不一样，用 A 类型的指针指向 B 类型的数据后，会按照 A 类型的方式来处理数据：如果是读取操作，可能会得到一堆没有意义的值；如果是写入操作，可能会使 B 类型的数据遭到破坏，当再次以 B 类型的方式读取数据时会得到一堆没有意义的值。</li>
+<li>  int 和指针之间的转换。将一个具体的地址赋值给指针变量是非常危险的，因为该地址上的内存可能没有分配，也可能没有读写权限，恰好是可用内存反而是小概率事件。</li>
+</ul>
+<p><strong>reinterpret_cast Operator</strong></p>
+<p><strong>语法</strong></p>
+<p>reinterpret_cast &lt; type-id &gt; ( expression )</p>
+<p>这个运算符用不好会造成不安全，尽量能用其他的代替就用其他的。</p>
+<p>这种转换仅仅是对二进制位的重新解释，不会借助已有的转换规则对数据进行调整，所以风险很高。</p>
+<p>reinterpret cast操作符可用于将char*转换为int*，或将一个类*转换为不相关的类*，这些操作符本质上是不安全的。</p>
+<p>重新解释强制类型转换的结果除了被强制转换回其原始类型外，不能安全地用于其他任何事情。</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/19/visual-studio-2019%E5%88%9D%E5%A7%8B%E5%8C%96directx12%E9%81%87%E5%88%B0%E7%9A%84%E4%B8%80%E4%BA%9B%E9%97%AE%E9%A2%98/">Visual Studio 2019初始化DirectX12遇到的一些问题</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-19</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>在使用《Introduce to 3D Game Programing with DirectX12》提供的基础框架时，使用VS2019创建项目无法成功生成项目，但是从github获取龙书自带的项目打开之后却没有任何问题，成功的生成了所有的实例。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/d3dcoder/d3d12book">https://github.com/d3dcoder/d3d12book</a> 这里是随书源码的github地址。</p>
+<p>经过对比项目设置后发现，以下几个选项务必保持一致：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0558_VisualStudi1.png"></p>
+<p>必须设置为x64平台</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0558_VisualStudi2.png"></p>
+<p>这里的符合模式必须要改成否</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0558_VisualStudi3.png"></p>
+<p>预处理器定义要加上WIN32</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0558_VisualStudi4.png"></p>
+<p><strong>链接器</strong>的<strong>系统</strong>中的<strong>子系统</strong>必须为<strong>窗口</strong></p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/19/directx-12-5-5-%E8%BE%93%E5%85%A5%E8%A3%85%E9%85%8D%E9%98%B6%E6%AE%B5/">DIRECTX 12 5.5 输入装配阶段</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-19</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></span><div class="content"><p>input assembler 简称IA阶段</p>
+<p>读取几何数据，如vertices和indices，然后装配成几何图元。</p>
+<p>vertex可以视为特殊的点，并且在DirectX中可以有更多的属性，可以定义不同格式的vertex，可以包含位置、uv、法线、颜色等等信息。</p>
+<p><strong>图元拓扑</strong></p>
+<p><strong>Primitive Topology</strong></p>
+<p>渲染管线中vertex被绑定到了vertex buffer中，里面存了一系列vertex，但是没有定义这些点怎么组装成几何图元。比如这里有一堆点，是两两配对装成线，还是三三配对成面呢？在D3D中需要指明图元拓扑规则。D3D中有一个枚举类来进行指定图元装配的拓扑规则。太长了自己去看doc吧</p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/api/d3dcommon/ne-d3dcommon-d3d_primitive_topology">https://docs.microsoft.com/en-us/windows/win32/api/d3dcommon/ne-d3dcommon-d3d_primitive_topology</a></p>
+<p>捡几个常见的说一下</p>
+<p><strong>Point List</strong></p>
+<p><strong>D3D_PRIMITIVE_TOPOLOGY_POINTLIST</strong></p>
+<p>会把每个vertex画成单独的点</p>
+<p><strong>Line Strip</strong></p>
+<p><strong>D3D_PRIMITIVE_TOPOLOGY_LINESTRIP</strong></p>
+<p>会把vertex画成线，这里如果有n+1个vertex，那么会有n条线</p>
+<p><strong>Line List</strong></p>
+<p><strong>D3D_PRIMITIVE_TOPOLOGY_LINELIST</strong></p>
+<p>和上面那个不一样，这里每两个vertex画成一条线</p>
+<p><strong>Triangle Strip</strong></p>
+<p><strong>D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP</strong></p>
+<p>会画成三角形，会假设这些三角形是关联的，也就是说n+2个点的话绘画出来n个三角形</p>
+<p><strong>Triangle List</strong></p>
+<p><strong>D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST</strong></p>
+<p>每三个点会画成一个单独的三角形</p>
+<p>下图简单的说明了明显的差异</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0541_DIRECTX12551.png"></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0541_DIRECTX12552.png"></p>
+<p><strong>图元邻接</strong></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0541_DIRECTX12553.png"></p>
+<p>每个三角形有三个相邻的三角形，叫做<strong>邻接三角形</strong> adjacent triangles。</p>
+<p>几何着色器geometry shader需要用到这些信息。为了让几何着色器获得这些邻接三角形，这些邻接三角形需要和原三角形一起被提交到vertex buffer或者index buffer，并且拓扑规则需要指定为<strong>D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST_ADJ</strong>。</p>
+<p><strong>Control Point Patch List</strong></p>
+<p>不晓得怎么翻译合适，先不翻了。</p>
+<p><strong>D3D_PRIMITIVE_TOPOLOGY_N_CONTROL_POINT_PATCHLIST</strong></p>
+<p>是一种拓扑类型。vertex数据会被解释为有N个控制点的patch lists。会被用在可选的tessellation阶段，这个在很后面才会解释。</p>
+<p><strong>Indices</strong></p>
+<p>举个栗子说明一下索引</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0541_DIRECTX12554.png"></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0541_DIRECTX12555.png"></p>
+<p>v0点在第二个图形中用了很多次，为了节省vertex buffer，也可以减少显卡的处理压力，只存储一次vertex v0，然后在绘制三角形的时候多次指明使用v0。这一点就是使用索引的意义，使用索引后会变成下面的情况。</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0541_DIRECTX12556.png"></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0541_DIRECTX12557.png"></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0541_DIRECTX12558.png"></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0541_DIRECTX12559.png"></p>
+<p>虽然索引中有一些重复的，但是比起vertex重复要好很多。</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/08/%E5%90%8E%E5%A4%84%E7%90%86%EF%BC%9A00%E5%87%86%E5%A4%87%E9%98%B6%E6%AE%B5/">后处理：00准备阶段</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-08</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/unity3d/">unity3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/unity3d/Unity-Shader/">Unity Shader</a></span><div class="content"><p>后处理是在最后阶段对像素的直接处理，需要能够获得选然后的图像信息。Unity API提供了这个方法供我们使用。</p>
+<p><a target="_blank" rel="noopener" href="https://docs.unity3d.com/ScriptReference/MonoBehaviour.OnRenderImage.html">https://docs.unity3d.com/ScriptReference/MonoBehaviour.OnRenderImage.html</a></p>
+<p>先写个脚本来满足获取信息的需求。这里考虑到凡是后处理效果都需要进行一些必要的检查，检查目前的效果是否被当前设备支持，所以对这些操作写在一个基类里面方便复用。</p>
+<p>这里实现一个相对简单的基类。</p>
+<p>基本上迁至检测需要考虑的有：</p>
+<ol>
+<li> 是否支持DX11</li>
+<li> 是否支持HDR贴图</li>
+<li> 是否支持深度贴图</li>
+<li> 当前的shader状态</li>
+<li> 当前的material状态</li>
+</ol>
+<p>具体的方法都卸载了源码的注释中。<a target="_blank" rel="noopener" href="https://github.com/muchenhen/MyUnityShaders/tree/master/Assets/PostEffects">https://github.com/muchenhen/MyUnityShaders/tree/master/Assets/PostEffects</a></p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/03/07/%E6%8F%8F%E8%BE%B9%E6%95%88%E6%9E%9C/">描边效果</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-07</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/unity3d/">unity3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/unity3d/Unity-Shader/">Unity Shader</a></span><div class="content"><p>本文简单归纳总结整理了关于各种思路的ShaderLab中的描边效果的实现。</p>
+<p>描边效果常见于一些非真实感的渲染中。下图是本人在测试各种描边方法实现时在Unity中的表现：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/030720_0937_1.png"></p>
+<h2 id="第一行：Back-Facing描边"><a href="#第一行：Back-Facing描边" class="headerlink" title="第一行：Back Facing描边"></a>第一行：Back Facing描边</h2><p>这种方法的思路十分简单，将每个顶点的位置沿着法线的方向进行扩展。</p>
+<p>过程实现非常简单，理论上讲，先把顶点坐标转换到裁剪空间，然后将法线坐标变换到视角空间后，直接讲顶点的位置的xy分量（xyz也行）加上对应的法线坐标。这个加法的结果就是所有的点沿着法线方向”膨胀”了一定的位移。然后把膨胀后的模型直接渲染成纯色，之后再正常的渲染模型，这样两层叠加后看起来就是喵了个边。</p>
+<p>. <img src="https://www.muchenhen.com/wp-content/uploads/2020/03/030720_0937_2.png"><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/030720_0937_3.png"></p>
+<p>此处实例是将模型简单设置成了白色 描边设置为黑色。如果想要控制描边的粗细，其实就是控制模型膨胀的程度，那么定义一个变量与计算膨胀的顶点坐标中的法线参数相乘，就可以通过这个参数的大小控制描边粗细。</p>
+<p>但是这个描边效果有两个问题：<br>1、对于正方体这种，转角处法线方向突变的情况，相当于周围面片飘了起来<br>2、随着摄像机靠近物体，会发现描边也是跟着变粗的，当然这个不能算问题，可以作为一种特性。</p>
+<p>第一个图的第二行就是解决了上述两个问题的情况</p>
+<h2 id="第二行：临时更改法线信息"><a href="#第二行：临时更改法线信息" class="headerlink" title="第二行：临时更改法线信息"></a>第二行：临时更改法线信息</h2><p>对于第一个问题，很清楚是因为法线完全垂直于平面，往外扩张之后还是垂直的，然后出现转角的时候就出现了断裂。正方体甚至正面完全看不见，因为就是渲染了一个平面。</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/030720_0937_4.png"></p>
+<p>所以我们可以临时修改法线的信息来实这种情况的描边。将每个顶点在同一个位置的不同的法线信息数据进行平均计算，计算出新的临时法线信息。</p>
+<p><strong>此处牵涉到一个新的问题，如果模型有骨骼动画，那么法线的数据会随着骨骼动画变化。如果模型使用了骨骼动画，那么需要将法线和切线数据写进mesh。如果不需要可以直接在顶点着色器中进行变化。如果要对mesh进行改变需要脚本进行。此处选择在脚本中操作。</strong></p>
+<p>实现的主要思路是通过Unity的API读取到mesh的顶点相关信息，然后自定义一个字典来进行每个顶点对应的法线向量的判断，将一个顶点的不同面的法线进行相加然后标准化（此处的几何意义很明显不解释了）。这样可以得到一个比较”温和”的转折处的法线，然后再进行扩张，可以得到很好的效果。</p>
+<p>关于第二个问题其实很简单，因为是在视角空间进行的操作，随意会对摄像机产生随距离变化的情况。如果把描边改成NDC空间就会解决这个问题。</p>
+<p>转换到NDC空间会遇到新的问题，众所周知Unity采用OpenGL的NDC空间，是个标准正方体，但是屏幕一般是16比9，所以我们要对x坐标进行修正。具体实现就是x坐标乘屏幕宽高比。</p>
+<p>完成上述的操作后就获得了比较好的描边效果，这种描边不是完全的轮廓边界，因为在渲染描边的时候Z缓冲写入没有关闭。</p>
+<h2 id="第三行：关闭Z缓冲的Back-Facing"><a href="#第三行：关闭Z缓冲的Back-Facing" class="headerlink" title="第三行：关闭Z缓冲的Back Facing"></a>第三行：关闭Z缓冲的Back Facing</h2><p>如果我不想要前面的部分会出现局部描边，而是完全的只有外部轮廓有描边的话，就需要关闭描边的Z缓冲写入，这样就会被后渲染的图形完全遮挡，就会得到想要的效果。</p>
+<h2 id="第四行：关闭Z缓冲的法线修改"><a href="#第四行：关闭Z缓冲的法线修改" class="headerlink" title="第四行：关闭Z缓冲的法线修改"></a>第四行：关闭Z缓冲的法线修改</h2><p>这个是在临时修改法线的基础上关闭了描边的Zbuffer写入。</p>
+<p>此外需要注意，在进行Z缓冲关闭的时候，由于默认 的渲染顺序是先于skybox的顺序的，所以渲染skybox后会遮掉描边，需要更改渲染队列的顺序，放在skybox之后。</p>
+<p>源码地址：<a target="_blank" rel="noopener" href="https://github.com/muchenhen/MyUnityShaders/tree/master/Assets/Unreality/01%E6%8F%8F%E8%BE%B9%E6%95%88%E6%9E%9C%20%E5%90%84%E7%A7%8D%E5%B0%9D%E8%AF%95">https://github.com/muchenhen/MyUnityShaders/tree/master/Assets/Unreality/01%E6%8F%8F%E8%BE%B9%E6%95%88%E6%9E%9C%20%E5%90%84%E7%A7%8D%E5%B0%9D%E8%AF%95</a></p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/11/12/Directx-12-4-3-%E5%88%9D%E5%A7%8B%E5%8C%96direct3d/">DIRECTX 12 4.3初始化DIRECT3D</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-11-12</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/DirectX/">DirectX</a></span><div class="content"><p>终于到初始化了，已经第4.3节了<br>初始化也是一个麻烦的过程，但所幸只需要进行一次。初始化Direct3D的过程可以分为以下几个步骤:<br>• 1. 使用D3D12CreateDevice函数创建ID3D12Device。<br>• 2. 创建一个ID3D12Fence对象和查询描述符大小。<br>• 3.检查4X MSAA质量水平支持。<br>• 4. 创建命令队列、命令列表分配器和主命令列表。<br>• 5. 描述并创建交换链。<br>• 6. 创建应用程序需要的描述符堆。<br>• 7. 调整后端缓冲区的大小，并为后端缓冲区创建一个呈现目标视图。<br>• 8. 创建深度/模板缓冲区及其关联的深度/模板视图。<br>• 9. 设置视口和裁剪矩形。</p>
+<p>4.3.1创建设备<br>初始化Direct3D首先创建Direct3D 12设备(ID3D12Device)。该设备表示一个显示适配器。通常，显示适配器是一个物理的3D硬件块(例如，显卡);然而，一个系统也可以有一个软件显示适配器来模拟3D硬件功能(例如，WARP适配器)。Direct3D 12设备用于检查特性支持，并创建所有其他Direct3D接口对象，如资源、标识符和命令列表。设备可以通过以下功能来创建:<br>HRESULT WINAPI D3D12CreateDevice(<br>IUnknown* pAdapter,<br>D3D_FEATURE_LEVEL MinimumFeatureLevel,<br>REFIID riid, // 预期:ID3D12Device<br>void** ppDevice );<br>pAdapter：指定要创建的设备表示的显示适配器。为该参数指定null将使用主显示适配器。<br>MinimumFeatureLevel：应用程序需要支持的最低功能级别;如果适配器不支持此功能级别，则设备创建将失败。<br>riid：要创建的ID3D12Device接口的COM ID。<br>ppDevice：返回创建的设备。<br>下面是这个函数调用的一个例子:<br>e is an example call of this function: #if defined(DEBUG) || defined(_DEBUG) // Enable the D3D12 debug layer.<br>{<br>ComPtr debugController; ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(&amp;debugController))); debugController-&gt;EnableDebugLayer(); } #endif<br>ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&amp;mdxgiFactory)));<br>// Try to create hardware device. HRESULT hardwareResult = D3D12CreateDevice(<br>nullptr, // default adapter D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&amp;md3dDevice));<br>// Fallback to WARP device. if(FAILED(hardwareResult)) {<br>ComPtr pWarpAdapter; ThrowIfFailed(mdxgiFactory-</p>
+<blockquote>
+<p>EnumWarpAdapter(IID_PPV_ARGS(&amp;pWarpAdapter)));<br>ThrowIfFailed(D3D12CreateDevice( pWarpAdapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&amp;md3dDevice)));<br>}<br>首先为调试模式构建启用调试层。当调试层启用后，Direct3D将启用额外的调试并向vc++输出窗口发送调试消息，如下所示:<br>D3D12 ERROR: ID3D12CommandList::Reset: Reset fails because the command list was not closed.</p>
+</blockquote>
+<p>还要注意，如果对D3D12CreateDevice的调用失败，将退回到WARP设备，这是一个软件适配器。WARP代表Windows高级栅格化平台。在Windows 7及以下版本中，WARP设备支持功能级别10.1;在Windows 8上，WARP设备支持高达11.1级的特性。为了创建一个WARP适配器，需要创建一个IDXGIFactory4对象，以便枚举WARP适配器：<br>ComPtr mdxgiFactory;<br>CreateDXGIFactory1(IID_PPV_ARGS(&amp;mdxgiFactory));<br>mdxgiFactory-&gt;EnumWarpAdapter( IID_PPV_ARGS(&amp;pWarpAdapter));<br>mdxgiFactory对象也将用于创建交换链。</p>
+<p>4.3.2 Create the Fence and Descriptor Sizes<br>标题不会翻译，不知道具体使用的哪个名词，容我查一下资料再修改<br>在创建完设备后，需要创建一个用于GPU和CPU同步的Fence。 由于使用了描述符，因此需要知道不同的描述符的大小。 由于描述符大小不同的GPU有不同的值，因此我们需要查询其大小。可以cache描述符大小一边需要的时候取用：<br>ThrowIfFailed(md3dDevice-&gt;CreateFence( 0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&amp;mFence))); mRtvDescriptorSize = md3dDevice-</p>
+<blockquote>
+<p>GetDescriptorHandleIncrementSize( D3D12_DESCRIPTOR_HEAP_TYPE_RTV); mDsvDescriptorSize = md3dDevice-<br>GetDescriptorHandleIncrementSize( D3D12_DESCRIPTOR_HEAP_TYPE_DSV); mCbvSrvDescriptorSize = md3dDevice-<br>GetDescriptorHandleIncrementSize(<br>D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);</p>
+</blockquote>
+<p>4.3.3 Check 4X MSAA Quality Support<br>检查对4X MSAA的支持。选择4X的原因是因为其开销并不是很大，因为所有的Direct3D 11功能设备支持4X MSAA的所有渲染目标格式。因此，它可以保证在Direct3D 11硬件上可用。但是必须检查所支持的质量水平，可以通过以下方法实现:<br>D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS<br>msQualityLevels; msQualityLevels.Format = mBackBufferFormat; msQualityLevels.SampleCount = 4; msQualityLevels.Flags =<br>D3D12_MULTISAMPLE_QUALITY_LEVELS_FLAG_NONE;<br>msQualityLevels.NumQualityLevels = 0; ThrowIfFailed(md3dDevice-&gt;CheckFeatureSupport(<br>D3D12_FEATURE_MULTISAMPLE_QUALITY_LEVELS, &amp;msQualityLevels, sizeof(msQualityLevels)));<br>m4xMsaaQuality = msQualityLevels.NumQualityLevels;<br>assert(m4xMsaaQuality &gt; 0 &amp;&amp; “Unexpected MSAA quality level.”);<br>由于4XMSAA是肯定被支持的，检测出来的等级肯定大于0。 可以在这里设置一个断言。</p>
+<p>4.3.4创建命令队列和命令列表<br>4.2.1讲过的东西<br>queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;<br>queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Device-&gt;CreateCommandQueue(&amp;queueDesc, IID_PPV_ARGS(CommandQueue));</span><br><span class="line"></span><br><span class="line">Device-&gt;CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,</span><br><span class="line">    IID_PPV_ARGS(CommandAllocator));</span><br><span class="line"></span><br><span class="line">Device-&gt;CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT,</span><br><span class="line">    CommandAllocator, nullptr, IID_PPV_ARGS(CommandList));</span><br><span class="line"></span><br><span class="line">CommandList-&gt;Close();</span><br></pre></td></tr></table></figure>
+
+<p>4.3.5描述并创建交换链<br>初始化的下一步是创建交换链。创建交换链的时候首先需要填充DXGI_SWAP_CHAIN_DESC结构。 需要这个结构来描述要创建什么属性的交换链。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">struct DXGI_SWAP_CHAIN_DESC</span><br><span class="line">&#123;</span><br><span class="line">    DXGI_MODE_DESC BufferDesc;</span><br><span class="line">    DXGI_SAMPLE_DESC SampleDesc;</span><br><span class="line">    DXGI_USAGE BufferUsage;</span><br><span class="line">    UINT BufferCount;</span><br><span class="line">    HWND OutputWindow;</span><br><span class="line">    BOOL Windowed;</span><br><span class="line">    DXGI_SWAP_EFFECT SwapEffect;</span><br><span class="line">    UINT Flags;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">struct DXGI_MODE_DESC</span><br><span class="line">&#123;</span><br><span class="line">    UINT Width; //缓存的宽度</span><br><span class="line">    UINT Height; //缓存的高度</span><br><span class="line">    DXGI_RATIONAL RefreshRate;</span><br><span class="line">    DXGI_FORMAT Format; //缓存的格式</span><br><span class="line">    DXGI_MODE_SCANLINE_ORDER ScanlineOrdering;</span><br><span class="line">    DXGI_MODE_SCALING Scaling; //如何在显示器上缩放显示</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>会使用较为常用的属性去填充下面的成员。 如果想了解更多填充的属性可以去参阅SDK文档。</p>
+<p>BufferDesc: 描述创建的BackBuffer的属性，主要属性就是宽度高度以及格式。其余的可以参考SDK文档。<br>SampleDesc: 多重采样的数量和质量等级，设置成采样数量为1，质量等级为0。<br>BufferUsage: 设置为DXGI_USAGE_RENDER_TARGET_OUTPUT。<br>BufferCount: 在交换链中要使用多少个缓冲，使用双缓冲设置为2。<br>OutputWindow: 要呈现的窗口的句柄。<br>Windowed: 设置为true就是窗口模式，否则是全屏模式。<br>SwapEffect: 设置为DXGI_SWAP_EFFECT_FLIP_DISCARD。<br>Flags: 一些其他设置。如果设置了DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH，那么在切换到全屏模式的时候就会选择一个最适合当前程序的显示模式，如果你没有设置这个属性，那么切换成全屏的时候就使用当前桌面的显示模式。<br>在填充完毕这个结构后，就可以创建交换链了。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">HRESULT IDXGIFactory::CreateSwapChain(</span><br><span class="line">    IUnknown *pDevice, //ID3D12CommandQueue</span><br><span class="line">    DXGI_SWAP_CHAIN_DESC *pDesc,</span><br><span class="line">    IDXGISwapChain **ppSwapChain);</span><br></pre></td></tr></table></figure>
+
+<p>下面的代码展示了如何在示例框架中创建交换链。注意，这个函数已经被设计成可以被多次调用。它将在创建新交换链之前破坏旧的交换链。这允许用不同的设置重新创建交换链，而且可以在运行时更改多采样设置。<br>DXGI_FORMAT mBackBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM; void D3DApp::CreateSwapChain() {<br>// Release the previous swapchain we will be recreating. mSwapChain.Reset();<br>DXGI_SWAP_CHAIN_DESC sd; sd.BufferDesc.Width = mClientWidth; sd.BufferDesc.Height = mClientHeight; sd.BufferDesc.RefreshRate.Numerator = 60; sd.BufferDesc.RefreshRate.Denominator = 1; sd.BufferDesc.Format = mBackBufferFormat; sd.BufferDesc.ScanlineOrdering =<br>DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED; sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED; sd.SampleDesc.Count = m4xMsaaState ? 4 : 1; sd.SampleDesc.Quality = m4xMsaaState ? (m4xMsaaQuality - 1) : 0; sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; sd.BufferCount = SwapChainBufferCount; sd.OutputWindow = mhMainWnd; sd.Windowed = true; sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD; sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH; // Note: Swap chain uses queue to perform flush. ThrowIfFailed(mdxgiFactory-&gt;CreateSwapChain( mCommandQueue.Get(), &amp;sd, mSwapChain.GetAddressOf()));<br>}</p>
+<p>4.3.6 Create the Descriptor Heaps<br>需要创建描述符堆来存储描述符。<br>描述符堆由ID3D12DescriptorHeap接口表示。Heap创建方法是<br>ID3D12Device: CreateDescriptorHeap接口。在本章的示例程序中，<br>需要在交换链中使用的缓冲个数相同数量的Render Target View去描述交换链中的缓冲资源，这些资源将存储最后要呈现的内容。 还需要一个Depth/Stencil View去描述一个用于深度测试的Depth/Stencil Buffer资源。 因此需要一个堆存储Render Target View和Depth/Stencil View。</p>
+<p>下面是代码：<br>ComPtr mRtvHeap; ComPtr mDsvHeap; void D3DApp::CreateRtvAndDsvDescriptorHeaps() {<br>D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc; rtvHeapDesc.NumDescriptors = SwapChainBufferCount; rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV; rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE; rtvHeapDesc.NodeMask = 0; ThrowIfFailed(md3dDevice-&gt;CreateDescriptorHeap( &amp;rtvHeapDesc, IID_PPV_ARGS(mRtvHeap.GetAddressOf())));<br>D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc; dsvHeapDesc.NumDescriptors = 1; dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV; dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE; dsvHeapDesc.NodeMask = 0; ThrowIfFailed(md3dDevice-&gt;CreateDescriptorHeap( &amp;dsvHeapDesc, IID_PPV_ARGS(mDsvHeap.GetAddressOf())));<br>}<br>创建堆之后需要能够访问它们存储的描述符。应用程序通过句柄引用描述符。<br>4.3.7创建渲染目标视图<br>必须先为资源创建一个描述符，然后将其绑定到管道阶段。为了将后台缓冲区绑定到管道的输出合并阶段需要为后台缓冲区创建一个呈现目标视图。<br>第一步是获取交换链中的缓冲区资源：<br>HRESULT IDXGISwapChain::GetBuffer( UINT Buffer, REFIID riid,<br>void **ppSurface);<br>Buffer:一想要获取的特定的后置缓冲的索引(如果有多个的话)。<br>riid: ID3D12Resource接口的COM ID，需要获得一个指向它的指针。<br>ppSurface：返回一个指向ID3D12Resource（代表后置缓存）的指针。<br>对IDXGISwapChain::GetBuffer的调用增加了返回缓冲区的COM引用计数，所以必须在完成后释放它。使用ComPtr可以自动完成。<br>创建渲染目标视图可以使用<br>ID3D12Device: CreateRenderTargetView方法:<br>void ID3D12Device::CreateRenderTargetView(<br>ID3D12Resource *pResource, const D3D12_RENDER_TARGET_VIEW_DESC *pDesc,<br>D3D12_CPU_DESCRIPTOR_HANDLE DestDescriptor);</p>
+<p>4.3.8 创建深度/模板缓冲区和视图<br>4.1.5说过深度缓冲是一个2D的texture，存储了最近的可见对象的深度信息。<br>使用D3D12_RESOURCE_DESC结构来创建texture，然后调用ID3D12Device::CreateCommittedResource<br>D3D12_RESOURCE_DESC结构：</p>
+<p>typedef struct D3D12_RESOURCE_DESC {<br>D3D12_RESOURCE_DIMENSION Dimension; UINT64 Alignment; UINT64 Width; UINT Height; UINT16 DepthOrArraySize; UINT16 MipLevels; DXGI_FORMAT Format; DXGI_SAMPLE_DESC SampleDesc; D3D12_TEXTURE_LAYOUT Layout; D3D12_RESOURCE_MISC_FLAG MiscFlags;<br>} D3D12_RESOURCE_DESC;</p>
+<p>其中的各个参数：<br>1. Dimension：资源的维度，它是下列枚举类型之一：<br>enum D3D12_RESOURCE_DIMENSION {<br>D3D12_RESOURCE_DIMENSION_UNKNOWN = 0,<br>D3D12_RESOURCE_DIMENSION_BUFFER = 1,<br>D3D12_RESOURCE_DIMENSION_TEXTURE1D = 2,<br>D3D12_RESOURCE_DIMENSION_TEXTURE2D = 3,<br>D3D12_RESOURCE_DIMENSION_TEXTURE3D = 4<br>} D3D12_RESOURCE_DIMENSION;<br>2. Width：texture在texels中的宽度。对于缓冲区资源，指的是缓冲区中的字节数。<br>3. Height：texture在texels中的高度。<br>4. DepthOrArraySize：texture在texels中的深度，或者是texture数组的大小，数组仅仅只能针对1D和2D的texture，无发建立3Dtextures的数组。<br>5. MipLevels：mipmap级别的数量。mipmap会在纸糊的章节介绍。<br>6. Format：指定texels格式的DXGI_FORMAT枚举类型的成员。<br>7. SampleDesc：多重采样的数量和质量等级。用于深度/模板缓冲的多重采样的参数必须与渲染目标匹配。<br>8. Layout：指定texture layout的D3D12_TEXTURE_LAYOUT枚举类型的成员。<br>9. MiscFlags：杂项资源标志。对于深度/模板缓冲区资源，指定D3D12_RESOURCE_MISC_DEPTH_STENCIL。</p>
+<p>GPU资源以堆的形式存在，堆本质上是带有特定属性的GPU内存块。CreateCommittedResource方法使用指定的属性创建资源并将其提交到特定的堆。<br>HRESULT ID3D12Device::CreateCommittedResource(<br>const D3D12_HEAP_PROPERTIES *pHeapProperties,<br>D3D12_HEAP_MISC_FLAG HeapMiscFlags,<br>const D3D12_RESOURCE_DESC *pResourceDesc,<br>D3D12_RESOURCE_USAGE InitialResourceState,<br>const D3D12_CLEAR_VALUE *pOptimizedClearValue,<br>REFIID riidResource, void **ppvResource);<br>typedef struct D3D12_HEAP_PROPERTIES {<br>D3D12_HEAP_TYPE Type;<br>D3D12_CPU_PAGE_PROPERTIES CPUPageProperties;<br>D3D12_MEMORY_POOL MemoryPoolPreference;<br>UINT CreationNodeMask;<br>UINT VisibleNodeMask;<br>} D3D12_HEAP_PROPERTIES;</p>
+<p>1.pHeapProperties：要提交资源的堆的属性。其中一些属性用于高级用途。需要关心的主要属性是D3D12_HEAP_TYPE，它可以是D3D12_HEAP_PROPERTIES枚举类型的以下成员之一：<br>1.1 D3D12_HEAP_TYPE_DEFAULT: 默认堆。提交资源的地方，这些资源只会被GPU访问。以深度/模板缓冲区为例:GPU读写深度/模板缓冲区。CPU不需要访问它，因此深度/模板缓冲区将被放置在默认堆中。<br>1.2 D3D12_HEAP_TYPE_UPLOAD: Upload heap. 从CPU提交资源，上传数据到GPU资源。<br>1.3 D3D12_HEAP_TYPE_READBACK: Read-back heap. 需要由CPU读取的资源的地方。<br>1.4 D3D12_HEAP_TYPE_CUSTOM:有关高级使用场景，请参阅MSDN文档了解更多信息。<br>2.HeapMiscFlags：提交资源的堆的附加标志。通常使用D3D12_HEAP_MISC_NONE<br>3.pResourceDesc：指向一个D3D12_RESOURCE_DESC实例的指针，该实例描述了想要创建的资源。<br>4.InitialResourceState：使用此参数设置资源创建时的初始状态。对于深度/模板缓冲区，初始状态将是D3D12_RESOURCE_USAGE_INITIAL，然后将其转换为D3D12_RESOURCE_USAGE_DEPTH，以便将其作为深度/模板缓冲区绑定到管道。<br>5.pOptimizedClearValue：指向D3D12_CLEAR_VALUE对象的指针，该对象描述了用于清除资源的优化值。匹配优化清除值的清除调用可能比不匹配优化清除值的清除调用更快。也可以为此指定Null。<br>struct D3D12_CLEAR_VALUE<br>{<br>DXGI_FORMAT Format;<br>union<br>{ FLOAT Color[ 4 ];<br>D3D12_DEPTH_STENCIL_VALUE DepthStencil;<br>};<br>} D3D12_CLEAR_VALUE;<br>6.riidResource： ID3D12Resource接口的COM ID，需要获得一个指向它的指针。<br>7.ppvResource：返回一个ID3D12Resource的指针，该指针表示新创建的资源。</p>
+<p>此外，在使用深度/模板缓冲区之前，须创建一个关联的深度/模板视图来绑定到管道上。这类似于创建render target视图。下面的代码示例展示了如何创建深度/模板纹理及其相应的深度/模板视图：<br>// Create the depth/stencil buffer and view.<br>D3D12_RESOURCE_DESC depthStencilDesc; depthStencilDesc.Dimension =<br>D3D12_RESOURCE_DIMENSION_TEXTURE2D; depthStencilDesc.Alignment = 0;<br>depthStencilDesc.Width = mClientWidth;<br>depthStencilDesc.Height = mClientHeight; depthStencilDesc.DepthOrArraySize = 1;<br>depthStencilDesc.MipLevels = 1;<br>depthStencilDesc.Format = mDepthStencilFormat; depthStencilDesc.SampleDesc.Count = m4xMsaaState ? 4 : 1; depthStencilDesc.SampleDesc.Quality = m4xMsaaState ?<br>(m4xMsaaQuality - 1) : 0;<br>depthStencilDesc.Layout =D3D12_TEXTURE_LAYOUT_UNKNOWN;<br>depthStencilDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;<br>D3D12_CLEAR_VALUE optClear; optClear.Format = mDepthStencilFormat; optClear.DepthStencil.Depth = 1.0f; optClear.DepthStencil.Stencil = 0;<br>ThrowIfFailed(md3dDevice-&gt;CreateCommittedResource(<br>&amp;CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),<br>D3D12_HEAP_FLAG_NONE, &amp;depthStencilDesc,<br>D3D12_RESOURCE_STATE_COMMON, &amp;optClear, IID_PPV_ARGS(mDepthStencilBuffer.GetAddressOf())));<br>// Create descriptor to mip level 0 of entire resource using the<br>// format of the resource.<br>md3dDevice-&gt;CreateDepthStencilView(<br>mDepthStencilBuffer.Get(), nullptr, DepthStencilView());<br>// Transition the resource from its initial state to be used as a depth<br>buffer.<br>mCommandList-&gt;ResourceBarrier(1,<br>&amp;CD3DX12_RESOURCE_BARRIER::Transition( mDepthStencilBuffer.Get(),<br>D3D12_RESOURCE_STATE_COMMON,<br>D3D12_RESOURCE_STATE_DEPTH_WRITE));</p>
+<p>使用CD3DX12_HEAP_PROPERTIES辅助构造函数来创建堆属性结构，其实现方式如下：</p>
+<p>explicit CD3DX12_HEAP_PROPERTIES(<br>D3D12_HEAP_TYPE type, UINT creationNodeMask = 1,<br>UINT nodeMask = 1 )<br>{ Type = type; CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;<br>MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;<br>CreationNodeMask = creationNodeMask;<br>VisibleNodeMask = nodeMask;<br>}</p>
+<p>4.3.9 Set the Viewport</p>
+<p>通常将3D场景绘制到整个后台缓冲区，其中后台缓冲区的大小对应于整个屏幕(全屏模式)或窗口的整个client区域。然而，有时只想把3D场景绘制到一个后缓冲区的子矩形中，比如下图：</p>
+<p>绘制的后缓冲区的子矩形称为viewport，它由以下结构描述：<br>typedef struct D3D12_VIEWPORT {<br>FLOAT TopLeftX;<br>FLOAT TopLeftY;<br>FLOAT Width;<br>FLOAT Height;<br>FLOAT MinDepth;<br>FLOAT MaxDepth;<br>} D3D12_VIEWPORT;<br>前四个数据成员定义了相对于后缓冲区的视口矩形(注意，可以指定分数像素坐标，数据成员的类型是float)。在Direct3D中，深度值以0到1的规格化范围存储在深度缓冲区中。使用MinDepth和MaxDepth成员将深度间隔[0,1]转换为深度间隔[MinDepth, MaxDepth]。能够变换深度范围可以达到一定的效果;例如，可以设置MinDepth=0和MaxDepth=0，这样用这个viewport绘制的所有对象的深度值都将为0，并出现在场景中所有其他对象的前面。但是，通常将MinDepth设置为0，将MaxDepth设置为1，这样就不会修改深度值。填写完D3D12_VIEWPORT结构后，使用ID3D12CommandList::RSSetViewports方法用Direct3D设置viewport。下面的例子创建并设置了一个viewport，它可以绘制到整个后台缓冲区:<br>D3D12_VIEWPORT vp;<br>vp.TopLeftX = 0.0f;<br>vp.TopLeftY = 0.0f;<br>vp.Width = static_cast(mClientWidth);<br>vp.Height = static_cast(mClientHeight);<br>vp.MinDepth = 0.0f;<br>vp.MaxDepth = 1.0f;<br>mCommandList-&gt;RSSetViewports(1, &amp;vp);</p>
+<p>第一个参数是要绑定的视口数量(对于高级效果使用多个视口)，第二个参数是指向视口数组的指针。<br>不能为同一个呈现目标指定多个视图。多个视口用于同时呈现多个呈现目标的高级技术。<br>每当命令列表重置时，视图端口都需要重置。<br>可以使用viewport来实现双人游戏的分屏，创建两个视图，一个用于屏幕的左侧，另一个用于屏幕的右侧。然后可以从Player 1的视角将3D场景绘制到左侧的视图中，并从Player 2的视角将3D场景绘制到右侧的视图中。</p>
+<p>4.3.10 Set the Scissor Rectangles<br>设置裁剪矩形<br>可以对后缓冲区定义一个裁剪矩形，使在这个矩形外的像素被剔除。这可以用于优化。例如，如果知道屏幕的某个区域将包含一个矩形的UI元素，那么就不需要处理UI元素遮住的3D世界的像素。裁剪矩形由D3D12_RECT结构定义，其类型如下:<br>typedef struct tagRECT<br>{<br>LONG left;<br>LONG top;<br>LONG right;<br>LONG bottom;<br>} RECT;<br>D3D设置裁剪矩形使用 ID3D12CommandList::RSSetScissorRects方法。下列的例子创建和设置了一个裁剪矩形覆盖了后缓冲区的左上象限：<br>mScissorRect = { 0, 0, mClientWidth/2, mClientHeight/2 };<br>mCommandList-&gt;RSSetScissorRects(1, &amp;mScissorRect);<br>……<br>4.3结束了，然而我们还是没有任何的示例代码，没有渲染出哪怕一个空窗口</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/11/12/directx-12-4-3%E5%88%9D%E5%A7%8B%E5%8C%96direct3d/">DIRECTX 12 4.3初始化DIRECT3D</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-11-12</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/DirectX/">DirectX</a></span><div class="content"><p>终于到初始化了，已经第4.3节了<br>初始化也是一个麻烦的过程，但所幸只需要进行一次。初始化Direct3D的过程可以分为以下几个步骤:<br>• 1. 使用D3D12CreateDevice函数创建ID3D12Device。<br>• 2. 创建一个ID3D12Fence对象和查询描述符大小。<br>• 3.检查4X MSAA质量水平支持。<br>• 4. 创建命令队列、命令列表分配器和主命令列表。<br>• 5. 描述并创建交换链。<br>• 6. 创建应用程序需要的描述符堆。<br>• 7. 调整后端缓冲区的大小，并为后端缓冲区创建一个呈现目标视图。<br>• 8. 创建深度/模板缓冲区及其关联的深度/模板视图。<br>• 9. 设置视口和裁剪矩形。</p>
+<p>4.3.1创建设备<br>初始化Direct3D首先创建Direct3D 12设备(ID3D12Device)。该设备表示一个显示适配器。通常，显示适配器是一个物理的3D硬件块(例如，显卡);然而，一个系统也可以有一个软件显示适配器来模拟3D硬件功能(例如，WARP适配器)。Direct3D 12设备用于检查特性支持，并创建所有其他Direct3D接口对象，如资源、标识符和命令列表。设备可以通过以下功能来创建:<br>HRESULT WINAPI D3D12CreateDevice(<br>IUnknown* pAdapter,<br>D3D_FEATURE_LEVEL MinimumFeatureLevel,<br>REFIID riid, // 预期:ID3D12Device<br>void** ppDevice );<br>pAdapter：指定要创建的设备表示的显示适配器。为该参数指定null将使用主显示适配器。<br>MinimumFeatureLevel：应用程序需要支持的最低功能级别;如果适配器不支持此功能级别，则设备创建将失败。<br>riid：要创建的ID3D12Device接口的COM ID。<br>ppDevice：返回创建的设备。<br>下面是这个函数调用的一个例子:<br>e is an example call of this function: #if defined(DEBUG) || defined(_DEBUG) // Enable the D3D12 debug layer.<br>{<br>ComPtr debugController; ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(&amp;debugController))); debugController-&gt;EnableDebugLayer(); } #endif<br>ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&amp;mdxgiFactory)));<br>// Try to create hardware device. HRESULT hardwareResult = D3D12CreateDevice(<br>nullptr, // default adapter D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&amp;md3dDevice));<br>// Fallback to WARP device. if(FAILED(hardwareResult)) {<br>ComPtr pWarpAdapter; ThrowIfFailed(mdxgiFactory-</p>
+<blockquote>
+<p>EnumWarpAdapter(IID_PPV_ARGS(&amp;pWarpAdapter)));<br>ThrowIfFailed(D3D12CreateDevice( pWarpAdapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&amp;md3dDevice)));<br>}<br>首先为调试模式构建启用调试层。当调试层启用后，Direct3D将启用额外的调试并向vc++输出窗口发送调试消息，如下所示:<br>D3D12 ERROR: ID3D12CommandList::Reset: Reset fails because the command list was not closed.</p>
+</blockquote>
+<p>还要注意，如果对D3D12CreateDevice的调用失败，将退回到WARP设备，这是一个软件适配器。WARP代表Windows高级栅格化平台。在Windows 7及以下版本中，WARP设备支持功能级别10.1;在Windows 8上，WARP设备支持高达11.1级的特性。为了创建一个WARP适配器，需要创建一个IDXGIFactory4对象，以便枚举WARP适配器：<br>ComPtr mdxgiFactory;<br>CreateDXGIFactory1(IID_PPV_ARGS(&amp;mdxgiFactory));<br>mdxgiFactory-&gt;EnumWarpAdapter( IID_PPV_ARGS(&amp;pWarpAdapter));<br>mdxgiFactory对象也将用于创建交换链。</p>
+<p>4.3.2 Create the Fence and Descriptor Sizes<br>标题不会翻译，不知道具体使用的哪个名词，容我查一下资料再修改<br>在创建完设备后，需要创建一个用于GPU和CPU同步的Fence。 由于使用了描述符，因此需要知道不同的描述符的大小。 由于描述符大小不同的GPU有不同的值，因此我们需要查询其大小。可以cache描述符大小一边需要的时候取用：<br>ThrowIfFailed(md3dDevice-&gt;CreateFence( 0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&amp;mFence))); mRtvDescriptorSize = md3dDevice-</p>
+<blockquote>
+<p>GetDescriptorHandleIncrementSize( D3D12_DESCRIPTOR_HEAP_TYPE_RTV); mDsvDescriptorSize = md3dDevice-<br>GetDescriptorHandleIncrementSize( D3D12_DESCRIPTOR_HEAP_TYPE_DSV); mCbvSrvDescriptorSize = md3dDevice-<br>GetDescriptorHandleIncrementSize(<br>D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);</p>
+</blockquote>
+<p>4.3.3 Check 4X MSAA Quality Support<br>检查对4X MSAA的支持。选择4X的原因是因为其开销并不是很大，因为所有的Direct3D 11功能设备支持4X MSAA的所有渲染目标格式。因此，它可以保证在Direct3D 11硬件上可用。但是必须检查所支持的质量水平，可以通过以下方法实现:<br>D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS<br>msQualityLevels; msQualityLevels.Format = mBackBufferFormat; msQualityLevels.SampleCount = 4; msQualityLevels.Flags =<br>D3D12_MULTISAMPLE_QUALITY_LEVELS_FLAG_NONE;<br>msQualityLevels.NumQualityLevels = 0; ThrowIfFailed(md3dDevice-&gt;CheckFeatureSupport(<br>D3D12_FEATURE_MULTISAMPLE_QUALITY_LEVELS, &amp;msQualityLevels, sizeof(msQualityLevels)));<br>m4xMsaaQuality = msQualityLevels.NumQualityLevels;<br>assert(m4xMsaaQuality &gt; 0 &amp;&amp; “Unexpected MSAA quality level.”);<br>由于4XMSAA是肯定被支持的，检测出来的等级肯定大于0。 可以在这里设置一个断言。</p>
+<p>4.3.4创建命令队列和命令列表<br>4.2.1讲过的东西<br>queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;<br>queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Device-&gt;CreateCommandQueue(&amp;queueDesc, IID_PPV_ARGS(CommandQueue));</span><br><span class="line"></span><br><span class="line">Device-&gt;CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,</span><br><span class="line">    IID_PPV_ARGS(CommandAllocator));</span><br><span class="line"></span><br><span class="line">Device-&gt;CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT,</span><br><span class="line">    CommandAllocator, nullptr, IID_PPV_ARGS(CommandList));</span><br><span class="line"></span><br><span class="line">CommandList-&gt;Close();</span><br></pre></td></tr></table></figure>
+
+<p>4.3.5描述并创建交换链<br>初始化的下一步是创建交换链。创建交换链的时候首先需要填充DXGI_SWAP_CHAIN_DESC结构。 需要这个结构来描述要创建什么属性的交换链。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">struct DXGI_SWAP_CHAIN_DESC</span><br><span class="line">&#123;</span><br><span class="line">    DXGI_MODE_DESC BufferDesc;</span><br><span class="line">    DXGI_SAMPLE_DESC SampleDesc;</span><br><span class="line">    DXGI_USAGE BufferUsage;</span><br><span class="line">    UINT BufferCount;</span><br><span class="line">    HWND OutputWindow;</span><br><span class="line">    BOOL Windowed;</span><br><span class="line">    DXGI_SWAP_EFFECT SwapEffect;</span><br><span class="line">    UINT Flags;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">struct DXGI_MODE_DESC</span><br><span class="line">&#123;</span><br><span class="line">    UINT Width; //缓存的宽度</span><br><span class="line">    UINT Height; //缓存的高度</span><br><span class="line">    DXGI_RATIONAL RefreshRate;</span><br><span class="line">    DXGI_FORMAT Format; //缓存的格式</span><br><span class="line">    DXGI_MODE_SCANLINE_ORDER ScanlineOrdering;</span><br><span class="line">    DXGI_MODE_SCALING Scaling; //如何在显示器上缩放显示</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>会使用较为常用的属性去填充下面的成员。 如果想了解更多填充的属性可以去参阅SDK文档。</p>
+<p>BufferDesc: 描述创建的BackBuffer的属性，主要属性就是宽度高度以及格式。其余的可以参考SDK文档。<br>SampleDesc: 多重采样的数量和质量等级，设置成采样数量为1，质量等级为0。<br>BufferUsage: 设置为DXGI_USAGE_RENDER_TARGET_OUTPUT。<br>BufferCount: 在交换链中要使用多少个缓冲，使用双缓冲设置为2。<br>OutputWindow: 要呈现的窗口的句柄。<br>Windowed: 设置为true就是窗口模式，否则是全屏模式。<br>SwapEffect: 设置为DXGI_SWAP_EFFECT_FLIP_DISCARD。<br>Flags: 一些其他设置。如果设置了DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH，那么在切换到全屏模式的时候就会选择一个最适合当前程序的显示模式，如果你没有设置这个属性，那么切换成全屏的时候就使用当前桌面的显示模式。<br>在填充完毕这个结构后，就可以创建交换链了。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">HRESULT IDXGIFactory::CreateSwapChain(</span><br><span class="line">    IUnknown *pDevice, //ID3D12CommandQueue</span><br><span class="line">    DXGI_SWAP_CHAIN_DESC *pDesc,</span><br><span class="line">    IDXGISwapChain **ppSwapChain);</span><br></pre></td></tr></table></figure>
+
+<p>下面的代码展示了如何在示例框架中创建交换链。注意，这个函数已经被设计成可以被多次调用。它将在创建新交换链之前破坏旧的交换链。这允许用不同的设置重新创建交换链，而且可以在运行时更改多采样设置。<br>DXGI_FORMAT mBackBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM; void D3DApp::CreateSwapChain() {<br>// Release the previous swapchain we will be recreating. mSwapChain.Reset();<br>DXGI_SWAP_CHAIN_DESC sd; sd.BufferDesc.Width = mClientWidth; sd.BufferDesc.Height = mClientHeight; sd.BufferDesc.RefreshRate.Numerator = 60; sd.BufferDesc.RefreshRate.Denominator = 1; sd.BufferDesc.Format = mBackBufferFormat; sd.BufferDesc.ScanlineOrdering =<br>DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED; sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED; sd.SampleDesc.Count = m4xMsaaState ? 4 : 1; sd.SampleDesc.Quality = m4xMsaaState ? (m4xMsaaQuality - 1) : 0; sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; sd.BufferCount = SwapChainBufferCount; sd.OutputWindow = mhMainWnd; sd.Windowed = true; sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD; sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH; // Note: Swap chain uses queue to perform flush. ThrowIfFailed(mdxgiFactory-&gt;CreateSwapChain( mCommandQueue.Get(), &amp;sd, mSwapChain.GetAddressOf()));<br>}</p>
+<p>4.3.6 Create the Descriptor Heaps<br>需要创建描述符堆来存储描述符。<br>描述符堆由ID3D12DescriptorHeap接口表示。Heap创建方法是<br>ID3D12Device: CreateDescriptorHeap接口。在本章的示例程序中，<br>需要在交换链中使用的缓冲个数相同数量的Render Target View去描述交换链中的缓冲资源，这些资源将存储最后要呈现的内容。 还需要一个Depth/Stencil View去描述一个用于深度测试的Depth/Stencil Buffer资源。 因此需要一个堆存储Render Target View和Depth/Stencil View。</p>
+<p>下面是代码：<br>ComPtr mRtvHeap; ComPtr mDsvHeap; void D3DApp::CreateRtvAndDsvDescriptorHeaps() {<br>D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc; rtvHeapDesc.NumDescriptors = SwapChainBufferCount; rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV; rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE; rtvHeapDesc.NodeMask = 0; ThrowIfFailed(md3dDevice-&gt;CreateDescriptorHeap( &amp;rtvHeapDesc, IID_PPV_ARGS(mRtvHeap.GetAddressOf())));<br>D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc; dsvHeapDesc.NumDescriptors = 1; dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV; dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE; dsvHeapDesc.NodeMask = 0; ThrowIfFailed(md3dDevice-&gt;CreateDescriptorHeap( &amp;dsvHeapDesc, IID_PPV_ARGS(mDsvHeap.GetAddressOf())));<br>}<br>创建堆之后需要能够访问它们存储的描述符。应用程序通过句柄引用描述符。<br>4.3.7创建渲染目标视图<br>必须先为资源创建一个描述符，然后将其绑定到管道阶段。为了将后台缓冲区绑定到管道的输出合并阶段需要为后台缓冲区创建一个呈现目标视图。<br>第一步是获取交换链中的缓冲区资源：<br>HRESULT IDXGISwapChain::GetBuffer( UINT Buffer, REFIID riid,<br>void **ppSurface);<br>Buffer:一想要获取的特定的后置缓冲的索引(如果有多个的话)。<br>riid: ID3D12Resource接口的COM ID，需要获得一个指向它的指针。<br>ppSurface：返回一个指向ID3D12Resource（代表后置缓存）的指针。<br>对IDXGISwapChain::GetBuffer的调用增加了返回缓冲区的COM引用计数，所以必须在完成后释放它。使用ComPtr可以自动完成。<br>创建渲染目标视图可以使用<br>ID3D12Device: CreateRenderTargetView方法:<br>void ID3D12Device::CreateRenderTargetView(<br>ID3D12Resource *pResource, const D3D12_RENDER_TARGET_VIEW_DESC *pDesc,<br>D3D12_CPU_DESCRIPTOR_HANDLE DestDescriptor);</p>
+<p>4.3.8 创建深度/模板缓冲区和视图<br>4.1.5说过深度缓冲是一个2D的texture，存储了最近的可见对象的深度信息。<br>使用D3D12_RESOURCE_DESC结构来创建texture，然后调用ID3D12Device::CreateCommittedResource<br>D3D12_RESOURCE_DESC结构：</p>
+<p>typedef struct D3D12_RESOURCE_DESC {<br>D3D12_RESOURCE_DIMENSION Dimension; UINT64 Alignment; UINT64 Width; UINT Height; UINT16 DepthOrArraySize; UINT16 MipLevels; DXGI_FORMAT Format; DXGI_SAMPLE_DESC SampleDesc; D3D12_TEXTURE_LAYOUT Layout; D3D12_RESOURCE_MISC_FLAG MiscFlags;<br>} D3D12_RESOURCE_DESC;</p>
+<p>其中的各个参数：<br>1. Dimension：资源的维度，它是下列枚举类型之一：<br>enum D3D12_RESOURCE_DIMENSION {<br>D3D12_RESOURCE_DIMENSION_UNKNOWN = 0,<br>D3D12_RESOURCE_DIMENSION_BUFFER = 1,<br>D3D12_RESOURCE_DIMENSION_TEXTURE1D = 2,<br>D3D12_RESOURCE_DIMENSION_TEXTURE2D = 3,<br>D3D12_RESOURCE_DIMENSION_TEXTURE3D = 4<br>} D3D12_RESOURCE_DIMENSION;<br>2. Width：texture在texels中的宽度。对于缓冲区资源，指的是缓冲区中的字节数。<br>3. Height：texture在texels中的高度。<br>4. DepthOrArraySize：texture在texels中的深度，或者是texture数组的大小，数组仅仅只能针对1D和2D的texture，无发建立3Dtextures的数组。<br>5. MipLevels：mipmap级别的数量。mipmap会在纸糊的章节介绍。<br>6. Format：指定texels格式的DXGI_FORMAT枚举类型的成员。<br>7. SampleDesc：多重采样的数量和质量等级。用于深度/模板缓冲的多重采样的参数必须与渲染目标匹配。<br>8. Layout：指定texture layout的D3D12_TEXTURE_LAYOUT枚举类型的成员。<br>9. MiscFlags：杂项资源标志。对于深度/模板缓冲区资源，指定D3D12_RESOURCE_MISC_DEPTH_STENCIL。</p>
+<p>GPU资源以堆的形式存在，堆本质上是带有特定属性的GPU内存块。CreateCommittedResource方法使用指定的属性创建资源并将其提交到特定的堆。<br>HRESULT ID3D12Device::CreateCommittedResource(<br>const D3D12_HEAP_PROPERTIES *pHeapProperties,<br>D3D12_HEAP_MISC_FLAG HeapMiscFlags,<br>const D3D12_RESOURCE_DESC *pResourceDesc,<br>D3D12_RESOURCE_USAGE InitialResourceState,<br>const D3D12_CLEAR_VALUE *pOptimizedClearValue,<br>REFIID riidResource, void **ppvResource);<br>typedef struct D3D12_HEAP_PROPERTIES {<br>D3D12_HEAP_TYPE Type;<br>D3D12_CPU_PAGE_PROPERTIES CPUPageProperties;<br>D3D12_MEMORY_POOL MemoryPoolPreference;<br>UINT CreationNodeMask;<br>UINT VisibleNodeMask;<br>} D3D12_HEAP_PROPERTIES;</p>
+<p>1.pHeapProperties：要提交资源的堆的属性。其中一些属性用于高级用途。需要关心的主要属性是D3D12_HEAP_TYPE，它可以是D3D12_HEAP_PROPERTIES枚举类型的以下成员之一：<br>1.1 D3D12_HEAP_TYPE_DEFAULT: 默认堆。提交资源的地方，这些资源只会被GPU访问。以深度/模板缓冲区为例:GPU读写深度/模板缓冲区。CPU不需要访问它，因此深度/模板缓冲区将被放置在默认堆中。<br>1.2 D3D12_HEAP_TYPE_UPLOAD: Upload heap. 从CPU提交资源，上传数据到GPU资源。<br>1.3 D3D12_HEAP_TYPE_READBACK: Read-back heap. 需要由CPU读取的资源的地方。<br>1.4 D3D12_HEAP_TYPE_CUSTOM:有关高级使用场景，请参阅MSDN文档了解更多信息。<br>2.HeapMiscFlags：提交资源的堆的附加标志。通常使用D3D12_HEAP_MISC_NONE<br>3.pResourceDesc：指向一个D3D12_RESOURCE_DESC实例的指针，该实例描述了想要创建的资源。<br>4.InitialResourceState：使用此参数设置资源创建时的初始状态。对于深度/模板缓冲区，初始状态将是D3D12_RESOURCE_USAGE_INITIAL，然后将其转换为D3D12_RESOURCE_USAGE_DEPTH，以便将其作为深度/模板缓冲区绑定到管道。<br>5.pOptimizedClearValue：指向D3D12_CLEAR_VALUE对象的指针，该对象描述了用于清除资源的优化值。匹配优化清除值的清除调用可能比不匹配优化清除值的清除调用更快。也可以为此指定Null。<br>struct D3D12_CLEAR_VALUE<br>{<br>DXGI_FORMAT Format;<br>union<br>{ FLOAT Color[ 4 ];<br>D3D12_DEPTH_STENCIL_VALUE DepthStencil;<br>};<br>} D3D12_CLEAR_VALUE;<br>6.riidResource： ID3D12Resource接口的COM ID，需要获得一个指向它的指针。<br>7.ppvResource：返回一个ID3D12Resource的指针，该指针表示新创建的资源。</p>
+<p>此外，在使用深度/模板缓冲区之前，须创建一个关联的深度/模板视图来绑定到管道上。这类似于创建render target视图。下面的代码示例展示了如何创建深度/模板纹理及其相应的深度/模板视图：<br>// Create the depth/stencil buffer and view.<br>D3D12_RESOURCE_DESC depthStencilDesc; depthStencilDesc.Dimension =<br>D3D12_RESOURCE_DIMENSION_TEXTURE2D; depthStencilDesc.Alignment = 0;<br>depthStencilDesc.Width = mClientWidth;<br>depthStencilDesc.Height = mClientHeight; depthStencilDesc.DepthOrArraySize = 1;<br>depthStencilDesc.MipLevels = 1;<br>depthStencilDesc.Format = mDepthStencilFormat; depthStencilDesc.SampleDesc.Count = m4xMsaaState ? 4 : 1; depthStencilDesc.SampleDesc.Quality = m4xMsaaState ?<br>(m4xMsaaQuality - 1) : 0;<br>depthStencilDesc.Layout =D3D12_TEXTURE_LAYOUT_UNKNOWN;<br>depthStencilDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;<br>D3D12_CLEAR_VALUE optClear; optClear.Format = mDepthStencilFormat; optClear.DepthStencil.Depth = 1.0f; optClear.DepthStencil.Stencil = 0;<br>ThrowIfFailed(md3dDevice-&gt;CreateCommittedResource(<br>&amp;CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),<br>D3D12_HEAP_FLAG_NONE, &amp;depthStencilDesc,<br>D3D12_RESOURCE_STATE_COMMON, &amp;optClear, IID_PPV_ARGS(mDepthStencilBuffer.GetAddressOf())));<br>// Create descriptor to mip level 0 of entire resource using the<br>// format of the resource.<br>md3dDevice-&gt;CreateDepthStencilView(<br>mDepthStencilBuffer.Get(), nullptr, DepthStencilView());<br>// Transition the resource from its initial state to be used as a depth<br>buffer.<br>mCommandList-&gt;ResourceBarrier(1,<br>&amp;CD3DX12_RESOURCE_BARRIER::Transition( mDepthStencilBuffer.Get(),<br>D3D12_RESOURCE_STATE_COMMON,<br>D3D12_RESOURCE_STATE_DEPTH_WRITE));</p>
+<p>使用CD3DX12_HEAP_PROPERTIES辅助构造函数来创建堆属性结构，其实现方式如下：</p>
+<p>explicit CD3DX12_HEAP_PROPERTIES(<br>D3D12_HEAP_TYPE type, UINT creationNodeMask = 1,<br>UINT nodeMask = 1 )<br>{ Type = type; CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;<br>MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;<br>CreationNodeMask = creationNodeMask;<br>VisibleNodeMask = nodeMask;<br>}</p>
+<p>4.3.9 Set the Viewport</p>
+<p>通常将3D场景绘制到整个后台缓冲区，其中后台缓冲区的大小对应于整个屏幕(全屏模式)或窗口的整个client区域。然而，有时只想把3D场景绘制到一个后缓冲区的子矩形中，比如下图：</p>
+<p>绘制的后缓冲区的子矩形称为viewport，它由以下结构描述：<br>typedef struct D3D12_VIEWPORT {<br>FLOAT TopLeftX;<br>FLOAT TopLeftY;<br>FLOAT Width;<br>FLOAT Height;<br>FLOAT MinDepth;<br>FLOAT MaxDepth;<br>} D3D12_VIEWPORT;<br>前四个数据成员定义了相对于后缓冲区的视口矩形(注意，可以指定分数像素坐标，数据成员的类型是float)。在Direct3D中，深度值以0到1的规格化范围存储在深度缓冲区中。使用MinDepth和MaxDepth成员将深度间隔[0,1]转换为深度间隔[MinDepth, MaxDepth]。能够变换深度范围可以达到一定的效果;例如，可以设置MinDepth=0和MaxDepth=0，这样用这个viewport绘制的所有对象的深度值都将为0，并出现在场景中所有其他对象的前面。但是，通常将MinDepth设置为0，将MaxDepth设置为1，这样就不会修改深度值。填写完D3D12_VIEWPORT结构后，使用ID3D12CommandList::RSSetViewports方法用Direct3D设置viewport。下面的例子创建并设置了一个viewport，它可以绘制到整个后台缓冲区:<br>D3D12_VIEWPORT vp;<br>vp.TopLeftX = 0.0f;<br>vp.TopLeftY = 0.0f;<br>vp.Width = static_cast(mClientWidth);<br>vp.Height = static_cast(mClientHeight);<br>vp.MinDepth = 0.0f;<br>vp.MaxDepth = 1.0f;<br>mCommandList-&gt;RSSetViewports(1, &amp;vp);</p>
+<p>第一个参数是要绑定的视口数量(对于高级效果使用多个视口)，第二个参数是指向视口数组的指针。<br>不能为同一个呈现目标指定多个视图。多个视口用于同时呈现多个呈现目标的高级技术。<br>每当命令列表重置时，视图端口都需要重置。<br>可以使用viewport来实现双人游戏的分屏，创建两个视图，一个用于屏幕的左侧，另一个用于屏幕的右侧。然后可以从Player 1的视角将3D场景绘制到左侧的视图中，并从Player 2的视角将3D场景绘制到右侧的视图中。</p>
+<p>4.3.10 Set the Scissor Rectangles<br>设置裁剪矩形<br>可以对后缓冲区定义一个裁剪矩形，使在这个矩形外的像素被剔除。这可以用于优化。例如，如果知道屏幕的某个区域将包含一个矩形的UI元素，那么就不需要处理UI元素遮住的3D世界的像素。裁剪矩形由D3D12_RECT结构定义，其类型如下:<br>typedef struct tagRECT<br>{<br>LONG left;<br>LONG top;<br>LONG right;<br>LONG bottom;<br>} RECT;<br>D3D设置裁剪矩形使用 ID3D12CommandList::RSSetScissorRects方法。下列的例子创建和设置了一个裁剪矩形覆盖了后缓冲区的左上象限：<br>mScissorRect = { 0, 0, mClientWidth/2, mClientHeight/2 };<br>mCommandList-&gt;RSSetScissorRects(1, &amp;mScissorRect);<br>……<br>4.3结束了，然而我们还是没有任何的示例代码，没有渲染出哪怕一个空窗口</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/11/11/stl%E5%85%B3%E8%81%94%E5%AE%B9%E5%99%A8/">STL关联容器</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-11-11</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/C/">C++</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/">cpp</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/cpp/STL/">STL</a></span><div class="content"><p>底层原理</p>
+<p>map 、set、multiset、multimap的底层原理</p>
+<p>map 、set、multiset、multimap的底层实现都是红黑树，epoll模型的底层数据结构也是红黑树，linux系统中CFS进程调度算法，也用到红黑树。</p>
+<p>关联式容器一句特定的排序准则自动对元素排序，元素可以是任意类型值类型，也可以是key/value pair，key可以是任何类型，映射一个相关的value，value也是任意类型。排序准则以函数形式呈现，映射一个相关的value，或者比较key/value中的key。默认情况都用&lt;进行比较，也可以自定义比较函数。</p>
+<p>关联容器主要优点是可以很快找到一个具有特定value的元素，时间复杂度为logn，缺点是不能直接改动value，因为会破坏已有的顺序。</p>
+<p>set：依据value自动排序，每个元素只有一次，不能重复。</p>
+<p>multset：元素可以重复。其他和set相同。</p>
+<p>map：每个元素都是key/value pair，其中key为排序准则的基准，每个key不能重复。map可以视为关联式数组，索引为任意类型的数组。set可以视为一种特殊的map，元素的value等同于key。</p>
+<p>multimap：和map的唯一区别是元素可以重复。multimap可以当作字典使用。</p>
+</div><hr></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-chevron-left"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer class="footer-bg" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div class="layout" id="footer"><div class="copyright">&copy;2016 - 2021 By 木尘痕</div><div class="framework-info"><span>Driven - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="footer_custom_text">天道作何，吞恨者多 <a target="_blank" rel="noopener" href="https://beian.miit.gov.cn">豫ICP备17048032号-1</a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_site_uv"><i class="fa fa-user"></i><span id="busuanzi_value_site_uv"></span><span></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i><span id="busuanzi_value_site_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.9.0"></script><script src="/js/fancybox.js?version=1.9.0"></script><script src="/js/sidebar.js?version=1.9.0"></script><script src="/js/copy.js?version=1.9.0"></script><script src="/js/fireworks.js?version=1.9.0"></script><script src="/js/transition.js?version=1.9.0"></script><script src="/js/scroll.js?version=1.9.0"></script><script src="/js/head.js?version=1.9.0"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+  $('#nav').addClass('is-mobile')
+  $('footer').addClass('is-mobile')
+  $('#top-container').addClass('is-mobile')
+}</script></body></html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="多边形的区域填充"><meta name="keywords" content=""><meta name="author" content="木尘痕"><meta name="copyright" content="木尘痕"><title>多边形的区域填充 | 风生之谷</title><link rel="shortcut icon" href="https://raw.githubusercontent.com/muchenhen/muchenhen.github.io/master/xuange.ico"><link rel="stylesheet" href="/css/index.css?version=1.9.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css?version=1.9.0"><meta name="format-detection" content="telephone=no"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  hexoVersion: '5.4.0'
+} </script><meta name="generator" content="Hexo 5.4.0"></head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="toggle-sidebar-info text-center"><span data-toggle="Toggle article">Toggle site</span><hr></div><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar"></div></div><div class="sidebar-toc__content"></div></div><div class="author-info hide"><div class="author-info__avatar text-center"><img src="https://github.com/muchenhen/muchenhen.github.io/blob/master/XuanGe.jpg?raw=true"></div><div class="author-info__name text-center">木尘痕</div><div class="author-info__description text-center">放一些笔记的地方</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">172</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">17</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">31</span></a></div><hr><div class="author-info-links"><div class="author-info-links__title text-center">Links</div><a class="author-info-links__name text-center" target="_blank" rel="noopener" href="https://alec-ray.github.io/">止戈</a></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">风生之谷</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">主页</a><a class="site-page" href="/archives">全部文章</a><a class="site-page" href="/tags">标签分类</a><a class="site-page" href="/categories">文章分类</a><a class="site-page" href="/contact">联系</a></span><span class="pull-right"></span></div><div id="post-info"><div id="post-title">多边形的区域填充</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-10-24</time><span class="post-meta__separator">|</span><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/C/">C++</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/OpenGL/">OpenGL</a></div></div></div><div class="layout" id="content-inner"><article id="post"><div class="article-container" id="post-content"><p><strong>详细的函数实现思路需要缓缓思路</strong></p>
+<p>扫描线算法实现区域填充，算法核心为求扫描线与多边形边线的交点。</p>
+<p>按照求交，排序，交点配对，区间填色的步骤</p>
+<p>此处详细知识看相关的计算机图形学的书籍，一般都有对多边形域的填充的相关内容。以下着重C++实现算法。</p>
+<p><strong>1****、算法的基本思想</strong></p>
+<p>此处略去对于一条扫描线的一般四个步骤。</p>
+<p>对于求交点，是关键的一步，需要尽量少的计算求出交点，并且要注意特殊交点。如果按照正常的线段求交点的方法进行计算，会导致计算量过大。</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/10/1.jpg"></p>
+<p>如图可知：</p>
+<p>1、同一条扫描线并不会同时和所有的边有交点。</p>
+<p>2、相邻的扫描线与同一直线的交点位置存在递推关系，这一点可以用来把乘法换成加法</p>
+<p>对于第一点，按照孙家广《计算机图形学》中，在处理一条扫描时，仅对与他相交的多边形的边进行求交运算。把与当前扫描线相交的边称为<strong>活性边（活动边），</strong>并把它们按与扫描线交点x坐标递增的顺序存放在一个链表中，称此链表为活性链表（AET）。例如扫描线4的“活动边表”由P1P2和P3P4两条边组成，而扫描线7的“活动边表”由P1P2、P6P1、P5P6和P4P5四条边组成。</p>
+<p>对于第二点，由图可以轻易发现，当前的活动边已经通过直线段求交点算法求出了交点，下一条活动边的交点不需要再求交计算，通过步进关系可以直接得到新交点坐标为（x + △x, y + 1）。前面提到过，步进关系△x是个常量，与直线的斜率有关，易得出△x=-b/a，斜率的倒数。推导的过程可以参考老师上课讲的任意斜率的数值微分法。</p>
+<p>接下来要考虑整个核心的<strong>活性边表，</strong>其实是关于扫描线的单链表。为了定义链表，首先需要定义“边”的数据类型，此处使用结构体</p>
+<p>typedef struct tagEDGE<br> {<br>     double xi;<br>    double dx;<br>     int ymax;<br> }EDGE;</p>
+<p>需要注意的是，扫描填充在意的只是交点的x坐标。Dx用来简化求下一条活性边交点的运算。同时，如果下一条扫描线与“边”没有交点之后，需要从边表删除掉该“边”。判断是否有交点需要看扫描线y是否大于该边的两端端点的y值，所以需要定义一下边的y坐标的最大值ymax。</p>
+<p>如果多边形不自交，关于一条“边”从当前到下一条扫描线延续，交点的顺序是不变的，有图象可以看出来。但是如果多边形自交了，比如对顶三角形，就会出现交点顺序改变，此时需要重新排序，因为扫描线是连贯的，仅有个别点需要重排序，可以使用冒泡排序：<a target="_blank" rel="noopener" href="https://www.muchenhen.com/2018/08/29/%e5%86%92%e6%b3%a1%e6%8e%92%e5%ba%8f/">冒泡排序</a></p>
+<p><strong>这些都是书上有的东西啊！关于新交上的边肯定是要添加到表里面啊，最好插进去的时候就排好序啊，所以<a target="_blank" rel="noopener" href="https://www.muchenhen.com/2018/10/28/%e6%8f%92%e5%85%a5%e6%8e%92%e5%ba%8f/">插入排序</a>啊！</strong></p>
+<p>下面是扫描线4和扫描线7的活性边表</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/10/2.png"></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/10/3.png"></p>
+<p>每一条扫描线都需要一个活性边表，所以为了方便更新活性边表，建立一个新边表。</p>
+<p><strong>以下是我的个人看法，书上写的比较专业****= =</strong></p>
+<p><strong>建立新边表的目的：</strong>为了不用计算每一条扫描线与边的交点，可以利用活性边表方便归纳出所有扫描线的活性边表。可以用新边表直接补全活性边表</p>
+<p><strong>建立“新边表”的规则是</strong>：如果某条边的较低端点（y坐标较小的那个点）的y坐标与扫描线y相等，则该边就是扫描线y的新边，应该加入扫描线y的“新边表”。</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/10/4.png"></p>
+<p>下面是补全的活性边表</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/10/5.png"></p>
+<p><strong>2****、特殊边和定点处理</strong></p>
+<p><strong>水平边：</strong>麻烦直接画出来，不然全都是交点！</p>
+<p><strong>顶点：为了保证偶数个交点，按照课本的方法对不同的点算不同的次数。</strong></p>
+<p><strong>填充边界：</strong>书上说了左开右闭，行规。</p>
+<p><strong>3****、算法实现</strong></p>
+<p>以下所有代码仅涉及了C++基本语法啊，不会的自己百度啊</p>
+<p>画线算法不再赘述。</p>
+<p>基本上需要这几个函数：</p>
+<p><strong>首先需要定义新边表的数据结构。定义“新边表”为一个数组，数组的每个元素存放对应扫描线的所有“新边”。</strong></p>
+<p><strong>ScanLinePolygonFill****：</strong>在开始对每条扫描线处理之前，需要先计算出多边形的ymax和ymin并初始化“新边表”（调用下面那个）。</p>
+<p><strong>InitScanLineNewEdgeTable****：</strong>根据多边形的顶点和边的情况初始化“新边表”。</p>
+<p><strong>ProcessScanLineFill</strong>函数开始对每条扫描线进行处理。</p>
+<p><strong>InsertNetListToAet</strong>函数负责将扫描线对应的所有新边插入到AET中，插入操作到保证AET还是有序表，应用插入排序。</p>
+<p>**FillAetScanLine()**函数执行具体的填充动作，它将AET中的边交点成对取出组成填充区间，然后根据“左闭右开”的原则对每个区间填充。</p>
+<p>**RemoveNonActiveEdgeFromAet()**函数负责将对下一条扫描线来说已经不是“活动边”的边从AET中删除，删除的条件就是当前扫描线y与边的ymax相等，如果有多条边满足这个条件，则一并全部删除。</p>
+<p><strong>UpdateAndResortAet</strong>函数更新边表中每项的xi值，就是根据扫描线的连贯性用dx对其进行修正，并且根据xi从小到大的原则对更新后的AET表重新排序。</p>
+<p>#include #include const int POINTNUM=7;      //多边形点数.</p>
+<p>//定义结构体用于活性边表AET和新边表NET<br>typedef struct XET<br>{<br>    float x;<br>    float dx,ymax;<br>    XET* next;<br>} AET,NET;</p>
+<p>//定义点结构体point<br>struct point<br>{<br>    float x;<br>    float y;<br>} polypoint[POINTNUM]= { {250,50},{50,150},{550,400},{250,250},{100,350},{100,100},{120,30} }; //多边形顶点</p>
+<p>void PolyScan()<br>{<br>    //计算最高点的y坐标(扫描到此结束)<br>    int MaxY=0;<br>    int i;<br>    for(i=0; iMaxY)<br>            MaxY=polypoint[i].y;</p>
+<pre><code>//初始化AET表
+AET \*pAET=new AET;
+pAET-&gt;next=NULL;
+
+//初始化NET表
+NET \*pNET\[1024\];
+for(i=0; i&lt;=MaxY; i++)
+&#123;
+    pNET\[i\]=new NET;
+    pNET\[i\]-&gt;next=NULL;
+&#125;
+glClear(GL\_COLOR\_BUFFER\_BIT);        //赋值的窗口显示.
+glColor3f(0.0,0.0,0.0);             //设置直线的颜色红色
+glBegin(GL\_POINTS);
+//扫描并建立NET表
+for(i=0; i&lt;=MaxY; i++)
+&#123;
+    for(int j=0; jpolypoint\[j\].y)
+            &#123;
+                NET \*p=new NET;
+                p-&gt;x=polypoint\[j\].x;
+                p-&gt;ymax=polypoint\[(j-1+POINTNUM)%POINTNUM\].y;
+                p-&gt;dx=(polypoint\[(j-1+POINTNUM)%POINTNUM\].x-polypoint\[j\].x)/(polypoint\[(j-1+POINTNUM)%POINTNUM\].y-polypoint\[j\].y);
+                p-&gt;next=pNET\[i\]-&gt;next;
+                pNET\[i\]-&gt;next=p;
+            &#125;
+            if(polypoint\[(j+1+POINTNUM)%POINTNUM\].y&gt;polypoint\[j\].y)
+            &#123;
+                NET \*p=new NET;
+                p-&gt;x=polypoint\[j\].x;
+                p-&gt;ymax=polypoint\[(j+1+POINTNUM)%POINTNUM\].y;
+                p-&gt;dx=(polypoint\[(j+1+POINTNUM)%POINTNUM\].x-polypoint\[j\].x)/(polypoint\[(j+1+POINTNUM)%POINTNUM\].y-polypoint\[j\].y);
+                p-&gt;next=pNET\[i\]-&gt;next;
+                pNET\[i\]-&gt;next=p;
+            &#125;
+        &#125;
+&#125;
+//建立并更新活性边表AET
+for(i=0; i&lt;=MaxY; i++)
+&#123;
+    //计算新的交点x,更新AET
+    NET \*p=pAET-&gt;next;
+    while(p)
+    &#123;
+        p-&gt;x=p-&gt;x + p-&gt;dx;
+        p=p-&gt;next;
+    &#125;
+    //更新后新AET先排序/
+    //断表排序,不再开辟空间
+    AET \*tq=pAET;
+    p=pAET-&gt;next;
+    tq-&gt;next=NULL;
+    while(p)
+    &#123;
+        while(tq-&gt;next &amp;&amp; p-&gt;x &gt;= tq-&gt;next-&gt;x)
+            tq=tq-&gt;next;
+        NET \*s=p-&gt;next;
+        p-&gt;next=tq-&gt;next;
+        tq-&gt;next=p;
+        p=s;
+        tq=pAET;
+    &#125;
+    //(改进算法)先从AET表中删除ymax==i的结点
+    AET \*q=pAET;
+    p=q-&gt;next;
+    while(p)
+    &#123;
+        if(p-&gt;ymax==i)
+        &#123;
+            q-&gt;next=p-&gt;next;
+            delete p;
+            p=q-&gt;next;
+        &#125;
+        else
+        &#123;
+            q=q-&gt;next;
+            p=q-&gt;next;
+        &#125;
+    &#125;
+    //将NET中的新点加入AET,并用插入法按X值递增排序
+    p=pNET\[i\]-&gt;next;
+    q=pAET;
+    while(p)
+    &#123;
+        while(q-&gt;next &amp;&amp; p-&gt;x &gt;= q-&gt;next-&gt;x)
+            q=q-&gt;next;
+        NET \*s=p-&gt;next;
+        p-&gt;next=q-&gt;next;
+        q-&gt;next=p;
+        p=s;
+        q=pAET;
+    &#125;
+    //配对填充颜色
+
+    p=pAET-&gt;next;
+    while(p &amp;&amp; p-&gt;next)
+    &#123;
+        for(float j=p-&gt;x; j&lt;=p-&gt;next-&gt;x; j++)
+            glVertex2i(static\_cast(j),i);
+        p=p-&gt;next-&gt;next;//考虑端点情况
+    &#125;
+&#125;
+glEnd();
+glFlush();
+</code></pre>
+<p>}</p>
+<p>void init(int argc,char** argv)<br>{<br>    glutInit(&amp;argc,argv);  //I初始化 GLUT.<br>    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);  =<br>    glutInitWindowPosition(50,100);  //设置窗口的顶部和左边位置<br>    glutInitWindowSize(800,600);  //设置窗口的高度和宽度<br>    glutCreateWindow(“Scan Program”);</p>
+<pre><code>glClearColor(1.0,1.0,1.0,0); //窗口背景颜色为白色
+glMatrixMode(GL\_PROJECTION);
+gluOrtho2D(0,600,0,450);
+</code></pre>
+<p>}</p>
+<p>void myDisplay(void)<br>{<br>    glClear(GL_COLOR_BUFFER_BIT);<br>    glColor3f(0.0,0.4,0.2);<br>    glPointSize(1);<br>    glBegin(GL_POINTS);<br>    PolyScan();<br>    glEnd();<br>    glFlush();<br>}</p>
+<p>int main(int argc,char** argv)<br>{<br>    init(argc,argv);<br>    glutDisplayFunc(myDisplay);<br>    glutMainLoop();<br>    return 0;<br>}</p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">木尘痕</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://muchenhen.com/2018/10/24/多边形的区域填充/">http://muchenhen.com/2018/10/24/多边形的区域填充/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-meta__tag-list"></div><nav id="pagination"><div class="prev-post pull-left"><a href="/2018/10/27/c%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F%E6%8E%A7%E5%88%B6%E7%AE%80%E4%BB%8B%EF%BC%88%E4%B8%80%EF%BC%89/"><i class="fa fa-chevron-left">  </i><span>C++输出格式控制简介（一）</span></a></div><div class="next-post pull-right"><a href="/2018/09/24/%E4%BA%8C%E5%88%86%E4%BE%8B%E9%A2%98%EF%BC%9Aaggressive-cows/"><span>二分例题：Aggressive cows</span><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer class="footer-bg" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div class="layout" id="footer"><div class="copyright">&copy;2016 - 2021 By 木尘痕</div><div class="framework-info"><span>Driven - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="footer_custom_text">天道作何，吞恨者多 <a target="_blank" rel="noopener" href="https://beian.miit.gov.cn">豫ICP备17048032号-1</a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.9.0"></script><script src="/js/fancybox.js?version=1.9.0"></script><script src="/js/sidebar.js?version=1.9.0"></script><script src="/js/copy.js?version=1.9.0"></script><script src="/js/fireworks.js?version=1.9.0"></script><script src="/js/transition.js?version=1.9.0"></script><script src="/js/scroll.js?version=1.9.0"></script><script src="/js/head.js?version=1.9.0"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+  $('#nav').addClass('is-mobile')
+  $('footer').addClass('is-mobile')
+  $('#top-container').addClass('is-mobile')
+}</script></body></html>

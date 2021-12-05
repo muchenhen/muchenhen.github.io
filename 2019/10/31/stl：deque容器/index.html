@@ -1,0 +1,235 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="STL：deque容器"><meta name="keywords" content=""><meta name="author" content="木尘痕"><meta name="copyright" content="木尘痕"><title>STL：deque容器 | 风生之谷</title><link rel="shortcut icon" href="https://raw.githubusercontent.com/muchenhen/muchenhen.github.io/master/xuange.ico"><link rel="stylesheet" href="/css/index.css?version=1.9.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css?version=1.9.0"><meta name="format-detection" content="telephone=no"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  hexoVersion: '5.4.0'
+} </script><meta name="generator" content="Hexo 5.4.0"></head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="toggle-sidebar-info text-center"><span data-toggle="Toggle article">Toggle site</span><hr></div><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar"></div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E5%87%BD%E6%95%B0"><span class="toc-number">1.</span> <span class="toc-text">操作函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9D%9E%E5%8F%98%E5%8A%A8%E6%80%A7%E6%93%8D%E4%BD%9C"><span class="toc-number">2.</span> <span class="toc-text">非变动性操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F%EF%BC%9A"><span class="toc-number">3.</span> <span class="toc-text">注意：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%98%E5%8A%A8%E6%80%A7%E6%93%8D%E4%BD%9C"><span class="toc-number">4.</span> <span class="toc-text">变动性操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C%E5%AE%9E%E4%BE%8B%EF%BC%9A"><span class="toc-number">5.</span> <span class="toc-text">运行实例：</span></a></li></ol></div></div><div class="author-info hide"><div class="author-info__avatar text-center"><img src="https://github.com/muchenhen/muchenhen.github.io/blob/master/XuanGe.jpg?raw=true"></div><div class="author-info__name text-center">木尘痕</div><div class="author-info__description text-center">放一些笔记的地方</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">172</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">17</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">31</span></a></div><hr><div class="author-info-links"><div class="author-info-links__title text-center">Links</div><a class="author-info-links__name text-center" target="_blank" rel="noopener" href="https://alec-ray.github.io/">止戈</a></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">风生之谷</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">主页</a><a class="site-page" href="/archives">全部文章</a><a class="site-page" href="/tags">标签分类</a><a class="site-page" href="/categories">文章分类</a><a class="site-page" href="/contact">联系</a></span><span class="pull-right"></span></div><div id="post-info"><div id="post-title">STL：deque容器</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-31</time><span class="post-meta__separator">|</span><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/C/">C++</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/cpp/">cpp</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/cpp/STL/">STL</a></div></div></div><div class="layout" id="content-inner"><article id="post"><div class="article-container" id="post-content"><p>发音</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/deque.png" alt="deque 
+/dek/ O /dEk/ O "></p>
+<p>和vector相似，但是可以在两端进行插入删除，支持随机访问。</p>
+<p>为了实现两端的插入和删除，deque的内存实现为一组独立区块，第一区块朝一个方向扩展，最末区块朝另一个方向扩展。</p>
+<p>需要头文件<deque></p>
+<p>位于命名空间std，定义如下：</p>
+<p>template &lt;class Type, class Allocator =allocator<Type>&gt;<br>class deque</p>
+<p>参数：</p>
+<p>第一个参数是要存储在 deque 中的元素数据类型</p>
+<p>第二个参数为所存储分配器对象的类型，该分配器对象封装有关 deque 的内存分配和解除分配的详细信息。 此参数是可选的, 默认值为 &lt;分配器类型 &gt; 。</p>
+<p>deque与vector功能的差异</p>
+<ul>
+<li>  deque元素访问和迭代器动作稍慢，因为有一个间接过程</li>
+<li>  deque的迭代器一定是智能指针</li>
+<li>  在内存有限制的系统内deque可以用多个区块所以能有更多元素</li>
+<li>  deque的插入和删除操作，除了在头尾两端，都会让其中元素的任何已存在的引用，迭代器和指针失效。</li>
+<li>  deque的内存重分配优于vector，不用复制全部元素。</li>
+<li>  deque会释放不再使用的内存块。</li>
+</ul>
+<p>可以优先选用deque的场景</p>
+<ol>
+<li> 需要在两端插入删除</li>
+<li> 不需要指向容器内元素</li>
+<li> 有需求要求不再使用的元素释放（c++标准不保证此项）</li>
+</ol>
+<h2 id="操作函数"><a href="#操作函数" class="headerlink" title="操作函数"></a>操作函数</h2><p>操作</p>
+<p>效果</p>
+<p>deque<Elem> c</p>
+<p>默认构造，空的queue</p>
+<p>deque<Elem> c(c2)</p>
+<p>复制构造</p>
+<p>deque<Elem> c = c2</p>
+<p>同上</p>
+<p>deque<Elem> c(rvalue)</p>
+<p>move构造，c11</p>
+<p>deque&lt;<Elem> c = rvalue</p>
+<p>同上，c11</p>
+<p>deque<Elem> c(n)</p>
+<p>默认构造生成一个大小为n的queue</p>
+<p>deque&lt;Elem c(n,elem)</p>
+<p>初始化一个大小为n，每个元素都是elem的queue</p>
+<p>deque<Elem> c(begin,end)</p>
+<p>初始化一个queue，元素是begin和end的范围</p>
+<p>deque<Elem> c(initlist)</p>
+<p>以初始化列进行初始化，c11</p>
+<p>deque<Elem> c = initlist</p>
+<p>同上</p>
+<p>c.~deque()</p>
+<p>销毁所有元素，释放内存</p>
+<p>与vector不同的两点操作：</p>
+<ol>
+<li> 不提供容量操作，如capacity()，sreserve()</li>
+<li> deque直接提供函数完成头部的插入删除，push_front()，pop_front()</li>
+</ol>
+<p>c++11添加了函数shrink_to_fit()，缩小内存以匹配元素个数，但没有强制力。会释放掉deque本身不会释放的用于存储指针的空间。</p>
+<h2 id="非变动性操作"><a href="#非变动性操作" class="headerlink" title="非变动性操作"></a>非变动性操作</h2><p>操作</p>
+<p>效果</p>
+<p>c.empty()</p>
+<p>返回是否为空</p>
+<p>c.size()</p>
+<p>返回当前容器内元素数量</p>
+<p>c.max_size()</p>
+<p>返回容器最大的可能元素数量</p>
+<p>c.shrink_to_fit()</p>
+<p>减少容器内存来符合元素数量，c11</p>
+<p>c1 == c2</p>
+<p> </p>
+<p>!=</p>
+<p> </p>
+<p>&gt;</p>
+<p> </p>
+<p>&lt;</p>
+<p> </p>
+<p>&gt;=</p>
+<p> </p>
+<p>&lt;=</p>
+<p> </p>
+<p>c[index]</p>
+<p>返回索引所指的元素</p>
+<p>c.at(index)</p>
+<p>会检查范围，返回索引指向的元素，超过范围会抛出异常</p>
+<p>c.front()</p>
+<p>返回第一个元素，不检查是否存在第一个元素</p>
+<p>c.back()</p>
+<p>返回最后一个元素，也不检查</p>
+<p>c.begin()</p>
+<p>返回指向第一个元素的迭代器</p>
+<p>c.end()</p>
+<p>返回指向最后一个元素的迭代器</p>
+<p>c.cbegin()</p>
+<p>返回一个const的指向第一的迭代器，c11</p>
+<p>c.cend()</p>
+<p>const，最后，c11</p>
+<p>c.rbegin()</p>
+<p>看例子，返回该deque的反向的deque的第一个元素的迭代器</p>
+<p>c.rend()</p>
+<p>和上面那个类比一下</p>
+<p>c.crbegin()</p>
+<p>上上面那个再加个const</p>
+<p>c.crend()</p>
+<p> </p>
+<p>c.rbegin()</p>
+<p>// deque_rbegin.cpp<br>// compile with: /EHsc<br>#include #include int main()<br>{<br>    using namespace std;<br>    deque c1;<br>    deque ::iterator c1_Iter;<br>    deque ::reverse_iterator c1_rIter;</p>
+<pre><code>// If the following line had replaced the line above, an error
+// would have resulted in the line modifying an element
+// (commented below) because the iterator would have been const
+// deque ::const\_reverse\_iterator c1\_rIter;
+
+c1.push\_back(10);
+c1.push\_back(20);
+c1.push\_back(30);
+
+c1\_rIter = c1.rbegin();
+cout &lt;&lt; &quot;deque中的最后一个元素是&quot; &lt;&lt; \*c1\_rIter &lt;&lt; &quot;.&quot; &lt;&lt; endl;
+
+cout &lt;&lt; &quot;deque中都有这些元素: &quot;;
+for (c1\_Iter = c1.begin(); c1\_Iter != c1.end(); c1\_Iter++)
+    cout &lt;&lt; \*c1\_Iter &lt;&lt; &quot; &quot;;
+cout &lt;&lt; endl;
+
+// 可以使用rbegin以相反的顺序遍历deque
+cout &lt;&lt; &quot;反序的deque是: &quot;;
+for (c1\_rIter = c1.rbegin(); c1\_rIter != c1.rend(); c1\_rIter++)
+    cout &lt;&lt; \*c1\_rIter &lt;&lt; &quot; &quot;;
+cout &lt;&lt; endl;
+
+c1\_rIter = c1.rbegin();
+\*c1\_rIter = 40;  // 如果如上所述声明了const\_reverse迭代器，则会导致错误
+cout &lt;&lt; &quot;现在deque的最后一个元素是 &quot; &lt;&lt; \*c1\_rIter &lt;&lt; &quot;.&quot; &lt;&lt; endl;
+</code></pre>
+<p>} </p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/deque%E8%BE%93%E5%87%BA.png" alt="deque 的 后 一 《 元 素 是 30 ． 
+de “ 都 者 这 些 元 素 ： 10 20 30 
+30 20 10 
+在 qu 的 后 一 个 元 素 是 "></p>
+<p>是很好理解的</p>
+<h2 id="注意："><a href="#注意：" class="headerlink" title="注意："></a>注意：</h2><p>除了at()，没有任何成员函数检查索引或者迭代器是否有效</p>
+<p>元素的插入和删除可能导致内存重新分配，会使所有的指向deque元素的指针，索引和迭代器失效，除非是在头尾进行该操作，在前面已经强调过了。</p>
+<p>另外，即使是在头尾进行插入删除也会使原本指向首尾的迭代器失效。</p>
+<h2 id="变动性操作"><a href="#变动性操作" class="headerlink" title="变动性操作"></a>变动性操作</h2><p>操作</p>
+<p>效果</p>
+<p>c = c2</p>
+<p>赋值</p>
+<p>c = rv</p>
+<p>将右值rv的所有元素move assign的方式给c，c11   </p>
+<p>c = initlist</p>
+<p>将初值列的值赋给c</p>
+<p>c.assign(n,elem)</p>
+<p>将n个elem的值赋给c的对应n个元素</p>
+<p>c.assign(begin,end)</p>
+<p>将[begin,end)的元素给c</p>
+<p>c.assign(initlist)</p>
+<p>将初值列的所有元素给c</p>
+<p>c1.swap(c2)</p>
+<p>c1，c2置换</p>
+<p>swap(c1,c2)</p>
+<p>同上，全局函数</p>
+<p>c.push_back(elem)</p>
+<p>在尾部插入elem</p>
+<p>c.pop_back()</p>
+<p>移除尾部的元素，不返回</p>
+<p>c.push_front(elem)</p>
+<p>在头部插入一个elem</p>
+<p>c.pop_front()</p>
+<p>移除头部的元素，不返回</p>
+<p>c.insert(pos,elem)</p>
+<p>在pos的位置前插入elem，并返回新元素的位置</p>
+<p>c.insert(pos,n,elem)</p>
+<p>在pos前插入n个elem，并返回第一个新元素的位置</p>
+<p>c.insert(pos,begin,end)</p>
+<p>在pos前插入范围并返回第一个元素的位置</p>
+<p>c.insert(pos,initlist)</p>
+<p>在pos前插入initlist内的元素并返回第一个新元素的位置，c11</p>
+<p>c.emplace(pos,args…)</p>
+<p>在pos前插入一个以args为初值的元素，并返回新元素的位置，C11</p>
+<p>c.emplace_back(args…)</p>
+<p>在末尾附加一个以args为初值的元素，不返回，C11</p>
+<p>c.emplace_front(args…)</p>
+<p>在起点前插入一个以args为初值的元素，不返回，C11</p>
+<p>c.erase(pos)</p>
+<p>移除pos位置的元素，并返回下一个元素的位置</p>
+<p>c.erase(begin,end)</p>
+<p>移除begin和end范围内的元素，返回下一个元素位置</p>
+<p>c.resize(num)</p>
+<p>将元素数量改为num，如果size变大，多出的位置进行默认构造</p>
+<p>c.resize(num,elem)</p>
+<p>和上面的类似，但是多出来的元素是elem</p>
+<p>c.clear()</p>
+<p>清空容器</p>
+<h2 id="运行实例："><a href="#运行实例：" class="headerlink" title="运行实例："></a>运行实例：</h2><p>#include #include #include #include #include using namespace std;</p>
+<p>int main()<br>{<br>    //初始化一个空的deque，元素类型为string<br>    deque coll;</p>
+<pre><code>//插入几个元素
+coll.assign(3, string(&quot;string&quot;));
+coll.push\_back(&quot;last string&quot;);
+coll.push\_front(&quot;first string&quot;);
+
+//打印
+copy(coll.cbegin(), coll.cend(), ostream\_iterator(cout, &quot;\\n&quot;));
+cout &lt;&lt; endl;
+
+//移除第一个和最后一个元素
+coll.pop\_front();
+coll.pop\_back();
+
+//在除了第一个元素前的每一个位置插入“another”
+for (unsigned i = 1; i &lt; coll.size(); ++i)
+&#123;
+    coll\[i\] = &quot;another&quot; + coll\[i\];
+&#125;
+
+//将容器数量变为4个
+coll.resize(4, &quot;resized string&quot;);
+
+//打印元素
+copy(coll.cbegin(), coll.cend(), ostream\_iterator(cout, &quot;\\n&quot;));
+
+return 0;
+</code></pre>
+<p>}</p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">木尘痕</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://muchenhen.com/2019/10/31/stl：deque容器/">http://muchenhen.com/2019/10/31/stl：deque容器/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-meta__tag-list"></div><nav id="pagination"><div class="prev-post pull-left"><a href="/2019/11/01/chapter-4-d3d%E5%88%9D%E5%A7%8B%E5%8C%96-4-1-%E5%89%8D%E7%BD%AE%E6%8A%80%E8%83%BD/"><i class="fa fa-chevron-left">  </i><span>Chapter 4 D3D初始化 4.1 前置技能</span></a></div><div class="next-post pull-right"><a href="/2019/10/30/dx12%E9%BE%99%E4%B9%A6part%E2%85%A0chapter-3-%E5%8F%98%E6%8D%A2/"><span>DX12龙书PartⅠChapter 3 变换</span><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer class="footer-bg" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div class="layout" id="footer"><div class="copyright">&copy;2016 - 2021 By 木尘痕</div><div class="framework-info"><span>Driven - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="footer_custom_text">天道作何，吞恨者多 <a target="_blank" rel="noopener" href="https://beian.miit.gov.cn">豫ICP备17048032号-1</a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.9.0"></script><script src="/js/fancybox.js?version=1.9.0"></script><script src="/js/sidebar.js?version=1.9.0"></script><script src="/js/copy.js?version=1.9.0"></script><script src="/js/fireworks.js?version=1.9.0"></script><script src="/js/transition.js?version=1.9.0"></script><script src="/js/scroll.js?version=1.9.0"></script><script src="/js/head.js?version=1.9.0"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+  $('#nav').addClass('is-mobile')
+  $('footer').addClass('is-mobile')
+  $('#top-container').addClass('is-mobile')
+}</script></body></html>

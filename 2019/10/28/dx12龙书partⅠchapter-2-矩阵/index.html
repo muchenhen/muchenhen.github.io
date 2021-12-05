@@ -1,0 +1,101 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="DX12龙书PartⅠChapter 2 矩阵"><meta name="keywords" content=""><meta name="author" content="木尘痕"><meta name="copyright" content="木尘痕"><title>DX12龙书PartⅠChapter 2 矩阵 | 风生之谷</title><link rel="shortcut icon" href="https://raw.githubusercontent.com/muchenhen/muchenhen.github.io/master/xuange.ico"><link rel="stylesheet" href="/css/index.css?version=1.9.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css?version=1.9.0"><meta name="format-detection" content="telephone=no"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  hexoVersion: '5.4.0'
+} </script><meta name="generator" content="Hexo 5.4.0"></head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="toggle-sidebar-info text-center"><span data-toggle="Toggle article">Toggle site</span><hr></div><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar"></div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A5%E4%B8%8A%E5%86%85%E5%AE%B9%E4%B8%BA%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E7%9F%A5%E8%AF%86%EF%BC%8C%E4%B8%8D%E8%B5%98%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">以上内容为线性代数知识，不赘述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-8-DIRECTX-MATH-MATRICES"><span class="toc-number">2.</span> <span class="toc-text">2.8 DIRECTX MATH MATRICES</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-8-1%E7%9F%A9%E9%98%B5%E7%B1%BB%E5%9E%8B"><span class="toc-number">3.</span> <span class="toc-text">2.8.1矩阵类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-8-2%E7%9F%A9%E9%98%B5%E5%87%BD%E6%95%B0"><span class="toc-number">4.</span> <span class="toc-text">2.8.2矩阵函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-8-3%E4%BE%8B%E5%AD%90"><span class="toc-number">5.</span> <span class="toc-text">2.8.3例子</span></a></li></ol></div></div><div class="author-info hide"><div class="author-info__avatar text-center"><img src="https://github.com/muchenhen/muchenhen.github.io/blob/master/XuanGe.jpg?raw=true"></div><div class="author-info__name text-center">木尘痕</div><div class="author-info__description text-center">放一些笔记的地方</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">172</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">17</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">31</span></a></div><hr><div class="author-info-links"><div class="author-info-links__title text-center">Links</div><a class="author-info-links__name text-center" target="_blank" rel="noopener" href="https://alec-ray.github.io/">止戈</a></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">风生之谷</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">主页</a><a class="site-page" href="/archives">全部文章</a><a class="site-page" href="/tags">标签分类</a><a class="site-page" href="/categories">文章分类</a><a class="site-page" href="/contact">联系</a></span><span class="pull-right"></span></div><div id="post-info"><div id="post-title">DX12龙书PartⅠChapter 2 矩阵</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-28</time><span class="post-meta__separator">|</span><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/DirectX/">DirectX</a></div></div></div><div class="layout" id="content-inner"><article id="post"><div class="article-container" id="post-content"><p>在三维计算机图形学中，我们使用矩阵来简洁地描述几何变换，如缩放、旋转、平移，以及将点或向量的坐标从一帧变换到另一帧。本章探讨矩阵的数学。</p>
+<p>目的:</p>
+<ol>
+<li> 了解矩阵及其运算。</li>
+<li> 发现向量矩阵乘法如何被视为一个线性组合。</li>
+<li> 学习单位矩阵是什么，矩阵的转置，行列式和逆是什么。</li>
+<li> 熟悉用于矩阵数学的DirectX数学库提供的类和函数的子集。</li>
+</ol>
+<p>2.1定义</p>
+<p>2.2矩阵乘法</p>
+<p>2.3矩阵转置</p>
+<p>2.4单位矩阵</p>
+<p>2.5矩阵行列式</p>
+<p>2.6伴随矩阵</p>
+<p>2.7矩阵的逆</p>
+<h2 id="以上内容为线性代数知识，不赘述"><a href="#以上内容为线性代数知识，不赘述" class="headerlink" title="以上内容为线性代数知识，不赘述"></a>以上内容为线性代数知识，不赘述</h2><h2 id="2-8-DIRECTX-MATH-MATRICES"><a href="#2-8-DIRECTX-MATH-MATRICES" class="headerlink" title="2.8 DIRECTX MATH MATRICES"></a><strong>2.8 DIRECTX MATH MATRICES</strong></h2><p>DirectX数学矩阵</p>
+<h2 id="2-8-1矩阵类型"><a href="#2-8-1矩阵类型" class="headerlink" title="2.8.1矩阵类型"></a><strong>2.8.1矩阵类型</strong></h2><p>为了在DirectX数学中表示4×4矩阵，我们使用了XMMATRIX类，它在DirectXMath.h头文件中定义</p>
+<p>XMMATRIX使用四个XMVECTOR实例来使用SIMD。而且，XMMATRIX为矩阵运算提供了重载的运算符。</p>
+<p>除了使用各种构造函数之外，还可以使用XMMatrixSet函数创建XMMATRIX实例:</p>
+<p>XMMATRIX XM_CALLCONV XMMatrixSet(</p>
+<p>float m00, float m01, float m02, float m03,</p>
+<p>float m10, float m11, float m12, float m13,</p>
+<p>float m20, float m21, float m22, float m23,</p>
+<p>float m30, float m31, float m32, float m33);</p>
+<p>我们使用以下方法将数据从XMFLOAT4X4加载到XMMATRIX:</p>
+<p> inline XMMATRIX XM_CALLCONV</p>
+<p>XMLoadFloat4x4(const XMFLOAT4X4* pSource);</p>
+<p>我们使用以下方法将数据从XMMATRIX存储到XMFLOAT4X4:</p>
+<p>inline void XM_CALLCONV</p>
+<p>XMStoreFloat4x4(XMFLOAT4X4* pDestination, FXMMATRIX M);</p>
+<h2 id="2-8-2矩阵函数"><a href="#2-8-2矩阵函数" class="headerlink" title="2.8.2矩阵函数"></a><strong>2.8.2矩阵函数</strong></h2><p>XMMATRIX XM_CALLCONV XMMatrixIdentity();</p>
+<p> // Returns the identity matrix I 返回单位矩阵I</p>
+<p> bool XM_CALLCONV XMMatrixIsIdentity( FXMMATRIX M);</p>
+<p> // Returns true if M is the identity matrix 如果是单位矩阵返回true</p>
+<p> // Input M</p>
+<p>XMMATRIX XM_CALLCONV XMMatrixMultiply( FXMMATRIX A, CXMMATRIX B);</p>
+<p> // Returns the matrix product AB 返回矩阵AB的乘积</p>
+<p>// Input A</p>
+<p> // Input B</p>
+<p>XMMATRIX XM_CALLCONV XMMatrixTranspose( FXMMATRIX M);</p>
+<p>// Returns MT 返回矩阵转置</p>
+<p> // Input M</p>
+<p>XMVECTOR XM_CALLCONV XMMatrixDeterminant(  FXMMATRIX M);</p>
+<p>// Returns(det M, det M, det M, det M) 返回矩阵行列式</p>
+<p>// Input M XMMATRIX XM_CALLCONV</p>
+<p>XMMatrixInverse(XMVECTOR* pDeterminant, FXMMATRIX M);</p>
+<p> // Returns M−1 返回矩阵的逆</p>
+<p> // Input (det M, det M, det M, det M)</p>
+<p>// Input M</p>
+<p>When we declare a XMMATRIX</p>
+<h2 id="2-8-3例子"><a href="#2-8-3例子" class="headerlink" title="2.8.3例子"></a><strong>2.8.3例子</strong></h2><p>#include // for XMVerifyCPUSupport<br>#include #include #include using namespace std;<br>using namespace DirectX;<br>using namespace DirectX::PackedVector;</p>
+<p>// Overload the  “&lt;&lt;” operators so that we can use cout to<br>//重载“&lt;&lt;”操作符，以便我们可以使用cout<br>// output XMVECTOR and XMMATRIX objects.<br>//输出XMVECTOR和XMMATRIX对象。<br>ostream&amp; XM_CALLCONV operator &lt;&lt; (ostream&amp; os, FXMVECTOR v)<br>{<br>    XMFLOAT4 dest;<br>    XMStoreFloat4(&amp;dest, v);</p>
+<pre><code>os &lt;&lt; &quot;(&quot; &lt;&lt; dest.x &lt;&lt; &quot;, &quot; &lt;&lt; dest.y &lt;&lt; &quot;, &quot; &lt;&lt; dest.z &lt;&lt; &quot;, &quot; &lt;&lt; dest.w &lt;&lt; &quot;)&quot;;
+return os;
+</code></pre>
+<p>}</p>
+<p>ostream&amp; XM_CALLCONV operator &lt;&lt; (ostream&amp; os, FXMMATRIX m)<br>{<br>    for (int i = 0; i &lt; 4; ++i)<br>    {<br>        os &lt;&lt; XMVectorGetX(m.r[i]) &lt;&lt; “\t”;<br>        os &lt;&lt; XMVectorGetY(m.r[i]) &lt;&lt; “\t”;<br>        os &lt;&lt; XMVectorGetZ(m.r[i]) &lt;&lt; “\t”;<br>        os &lt;&lt; XMVectorGetW(m.r[i]);<br>        os &lt;&lt; endl;<br>    }<br>    return os;<br>}</p>
+<p>int main()<br>{<br>    // Check support for SSE2 (Pentium4, AMD K8, and above).<br>    //检查是否支持SSE2<br>    if (!XMVerifyCPUSupport())<br>    {<br>        cout &lt;&lt; “directx math not supported” &lt;&lt; endl;<br>        return 0;<br>    }</p>
+<pre><code>XMMATRIX A(1.0f, 0.0f, 0.0f, 0.0f,
+    0.0f, 2.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 4.0f, 0.0f,
+    1.0f, 2.0f, 3.0f, 1.0f);
+
+XMMATRIX B = XMMatrixIdentity();//定义了一个单位矩阵
+
+XMMATRIX C = A \* B;//矩阵乘法
+
+XMMATRIX D = XMMatrixTranspose(A);//A的转置
+
+XMVECTOR det = XMMatrixDeterminant(A);//A的行列式
+XMMATRIX E = XMMatrixInverse(&amp;det, A);//A的逆
+
+XMMATRIX F = A \* E;//A乘A的逆矩阵，结果是单位阵
+
+cout &lt;&lt; &quot;A = &quot; &lt;&lt; endl &lt;&lt; A &lt;&lt; endl;
+cout &lt;&lt; &quot;B = &quot; &lt;&lt; endl &lt;&lt; B &lt;&lt; endl;
+cout &lt;&lt; &quot;C = A\*B = &quot; &lt;&lt; endl &lt;&lt; C &lt;&lt; endl;
+cout &lt;&lt; &quot;D = transpose(A) = &quot; &lt;&lt; endl &lt;&lt; D &lt;&lt; endl;
+cout &lt;&lt; &quot;det = determinant(A) = &quot; &lt;&lt; det &lt;&lt; endl &lt;&lt; endl;
+cout &lt;&lt; &quot;E = inverse(A) = &quot; &lt;&lt; endl &lt;&lt; E &lt;&lt; endl;
+cout &lt;&lt; &quot;F = A\*E = &quot; &lt;&lt; endl &lt;&lt; F &lt;&lt; endl;
+
+return 0;
+</code></pre>
+<p>} </p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-14.png"></p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">木尘痕</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://muchenhen.com/2019/10/28/dx12龙书partⅠchapter-2-矩阵/">http://muchenhen.com/2019/10/28/dx12龙书partⅠchapter-2-矩阵/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-meta__tag-list"></div><nav id="pagination"><div class="prev-post pull-left"><a href="/2019/10/30/stl%EF%BC%9Aarray%E5%AE%B9%E5%99%A8/"><i class="fa fa-chevron-left">  </i><span>STL：array容器</span></a></div><div class="next-post pull-right"><a href="/2019/10/28/latex%E6%B5%8B%E8%AF%95/"><span>Latex测试</span><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer class="footer-bg" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div class="layout" id="footer"><div class="copyright">&copy;2016 - 2021 By 木尘痕</div><div class="framework-info"><span>Driven - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="footer_custom_text">天道作何，吞恨者多 <a target="_blank" rel="noopener" href="https://beian.miit.gov.cn">豫ICP备17048032号-1</a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.9.0"></script><script src="/js/fancybox.js?version=1.9.0"></script><script src="/js/sidebar.js?version=1.9.0"></script><script src="/js/copy.js?version=1.9.0"></script><script src="/js/fireworks.js?version=1.9.0"></script><script src="/js/transition.js?version=1.9.0"></script><script src="/js/scroll.js?version=1.9.0"></script><script src="/js/head.js?version=1.9.0"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+  $('#nav').addClass('is-mobile')
+  $('footer').addClass('is-mobile')
+  $('#top-container').addClass('is-mobile')
+}</script></body></html>

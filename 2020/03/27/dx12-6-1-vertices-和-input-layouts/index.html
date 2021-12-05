@@ -1,0 +1,62 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="DX12 6.1 Vertices 和 Input Layouts"><meta name="keywords" content=""><meta name="author" content="木尘痕"><meta name="copyright" content="木尘痕"><title>DX12 6.1 Vertices 和 Input Layouts | 风生之谷</title><link rel="shortcut icon" href="https://raw.githubusercontent.com/muchenhen/muchenhen.github.io/master/xuange.ico"><link rel="stylesheet" href="/css/index.css?version=1.9.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css?version=1.9.0"><meta name="format-detection" content="telephone=no"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  hexoVersion: '5.4.0'
+} </script><meta name="generator" content="Hexo 5.4.0"></head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="toggle-sidebar-info text-center"><span data-toggle="Toggle article">Toggle site</span><hr></div><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar"></div></div><div class="sidebar-toc__content"></div></div><div class="author-info hide"><div class="author-info__avatar text-center"><img src="https://github.com/muchenhen/muchenhen.github.io/blob/master/XuanGe.jpg?raw=true"></div><div class="author-info__name text-center">木尘痕</div><div class="author-info__description text-center">放一些笔记的地方</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">172</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">17</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">31</span></a></div><hr><div class="author-info-links"><div class="author-info-links__title text-center">Links</div><a class="author-info-links__name text-center" target="_blank" rel="noopener" href="https://alec-ray.github.io/">止戈</a></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">风生之谷</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">主页</a><a class="site-page" href="/archives">全部文章</a><a class="site-page" href="/tags">标签分类</a><a class="site-page" href="/categories">文章分类</a><a class="site-page" href="/contact">联系</a></span><span class="pull-right"></span></div><div id="post-info"><div id="post-title">DX12 6.1 Vertices 和 Input Layouts</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-27</time><span class="post-meta__separator">|</span><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></div></div></div><div class="layout" id="content-inner"><article id="post"><div class="article-container" id="post-content"><p>一个vertex可以包含除了位置之外额外的数据，可以创建自定义的vertex格式，但首先要创建一个包含我们需要的vertex的数据的结构体。比如下面两个自定义的结构体：</p>
+<p>struct Vertex1 {</p>
+<p>XMFLOAT3 Pos;</p>
+<p>XMFLOAT4 Color;</p>
+<p>};</p>
+<p>struct Vertex2 {</p>
+<p>XMFLOAT3 Pos;</p>
+<p>XMFLOAT3 Normal;</p>
+<p>XMFLOAT2 Tex0;</p>
+<p>XMFLOAT2 Tex1;</p>
+<p>};</p>
+<p>一旦定义了一个vertex结构体，需要告诉DirectX对于结构体的每个组件应该怎么处理。需要提供给DX一个”说明”，这个说明由D3D12_INPUT_LAYOUT_DESC结构体表示：</p>
+<p>typedef struct D3D12_INPUT_LAYOUT_DESC {</p>
+<p>const D3D12_INPUT_ELEMENT_DESC *pInputElementDescs;</p>
+<p>UINT NumElements;</p>
+<p>} D3D12_INPUT_LAYOUT_DESC;</p>
+<p><em>来自 &lt;<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/api/d3d12/ns-d3d12-d3d12_input_layout_desc">https://docs.microsoft.com/en-us/windows/win32/api/d3d12/ns-d3d12-d3d12_input_layout_desc</a>&gt;</em></p>
+<p>两个参数，第一个是 D3D12_INPUT_ELEMENT_DESC类型的数组，描述输入阶段的数据类型，第二个参数是unsigned int型，pInputElementDescs成员指向的输入元素数组中的输入数据类型的数量。</p>
+<p>关于第一个参数的类型</p>
+<p>D3D12_INPUT_ELEMENT_DESC structure</p>
+<p>typedef struct D3D12_INPUT_ELEMENT_DESC {</p>
+<p>LPCSTR SemanticName;</p>
+<p>UINT SemanticIndex;</p>
+<p>DXGI_FORMAT Format;</p>
+<p>UINT InputSlot;</p>
+<p>UINT AlignedByteOffset;</p>
+<p>D3D12_INPUT_CLASSIFICATION InputSlotClass;</p>
+<p>UINT InstanceDataStepRate;</p>
+<p>} D3D12_INPUT_ELEMENT_DESC;</p>
+<p><em>来自 &lt;<a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows/win32/api/d3d12/ns-d3d12-d3d12_input_element_desc">https://docs.microsoft.com/zh-cn/windows/win32/api/d3d12/ns-d3d12-d3d12_input_element_desc</a>&gt;</em></p>
+<p>关于该结构体的几个参数：</p>
+<ul>
+<li>SemanticName 在着色器input-signature中与此元素关联的HLSL语义。要与元素关联的字符串。这可以是任何有效的变量名。语义用于将顶点结构中的元素映射到顶点着色器输入签名中的元素<ul>
+<li>  <img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032720_0142_DX1261Verti1.png"></li>
+<li>  vertex结构体中的每个元素都由数组中相应的元素描述</li>
+</ul>
+</li>
+<li>  SemanticIndex 元素的语义索引。语义索引使用整数索引号修改语义。只有在多个元素具有相同语义的情况下才需要语义索引。例如，上图需要两个TEXCOORD，则第一个的索引是0，第二个的索引是1，此外图中POSITION相当于POSITION0</li>
+<li>  Format 指定元素数据格式的 DXGI_FORMAT美剧类型成员，指定了此vertex元素在DirectX的数据格式。</li>
+<li>  InputSlot 指定此元素将来自的input slot的索引。值在01~15之间。具体的在这里先不深入。</li>
+<li>AlignedByteOffset 从指定的input slot的C++顶点结构的开始到顶点分量的开始，以字节为单位的偏移量。例如，在下面的顶点结构中，元素Pos有一个0字节的偏移量，因为它开始与顶点结构的开始重合；元素Normal有一个12字节的偏移量，必须跳过Pos的字节才能到达Normal的开头；元素Tex0有一个24字节的偏移量，需要跳过Pos和Normal的字节才能到达Tex0的开头；元素Tex1有一个32字节的偏移量，需要跳过Pos、Normal和Tex0到达Tex1开头。<ul>
+<li>  <img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032720_0142_DX1261Verti2.png"></li>
+</ul>
+</li>
+<li>  InputSlotClass 目前设置为D3D12_INPUT_PER_VERTEX_DATA，该参数是一些可选的用于高级特性的实例，这个值用于标识单个的input slot的输入数据类的值。</li>
+<li>  InstanceDataStepRate 目前设置为0，其他的值用于一些高级特性。对于包含每个顶点数据的元素，此值必须为0 。</li>
+</ul>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">木尘痕</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://muchenhen.com/2020/03/27/dx12-6-1-vertices-和-input-layouts/">http://muchenhen.com/2020/03/27/dx12-6-1-vertices-和-input-layouts/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-meta__tag-list"></div><nav id="pagination"><div class="prev-post pull-left"><a href="/2020/03/27/6-3-indices-and-index-buffers/"><i class="fa fa-chevron-left">  </i><span>6.3 Indices and Index Buffers</span></a></div><div class="next-post pull-right"><a href="/2020/03/26/dx12-6-2-vertex-buffer/"><span>DX12 6.2 VERTEX BUFFER</span><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer class="footer-bg" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div class="layout" id="footer"><div class="copyright">&copy;2016 - 2021 By 木尘痕</div><div class="framework-info"><span>Driven - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="footer_custom_text">天道作何，吞恨者多 <a target="_blank" rel="noopener" href="https://beian.miit.gov.cn">豫ICP备17048032号-1</a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.9.0"></script><script src="/js/fancybox.js?version=1.9.0"></script><script src="/js/sidebar.js?version=1.9.0"></script><script src="/js/copy.js?version=1.9.0"></script><script src="/js/fireworks.js?version=1.9.0"></script><script src="/js/transition.js?version=1.9.0"></script><script src="/js/scroll.js?version=1.9.0"></script><script src="/js/head.js?version=1.9.0"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+  $('#nav').addClass('is-mobile')
+  $('footer').addClass('is-mobile')
+  $('#top-container').addClass('is-mobile')
+}</script></body></html>

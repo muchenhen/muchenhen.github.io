@@ -1,0 +1,288 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="DX12龙书PartⅠChapter 1 向量"><meta name="keywords" content=""><meta name="author" content="木尘痕"><meta name="copyright" content="木尘痕"><title>DX12龙书PartⅠChapter 1 向量 | 风生之谷</title><link rel="shortcut icon" href="https://raw.githubusercontent.com/muchenhen/muchenhen.github.io/master/xuange.ico"><link rel="stylesheet" href="/css/index.css?version=1.9.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css?version=1.9.0"><meta name="format-detection" content="telephone=no"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  hexoVersion: '5.4.0'
+} </script><meta name="generator" content="Hexo 5.4.0"></head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="toggle-sidebar-info text-center"><span data-toggle="Toggle article">Toggle site</span><hr></div><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar"></div></div><div class="sidebar-toc__content"></div></div><div class="author-info hide"><div class="author-info__avatar text-center"><img src="https://github.com/muchenhen/muchenhen.github.io/blob/master/XuanGe.jpg?raw=true"></div><div class="author-info__name text-center">木尘痕</div><div class="author-info__description text-center">放一些笔记的地方</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">172</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">17</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">31</span></a></div><hr><div class="author-info-links"><div class="author-info-links__title text-center">Links</div><a class="author-info-links__name text-center" target="_blank" rel="noopener" href="https://alec-ray.github.io/">止戈</a></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">风生之谷</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">主页</a><a class="site-page" href="/archives">全部文章</a><a class="site-page" href="/tags">标签分类</a><a class="site-page" href="/categories">文章分类</a><a class="site-page" href="/contact">联系</a></span><span class="pull-right"></span></div><div id="post-info"><div id="post-title">DX12龙书PartⅠChapter 1 向量</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-27</time><span class="post-meta__separator">|</span><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/DirectX/">DirectX</a></div></div></div><div class="layout" id="content-inner"><article id="post"><div class="article-container" id="post-content"><p>目的:</p>
+<ul>
+<li>  1. 学习向量是如何用几何和数字表示的。</li>
+<li>  2. 发现向量上定义的运算及其几何应用。</li>
+<li>  3.熟悉DirectXMath类库中的向量函数和类。</li>
+</ul>
+<p>D3D使用左手坐标系</p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image.png" alt="zł "></p>
+<p><strong>1.6 DIRECTX MATH VECTORS</strong><br><strong>D3D数学向量</strong></p>
+<p>要使用d3d数学库，需要</p>
+<p>#include &lt;DirectXMath.h&gt;<br>#include &lt;DirectXPackedVector.h&gt;</p>
+<p>命名空间</p>
+<p>DirectX<br>DirectX::PackedVector</p>
+<p><strong>XMVECTOR</strong></p>
+<p>库中核心的Vector类型，是对SIMD寄存器的映射。当前CPU是SSE2指令集可以使用时如下定义：</p>
+<p>typedef _m128 XMVECTOR;</p>
+<p>_m128是由Microsoft提供的基本数据类型，用于与SSE、SSE2内部指令一起使用的。在16字节边界上自动对齐。ARM处理器不支持该类型。<br>虽然这是一个128位宽的寄存器，能存储一个四维的Vector，但当我们使用二维或三维的Vector运算时，为了效率，仍然会去使用XMVECTOR类型。<br>XMVECTOR的数据不能直接访问。可以转换成XMFLOAT类型（转换方法见下文），也可通过特定的接口get或set其某个分量：</p>
+<p><strong>加载和存储方法</strong></p>
+<p>We use the following methods to load data from XMFLOATn into XMVECTOR:<br>使用如下的方法去加载数据，从XMFLOAT到XMVECTOR</p>
+<p>// Loads XMFLOAT2 into XMVECTOR<br>//加载2到V<br><strong>XMVECTOR XM_CALLCONV XMLoadFloat2(const XMFLOAT2* pSource);</strong></p>
+<p>// Loads XMFLOAT3 into XMVECTOR<br><strong>XMVECTOR XM_CALLCONV XMLoadFloat3(const XMFLOAT3* pSource);</strong></p>
+<p>// Loads XMFLOAT4 into XMVECTOR<br><strong>XMVECTOR XM_CALLCONV XMLoadFloat4(const XMFLOAT4* pSource);</strong></p>
+<p> We use the following methods to store data from XMVECTOR into XMFLOATn:<br>使用下面的方法存储数据，从V到F</p>
+<p>// Loads XMVECTOR into XMFLOAT2<br><strong>void XM_CALLCONV XMStoreFloat2(XMFLOAT2 *pDestination, FXMVECTOR V);</strong></p>
+<p>// Loads XMVECTOR into XMFLOAT3<br><strong>void XM_CALLCONV XMStoreFloat3(XMFLOAT3 *pDestination, FXMVECTOR V);</strong></p>
+<p>// Loads XMVECTOR into XMFLOAT4<br><strong>void XM_CALLCONV XMStoreFloat4(XMFLOAT4 *pDestination, FXMVECTOR V);</strong></p>
+<p>Sometimes we just want to get or set one component of an XMVECTOR; the following getter and setter functions facilitate this:<br>获得向量的某个组件，get方法</p>
+<p>float XM_CALLCONV XMVectorGetX(FXMVECTOR V);</p>
+<p>float XM_CALLCONV XMVectorGetY(FXMVECTOR V);</p>
+<p> float XM_CALLCONV XMVectorGetZ(FXMVECTOR V);</p>
+<p> float XM_CALLCONV XMVectorGetW(FXMVECTOR V);</p>
+<p>设置向量的某个组件，set方法</p>
+<p>XMVECTOR XM_CALLCONV XMVectorSetX(FXMVECTOR V, float x);</p>
+<p> XMVECTOR XM_CALLCONV XMVectorSetY(FXMVECTOR V, float y);</p>
+<p>XMVECTOR XM_CALLCONV XMVectorSetZ(FXMVECTOR V, float z);</p>
+<p>XMVECTOR XM_CALLCONV XMVectorSetW(FXMVECTOR V, float w);</p>
+<p>XMVECTOR重载了加减乘除等运算符，可以方便的进行运算。</p>
+<p><strong>1.6.3 参数传递</strong></p>
+<p>由于XMVECTOR的数据存储在寄存器，而不在堆栈上，因此参数传递时会有些特殊。基本的想法是，能用寄存器传递的就用寄存器传递，不能的就用栈。具体可以通过寄存器传递的参数数量，根据平台和编译器而定。<br>为此，增加了几种用于参数传递的数据类型，FXMVECTOR、GXMVECTOR、HXMVECTOR、CXMVECTOR。基本的使用规则是：</p>
+<ol>
+<li> 前三个XMVECTOR参数使用FXMVECTOR</li>
+<li> 第四个XMVECTOR参数使用GXMVECTOR</li>
+<li> 第五六个XMVECTOR参数使用HXMVECTOR</li>
+<li> 其他使用CXMVECTOR</li>
+</ol>
+<p>而宏XM_CALLCONV，就是用于告诉编译器该函数调用时，有这种特别的参数传递规则。<br>有这样的定义</p>
+<p>void XM_CALLCONV XMStoreFloat2(XMFLOAT2 *pDestination, FXMVECTOR V);</p>
+<p>但是，这些规则在构造函数中并不适用。在构造函数中：</p>
+<ol>
+<li> 前三个XMVECTOR参数使用FXMVECTOR</li>
+<li> 其他使用CXMVECTOR</li>
+<li> 不要使用XM_CALLCONV</li>
+</ol>
+<p>另外，这些规则只是针对于XMVECTOR类型本身。而对于复合类，XMVECTOR&amp;、XMVECTOR*并不会使用寄存器传递，和普通参数同等看待。</p>
+<p><strong>1.6.5重载运算符</strong></p>
+<p>XMVECTOR有几个重载的运算符，用于执行向量的加法、减法和标量乘法。</p>
+<p>XMVECTOR XM_CALLCONV operator+ (FXMVECTOR V);</p>
+<p>XMVECTOR XM_CALLCONV operator- (FXMVECTOR V);</p>
+<p>XMVECTOR&amp; XM_CALLCONV operator+= (XMVECTOR&amp; V1, FXMVECTOR V2);</p>
+<p> XMVECTOR&amp; XM_CALLCONV operator-= (XMVECTOR&amp; V1, FXMVECTOR V2);</p>
+<p>XMVECTOR&amp; XM_CALLCONV operator*= (XMVECTOR&amp; V1, FXMVECTOR V2);</p>
+<p>XMVECTOR&amp; XM_CALLCONV operator/= (XMVECTOR&amp; V1, FXMVECTOR V2);</p>
+<p>XMVECTOR&amp; operator*= (XMVECTOR&amp; V, float S);</p>
+<p> XMVECTOR&amp; operator/= (XMVECTOR&amp; V, float S);</p>
+<p>XMVECTOR XM_CALLCONV operator+ (FXMVECTOR V1, FXMVECTOR V2);</p>
+<p>XMVECTOR XM_CALLCONV operator- (FXMVECTOR V1, FXMVECTOR V2);</p>
+<p> XMVECTOR XM_CALLCONV operator* (FXMVECTOR V1, FXMVECTOR V2);</p>
+<p>XMVECTOR XM_CALLCONV operator/ (FXMVECTOR V1, FXMVECTOR V2);</p>
+<p> XMVECTOR XM_CALLCONV operator* (FXMVECTOR V, float S);</p>
+<p> XMVECTOR XM_CALLCONV operator* (float S, FXMVECTOR V);</p>
+<p>XMVECTOR XM_CALLCONV operator/ (FXMVECTOR V, float S);</p>
+<p><strong>1.6.6其他参数</strong></p>
+<p><strong>定义以下常量用于涉及π近似不同的表达式</strong><strong>:</strong></p>
+<p>const float XM_PI = 3.141592654f;</p>
+<p>const float XM_2PI = 6.283185307f;</p>
+<p>const float XM_1DIVPI = 0.318309886f;</p>
+<p>const float XM_1DIV2PI = 0.159154943f;</p>
+<p>const float XM_PIDIV2 = 1.570796327f;</p>
+<p>const float XM_PIDIV4 = 0.785398163f;</p>
+<p><strong>弧度和角度转换的内联函数：</strong></p>
+<p>inline float XMConvertToRadians(float fDegrees) { return fDegrees * (XM_PI / 180.0f); } inline float XMConvertToDegrees(float fRadians) { return fRadians * (180.0f / XM_PI); }</p>
+<p><strong>min</strong><strong>/max****函数：</strong></p>
+<p>template<class T> inline T XMMin(T a, T b) { return (a &lt; b) ? a : b; }</p>
+<p>template<class T> inline T XMMax(T a, T b) { return (a &gt; b) ? a : b; }</p>
+<p><strong>1.6.7 Setter 函数</strong></p>
+<p>DirectX Math提供了以下函数来设置XMVECTOR的内容:</p>
+<p>// Returns the zero vector 0  置0</p>
+<p>XMVECTOR XM_CALLCONV XMVectorZero();</p>
+<p>// Returns the vector (1, 1, 1, 1)  置1</p>
+<p>XMVECTOR XM_CALLCONV XMVectorSplatOne();</p>
+<p>// Returns the vector (x, y, z, w)</p>
+<p>XMVECTOR XM_CALLCONV XMVectorSet(float x, float y, float z, float w);</p>
+<p>// Returns the vector (s, s, s, s)</p>
+<p>XMVECTOR XM_CALLCONV XMVectorReplicate(float Value);</p>
+<p>// Returns the vector (vx, vx, vx, vx)</p>
+<p>XMVECTOR XM_CALLCONV XMVectorSplatX(FXMVECTOR V);</p>
+<p>// Returns the vector (vy, vy, vy, vy)</p>
+<p>XMVECTOR XM_CALLCONV XMVectorSplatY(FXMVECTOR V);</p>
+<p>// Returns the vector (vz, vz, vz, vz)</p>
+<p>XMVECTOR XM_CALLCONV XMVectorSplatZ(FXMVECTOR V);</p>
+<p><strong>1.6.8向量函数</strong></p>
+<p>DirectX Math提供以下函数来执行各种向量操作。用3D版本来说明，但也有类似的2D和4D版本;2D和4D版本的名称与3D版本相同，只是分别用2和4代替了3。</p>
+<p>XMVECTOR XM_CALLCONV XMVector3Length( // Returns ||v||</p>
+<p>FXMVECTOR V); // Input v</p>
+<p>XMVECTOR XM_CALLCONV XMVector3LengthSq( // Returns ||v||2</p>
+<p>FXMVECTOR V); // Input v</p>
+<p>XMVECTOR XM_CALLCONV XMVector3Dot( // Returns v1·v2</p>
+<p>FXMVECTOR V1, // Input v1</p>
+<p>FXMVECTOR V2); // Input v2</p>
+<p>XMVECTOR XM_CALLCONV XMVector3Cross( // Returns v1 × v2</p>
+<p>FXMVECTOR V1, // Input v1</p>
+<p>FXMVECTOR V2); // Input v2</p>
+<p>XMVECTOR XM_CALLCONV XMVector3Normalize( // Returns</p>
+<p>v/||v|| FXMVECTOR V); // Input v</p>
+<p>XMVECTOR XM_CALLCONV XMVector3Orthogonal( // Returns a</p>
+<p>vector orthogonal to v FXMVECTOR V); // Input v</p>
+<p> XMVECTOR XM_CALLCONV</p>
+<p>XMVector3AngleBetweenVectors( // Returns the angle between v1 and</p>
+<p>v2</p>
+<p>FXMVECTOR V1, // Input v1</p>
+<p>FXMVECTOR V2); // Input v2</p>
+<p> void XM_CALLCONV XMVector3ComponentsFromNormal(</p>
+<p>XMVECTOR* pParallel, // Returns projn(v)</p>
+<p>XMVECTOR* pPerpendicular, // Returns perpn(v)</p>
+<p>FXMVECTOR V, // Input v</p>
+<p>FXMVECTOR Normal); // Input n</p>
+<p>bool XM_CALLCONV XMVector3Equal( // Returns v1 = v2</p>
+<p>FXMVECTOR V1, // Input v1</p>
+<p>FXMVECTOR V2); // Input v2</p>
+<p> bool XM_CALLCONV XMVector3NotEqual( // Returns v1 ≠ v2</p>
+<p>FXMVECTOR V1, // Input v1</p>
+<p>FXMVECTOR V2); // Input v2</p>
+<p><strong>Sample</strong> Code:</p>
+<p>#include  // for XMVerifyCPUSupport<br>#include<br>#include<br>#include<br>using namespace std;<br>using namespace DirectX;<br>using namespace DirectX::PackedVector;</p>
+<p>// Overload the  “&lt;&lt;” operators so that we can use cout to<br>// output XMVECTOR objects.</p>
+<p>//重载流运算符<br>ostream&amp; XM_CALLCONV operator &lt;&lt; (ostream&amp; os, FXMVECTOR v)<br>{<br>    XMFLOAT3 dest;<br>    XMStoreFloat3(&amp;dest, v);</p>
+<pre><code>os &lt;&lt; &quot;(&quot; &lt;&lt; dest.x &lt;&lt; &quot;, &quot; &lt;&lt; dest.y &lt;&lt; &quot;, &quot; &lt;&lt; dest.z &lt;&lt; &quot;)&quot;;
+return os;
+</code></pre>
+<p>}</p>
+<p>int main()<br>{<br>    cout.setf(ios_base::boolalpha);</p>
+<pre><code>// Check support for SSE2 (Pentium4, AMD K8, and above).
+//检查是否支持SSE2
+
+if (!XMVerifyCPUSupport())
+&#123;
+    cout &lt;&lt; &quot;directx math not supported&quot; &lt;&lt; endl;
+    return 0;
+&#125;
+
+XMVECTOR n = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+XMVECTOR u = XMVectorSet(1.0f, 2.0f, 3.0f, 0.0f);
+XMVECTOR v = XMVectorSet(-2.0f, 1.0f, -3.0f, 0.0f);
+XMVECTOR w = XMVectorSet(0.707f, 0.707f, 0.0f, 0.0f);
+
+// Vector addition: XMVECTOR operator + 
+// 向量加法
+XMVECTOR a = u + v;
+
+// Vector subtraction: XMVECTOR operator - 
+// 向量减法
+XMVECTOR b = u - v;
+
+// Scalar multiplication: XMVECTOR operator \* 
+// 数乘
+XMVECTOR c = 10.0f\*u;
+
+// ||u||
+// 向量的模
+XMVECTOR L = XMVector3Length(u);
+
+// d = u / ||u||
+// 向量单位化
+XMVECTOR d = XMVector3Normalize(u);
+
+// s = u dot v
+// 点乘
+XMVECTOR s = XMVector3Dot(u, v);
+
+// e = u x v
+// 叉乘
+XMVECTOR e = XMVector3Cross(u, v);
+
+// Find proj\_n(w) and perp\_n(w)
+// w对于n的两个投影分量
+XMVECTOR projW;
+XMVECTOR perpW;
+XMVector3ComponentsFromNormal(&amp;projW, &amp;perpW, w, n);
+
+// Does projW + perpW == w?
+// 两个投影分量对应的向量，加法结果是原向量，三角形法则
+bool equal = XMVector3Equal(projW + perpW, w) != 0;
+bool notEqual = XMVector3NotEqual(projW + perpW, w) != 0;
+
+// The angle between projW and perpW should be 90 degrees.
+// 两个投影分量是垂直的
+XMVECTOR angleVec = XMVector3AngleBetweenVectors(projW, perpW);
+float angleRadians = XMVectorGetX(angleVec);
+float angleDegrees = XMConvertToDegrees(angleRadians);
+
+cout &lt;&lt; &quot;u                   = &quot; &lt;&lt; u &lt;&lt; endl;
+cout &lt;&lt; &quot;v                   = &quot; &lt;&lt; v &lt;&lt; endl;
+cout &lt;&lt; &quot;w                   = &quot; &lt;&lt; w &lt;&lt; endl;
+cout &lt;&lt; &quot;n                   = &quot; &lt;&lt; n &lt;&lt; endl;
+cout &lt;&lt; &quot;a = u + v           = &quot; &lt;&lt; a &lt;&lt; endl;
+cout &lt;&lt; &quot;b = u - v           = &quot; &lt;&lt; b &lt;&lt; endl;
+cout &lt;&lt; &quot;c = 10 \* u          = &quot; &lt;&lt; c &lt;&lt; endl;
+cout &lt;&lt; &quot;d = u / ||u||       = &quot; &lt;&lt; d &lt;&lt; endl;
+cout &lt;&lt; &quot;e = u x v           = &quot; &lt;&lt; e &lt;&lt; endl;
+cout &lt;&lt; &quot;L  = ||u||          = &quot; &lt;&lt; L &lt;&lt; endl;
+cout &lt;&lt; &quot;s = u.v             = &quot; &lt;&lt; s &lt;&lt; endl;
+cout &lt;&lt; &quot;projW               = &quot; &lt;&lt; projW &lt;&lt; endl;
+cout &lt;&lt; &quot;perpW               = &quot; &lt;&lt; perpW &lt;&lt; endl;
+cout &lt;&lt; &quot;projW + perpW == w  = &quot; &lt;&lt; equal &lt;&lt; endl;
+cout &lt;&lt; &quot;projW + perpW != w  = &quot; &lt;&lt; notEqual &lt;&lt; endl;
+cout &lt;&lt; &quot;angle               = &quot; &lt;&lt; angleDegrees &lt;&lt; endl;
+
+return 0;
+</code></pre>
+<p>}</p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-3.png" alt="0) 
+10 * u 
+=(1,2,3) 
+(-2, 1, -3) 
+(0. 707, 0. 707, 
+(10, 20, 30) 
+d = u 
+u 
+rajW 
+erpW 
+rajW 
+rajW 
+angle 
+/IIuII 
+V 
+perpW 
+perpW 
+(0. 267261, 0. 534522, 0. 801784) 
+(-9, -3, 5) 
+(3. 74166, 3. 74166, 3. 74166) 
+(0. 707, 0, 0) 
+(0, 0. 707, 0) 
+false "></p>
+<p>总结：</p>
+<p>1. 对局部或全局变量使用XMVECTOR。<br>2. 对类数据成员使用XMFLOAT2、XMFLOAT3和XMFLOAT4。<br>3.在进行计算之前，使用加载函数将XMFLOATn转换为XMVECTOR<br>4. 使用XMVECTOR实例进行计算。<br>5. 使用存储函数将XMVECTOR转换为XMFLOATn</p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-1.png" alt="I. 
+2. 
+3. 
+4. 
+5. 
+Use XMVECTOR for local or global variables. 
+Use XMFLOAT2, XMFLOAT3, and XMFLOAT4 for class data members. 
+Use loading functions to convert from XMFLOATn to XMVECTOR before 
+doing calculations. 
+Do calculations with XMVECTOR instances. 
+Use storage functions to convert from XMVECTOR to XMFLOATn. "></p>
+<p>矢量用于模拟同时具有大小和方向的物理量。几何上，我们用有向线段表示一个向量。矢量平行于自身平移时处于标准位置，使其尾部与坐标系的原点重合。一个处于标准位置的向量可以通过指定其头部相对于一个坐标系的坐标来进行数值描述。</p>
+<p>![operations: </p>
+<ol>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li>Addition: u + V = (ux + vx, uy + vy, Liz + vz)<br>Subtraction: u — V = (ux — vx, uy — vy, Liz — vz)<br>Scalar Multiplication: ku = (ku ku kuz)<br>x2 + + z2<br>Length: Ilu<br>Normalization:<br>Dot Product:<br>Cross Product:<br>(xyz<br>I lull ‘ llull ‘ lull<br>Ilull<br>uv<br>—uV u V —uyvx) ](<a target="_blank" rel="noopener" href="http://www.muchenhen.com/wp-content/uploads/2019/10/image-2.png">http://www.muchenhen.com/wp-content/uploads/2019/10/image-2.png</a>)</li>
+</ol>
+<p>提供了以下有用的函数来计算一个向量的长度，一个向量的长度的平方，计算两个向量的点积，计算两个向量的外积，以及对一个向量进行归一化:</p>
+<p>XMVECTOR XM_CALLCONV XMVector3Length(FXMVECTOR V);</p>
+<p>XMVECTOR XM_CALLCONV XMVector3LengthSq(FXMVECTOR V);</p>
+<p>XMVECTOR XM_CALLCONV XMVector3Dot(FXMVECTOR V1, FXMVECTOR V2);</p>
+<p>XMVECTOR XM_CALLCONV XMVector3Cross(FXMVECTOR V1, FXMVECTOR V2);</p>
+<p>XMVECTOR XM_CALLCONV XMVector3Normalize(FXMVECTOR V);</p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">木尘痕</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://muchenhen.com/2019/10/27/dx12龙书partⅠchapter-1-向量/">http://muchenhen.com/2019/10/27/dx12龙书partⅠchapter-1-向量/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-meta__tag-list"></div><nav id="pagination"><div class="prev-post pull-left"><a href="/2019/10/27/c11-stl%E4%B8%AD%E7%9A%84%E5%AE%B9%E5%99%A8/"><i class="fa fa-chevron-left">  </i><span>C++11 STL中的容器</span></a></div><div class="next-post pull-right"><a href="/2019/10/27/dx12%E9%BE%99%E4%B9%A6part%E2%85%A0chapter-0-dx%E6%95%B0%E5%AD%A6%E5%BA%93/"><span>DX12龙书PartⅠChapter 0 DX数学库</span><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer class="footer-bg" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div class="layout" id="footer"><div class="copyright">&copy;2016 - 2021 By 木尘痕</div><div class="framework-info"><span>Driven - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="footer_custom_text">天道作何，吞恨者多 <a target="_blank" rel="noopener" href="https://beian.miit.gov.cn">豫ICP备17048032号-1</a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.9.0"></script><script src="/js/fancybox.js?version=1.9.0"></script><script src="/js/sidebar.js?version=1.9.0"></script><script src="/js/copy.js?version=1.9.0"></script><script src="/js/fireworks.js?version=1.9.0"></script><script src="/js/transition.js?version=1.9.0"></script><script src="/js/scroll.js?version=1.9.0"></script><script src="/js/head.js?version=1.9.0"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+  $('#nav').addClass('is-mobile')
+  $('footer').addClass('is-mobile')
+  $('#top-container').addClass('is-mobile')
+}</script></body></html>

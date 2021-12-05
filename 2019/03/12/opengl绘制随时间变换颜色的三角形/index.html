@@ -1,0 +1,143 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="OpenGL绘制随时间变换颜色的三角形"><meta name="keywords" content=""><meta name="author" content="木尘痕"><meta name="copyright" content="木尘痕"><title>OpenGL绘制随时间变换颜色的三角形 | 风生之谷</title><link rel="shortcut icon" href="https://raw.githubusercontent.com/muchenhen/muchenhen.github.io/master/xuange.ico"><link rel="stylesheet" href="/css/index.css?version=1.9.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css?version=1.9.0"><meta name="format-detection" content="telephone=no"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  hexoVersion: '5.4.0'
+} </script><meta name="generator" content="Hexo 5.4.0"></head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="toggle-sidebar-info text-center"><span data-toggle="Toggle article">Toggle site</span><hr></div><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar"></div></div><div class="sidebar-toc__content"></div></div><div class="author-info hide"><div class="author-info__avatar text-center"><img src="https://github.com/muchenhen/muchenhen.github.io/blob/master/XuanGe.jpg?raw=true"></div><div class="author-info__name text-center">木尘痕</div><div class="author-info__description text-center">放一些笔记的地方</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">172</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">17</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">31</span></a></div><hr><div class="author-info-links"><div class="author-info-links__title text-center">Links</div><a class="author-info-links__name text-center" target="_blank" rel="noopener" href="https://alec-ray.github.io/">止戈</a></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">风生之谷</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">主页</a><a class="site-page" href="/archives">全部文章</a><a class="site-page" href="/tags">标签分类</a><a class="site-page" href="/categories">文章分类</a><a class="site-page" href="/contact">联系</a></span><span class="pull-right"></span></div><div id="post-info"><div id="post-title">OpenGL绘制随时间变换颜色的三角形</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-03-12</time><span class="post-meta__separator">|</span><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/OpenGL/">OpenGL</a></div></div></div><div class="layout" id="content-inner"><article id="post"><div class="article-container" id="post-content"><p>主要知识点是uniform全局声明，uniform可以随时更新任意着色器中的对应的变量的值，只要使用函数glUniform+后缀，在主函数中进行赋值。</p>
+<p>源码以及详细的注释：</p>
+<p>#include #include #include #include void framebuffer_size_callback(GLFWwindow* window, int width, int height);<br>void processInput(GLFWwindow *window);</p>
+<p>// 设置窗口<br>const unsigned int SCR_WIDTH = 800;<br>const unsigned int SCR_HEIGHT = 600;</p>
+<p>const char *vertexShaderSource = “#version 460 core\n”<br>“layout (location = 0) in vec3 aPos;\n”<br>“void main()\n”<br>“{\n”<br>“   gl_Position = vec4(aPos, 1.0);\n”<br>“}\0”;</p>
+<p>const char *fragmentShaderSource = “#version 460 core\n”<br>“out vec4 FragColor;\n”<br>“uniform vec4 ourColor;\n” // 着色器中的uniform是全局的，可以在主函数中设置方法来更新该值，随时传递进着色器<br>“void main()\n”<br>“{\n”<br>“   FragColor = ourColor;\n”<br>“}\n\0”;</p>
+<p>int main()<br>{<br>    glfwInit();<br>    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);<br>    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);<br>    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);</p>
+<pre><code>//创建窗口
+GLFWwindow\* window = glfwCreateWindow(800, 600, &quot;变换颜色的三角形&quot;, NULL, NULL);
+if (window == NULL)
+&#123;
+    std::cout &lt;&lt; &quot;Failed to create GLFW window&quot; &lt;&lt; std::endl;
+    glfwTerminate();
+    return -1;
+&#125;
+glfwMakeContextCurrent(window);
+glfwSetFramebufferSizeCallback(window, framebuffer\_size\_callback);
+
+// 加载glad
+if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+&#123;
+    std::cout &lt;&lt; &quot;Failed to initialize GLAD&quot; &lt;&lt; std::endl;
+    return -1;
+&#125;
+
+// 创建并编译着色器程序
+// 顶点着色器
+int vertexShader = glCreateShader(GL\_VERTEX\_SHADER);
+glShaderSource(vertexShader, 1, &amp;vertexShaderSource, NULL);
+glCompileShader(vertexShader);
+// 检查着色器编译错误
+int success;
+char infoLog\[512\];
+glGetShaderiv(vertexShader, GL\_COMPILE\_STATUS, &amp;success);
+if (!success)
+&#123;
+    glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+    std::cout &lt;&lt; &quot;ERROR::SHADER::VERTEX::COMPILATION\_FAILED\\n&quot; &lt;&lt; infoLog &lt;&lt; std::endl;
+&#125;
+// 片段着色器
+int fragmentShader = glCreateShader(GL\_FRAGMENT\_SHADER);
+glShaderSource(fragmentShader, 1, &amp;fragmentShaderSource, NULL);
+glCompileShader(fragmentShader);
+// 检查着色器编译错误
+glGetShaderiv(fragmentShader, GL\_COMPILE\_STATUS, &amp;success);
+if (!success)
+&#123;
+    glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+    std::cout &lt;&lt; &quot;ERROR::SHADER::FRAGMENT::COMPILATION\_FAILED\\n&quot; &lt;&lt; infoLog &lt;&lt; std::endl;
+&#125;
+// 连接着色器
+int shaderProgram = glCreateProgram();
+glAttachShader(shaderProgram, vertexShader);
+glAttachShader(shaderProgram, fragmentShader);
+glLinkProgram(shaderProgram);
+// 检查连接错误
+glGetProgramiv(shaderProgram, GL\_LINK\_STATUS, &amp;success);
+if (!success) &#123;
+    glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+    std::cout &lt;&lt; &quot;ERROR::SHADER::PROGRAM::LINKING\_FAILED\\n&quot; &lt;&lt; infoLog &lt;&lt; std::endl;
+&#125;
+glDeleteShader(vertexShader);
+glDeleteShader(fragmentShader);
+
+// 设置顶点数据和缓存 配置顶点属性
+float vertices\[\] = &#123;
+     0.5f, -0.5f, 0.0f,  // 右顶点
+    -0.5f, -0.5f, 0.0f,  // 左顶点
+     0.0f,  0.5f, 0.0f   // 上顶点 
+&#125;;
+
+unsigned int VBO, VAO;
+glGenVertexArrays(1, &amp;VAO);
+glGenBuffers(1, &amp;VBO);
+// 绑定顶点数组对象, 绑定并设置缓存, 配置顶点属性
+glBindVertexArray(VAO);
+
+glBindBuffer(GL\_ARRAY\_BUFFER, VBO);
+glBufferData(GL\_ARRAY\_BUFFER, sizeof(vertices), vertices, GL\_STATIC\_DRAW);
+
+glVertexAttribPointer(0, 3, GL\_FLOAT, GL\_FALSE, 3 \* sizeof(float), (void\*)0);
+glEnableVertexAttribArray(0);
+
+// 绑定VAO
+glBindVertexArray(VAO);
+
+
+// 渲染循环
+while (!glfwWindowShouldClose(window))
+&#123;
+    // 输入
+    processInput(window);
+
+    // 渲染
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClear(GL\_COLOR\_BUFFER\_BIT);
+
+    // 激活渲染程序
+    glUseProgram(shaderProgram);
+
+    // 更新着色器 uniform
+    //132与133通过获得时间作为自变量，使用sin函数生成变化的因变量，将这个变量值赋给greenValue
+    float timeValue = glfwGetTime();
+    float greenValue = sin(timeValue) / 2.0f + 0.5f;
+    //下面这一行的函数通过着色器中的shader的名字获得Location，将位置付给变量vertexColorLaction
+    int vertexColorLocation = glGetUniformLocation(shaderProgram, &quot;ourColor&quot;);
+    //通过查询到的着色器地址，指定要修改该位置的四个变量值
+    //五个参数分别是地址和四个float型，在着色器中定义的全局uniform ourcolor变量就是四个float型
+    //RGBA的数值，其中G值来自于上面设定的greenValue，随时间变化
+    glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+    //该函数修改了着色器中的uniform值
+
+    // 绘制三角形
+    glDrawArrays(GL\_TRIANGLES, 0, 3);
+
+    glfwSwapBuffers(window);
+    glfwPollEvents();
+&#125;
+
+glDeleteVertexArrays(1, &amp;VAO);
+glDeleteBuffers(1, &amp;VBO);
+
+glfwTerminate();
+return 0;
+</code></pre>
+<p>}</p>
+<p>void processInput(GLFWwindow *window)<br>{<br>    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)<br>        glfwSetWindowShouldClose(window, true);<br>}</p>
+<p>void framebuffer_size_callback(GLFWwindow* window, int width, int height)<br>{<br>    glViewport(0, 0, width, height);<br>}</p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">木尘痕</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://muchenhen.com/2019/03/12/opengl绘制随时间变换颜色的三角形/">http://muchenhen.com/2019/03/12/opengl绘制随时间变换颜色的三角形/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-meta__tag-list"></div><nav id="pagination"><div class="prev-post pull-left"><a href="/2019/03/16/%E3%80%90unity%E4%BC%98%E5%8C%96%E3%80%91%E5%B8%B8%E8%A7%81%E4%BC%98%E5%8C%96%E6%96%B9%E5%BC%8F/"><i class="fa fa-chevron-left">  </i><span>【Unity优化】常见优化方式</span></a></div><div class="next-post pull-right"><a href="/2019/03/12/opengl%E7%9D%80%E8%89%B2%E5%99%A8/"><span>OpenGL着色器</span><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer class="footer-bg" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div class="layout" id="footer"><div class="copyright">&copy;2016 - 2021 By 木尘痕</div><div class="framework-info"><span>Driven - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="footer_custom_text">天道作何，吞恨者多 <a target="_blank" rel="noopener" href="https://beian.miit.gov.cn">豫ICP备17048032号-1</a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.9.0"></script><script src="/js/fancybox.js?version=1.9.0"></script><script src="/js/sidebar.js?version=1.9.0"></script><script src="/js/copy.js?version=1.9.0"></script><script src="/js/fireworks.js?version=1.9.0"></script><script src="/js/transition.js?version=1.9.0"></script><script src="/js/scroll.js?version=1.9.0"></script><script src="/js/head.js?version=1.9.0"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+  $('#nav').addClass('is-mobile')
+  $('footer').addClass('is-mobile')
+  $('#top-container').addClass('is-mobile')
+}</script></body></html>

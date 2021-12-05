@@ -1,0 +1,139 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="DX12 6.2 VERTEX BUFFER"><meta name="keywords" content=""><meta name="author" content="木尘痕"><meta name="copyright" content="木尘痕"><title>DX12 6.2 VERTEX BUFFER | 风生之谷</title><link rel="shortcut icon" href="https://raw.githubusercontent.com/muchenhen/muchenhen.github.io/master/xuange.ico"><link rel="stylesheet" href="/css/index.css?version=1.9.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css?version=1.9.0"><meta name="format-detection" content="telephone=no"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  hexoVersion: '5.4.0'
+} </script><meta name="generator" content="Hexo 5.4.0"></head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="toggle-sidebar-info text-center"><span data-toggle="Toggle article">Toggle site</span><hr></div><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar"></div></div><div class="sidebar-toc__content"></div></div><div class="author-info hide"><div class="author-info__avatar text-center"><img src="https://github.com/muchenhen/muchenhen.github.io/blob/master/XuanGe.jpg?raw=true"></div><div class="author-info__name text-center">木尘痕</div><div class="author-info__description text-center">放一些笔记的地方</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">172</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">17</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">31</span></a></div><hr><div class="author-info-links"><div class="author-info-links__title text-center">Links</div><a class="author-info-links__name text-center" target="_blank" rel="noopener" href="https://alec-ray.github.io/">止戈</a></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">风生之谷</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">主页</a><a class="site-page" href="/archives">全部文章</a><a class="site-page" href="/tags">标签分类</a><a class="site-page" href="/categories">文章分类</a><a class="site-page" href="/contact">联系</a></span><span class="pull-right"></span></div><div id="post-info"><div id="post-title">DX12 6.2 VERTEX BUFFER</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-26</time><span class="post-meta__separator">|</span><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></div></div></div><div class="layout" id="content-inner"><article id="post"><div class="article-container" id="post-content"><p>为了让GPU可以获取vertex数组，需要将vertex存储在buffer（GPU资源ID3D12Resource）中，存储vertex的buffer称作vertex buffer。</p>
+<p>要创建一个ID3D12Resource的话，需要填写一个用来描述buffer资源的结构体，这个结构体的名字叫做<strong>D3D12_RESOURCE_DESC</strong></p>
+<p>之后再调用<strong>ID3D12Device::CreateCommittedResource</strong>从而创建一个ID3D12Resource</p>
+<p>而在DirectX12中提供了一个C++类：<strong>CD3DX12_RESOURCE_DESC</strong></p>
+<p>更详细的可以访问MSDN，会发现该类还提供了<strong>方便的构造其他类型资源的函数</strong></p>
+<p>A helper structure to enable easy initialization of a <a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/desktop/api/d3d12/ns-d3d12-d3d12_resource_desc"></a> <a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/desktop/api/d3d12/ns-d3d12-d3d12_resource_desc"><strong>D3D12_RESOURCE_DESC</strong> structure.</a></p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/desktop/api/d3d12/ns-d3d12-d3d12_resource_desc"><em>来自 &lt;</em></a><em><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/direct3d12/cd3dx12-resource-desc">https://docs.microsoft.com/en-us/windows/win32/direct3d12/cd3dx12-resource-desc</a>&gt;</em></p>
+<p>该类派生自D3D12_RESOURCE_DESC，提供了方便的构造函数和方法。特别是提供了一个方法来简化填写描述缓冲区D3D12_RESOURCE_DESC结构体的构造函数：</p>
+<p><strong>static inline CD3DX12_RESOURCE_DESC Buffer</strong></p>
+<p>CD3DX12_RESOURCE_DESC static inline Buffer</p>
+<p>(</p>
+<p>UINT64 width,</p>
+<p>D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE,</p>
+<p>UINT64 alignment = 0</p>
+<p>);</p>
+<p>对于缓冲区，width是指缓冲区中的字节数。例如，如果缓冲区存储了64个浮点，那么宽度将是64*sizeof（float）。</p>
+<p>对于静态的几何体（每帧不更改的几何体）会存放在默认堆区<strong>D3D12_HEAP_TYPE_DEFAULT</strong>。</p>
+<p>对于不变动的几何体，比如树啊建筑啊这些东西，初始化顶点缓冲区后，只有GPU需要从顶点缓冲区读取数据来绘制几何体，因此默认堆是有意义的。默认堆区的存在可以提供客观的性能优势。</p>
+<p>但是，<strong>CPU无法向默认堆区中的顶点缓冲区写入数据</strong>。如果不能写入数据，那么就没办法初始化一个顶点缓冲资源。不能初始化就意味着GPU没数据可以读取……</p>
+<p>那么要怎样才能让CPU把数据写进堆区的顶点缓冲里面呢？其实看见D3D12_HEAP_TYPE_DEFAULT这个应该能想到type后面这个东西不止defualt，事实也确实如此：</p>
+<p>typedef enum D3D12_HEAP_TYPE {</p>
+<p>D3D12_HEAP_TYPE_DEFAULT,</p>
+<p>D3D12_HEAP_TYPE_UPLOAD,</p>
+<p>D3D12_HEAP_TYPE_READBACK,</p>
+<p>D3D12_HEAP_TYPE_CUSTOM } ;</p>
+<p><em>来自 &lt;<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_heap_type">https://docs.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_heap_type</a>&gt;</em></p>
+<p>可以看到有四个不同的类型，这是个枚举类型。其中第二个<strong>D3D12_HEAP_TYPE_UPLOAD</strong>是用来将数据从CPU复制到GPU的，船舰一个upload buffer，然后将vertex数据从系统内存复制到upload buffer，接下来就可以从upload buffer把数据复制到现行的vertex buffer。</p>
+<p>但是如果想创建一个upload buffer，必须先初始化一个DEFAULT类型的buffer，在这里使用下面这个方法来简化工作，可以避免在需要创建defualt类型buffer的时候进行一些重复的工作：</p>
+<p>static Microsoft::WRL::ComPtr<ID3D12Resource> CreateDefaultBuffer(</p>
+<p>ID3D12Device* device,</p>
+<p>ID3D12GraphicsCommandList* cmdList,</p>
+<p>const void* initData,</p>
+<p>UINT64 byteSize,</p>
+<p>Microsoft::WRL::ComPtr<ID3D12Resource>&amp; uploadBuffer);</p>
+<p>具体的函数实现有点长，懒得调代码格式，可以直接看源码，这里我已经完善了一些注释</p>
+<p>其中<strong>D3D12_SUBRESOURCE_DATA</strong>需要拿出来说一下，这个前面的章节没提过</p>
+<p>typedef struct D3D12_SUBRESOURCE_DATA</p>
+<p>{</p>
+<p>const void *pData;</p>
+<p>LONG_PTR RowPitch;</p>
+<p>LONG_PTR SlicePitch;</p>
+<p>}         D3D12_SUBRESOURCE_DATA;</p>
+<p>参数：</p>
+<ol>
+<li> 一个指针，指向了系统内存里面存储了用来初始化buffer的数据的数组。如果buffer可以存储n个vertex，那么数组至少要有n个顶点才能初始化完整的buffer</li>
+<li> 对于buffer来说的，将要复制的数据的大小的字节数</li>
+<li> 同上</li>
+</ol>
+<p>下面的代码展示了这个类如何被用来创建一个默认buffer来存储一个正方体的八个vertex，每个顶点都有不同的颜色：</p>
+<p>Vertex vertices[] =</p>
+<p>{</p>
+<p>{ XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(Colors::White) },</p>
+<p>{ XMFLOAT3(-1.0f, +1.0f, -1.0f), XMFLOAT4(Colors::Black) },</p>
+<p>{ XMFLOAT3(+1.0f, +1.0f, -1.0f), XMFLOAT4(Colors::Red) },</p>
+<p>{ XMFLOAT3(+1.0f, -1.0f, -1.0f), XMFLOAT4(Colors::Green) },</p>
+<p>{ XMFLOAT3(-1.0f, -1.0f, +1.0f), XMFLOAT4(Colors::Blue) },</p>
+<p>{ XMFLOAT3(-1.0f, +1.0f, +1.0f), XMFLOAT4(Colors::Yellow) },</p>
+<p>{ XMFLOAT3(+1.0f, +1.0f, +1.0f), XMFLOAT4(Colors::Cyan) },</p>
+<p>{ XMFLOAT3(+1.0f, -1.0f, +1.0f), XMFLOAT4(Colors::Magenta) }</p>
+<p>};//8个顶点的位置和颜色</p>
+<p>const UINT64 vbByteSize = 8 * sizeof(Vertex);//8个顶点需要这么多的字节</p>
+<p>ComPtr<ID3D12Resource> VertexBufferGPU = nullptr; //默认缓冲</p>
+<p>ComPtr<ID3D12Resource> VertexBufferUploader = nullptr;//upload缓冲区</p>
+<p>VertexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(), mCommandList.Get(),vertices, vbByteSize, VertexBufferUploader);//调用前面说的方法</p>
+<p>到此为止算是创建了一个vertex buffer，但是还需要将vertex buffer绑定到渲染管线上。想要绑定到渲染管线上需要创建一个vertex buffer view。</p>
+<p>typedef struct D3D12_VERTEX_BUFFER_VIEW {</p>
+<p>D3D12_GPU_VIRTUAL_ADDRESS BufferLocation;</p>
+<p>UINT SizeInBytes;</p>
+<p>UINT StrideInBytes;</p>
+<p>} D3D12_VERTEX_BUFFER_VIEW;</p>
+<p>参数：</p>
+<ol>
+<li> 想要创建view的目标vertex buffer的虚拟地址</li>
+<li> 指明缓冲区有多少字节的大小</li>
+<li> 指明每个vertex元素有多少字节的大小</li>
+</ol>
+<p>好了，创建完vertex buffer，再为这个buffer创建一个vertex buffer view，我们就可以将这个buffer绑定到渲染管线的一个input slot上，然后将vertex数据送到渲染管线的输入装配阶段。要实现这一步需要以下这个函数：</p>
+<p>void IASetVertexBuffers(</p>
+<p>UINT StartSlot,</p>
+<p>UINT NumViews,</p>
+<p>const D3D12_VERTEX_BUFFER_VIEW *pViews</p>
+<p>);</p>
+<p><em>来自 &lt;<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/api/d3d12/nf-d3d12-id3d12graphicscommandlist-iasetvertexbuffers">https://docs.microsoft.com/en-us/windows/win32/api/d3d12/nf-d3d12-id3d12graphicscommandlist-iasetvertexbuffers</a>&gt;</em></p>
+<p>参数：</p>
+<ol>
+<li> 绑定vertex buffer的起始的input slot，一共有16个，从0开始。</li>
+<li> 绑定到input slot中的vertex buffer的数量，举例：如果第一个参数是n，那么绑定x个顶点缓冲，会依次绑定到n，n+1，n+2……n+x-1索引的input slot</li>
+<li> 指向存放vertex buffer view数组的第一个元素的指针。</li>
+</ol>
+<p>下面是一个小例子：</p>
+<p>D3D12_VERTEX_BUFFER_VIEW vbv;//定义一个view</p>
+<p>vbv.BufferLocation = VertexBufferGPU-&gt;GetGPUVirtualAddress();//获得了顶点缓冲的虚拟地址</p>
+<p>vbv.StrideInBytes = sizeof(Vertex);//计算每个vertex占用的字节</p>
+<p>vbv.SizeInBytes = 8 * sizeof(Vertex);//计算缓冲区总共有多少字节</p>
+<p>D3D12_VERTEX_BUFFER_VIEW vertexBuffers[1] = { vbv };//定义一个view的数组，将前面定义的view作为容器内元素进行初始化</p>
+<p>mCommandList-&gt;IASetVertexBuffers(0, 1, vertexBuffers);//调用函数</p>
+<p>IASetVertexBuffers是很好用的，它支持设置一整个数组的vertex buffer到不同的input slot，在这里只用一个。</p>
+<p>一旦一个vertex buffer绑定到了一个input slot上，除非手动更改不然会一直保持绑定状态。所以如果要使用不止一个vertex buffer，可以按照如下方法编写代码：</p>
+<p>ID3D12Resource* mVB1;//存储第一种类型的顶点数据</p>
+<p>ID3D12Resource* mVB2;//存储另一种类型的顶点数据</p>
+<p>D3D12_VERTEX_BUFFER_VIEW_DESC mVBView1;//为第一个vertex buffer创建的view</p>
+<p>D3D12_VERTEX_BUFFER_VIEW_DESC mVBView2;//第二个view</p>
+<p>/*创建vertex buffer和view*/</p>
+<p>mCommandList-&gt;IASetVertexBuffers(0, 1, &amp;mVBView1);//使用第一种顶点数据类型绘制</p>
+<p>mCommandList-&gt;IASetVertexBuffers(0, 1, &amp;mVBView2);//使用第二种绘制</p>
+<p>将一个vertex buffer设置到input slot后并没有绘制，仅仅是将vertex数据准备好发送到渲染管线，最后一步实际进行绘制vertex是完成调用ID3D12GraphicsCommandList::DrawInstanced函数之后：</p>
+<p><strong>ID3D12GraphicsCommandList::DrawInstanced</strong></p>
+<p>void DrawInstanced(</p>
+<p>UINT VertexCountPerInstance,</p>
+<p>UINT InstanceCount,</p>
+<p>UINT StartVertexLocation,</p>
+<p>UINT StartInstanceLocation</p>
+<p>)<strong>;</strong></p>
+<p><em>来自 &lt;<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/api/d3d12/nf-d3d12-id3d12graphicscommandlist-drawinstanced">https://docs.microsoft.com/en-us/windows/win32/api/d3d12/nf-d3d12-id3d12graphicscommandlist-drawinstanced</a>&gt;</em></p>
+<p>参数：</p>
+<ol>
+<li> 要绘制的vertex数量</li>
+<li> 用于一种高级特性，暂时用不到</li>
+<li> 指定第一个要绘制的vertex的索引，会从指定的这个开始绘制</li>
+<li> 同2，现在设置为0</li>
+</ol>
+<p>第一个和第三个参数在vertex buffer中定义了一个连续的要绘制的vertex集合。</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/032620_1121_DX1262VERTE1.png"></p>
+<p>这个函数没有指明使用哪种装配方式，图元装配拓扑规则是函数<strong>ID3D12GraphicsCommandList::IASetPrimitiveTopology</strong>设置的。</p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">木尘痕</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://muchenhen.com/2020/03/26/dx12-6-2-vertex-buffer/">http://muchenhen.com/2020/03/26/dx12-6-2-vertex-buffer/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-meta__tag-list"></div><nav id="pagination"><div class="prev-post pull-left"><a href="/2020/03/27/dx12-6-1-vertices-%E5%92%8C-input-layouts/"><i class="fa fa-chevron-left">  </i><span>DX12 6.1 Vertices 和 Input Layouts</span></a></div><div class="next-post pull-right"><a href="/2020/03/22/dx12-5-1112-%E5%83%8F%E7%B4%A0%E7%9D%80%E8%89%B2%E5%99%A8%E9%98%B6%E6%AE%B5%E5%92%8C%E8%BE%93%E5%87%BA%E5%90%88%E5%B9%B6%E9%98%B6%E6%AE%B5/"><span>DX12 5.11&amp;12 像素着色器阶段和输出合并阶段</span><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer class="footer-bg" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div class="layout" id="footer"><div class="copyright">&copy;2016 - 2021 By 木尘痕</div><div class="framework-info"><span>Driven - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="footer_custom_text">天道作何，吞恨者多 <a target="_blank" rel="noopener" href="https://beian.miit.gov.cn">豫ICP备17048032号-1</a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.9.0"></script><script src="/js/fancybox.js?version=1.9.0"></script><script src="/js/sidebar.js?version=1.9.0"></script><script src="/js/copy.js?version=1.9.0"></script><script src="/js/fireworks.js?version=1.9.0"></script><script src="/js/transition.js?version=1.9.0"></script><script src="/js/scroll.js?version=1.9.0"></script><script src="/js/head.js?version=1.9.0"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+  $('#nav').addClass('is-mobile')
+  $('footer').addClass('is-mobile')
+  $('#top-container').addClass('is-mobile')
+}</script></body></html>

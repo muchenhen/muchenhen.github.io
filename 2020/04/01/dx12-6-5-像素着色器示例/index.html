@@ -1,0 +1,61 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="DX12 6.5 像素着色器示例"><meta name="keywords" content=""><meta name="author" content="木尘痕"><meta name="copyright" content="木尘痕"><title>DX12 6.5 像素着色器示例 | 风生之谷</title><link rel="shortcut icon" href="https://raw.githubusercontent.com/muchenhen/muchenhen.github.io/master/xuange.ico"><link rel="stylesheet" href="/css/index.css?version=1.9.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css?version=1.9.0"><meta name="format-detection" content="telephone=no"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  hexoVersion: '5.4.0'
+} </script><meta name="generator" content="Hexo 5.4.0"></head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="toggle-sidebar-info text-center"><span data-toggle="Toggle article">Toggle site</span><hr></div><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar"></div></div><div class="sidebar-toc__content"></div></div><div class="author-info hide"><div class="author-info__avatar text-center"><img src="https://github.com/muchenhen/muchenhen.github.io/blob/master/XuanGe.jpg?raw=true"></div><div class="author-info__name text-center">木尘痕</div><div class="author-info__description text-center">放一些笔记的地方</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">172</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">17</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">31</span></a></div><hr><div class="author-info-links"><div class="author-info-links__title text-center">Links</div><a class="author-info-links__name text-center" target="_blank" rel="noopener" href="https://alec-ray.github.io/">止戈</a></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">风生之谷</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">主页</a><a class="site-page" href="/archives">全部文章</a><a class="site-page" href="/tags">标签分类</a><a class="site-page" href="/categories">文章分类</a><a class="site-page" href="/contact">联系</a></span><span class="pull-right"></span></div><div id="post-info"><div id="post-title">DX12 6.5 像素着色器示例</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-04-01</time><span class="post-meta__separator">|</span><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></div></div></div><div class="layout" id="content-inner"><article id="post"><div class="article-container" id="post-content"><p>在光栅化过程中，顶点着色器（或几何体着色器）输出的顶点属性被插值到三角形的像素上。插值的值随后作为输入，输入到像素着色器中。假设没有几何体着色器，下图说明了顶点数据目前为止的路径。</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/04/040120_0320_DX12651.png"></p>
+<p>每个顶点元素都具有由D3D12_INPUT_element_DESC数组指定的关联语义。顶点着色器的每个参数还具有附加的语义。语义用于将顶点元素与顶点着色器参数匹配。同样，顶点着色器的每个输出都有附加语义，每个像素着色器输入参数都有附加语义。这些语义用来映射顶点着色器的输出到顶点着色器的输入阶段。</p>
+<p>像素着色器类似于顶点着色器，因为它是为每个像素片段执行的函数。给定像素着色器输入，像素着色器的工作是计算像素片段的颜色值。有些像素片段可能无法一直存在并进入到后缓冲区，例如它可能被像素着色器（HLSL包括一个clip函数，该函数可以从进一步处理中丢弃像素片段）中剪裁，被另一个深度值较小的像素片段遮挡，或者像素片段可能会被稍后的管道测试（如模板缓冲区测试）丢弃。因此，后缓冲区上的像素可能有多个候选像素片段；这是”像素片段”和”像素”之间的区别，尽管有时使用术语可以互换，但上下文通常清楚地说明了什么意思。</p>
+<p>作为硬件优化，在将像素片段生成到像素着色器之前，可能会被管道拒绝（例如，earlyz拒绝）。这是首先进行深度测试的地方，如果确定像素片段被深度测试遮挡，则跳过像素着色器。但是，也有一些情况可以禁用early-z来禁用优化。例如，如果像素着色器修改了像素的深度，那么必须执行像素明暗器，因为我们不知道像素之前的深度是多少如果像素着色器更改了它，则使用着色器。</p>
+<p>下面是一个示例：</p>
+<p>cbuffer cbPerObject : register(b0) {</p>
+<p>float4x4 gWorldViewProj;</p>
+<p>};</p>
+<p>void VS(</p>
+<p>float3 iPos : POSITION,</p>
+<p>float4 iColor : COLOR,</p>
+<p>out float4 oPosH : SV_POSITION,</p>
+<p>out float4 oColor : COLOR)</p>
+<p>{</p>
+<p>// 转换到齐次裁剪空间.</p>
+<p>oPosH = mul(float4(iPos, 1.0f), gWorldViewProj);</p>
+<p>// 顶点颜色传递给像素着色器.</p>
+<p>oColor = iColor;</p>
+<p>}</p>
+<p>float4 PS(float4 posH : SV_POSITION, float4 color : COLOR) : SV_Target {</p>
+<p>return pin.Color;</p>
+<p>}</p>
+<p>在本例中像素着色器仅返回插值的颜色值。注意像素着色器输入与顶点着色器输出完全匹配。像素着色器返回4D颜色值，函数参数列表后的<strong>SV_TARGET</strong>语义指示返回值类型应与渲染目标格式匹配。可以使用输入/输出结构。这种表示法的不同之处在于，将语义附加到输入/输出结构的成员，并且使用一个返回语句输出而不是输出参数。</p>
+<p>cbuffer cbPerObject : register(b0) {</p>
+<p>float4x4 gWorldViewProj;</p>
+<p>};</p>
+<p>struct VertexIn {</p>
+<p>float3 Pos : POSITION;</p>
+<p>float4 Color : COLOR;</p>
+<p>};</p>
+<p>struct VertexOut {</p>
+<p>float4 PosH : SV_POSITION;</p>
+<p>float4 Color : COLOR;</p>
+<p>};</p>
+<p>VertexOut VS(VertexIn vin) {</p>
+<p>VertexOut vout;</p>
+<p>// 转换到齐次裁剪空间.</p>
+<p>vout.PosH = mul(float4(vin.Pos, 1.0f), gWorldViewProj);</p>
+<p>// 传递颜色给像素着色器.</p>
+<p>vout.Color = vin.Color;</p>
+<p>return vout;</p>
+<p>}</p>
+<p>float4 PS(VertexOut pin) : SV_Target {</p>
+<p>return pin.Color;</p>
+<p>}</p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">木尘痕</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://muchenhen.com/2020/04/01/dx12-6-5-像素着色器示例/">http://muchenhen.com/2020/04/01/dx12-6-5-像素着色器示例/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-meta__tag-list"></div><nav id="pagination"><div class="prev-post pull-left"><a href="/2020/08/23/UE4-%E5%8F%8D%E5%B0%84%E7%B3%BB%E7%BB%9F%E8%8E%B7%E5%8F%96UPROPERTY/"><i class="fa fa-chevron-left">  </i><span>UE4:反射系统获取UPROPERTY</span></a></div><div class="next-post pull-right"><a href="/2020/03/29/dx12-6-4-%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8%E5%AE%9E%E4%BE%8B/"><span>DX12 6.4 顶点着色器实例</span><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer class="footer-bg" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div class="layout" id="footer"><div class="copyright">&copy;2016 - 2021 By 木尘痕</div><div class="framework-info"><span>Driven - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="footer_custom_text">天道作何，吞恨者多 <a target="_blank" rel="noopener" href="https://beian.miit.gov.cn">豫ICP备17048032号-1</a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.9.0"></script><script src="/js/fancybox.js?version=1.9.0"></script><script src="/js/sidebar.js?version=1.9.0"></script><script src="/js/copy.js?version=1.9.0"></script><script src="/js/fireworks.js?version=1.9.0"></script><script src="/js/transition.js?version=1.9.0"></script><script src="/js/scroll.js?version=1.9.0"></script><script src="/js/head.js?version=1.9.0"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+  $('#nav').addClass('is-mobile')
+  $('footer').addClass('is-mobile')
+  $('#top-container').addClass('is-mobile')
+}</script></body></html>

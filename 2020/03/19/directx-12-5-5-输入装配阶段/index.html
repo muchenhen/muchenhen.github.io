@@ -1,0 +1,59 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="DIRECTX 12 5.5 输入装配阶段"><meta name="keywords" content=""><meta name="author" content="木尘痕"><meta name="copyright" content="木尘痕"><title>DIRECTX 12 5.5 输入装配阶段 | 风生之谷</title><link rel="shortcut icon" href="https://raw.githubusercontent.com/muchenhen/muchenhen.github.io/master/xuange.ico"><link rel="stylesheet" href="/css/index.css?version=1.9.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css?version=1.9.0"><meta name="format-detection" content="telephone=no"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  hexoVersion: '5.4.0'
+} </script><meta name="generator" content="Hexo 5.4.0"></head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="toggle-sidebar-info text-center"><span data-toggle="Toggle article">Toggle site</span><hr></div><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar"></div></div><div class="sidebar-toc__content"></div></div><div class="author-info hide"><div class="author-info__avatar text-center"><img src="https://github.com/muchenhen/muchenhen.github.io/blob/master/XuanGe.jpg?raw=true"></div><div class="author-info__name text-center">木尘痕</div><div class="author-info__description text-center">放一些笔记的地方</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">172</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">17</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">Categories</span><span class="pull-right">31</span></a></div><hr><div class="author-info-links"><div class="author-info-links__title text-center">Links</div><a class="author-info-links__name text-center" target="_blank" rel="noopener" href="https://alec-ray.github.io/">止戈</a></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">风生之谷</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">主页</a><a class="site-page" href="/archives">全部文章</a><a class="site-page" href="/tags">标签分类</a><a class="site-page" href="/categories">文章分类</a><a class="site-page" href="/contact">联系</a></span><span class="pull-right"></span></div><div id="post-info"><div id="post-title">DIRECTX 12 5.5 输入装配阶段</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-19</time><span class="post-meta__separator">|</span><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/d3d/">d3d</a><i class="fa fa-angle-right" aria-hidden="true"></i><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/d3d/DirectX12/">DirectX12</a></div></div></div><div class="layout" id="content-inner"><article id="post"><div class="article-container" id="post-content"><p>input assembler 简称IA阶段</p>
+<p>读取几何数据，如vertices和indices，然后装配成几何图元。</p>
+<p>vertex可以视为特殊的点，并且在DirectX中可以有更多的属性，可以定义不同格式的vertex，可以包含位置、uv、法线、颜色等等信息。</p>
+<p><strong>图元拓扑</strong></p>
+<p><strong>Primitive Topology</strong></p>
+<p>渲染管线中vertex被绑定到了vertex buffer中，里面存了一系列vertex，但是没有定义这些点怎么组装成几何图元。比如这里有一堆点，是两两配对装成线，还是三三配对成面呢？在D3D中需要指明图元拓扑规则。D3D中有一个枚举类来进行指定图元装配的拓扑规则。太长了自己去看doc吧</p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/api/d3dcommon/ne-d3dcommon-d3d_primitive_topology">https://docs.microsoft.com/en-us/windows/win32/api/d3dcommon/ne-d3dcommon-d3d_primitive_topology</a></p>
+<p>捡几个常见的说一下</p>
+<p><strong>Point List</strong></p>
+<p><strong>D3D_PRIMITIVE_TOPOLOGY_POINTLIST</strong></p>
+<p>会把每个vertex画成单独的点</p>
+<p><strong>Line Strip</strong></p>
+<p><strong>D3D_PRIMITIVE_TOPOLOGY_LINESTRIP</strong></p>
+<p>会把vertex画成线，这里如果有n+1个vertex，那么会有n条线</p>
+<p><strong>Line List</strong></p>
+<p><strong>D3D_PRIMITIVE_TOPOLOGY_LINELIST</strong></p>
+<p>和上面那个不一样，这里每两个vertex画成一条线</p>
+<p><strong>Triangle Strip</strong></p>
+<p><strong>D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP</strong></p>
+<p>会画成三角形，会假设这些三角形是关联的，也就是说n+2个点的话绘画出来n个三角形</p>
+<p><strong>Triangle List</strong></p>
+<p><strong>D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST</strong></p>
+<p>每三个点会画成一个单独的三角形</p>
+<p>下图简单的说明了明显的差异</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0541_DIRECTX12551.png"></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0541_DIRECTX12552.png"></p>
+<p><strong>图元邻接</strong></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0541_DIRECTX12553.png"></p>
+<p>每个三角形有三个相邻的三角形，叫做<strong>邻接三角形</strong> adjacent triangles。</p>
+<p>几何着色器geometry shader需要用到这些信息。为了让几何着色器获得这些邻接三角形，这些邻接三角形需要和原三角形一起被提交到vertex buffer或者index buffer，并且拓扑规则需要指定为<strong>D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST_ADJ</strong>。</p>
+<p><strong>Control Point Patch List</strong></p>
+<p>不晓得怎么翻译合适，先不翻了。</p>
+<p><strong>D3D_PRIMITIVE_TOPOLOGY_N_CONTROL_POINT_PATCHLIST</strong></p>
+<p>是一种拓扑类型。vertex数据会被解释为有N个控制点的patch lists。会被用在可选的tessellation阶段，这个在很后面才会解释。</p>
+<p><strong>Indices</strong></p>
+<p>举个栗子说明一下索引</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0541_DIRECTX12554.png"></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0541_DIRECTX12555.png"></p>
+<p>v0点在第二个图形中用了很多次，为了节省vertex buffer，也可以减少显卡的处理压力，只存储一次vertex v0，然后在绘制三角形的时候多次指明使用v0。这一点就是使用索引的意义，使用索引后会变成下面的情况。</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0541_DIRECTX12556.png"></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0541_DIRECTX12557.png"></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0541_DIRECTX12558.png"></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/03/031920_0541_DIRECTX12559.png"></p>
+<p>虽然索引中有一些重复的，但是比起vertex重复要好很多。</p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">木尘痕</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://muchenhen.com/2020/03/19/directx-12-5-5-输入装配阶段/">http://muchenhen.com/2020/03/19/directx-12-5-5-输入装配阶段/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-meta__tag-list"></div><nav id="pagination"><div class="prev-post pull-left"><a href="/2020/03/19/visual-studio-2019%E5%88%9D%E5%A7%8B%E5%8C%96directx12%E9%81%87%E5%88%B0%E7%9A%84%E4%B8%80%E4%BA%9B%E9%97%AE%E9%A2%98/"><i class="fa fa-chevron-left">  </i><span>Visual Studio 2019初始化DirectX12遇到的一些问题</span></a></div><div class="next-post pull-right"><a href="/2020/03/08/%E5%90%8E%E5%A4%84%E7%90%86%EF%BC%9A00%E5%87%86%E5%A4%87%E9%98%B6%E6%AE%B5/"><span>后处理：00准备阶段</span><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer class="footer-bg" style="background-image: url(https://github.com/muchenhen/muchenhen.github.io/blob/master/FF.png?raw=true)"><div class="layout" id="footer"><div class="copyright">&copy;2016 - 2021 By 木尘痕</div><div class="framework-info"><span>Driven - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="footer_custom_text">天道作何，吞恨者多 <a target="_blank" rel="noopener" href="https://beian.miit.gov.cn">豫ICP备17048032号-1</a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.9.0"></script><script src="/js/fancybox.js?version=1.9.0"></script><script src="/js/sidebar.js?version=1.9.0"></script><script src="/js/copy.js?version=1.9.0"></script><script src="/js/fireworks.js?version=1.9.0"></script><script src="/js/transition.js?version=1.9.0"></script><script src="/js/scroll.js?version=1.9.0"></script><script src="/js/head.js?version=1.9.0"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+  $('#nav').addClass('is-mobile')
+  $('footer').addClass('is-mobile')
+  $('#top-container').addClass('is-mobile')
+}</script></body></html>
