@@ -1,0 +1,788 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="木尘痕">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="画三角形 上节已经会画线了，三角形还能不简单吗 假设我有ABC三个点组成三角形，我AB画一条线，BC画一条线，AC画一条线，结束！ &#x3D; &#x3D;目前写C处于UE和之前C风格的混沌叠加态了，能跑就行（不是 123456void DrawTriangle(Point&lt;float&gt; A, Point&lt;float&gt; B, Point&lt;float&gt; C, TGAImage&amp;a">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TinyRenderer 2：三角形光栅化和背面剔除">
+<meta property="og:url" content="http://muchenhen.com/posts/7931/index.html">
+<meta property="og:site_name" content="虚无之境">
+<meta property="og:description" content="画三角形 上节已经会画线了，三角形还能不简单吗 假设我有ABC三个点组成三角形，我AB画一条线，BC画一条线，AC画一条线，结束！ &#x3D; &#x3D;目前写C处于UE和之前C风格的混沌叠加态了，能跑就行（不是 123456void DrawTriangle(Point&lt;float&gt; A, Point&lt;float&gt; B, Point&lt;float&gt; C, TGAImage&amp;a">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/202220220702145057.png">
+<meta property="article:published_time" content="2022-07-02T04:02:56.000Z">
+<meta property="article:modified_time" content="2024-07-14T15:26:08.252Z">
+<meta property="article:author" content="木尘痕">
+<meta property="article:tag" content="Renderer">
+<meta property="article:tag" content="CG">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/202220220702145057.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>TinyRenderer 2：三角形光栅化和背面剔除 - 虚无之境</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"muchenhen.com","root":"/","version":"1.9.1","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"bbb32ef470b36fe5f1e4e72f32112b68","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>虚无之境</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/NagisaKaworu.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="TinyRenderer 2：三角形光栅化和背面剔除"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        木尘痕
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-07-02 12:02" pubdate>
+          2022年7月2日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          7 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">TinyRenderer 2：三角形光栅化和背面剔除</h1>
+            
+            <div class="markdown-body">
+              
+              <h1 id="画三角形"><a class="markdownIt-Anchor" href="#画三角形"></a> 画三角形</h1>
+<p>上节已经会画线了，三角形还能不简单吗<br />
+假设我有ABC三个点组成三角形，我AB画一条线，BC画一条线，AC画一条线，结束！</p>
+<p>= =目前写C<ins>处于UE和之前C</ins>风格的混沌叠加态了，能跑就行（不是</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">DrawTriangle</span><span class="hljs-params">(Point&lt;<span class="hljs-type">float</span>&gt; A, Point&lt;<span class="hljs-type">float</span>&gt; B, Point&lt;<span class="hljs-type">float</span>&gt; C, TGAImage&amp; Image, <span class="hljs-type">const</span> TGAColor&amp; Color)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-built_in">DrawLineBresenham</span>(A, B, Image, Color);<br>	<span class="hljs-built_in">DrawLineBresenham</span>(A, C, Image, Color);<br>	<span class="hljs-built_in">DrawLineBresenham</span>(B, C, Image, Color);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>本节完！（不是</p>
+<p>下一个问题是填充三角形</p>
+<h1 id="fill三角形"><a class="markdownIt-Anchor" href="#fill三角形"></a> Fill三角形</h1>
+<p>那当然是先来一个最经典的从上到下或者从下到上的水平逐行扫描啦，简单直接=W=</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">DrawFilledTriangle</span><span class="hljs-params">(Vec2i T0, Vec2i T1, Vec2i T2, TGAImage&amp; Image, <span class="hljs-type">const</span> TGAColor Color)</span> </span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-keyword">if</span> (T0.y == T1.y &amp;&amp; T0.y == T2.y) <span class="hljs-keyword">return</span>; <span class="hljs-comment">// 这能叫三角形啊（暴言</span><br>	<span class="hljs-comment">// 给点按照y排序可以方便的确认高度</span><br>	<span class="hljs-keyword">if</span> (T0.y &gt; T1.y) std::<span class="hljs-built_in">swap</span>(T0, T1);<br>	<span class="hljs-keyword">if</span> (T0.y &gt; T2.y) std::<span class="hljs-built_in">swap</span>(T0, T2);<br>	<span class="hljs-keyword">if</span> (T1.y &gt; T2.y) std::<span class="hljs-built_in">swap</span>(T1, T2);<br>	<span class="hljs-type">const</span> <span class="hljs-type">int</span> TotalHeight = T2.y - T0.y;<br>	<span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; TotalHeight; i++) <br>    &#123;<br>		<span class="hljs-type">const</span> <span class="hljs-type">bool</span> SecondHalf = i &gt; T1.y - T0.y || T1.y == T0.y;<br>		<span class="hljs-type">const</span> <span class="hljs-type">int</span> SegmentHeight = SecondHalf ? T2.y - T1.y : T1.y - T0.y;<br>		<span class="hljs-type">const</span> <span class="hljs-type">float</span> Alpha = <span class="hljs-built_in">static_cast</span>&lt;<span class="hljs-type">float</span>&gt;(i) / TotalHeight;<br>		<span class="hljs-type">const</span> <span class="hljs-type">float</span> Beta = <span class="hljs-built_in">static_cast</span>&lt;<span class="hljs-type">float</span>&gt;(i - (SecondHalf ? T1.y - T0.y : <span class="hljs-number">0</span>)) / SegmentHeight;<br>		Vec2i A = T0 + (T2 - T0) * Alpha;<br>		Vec2i B = SecondHalf ? T1 + (T2 - T1) * Beta : T0 + (T1 - T0) * Beta;<br>		<span class="hljs-keyword">if</span> (A.x &gt; B.x) <br>            std::<span class="hljs-built_in">swap</span>(A, B);<br>		<span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> j = A.x; j &lt;= B.x; j++) <br>        &#123;<br>			Image.<span class="hljs-built_in">set</span>(j, T0.y + i, Color); <span class="hljs-comment">// 需要注意int型可能导致的 t0.y+i != A.y </span><br>		&#125;<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>在这节课里大佬给出了一个想法：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-built_in">triangle</span>(vec2 points[<span class="hljs-number">3</span>]) <br>&#123; <br>    vec2 bbox[<span class="hljs-number">2</span>] = <span class="hljs-built_in">find_bounding_box</span>(points); <br>    <span class="hljs-keyword">for</span> (each pixel in the bounding box) &#123; <br>        <span class="hljs-keyword">if</span> (<span class="hljs-built_in">inside</span>(points, pixel)) &#123; <br>            <span class="hljs-built_in">put_pixel</span>(pixel); <br>        &#125; <br>    &#125; <br>&#125;<br></code></pre></td></tr></table></figure>
+<p>先找到三角形的包围盒，然后在对包围盒的每一个点判断是否在三角形之内，是的话就着色，最后画出一个三角形</p>
+<p>这个被称为边界函数算法（Edge-Function）</p>
+<p>在计算点是否在三角形内的时候使用了重心坐标系</p>
+<p>这个算法猛地一看感觉很奇怪，这不是有很多像素根本不在三角形里，要去做判断不是一种浪费嘛，逐行扫描划出来的就是在三角形里的</p>
+<p>主要原因是，扫描线画法通过插值生成两个边界点，插值的精度损失导致的多个三角形间存在接缝的问题。而绘制边界点之间部分，每次只画了一条线，操作的单位是一条线，现在基本都是高精度模型，这样画起来是很慢的，需要寻求一种可以并行的方法</p>
+<p>对边界函数算法的实现如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-function">Vec3f <span class="hljs-title">Barycentric</span><span class="hljs-params">(<span class="hljs-type">const</span> Vec2i Pts[<span class="hljs-number">3</span>], Vec2i P)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-type">const</span> Vec3f U =<br>        <span class="hljs-built_in">Vec3f</span>(Pts[<span class="hljs-number">2</span>].x - Pts[<span class="hljs-number">0</span>].x, Pts[<span class="hljs-number">1</span>].x - Pts[<span class="hljs-number">0</span>].x, Pts[<span class="hljs-number">0</span>].x - P.x) ^ <span class="hljs-built_in">Vec3f</span>(Pts[<span class="hljs-number">2</span>].y - Pts[<span class="hljs-number">0</span>].y, Pts[<span class="hljs-number">1</span>].y - Pts[<span class="hljs-number">0</span>].y, Pts[<span class="hljs-number">0</span>].y - P.y);<br>    <span class="hljs-keyword">if</span> (std::<span class="hljs-built_in">abs</span>(U.z) &lt; <span class="hljs-number">1</span>)<br>        <span class="hljs-keyword">return</span> &#123;<span class="hljs-number">-1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>&#125;;<br>    <span class="hljs-keyword">return</span> &#123;<span class="hljs-number">1.f</span> - (U.x + U.y) / U.z, U.y / U.z, U.x / U.z&#125;;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">DrawTriangleEdgeFunc</span><span class="hljs-params">(Vec2i Pts[<span class="hljs-number">3</span>], TGAImage&amp; Image, <span class="hljs-type">const</span> TGAColor Color)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-function">Vec2i <span class="hljs-title">BboxMin</span><span class="hljs-params">(Image.get_width() - <span class="hljs-number">1</span>, Image.get_height() - <span class="hljs-number">1</span>)</span></span>;<br>    <span class="hljs-function">Vec2i <span class="hljs-title">BboxMax</span><span class="hljs-params">(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>)</span></span>;<br>    <span class="hljs-function"><span class="hljs-type">const</span> Vec2i <span class="hljs-title">Clamp</span><span class="hljs-params">(Image.get_width() - <span class="hljs-number">1</span>, Image.get_height() - <span class="hljs-number">1</span>)</span></span>;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">3</span>; i++)<br>    &#123;<br>        BboxMin.x = std::<span class="hljs-built_in">max</span>(<span class="hljs-number">0</span>, std::<span class="hljs-built_in">min</span>(BboxMin.x, Pts[i].x));<br>        BboxMin.y = std::<span class="hljs-built_in">max</span>(<span class="hljs-number">0</span>, std::<span class="hljs-built_in">min</span>(BboxMin.y, Pts[i].y));<br><br>        BboxMax.x = std::<span class="hljs-built_in">min</span>(Clamp.x, std::<span class="hljs-built_in">max</span>(BboxMax.x, Pts[i].x));<br>        BboxMax.y = std::<span class="hljs-built_in">min</span>(Clamp.y, std::<span class="hljs-built_in">max</span>(BboxMax.y, Pts[i].y));<br>    &#125;<br>    Vec2i P;<br>    <span class="hljs-keyword">for</span> (P.x = BboxMin.x; P.x &lt;= BboxMax.x; P.x++)<br>    &#123;<br>        <span class="hljs-keyword">for</span> (P.y = BboxMin.y; P.y &lt;= BboxMax.y; P.y++)<br>        &#123;<br>            Vec3f BcScreen = <span class="hljs-built_in">Barycentric</span>(Pts, P);<br>            <span class="hljs-keyword">if</span> (BcScreen.x &lt; <span class="hljs-number">0</span> || BcScreen.y &lt; <span class="hljs-number">0</span> || BcScreen.z &lt; <span class="hljs-number">0</span>) <span class="hljs-keyword">continue</span>;<br>            Image.<span class="hljs-built_in">set</span>(P.x, P.y, Color);<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h1 id="背面剔除"><a class="markdownIt-Anchor" href="#背面剔除"></a> 背面剔除</h1>
+<p>通过定义一个光照方向（其实是视线方向），与每个平面的法向量求点积，点击结果意味着两个方向的夹角关系，可以得知是平行还是反方向，就可以完成背面剔除的工作了~</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-comment">// 定义光照方向</span><br><span class="hljs-function">Vec3f <span class="hljs-title">LightDir</span><span class="hljs-params">(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">-1</span>)</span></span>;<br><span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; ModelInstance-&gt;<span class="hljs-built_in">GetFacesNumber</span>(); i++)<br>&#123;<br>    Face Face = ModelInstance-&gt;<span class="hljs-built_in">GetFace</span>(i);<br>    Vec2i ScreenCoords[<span class="hljs-number">3</span>];<br>    Vec3f WorldCoords[<span class="hljs-number">3</span>];<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> j = <span class="hljs-number">0</span>; j &lt; <span class="hljs-number">3</span>; j++)<br>    &#123;<br>        <span class="hljs-type">const</span> Vec3f V = ModelInstance-&gt;<span class="hljs-built_in">GetVertex</span>(Face[j]);<br>        ScreenCoords[j] = <span class="hljs-built_in">Vec2i</span>((V.x + <span class="hljs-number">1.</span>) * WIDTH / <span class="hljs-number">2.</span>, (V.y + <span class="hljs-number">1.</span>) * HEIGHT / <span class="hljs-number">2.</span>);<br>        WorldCoords[j] = V;<br>    &#125;<br>    <span class="hljs-comment">// 这里三角形的法线可以简单地计算为其两侧的叉积</span><br>    <span class="hljs-comment">// 两个向量的叉积与这两个向量组成的坐标平面垂直</span><br>    Vec3f N = (WorldCoords[<span class="hljs-number">2</span>] - WorldCoords[<span class="hljs-number">0</span>]) ^ (WorldCoords[<span class="hljs-number">1</span>] - WorldCoords[<span class="hljs-number">0</span>]);<br>    N.<span class="hljs-built_in">normalize</span>();<br>    <span class="hljs-type">const</span> <span class="hljs-type">float</span> Intensity = N * LightDir;<br>    <span class="hljs-comment">// 如果Intensity是0说明光照和法向量平行，就照不到光，小于0就意味着光是从平面法向量背面照射的</span><br>    <span class="hljs-keyword">if</span> (Intensity &gt; <span class="hljs-number">0</span>)<br>    &#123;<br>        Vec2i Pts[<span class="hljs-number">3</span>] = &#123;ScreenCoords[<span class="hljs-number">0</span>], ScreenCoords[<span class="hljs-number">1</span>], ScreenCoords[<span class="hljs-number">2</span>]&#125;;<br>        <span class="hljs-built_in">DrawTriangleEdgeFunc</span>(Pts, Image, <span class="hljs-built_in">TGAColor</span>(Intensity * <span class="hljs-number">255</span>, Intensity * <span class="hljs-number">255</span>, Intensity * <span class="hljs-number">255</span>, <span class="hljs-number">255</span>));<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>本节课结束之后会得到这样一张图：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/202220220702145057.png" srcset="/img/loading.gif" lazyload alt="第二节完毕" /></p>
+<p>可以看到嘴部是有点奇怪的，这个就是我们前面用的粗暴的剔除的方式导致的，嘴唇的一部分的法向量计算出来的结果并不是我们实际想要的“正面”的法向量方向，导致和光照方向点乘的结果是小于0的，认为是不可见的部分</p>
+<p>这节到这里就结束了</p>
+
+              
+            </div>
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/CG/" class="category-chain-item">CG</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Renderer/">#Renderer</a>
+      
+        <a href="/tags/CG/">#CG</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>TinyRenderer 2：三角形光栅化和背面剔除</div>
+      <div>http://muchenhen.com/posts/7931/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>木尘痕</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年7月2日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/54742/" title="TinyRenderer 3：ZBuffer">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">TinyRenderer 3：ZBuffer</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/21321/" title="UE4：关于Texture Streaming的一部分总结">
+                        <span class="hidden-mobile">UE4：关于Texture Streaming的一部分总结</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+    <!-- 备案信息 ICP for China -->
+    <div class="beian">
+  <span>
+    <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+      
+    </a>
+  </span>
+  
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?bbb32ef470b36fe5f1e4e72f32112b68";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script>
+  (function() {
+    var enableLang = CONFIG.code_language.enable && CONFIG.code_language.default;
+    var enableCopy = CONFIG.copy_btn;
+    if (!enableLang && !enableCopy) {
+      return;
+    }
+
+    function getBgClass(ele) {
+      return Fluid.utils.getBackgroundLightness(ele) >= 0 ? 'code-widget-light' : 'code-widget-dark';
+    }
+
+    var copyTmpl = '';
+    copyTmpl += '<div class="code-widget">';
+    copyTmpl += 'LANG';
+    copyTmpl += '</div>';
+    jQuery('.markdown-body pre').each(function() {
+      var $pre = jQuery(this);
+      if ($pre.find('code.mermaid').length > 0) {
+        return;
+      }
+      if ($pre.find('span.line').length > 0) {
+        return;
+      }
+
+      var lang = '';
+
+      if (enableLang) {
+        lang = CONFIG.code_language.default;
+        if ($pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2 && $pre.children().hasClass('hljs')) {
+          lang = $pre[0].children[0].classList[1];
+        } else if ($pre[0].getAttribute('data-language')) {
+          lang = $pre[0].getAttribute('data-language');
+        } else if ($pre.parent().hasClass('sourceCode') && $pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2) {
+          lang = $pre[0].children[0].classList[1];
+          $pre.parent().addClass('code-wrapper');
+        } else if ($pre.parent().hasClass('markdown-body') && $pre[0].classList.length === 0) {
+          $pre.wrap('<div class="code-wrapper"></div>');
+        }
+        lang = lang.toUpperCase().replace('NONE', CONFIG.code_language.default);
+      }
+      $pre.append(copyTmpl.replace('LANG', lang).replace('code-widget">',
+        getBgClass($pre[0]) + (enableCopy ? ' code-widget copy-btn" data-clipboard-snippet><i class="iconfont icon-copy"></i>' : ' code-widget">')));
+
+      if (enableCopy) {
+        Fluid.utils.createScript('https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js', function() {
+          var clipboard = new window.ClipboardJS('.copy-btn', {
+            target: function(trigger) {
+              var nodes = trigger.parentNode.childNodes;
+              for (var i = 0; i < nodes.length; i++) {
+                if (nodes[i].tagName === 'CODE') {
+                  return nodes[i];
+                }
+              }
+            }
+          });
+          clipboard.on('success', function(e) {
+            e.clearSelection();
+            e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-copy', 'icon-success');
+            setTimeout(function() {
+              e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-success', 'icon-copy');
+            }, 2000);
+          });
+        });
+      }
+    });
+  })();
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

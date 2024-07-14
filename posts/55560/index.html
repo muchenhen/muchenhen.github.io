@@ -1,0 +1,788 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="木尘痕">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言 版本4.27 发现在打包后在iOS端，使用iOS自带的中文输入法输入文本之后，如果使用的是嵌入式虚拟键盘  如上图所示，勾选上之后不会出现带有ok和cancel的弹窗，直接在虚拟键盘上方有一个长方形的输入框  在这种情况下，无论是点击右下角的确认完成输入，还是点击任何非键盘区域隐藏软键盘之后，touch事件都会出现问题，后面的按钮可点击间隔时间会变的很长 取消勾选相面的选项之后，会变成如下">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UE4：iOS自定义文本输入框">
+<meta property="og:url" content="http://muchenhen.com/posts/55560/index.html">
+<meta property="og:site_name" content="虚无之境">
+<meta property="og:description" content="前言 版本4.27 发现在打包后在iOS端，使用iOS自带的中文输入法输入文本之后，如果使用的是嵌入式虚拟键盘  如上图所示，勾选上之后不会出现带有ok和cancel的弹窗，直接在虚拟键盘上方有一个长方形的输入框  在这种情况下，无论是点击右下角的确认完成输入，还是点击任何非键盘区域隐藏软键盘之后，touch事件都会出现问题，后面的按钮可点击间隔时间会变的很长 取消勾选相面的选项之后，会变成如下">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2023/20230627193632.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2023/20230627200412.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2023/20230627201406.png">
+<meta property="article:published_time" content="2023-06-27T11:26:25.000Z">
+<meta property="article:modified_time" content="2024-07-14T15:26:08.256Z">
+<meta property="article:author" content="木尘痕">
+<meta property="article:tag" content="UE4">
+<meta property="article:tag" content="iOS">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2023/20230627193632.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>UE4：iOS自定义文本输入框 - 虚无之境</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"muchenhen.com","root":"/","version":"1.9.1","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"bbb32ef470b36fe5f1e4e72f32112b68","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>虚无之境</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/NagisaKaworu.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="UE4：iOS自定义文本输入框"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        木尘痕
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-06-27 19:26" pubdate>
+          2023年6月27日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          11k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          19 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">UE4：iOS自定义文本输入框</h1>
+            
+            <div class="markdown-body">
+              
+              <h1 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h1>
+<p>版本4.27</p>
+<p>发现在打包后在iOS端，使用iOS自带的中文输入法输入文本之后，如果使用的是嵌入式虚拟键盘</p>
+<p><img src="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2023/20230627193632.png" srcset="/img/loading.gif" lazyload alt="Use Integrated Keyboard" /></p>
+<p>如上图所示，勾选上之后不会出现带有ok和cancel的弹窗，直接在虚拟键盘上方有一个长方形的输入框</p>
+<p><img src="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2023/20230627200412.png" srcset="/img/loading.gif" lazyload alt="嵌入式软键盘" /></p>
+<p>在这种情况下，无论是点击右下角的确认完成输入，还是点击任何非键盘区域隐藏软键盘之后，touch事件都会出现问题，后面的按钮可点击间隔时间会变的很长</p>
+<p>取消勾选相面的选项之后，会变成如下图这样：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2023/20230627201406.png" srcset="/img/loading.gif" lazyload alt="弹窗输入" /></p>
+<p>在这种情况下，只有点击ok或者是cancel才可以收起键盘，这种情况不会造成点击事件出现问题。但是这种模式也存在缺点，布局在部分情况下是完全不够用的，输入框太短，并且收起键盘只能使用按钮</p>
+<p>在确认了嵌入式软键盘确实有问题之后，决定首先想办法在有弹窗的模式下对布局进行自定义</p>
+<h1 id="427原始代码"><a class="markdownIt-Anchor" href="#427原始代码"></a> 4.27原始代码</h1>
+<p><a target="_blank" rel="noopener" href="https://github.com/EpicGames/UnrealEngine/blob/3abfe77d0b24a6d8bacebd27766912e5a5fa6f02/Engine/Source/Runtime/Slate/Public/Framework/Text/IOS/IOSPlatformTextField.h#L33-L45">UE4.27 IOSPlatformTextField.h</a></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs c++">@interface SlateTextField : UIAlertController<br>&#123;<br>	TWeakPtr&lt;IVirtualKeyboardEntry&gt; TextWidget;<br>	FText TextEntry;<br>    <br>    <span class="hljs-type">bool</span> bTransitioning;<br>    <span class="hljs-type">bool</span> bWantsToShow;<br>    NSString* CachedTextContents;<br>    NSString* CachedPlaceholderContents;<br>    FKeyboardConfig CachedKeyboardConfig;<br>    <br>    UIAlertController* AlertController;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>上面这段代码的最后一个变量AlertController，就是iOS原生的弹窗:<a target="_blank" rel="noopener" href="https://developer.apple.com/documentation/uikit/uialertcontroller">UIAlertController</a></p>
+<p>他提供了一些基本的方法，比如设置标题，设置内容，设置按钮等等，比如UE4中的代码<a target="_blank" rel="noopener" href="https://github.com/EpicGames/UnrealEngine/blob/4.27/Engine/Source/Runtime/Slate/Private/Framework/Text/IOS/IOSPlatformTextField.cpp">IOSPlatform.cpp</a>：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">// 下面这一行初始化了一个UIAlertController，这个弹窗的标题是空的，内容也是空的，弹窗的样式是UIAlertControllerStyleAlert</span><br>AlertController = [UIAlertController alertControllerWithTitle : @<span class="hljs-string">&quot;&quot;</span> message:@<span class="hljs-string">&quot;&quot;</span> preferredStyle:UIAlertControllerStyleAlert];<br><span class="hljs-comment">// 下面这一行添加了点击ok之后的方法，okaction是一个UIAlertAction，</span><br>[AlertController addAction: okAction];<br><span class="hljs-comment">// 下面这一行添加了点击cancel之后的方法，cancelAction是一个UIAlertAction，</span><br>[AlertController addAction: cancelAction];  <br><span class="hljs-comment">// 下面这段代码添加了文本输入框，这里的文本输入框是一个UITextField，这个文本输入框的样式是UIAlertControllerStyleAlert</span><br>[AlertController<br>    addTextFieldWithConfigurationHandler:^(UITextField* AlertTextField)<br>    &#123;<br>        <span class="hljs-comment">// 是否在开始编辑的时候清空文本，这里是不清空</span><br>        AlertTextField.clearsOnBeginEditing = NO;<br>        <span class="hljs-comment">// 是否在插入的时候清空文本，这里是不清空</span><br>        AlertTextField.clearsOnInsertion = NO;<br>        <span class="hljs-keyword">if</span> (TextWidget.<span class="hljs-built_in">IsValid</span>())<br>        &#123;<br>            <span class="hljs-comment">// 设置文本输入框的内容，比如游戏UI中的输入框已经有内容了，这里获取一下显示出来，在原有的基础上修改</span><br>            AlertTextField.text = TextContents;<br>            <span class="hljs-comment">// 文本字段显示的占位符文本</span><br>            AlertTextField.placeholder = PlaceholderContents;<br>            <span class="hljs-comment">// 键盘样式，默认、数字、URL等等</span><br>            AlertTextField.keyboardType = KeyboardConfig.KeyboardType;<br>            <span class="hljs-comment">// 自动更正类型</span><br>            AlertTextField.autocorrectionType = KeyboardConfig.AutocorrectionType;<br>            <span class="hljs-comment">// 自动大写类型</span><br>            AlertTextField.autocapitalizationType = KeyboardConfig.AutocapitalizationType;<br>            <span class="hljs-comment">// 是否隐藏输入的内容，比如密码输入框</span><br>            AlertTextField.secureTextEntry = KeyboardConfig.bSecureTextEntry;<br>        &#125;<br>    &#125;<br>];<br></code></pre></td></tr></table></figure>
+<p>以上就是UE4.27中iOS键盘相关部分的代码，原本想着是稍微改一下，经过搜索（毕竟没有接触过iOS开发）后发现，作为基本的UIAlertController，他并不能支持随意的自定义布局，比如按钮位置、输入框尺寸和位置等。</p>
+<h1 id="修改代码"><a class="markdownIt-Anchor" href="#修改代码"></a> 修改代码</h1>
+<p>经过查找资料，发现其实自定义一个类似的UIAlertController并不难，只需要继承UIViewController：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs objective-c">/**<br> * @brief 自定义文本框视图控制器<br> */<br>@interface CustomTextFieldViewController : UIViewController<br><br>// 文本框<br>@property (strong, nonatomic) UITextField *textField;<br>// 文本框宽度<br>@property (assign, nonatomic) CGFloat textWidth;<br>// 文本框高度<br>@property (assign, nonatomic) CGFloat textHeight;<br>// clearsOnBeginEditing<br>@property (assign, nonatomic) BOOL clearsOnBeginEditing;<br>// clearsOnInsertion<br>@property (assign, nonatomic) BOOL clearsOnInsertion;<br>// 文本内容<br>@property (strong, nonatomic) NSString *text;<br>// placeholder<br>@property (strong, nonatomic) NSString *placeholder;<br>// keyboardType<br>@property (assign, nonatomic) UIKeyboardType keyboardType;<br>// autocorrectionType<br>@property (assign, nonatomic) UITextAutocorrectionType autocorrectionType;<br>// autocapitalizationType<br>@property (assign, nonatomic) UITextAutocapitalizationType autocapitalizationType;<br>// secureTextEntry<br>@property (assign, nonatomic) BOOL secureTextEntry;<br><br>// okAction 点击ok按钮之后的回调<br>@property (nonatomic, copy) void (^okAction)(void);<br>// cancelAction 点击cancel按钮之后的回调<br>@property (nonatomic, copy) void (^cancelAction)(void);<br>// okButton ok按钮<br>@property (strong, nonatomic) UIButton *okButton;<br>// cancelButton cancel按钮<br>@property (strong, nonatomic) UIButton *cancelButton;<br>// backgroundButton 背景按钮，用于点击背景收起键盘<br>@property (strong, nonatomic) UIButton *backgroundButton;<br>@end<br></code></pre></td></tr></table></figure>
+<p>上面的代码是自定义文本字段视图控制器的Objective-C接口。定义了许多属性，可以用来自定义文本字段的行为和外观。</p>
+<p>textField属性是对实际文本字段对象的引用，该对象将显示在屏幕上。textWidth和textHeight属性允许设置文本字段的大小。</p>
+<p>后面的那些是UE原本都要设置的，这里就不多说了。</p>
+<p>定义了回调块，可用于响应用户操作。当用户点击“OK”按钮时，将调用okAction，而当用户点击“Cancel”按钮时，将调用cancelAction。</p>
+<p>加了一个背景按钮，用于点击背景收起键盘。</p>
+<p>下面是实现部分：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><code class="hljs objective-c">- (void)viewDidLoad <br>&#123;<br>	[super viewDidLoad];<br><br>	// 获取屏幕的大小<br>	CGRect screenRect = [[UIScreen mainScreen] bounds];<br><br>	// 创建textField<br>	self.textField = [[UITextField alloc] initWithFrame:CGRectMake(10, 10, self.textWidth, self.textHeight)];<br>	self.textField.clearsOnBeginEditing = self.clearsOnBeginEditing;<br>	self.textField.clearsOnInsertion = self.clearsOnInsertion;<br>	self.textField.text = self.text;<br>	self.textField.placeholder = self.placeholder;<br>    self.textField.keyboardType = self.keyboardType;<br>    self.textField.autocorrectionType = self.autocorrectionType;<br>    self.textField.autocapitalizationType = self.autocapitalizationType;<br>    self.textField.secureTextEntry = self.secureTextEntry;<br>	self.textField.borderStyle = UITextBorderStyleRoundedRect;<br>	self.textField.layer.zPosition = 1;<br>	[self.textField becomeFirstResponder];<br><br>	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];<br><br>	// 创建okButton<br>	self.okButton = [UIButton buttonWithType:UIButtonTypeSystem];<br>	[self.okButton setTitle:@&quot;完成&quot; forState:UIControlStateNormal];<br>	[self.okButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];<br>	[self.okButton setBackgroundColor:[UIColor whiteColor]];<br>	[self.okButton addTarget:self action:@selector(okButtonTapped:) forControlEvents:UIControlEventTouchUpInside];<br>	[self.view addSubview:self.okButton];<br><br>    // 创建cancelButton<br>	self.cancelButton = [UIButton buttonWithType:UIButtonTypeSystem];<br>	[self.cancelButton setTitle:@&quot;取消&quot; forState:UIControlStateNormal];<br>	[self.cancelButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];<br>	[self.cancelButton setBackgroundColor:[UIColor whiteColor]];<br>	[self.cancelButton addTarget:self action:@selector(cancelButtonTapped:) forControlEvents:UIControlEventTouchUpInside];<br>	[self.view addSubview:self.cancelButton];<br>	<br>	// 创建背景按钮<br>	self.backgroundButton = [UIButton buttonWithType:UIButtonTypeCustom];<br>	self.backgroundButton.backgroundColor = [UIColor clearColor];<br>	[self.backgroundButton addTarget:self action:@selector(cancelButtonTapped:) forControlEvents:UIControlEventTouchUpInside];<br>	[self.view addSubview:self.backgroundButton];<br><br>	// 将textField添加到视图中显示<br>	[self.view addSubview:self.textField];<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>viewDidLoad在视图控制器将其视图层次结构加载到内存中后调用。此方法通常用于执行视图加载后所需的任何附加设置，例如设置用户界面元素或初始化数据。</p>
+<p>viewDidLoad方法在视图控制器的生存期内只调用一次，并且在调用视图控制器的loadView方法后调用。这意味着在调用viewDidLoad时，视图控制器的视图层次结构已经加载到内存中。</p>
+<p>上面这段代码把该有的元素都创建出来了，下面就是布局。</p>
+<p>由于希望是紧挨着键盘的，所以需要监听键盘的弹出事件，这里使用了NSNotificationCenter来监听键盘弹出事件。不然的话可以考虑<br />
+<code>- (void)viewDidLayoutSubviews</code>来布局：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><code class="hljs objective-c">- (void)keyboardWillShow:(NSNotification *)notification <br>&#123;<br>	// Extract the keyboard height from the notification&#x27;s userInfo dictionary<br>	CGRect keyboardFrame = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];<br>	CGFloat keyboardHeight = keyboardFrame.size.height;<br>    CGFloat safeLeft = 0;<br>	CGFloat safeRight = 0;<br>	UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];<br>	if (orientation == UIDeviceOrientationLandscapeLeft) <br>	&#123;<br>		if (@available(iOS 11.0, *)) <br>		&#123;<br>			UIEdgeInsets safeAreaInsets = UIApplication.sharedApplication.keyWindow.safeAreaInsets;<br>			NSLog(@&quot;safeAreaInsets: %@&quot;, NSStringFromUIEdgeInsets(safeAreaInsets));<br>			// Bangs are on the left<br>			safeLeft = safeAreaInsets.left;<br>		&#125; <br>	&#125;<br>	else if (orientation == UIDeviceOrientationLandscapeRight)<br>	&#123;<br>		if (@available(iOS 11.0, *)) <br>		&#123;<br>			UIEdgeInsets safeAreaInsets = UIApplication.sharedApplication.keyWindow.safeAreaInsets;<br>			NSLog(@&quot;safeAreaInsets: %@&quot;, NSStringFromUIEdgeInsets(safeAreaInsets));<br>			// Bangs are on the right<br>			safeRight = safeAreaInsets.right;<br>		&#125; <br>	&#125;<br><br>	CGRect screenRect = [[UIScreen mainScreen] bounds];<br>	CGFloat screenWidth = screenRect.size.width;<br>	CGFloat screenHeight = screenRect.size.height;<br><br>	CGFloat marginY = 20;<br>	CGFloat marginX = 20;<br>	CGFloat marginOfItem = 5;<br>	CGFloat buttonWidth = 60;<br>	CGFloat itemMarginY = 5;<br><br>	// Position text field<br>	CGFloat textFieldX = marginX;<br>	CGFloat textFieldY = screenHeight - keyboardHeight - self.textHeight - itemMarginY;<br>	CGFloat textFieldWidth = screenWidth - marginX - marginOfItem - buttonWidth - marginOfItem - buttonWidth - marginX;<br><br>	NSLog(@&quot;safeLeft: %f&quot;, safeLeft);<br>	NSLog(@&quot;safeRight: %f&quot;, safeRight);<br><br>	if (safeLeft &gt; 0 &amp;&amp; safeRight == 0)<br>	&#123;<br>		// Bangs are on the left<br>		textFieldX = marginX + safeLeft;<br>		textFieldWidth = screenWidth - marginX - marginOfItem - buttonWidth - marginOfItem - buttonWidth - marginX - safeLeft;<br>	&#125;<br>	else if (safeLeft == 0 &amp;&amp; safeRight &gt; 0)<br>	&#123;<br>		// Bangs are on the right<br>		textFieldWidth = screenWidth - marginX - marginOfItem - buttonWidth - marginOfItem - buttonWidth - marginX - safeRight;<br>	&#125;<br><br>	self.textField.frame = CGRectMake(textFieldX, textFieldY, textFieldWidth, self.textHeight);<br><br>	// Position OK button<br>	CGFloat okButtonX = CGRectGetMaxX(self.textField.frame) + marginOfItem;<br>	self.okButton.frame = CGRectMake(okButtonX, textFieldY, buttonWidth, self.textHeight);<br><br>	// Position Cancel button<br>	CGFloat cancelButtonX = CGRectGetMaxX(self.okButton.frame) + marginOfItem;<br>	self.cancelButton.frame = CGRectMake(cancelButtonX, textFieldY, buttonWidth, self.textHeight);<br><br>	// Position background button<br>	CGFloat backgroundButtonHeight = screenHeight - keyboardHeight - self.textHeight - itemMarginY;<br>	self.backgroundButton.frame = CGRectMake(0, 0, screenWidth, backgroundButtonHeight);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>当键盘即将在iOS设备上显示时调用该方法。从通知的用户信息字典中提取键盘的高度，并使用它在屏幕上定位自定义文本字段视图和两个按钮。</p>
+<p>该方法首先检查设备的方向，并确定刘海是在屏幕的左侧还是右侧。如果刘海在左边，该方法会调整文本字段的位置和宽度，以考虑屏幕左侧的安全区域。如果刘海在右边，该方法会调整文本字段的宽度，以考虑屏幕右侧的安全区域。</p>
+<p>然后根据屏幕的大小、键盘的高度以及各种边距和项目大小来计算文本字段和按钮的位置。相应地设置文本字段的框架和按钮。</p>
+<p>上面就完成了一个简单的自定义的文本输入框类。</p>
+<p>然后在原本的UE的创建弹窗的地方进行修改。</p>
+<p>头文件中：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs objective-c">@interface SlateTextField : UIAlertController<br>&#123;<br>	TWeakPtr&lt;IVirtualKeyboardEntry&gt; TextWidget;<br>	FText TextEntry;<br>    <br>    bool bTransitioning;<br>    bool bWantsToShow;<br>    NSString* CachedTextContents;<br>    NSString* CachedPlaceholderContents;<br>    FKeyboardConfig CachedKeyboardConfig;<br><br>#pragma region (ios keyboard input)<br>    CustomTextFieldViewController* AlertController;<br>#pragma endregion<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>源文件中：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><code class="hljs objective-c">if(AlertController == nil &amp;&amp; !bTransitioning &amp;&amp; TextWidget.IsValid())<br>&#123;<br>    AlertController = [[CustomTextFieldViewController  alloc] init];<br>    // ... 省略部分代码<br><br>    // 原本的okAction和cancelAction是UIAlertAction类型，这里无法直接使用，直接绑定到了自定义的方法上<br>    AlertController.okAction = <br>    ^&#123;<br>        if ([AlertController respondsToSelector:@selector(dismissViewControllerAnimated: completion:)])<br>        &#123;<br>            bTransitioning = true;<br>            [AlertController dismissViewControllerAnimated : YES completion : ^()&#123;<br>                bTransitioning = false;<br>                [self updateToDesiredState];<br>            &#125;];<br><br>            UITextField* AlertTextField = AlertController.textField;<br>            TextEntry = FText::FromString(AlertTextField.text);<br>            AlertController = nil;<br>                                        <br>            FIOSAsyncTask* AsyncTask = [[FIOSAsyncTask alloc] init];<br>            AsyncTask.GameThreadCallback = ^ bool(void)<br>            &#123;<br>                if(TextWidget.IsValid())<br>                &#123;<br>                    TSharedPtr&lt;IVirtualKeyboardEntry&gt; TextEntryWidgetPin = TextWidget.Pin();<br>                    TextEntryWidgetPin-&gt;SetTextFromVirtualKeyboard(TextEntry, ETextEntryType::TextEntryAccepted);<br>                &#125;<br><br>                // clear the TextWidget<br>                TextWidget = nullptr;<br>                return true;<br>            &#125;;<br>            [AsyncTask FinishedTask];<br>        &#125;<br>        else<br>        &#123;<br>            TextWidget = nullptr;<br>            UE_LOG(LogTemp, Log, TEXT(&quot;AlertController didn&#x27;t support needed selector&quot;));<br>        &#125;<br>    &#125;;<br><br>    // ... cancelAction同上<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>这样就完成了修改，可以在iOS设备上使用自定义的文本输入框了。</p>
+<p>其实github上有很多关于iOS的alert的自定义开源项目，不过objective-c的.m文件不能在UE4中直接使用，并且狠毒哦项目原本是用来进行直接的iOS的应用开发的，会写的比较完善和复杂，有需要的话可以参考，这里就简单实现了一下。</p>
+
+              
+            </div>
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/UE4/">#UE4</a>
+      
+        <a href="/tags/iOS/">#iOS</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>UE4：iOS自定义文本输入框</div>
+      <div>http://muchenhen.com/posts/55560/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>木尘痕</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年6月27日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/25258/" title="UE4：C++直接获取STATS相关值的方式">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">UE4：C++直接获取STATS相关值的方式</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/29435/" title="UE4：NiagaraSystem批量删除modules">
+                        <span class="hidden-mobile">UE4：NiagaraSystem批量删除modules</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+    <!-- 备案信息 ICP for China -->
+    <div class="beian">
+  <span>
+    <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+      
+    </a>
+  </span>
+  
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?bbb32ef470b36fe5f1e4e72f32112b68";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script>
+  (function() {
+    var enableLang = CONFIG.code_language.enable && CONFIG.code_language.default;
+    var enableCopy = CONFIG.copy_btn;
+    if (!enableLang && !enableCopy) {
+      return;
+    }
+
+    function getBgClass(ele) {
+      return Fluid.utils.getBackgroundLightness(ele) >= 0 ? 'code-widget-light' : 'code-widget-dark';
+    }
+
+    var copyTmpl = '';
+    copyTmpl += '<div class="code-widget">';
+    copyTmpl += 'LANG';
+    copyTmpl += '</div>';
+    jQuery('.markdown-body pre').each(function() {
+      var $pre = jQuery(this);
+      if ($pre.find('code.mermaid').length > 0) {
+        return;
+      }
+      if ($pre.find('span.line').length > 0) {
+        return;
+      }
+
+      var lang = '';
+
+      if (enableLang) {
+        lang = CONFIG.code_language.default;
+        if ($pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2 && $pre.children().hasClass('hljs')) {
+          lang = $pre[0].children[0].classList[1];
+        } else if ($pre[0].getAttribute('data-language')) {
+          lang = $pre[0].getAttribute('data-language');
+        } else if ($pre.parent().hasClass('sourceCode') && $pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2) {
+          lang = $pre[0].children[0].classList[1];
+          $pre.parent().addClass('code-wrapper');
+        } else if ($pre.parent().hasClass('markdown-body') && $pre[0].classList.length === 0) {
+          $pre.wrap('<div class="code-wrapper"></div>');
+        }
+        lang = lang.toUpperCase().replace('NONE', CONFIG.code_language.default);
+      }
+      $pre.append(copyTmpl.replace('LANG', lang).replace('code-widget">',
+        getBgClass($pre[0]) + (enableCopy ? ' code-widget copy-btn" data-clipboard-snippet><i class="iconfont icon-copy"></i>' : ' code-widget">')));
+
+      if (enableCopy) {
+        Fluid.utils.createScript('https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js', function() {
+          var clipboard = new window.ClipboardJS('.copy-btn', {
+            target: function(trigger) {
+              var nodes = trigger.parentNode.childNodes;
+              for (var i = 0; i < nodes.length; i++) {
+                if (nodes[i].tagName === 'CODE') {
+                  return nodes[i];
+                }
+              }
+            }
+          });
+          clipboard.on('success', function(e) {
+            e.clearSelection();
+            e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-copy', 'icon-success');
+            setTimeout(function() {
+              e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-success', 'icon-copy');
+            }, 2000);
+          });
+        });
+      }
+    });
+  })();
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

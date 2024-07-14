@@ -1,0 +1,461 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="木尘痕">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="在光栅化过程中，顶点着色器（或几何体着色器）输出的顶点属性被插值到三角形的像素上。插值的值随后作为输入，输入到像素着色器中。假设没有几何体着色器，下图说明了顶点数据目前为止的路径。  每个顶点元素都具有由D3D12_INPUT_element_DESC数组指定的关联语义。顶点着色器的每个参数还具有附加的语义。语义用于将顶点元素与顶点着色器参数匹配。同样，顶点着色器的每个输出都有附加语义，每个像素着">
+<meta property="og:type" content="website">
+<meta property="og:title" content="DX12 6.5 像素着色器示例">
+<meta property="og:url" content="http://muchenhen.com/OLD/dx12-6-5-%E5%83%8F%E7%B4%A0%E7%9D%80%E8%89%B2%E5%99%A8%E7%A4%BA%E4%BE%8B.html">
+<meta property="og:site_name" content="虚无之境">
+<meta property="og:description" content="在光栅化过程中，顶点着色器（或几何体着色器）输出的顶点属性被插值到三角形的像素上。插值的值随后作为输入，输入到像素着色器中。假设没有几何体着色器，下图说明了顶点数据目前为止的路径。  每个顶点元素都具有由D3D12_INPUT_element_DESC数组指定的关联语义。顶点着色器的每个参数还具有附加的语义。语义用于将顶点元素与顶点着色器参数匹配。同样，顶点着色器的每个输出都有附加语义，每个像素着">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2020/04/040120_0320_DX12651.png">
+<meta property="article:published_time" content="2020-04-01T03:20:13.000Z">
+<meta property="article:modified_time" content="2024-07-14T15:26:08.244Z">
+<meta property="article:author" content="木尘痕">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.muchenhen.com/wp-content/uploads/2020/04/040120_0320_DX12651.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>DX12 6.5 像素着色器示例 - 虚无之境</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"muchenhen.com","root":"/","version":"1.9.1","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"bbb32ef470b36fe5f1e4e72f32112b68","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>虚无之境</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/NagisaKaworu.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="DX12 6.5 像素着色器示例"></span>
+          
+        </div>
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      <div class="container nopadding-x-md">
+        <div id="board"
+          >
+          
+          <div class="container">
+            <div class="row">
+              <div class="col-12 col-md-10 m-auto">
+                
+
+<article class="page-content">
+  <p>在光栅化过程中，顶点着色器（或几何体着色器）输出的顶点属性被插值到三角形的像素上。插值的值随后作为输入，输入到像素着色器中。假设没有几何体着色器，下图说明了顶点数据目前为止的路径。</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2020/04/040120_0320_DX12651.png" srcset="/img/loading.gif" lazyload alt="" /></p>
+<p>每个顶点元素都具有由D3D12_INPUT_element_DESC数组指定的关联语义。顶点着色器的每个参数还具有附加的语义。语义用于将顶点元素与顶点着色器参数匹配。同样，顶点着色器的每个输出都有附加语义，每个像素着色器输入参数都有附加语义。这些语义用来映射顶点着色器的输出到顶点着色器的输入阶段。</p>
+<p>像素着色器类似于顶点着色器，因为它是为每个像素片段执行的函数。给定像素着色器输入，像素着色器的工作是计算像素片段的颜色值。有些像素片段可能无法一直存在并进入到后缓冲区，例如它可能被像素着色器（HLSL包括一个clip函数，该函数可以从进一步处理中丢弃像素片段）中剪裁，被另一个深度值较小的像素片段遮挡，或者像素片段可能会被稍后的管道测试（如模板缓冲区测试）丢弃。因此，后缓冲区上的像素可能有多个候选像素片段；这是&quot;像素片段&quot;和&quot;像素&quot;之间的区别，尽管有时使用术语可以互换，但上下文通常清楚地说明了什么意思。</p>
+<p>作为硬件优化，在将像素片段生成到像素着色器之前，可能会被管道拒绝（例如，earlyz拒绝）。这是首先进行深度测试的地方，如果确定像素片段被深度测试遮挡，则跳过像素着色器。但是，也有一些情况可以禁用early-z来禁用优化。例如，如果像素着色器修改了像素的深度，那么必须执行像素明暗器，因为我们不知道像素之前的深度是多少如果像素着色器更改了它，则使用着色器。</p>
+<p>下面是一个示例：</p>
+<p>cbuffer cbPerObject : register(b0) {</p>
+<p>float4x4 gWorldViewProj;</p>
+<p>};</p>
+<p>void VS(</p>
+<p>float3 iPos : POSITION,</p>
+<p>float4 iColor : COLOR,</p>
+<p>out float4 oPosH : SV_POSITION,</p>
+<p>out float4 oColor : COLOR)</p>
+<p>{</p>
+<p>// 转换到齐次裁剪空间.</p>
+<p>oPosH = mul(float4(iPos, 1.0f), gWorldViewProj);</p>
+<p>// 顶点颜色传递给像素着色器.</p>
+<p>oColor = iColor;</p>
+<p>}</p>
+<p>float4 PS(float4 posH : SV_POSITION, float4 color : COLOR) : SV_Target {</p>
+<p>return pin.Color;</p>
+<p>}</p>
+<p>在本例中像素着色器仅返回插值的颜色值。注意像素着色器输入与顶点着色器输出完全匹配。像素着色器返回4D颜色值，函数参数列表后的<strong>SV_TARGET</strong>语义指示返回值类型应与渲染目标格式匹配。可以使用输入/输出结构。这种表示法的不同之处在于，将语义附加到输入/输出结构的成员，并且使用一个返回语句输出而不是输出参数。</p>
+<p>cbuffer cbPerObject : register(b0) {</p>
+<p>float4x4 gWorldViewProj;</p>
+<p>};</p>
+<p>struct VertexIn {</p>
+<p>float3 Pos : POSITION;</p>
+<p>float4 Color : COLOR;</p>
+<p>};</p>
+<p>struct VertexOut {</p>
+<p>float4 PosH : SV_POSITION;</p>
+<p>float4 Color : COLOR;</p>
+<p>};</p>
+<p>VertexOut VS(VertexIn vin) {</p>
+<p>VertexOut vout;</p>
+<p>// 转换到齐次裁剪空间.</p>
+<p>vout.PosH = mul(float4(vin.Pos, 1.0f), gWorldViewProj);</p>
+<p>// 传递颜色给像素着色器.</p>
+<p>vout.Color = vin.Color;</p>
+<p>return vout;</p>
+<p>}</p>
+<p>float4 PS(VertexOut pin) : SV_Target {</p>
+<p>return pin.Color;</p>
+<p>}</p>
+
+
+  
+
+</article>
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+    <!-- 备案信息 ICP for China -->
+    <div class="beian">
+  <span>
+    <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+      
+    </a>
+  </span>
+  
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?bbb32ef470b36fe5f1e4e72f32112b68";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

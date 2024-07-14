@@ -1,0 +1,795 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="木尘痕">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="简介 该插件继承UBlueprintFunctionLibrary，提供了一些静态函数，可以对UObject类及其子类的对象进行Get和Set操作获取或者修改对应的UPROPERTY的名称或值。 更新 添加了UEnum和TSet的UPROPERTY的独写  提供的函数 1234567891011121314151617181920212223242526272829303132333435UFU">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UE4：UObjectToLua插件简介">
+<meta property="og:url" content="http://muchenhen.com/posts/42260/index.html">
+<meta property="og:site_name" content="虚无之境">
+<meta property="og:description" content="简介 该插件继承UBlueprintFunctionLibrary，提供了一些静态函数，可以对UObject类及其子类的对象进行Get和Set操作获取或者修改对应的UPROPERTY的名称或值。 更新 添加了UEnum和TSet的UPROPERTY的独写  提供的函数 1234567891011121314151617181920212223242526272829303132333435UFU">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-10-21T08:35:24.000Z">
+<meta property="article:modified_time" content="2024-07-14T15:26:08.256Z">
+<meta property="article:author" content="木尘痕">
+<meta property="article:tag" content="UE4">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="Plugin">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>UE4：UObjectToLua插件简介 - 虚无之境</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"muchenhen.com","root":"/","version":"1.9.1","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"bbb32ef470b36fe5f1e4e72f32112b68","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>虚无之境</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/NagisaKaworu.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="UE4：UObjectToLua插件简介"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        木尘痕
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-10-21 16:35" pubdate>
+          2020年10月21日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          7.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          12 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">UE4：UObjectToLua插件简介</h1>
+            
+            <div class="markdown-body">
+              
+              <h5 id="简介"><a class="markdownIt-Anchor" href="#简介"></a> 简介</h5>
+<p>该插件继承UBlueprintFunctionLibrary，提供了一些静态函数，可以对UObject类及其子类的对象进行Get和Set操作获取或者修改对应的UPROPERTY的名称或值。</p>
+<p><strong>更新</strong></p>
+<p>添加了UEnum和TSet的UPROPERTY的独写</p>
+<h5 id="提供的函数"><a class="markdownIt-Anchor" href="#提供的函数"></a> 提供的函数</h5>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-built_in">UFUNCTION</span>(BlueprintCallable, Category = <span class="hljs-string">&quot;UTL&quot;</span>)<br><span class="hljs-function"><span class="hljs-type">static</span> FString <span class="hljs-title">UObjectToLuaString</span><span class="hljs-params">(UObject* Object)</span></span>;<br><br><span class="hljs-built_in">UFUNCTION</span>(BlueprintCallable, Category = <span class="hljs-string">&quot;UTL&quot;</span>)<br><span class="hljs-function"><span class="hljs-type">static</span> FString <span class="hljs-title">UObjectToLuaStringWithIgnore</span><span class="hljs-params">(UObject* Object, FString ignore)</span></span>;<br><br><span class="hljs-built_in">UFUNCTION</span>(BlueprintCallable, Category = <span class="hljs-string">&quot;UTL&quot;</span>)<br><span class="hljs-function"><span class="hljs-type">static</span> FString <span class="hljs-title">UObjectToCSV</span><span class="hljs-params">(UObject* Object)</span></span>;<br><br><span class="hljs-built_in">UFUNCTION</span>(BlueprintCallable, Category = <span class="hljs-string">&quot;UTL&quot;</span>)<br><span class="hljs-function"><span class="hljs-type">static</span> FString <span class="hljs-title">UObjectToCSVwithIgnore</span><span class="hljs-params">(UObject* Object, FString ignore)</span></span>;<br><br><span class="hljs-built_in">UFUNCTION</span>(BlueprintCallable, Category = <span class="hljs-string">&quot;UTL&quot;</span>)<br><span class="hljs-function"><span class="hljs-type">static</span> FString <span class="hljs-title">GetAimValue</span><span class="hljs-params">(UObject* Object, FString Aim)</span></span>;<br><br><span class="hljs-built_in">UFUNCTION</span>(BlueprintCallable, Category = <span class="hljs-string">&quot;UTL&quot;</span>)<br><span class="hljs-function"><span class="hljs-type">static</span> UObject* <span class="hljs-title">SetAimValue</span><span class="hljs-params">(UClass* classNAme, FString Aim, FString nameAndValue)</span></span>;<br><br><span class="hljs-built_in">UFUNCTION</span>(BlueprintCallable, Category = <span class="hljs-string">&quot;UTL&quot;</span>)<br><span class="hljs-function"><span class="hljs-type">static</span> UObject* <span class="hljs-title">LuaStringToUObject</span><span class="hljs-params">(UClass* className, FString nameAndValue)</span></span>;<br><br><span class="hljs-built_in">UFUNCTION</span>(BlueprintCallable, Category = <span class="hljs-string">&quot;UTL&quot;</span>)<br><span class="hljs-function"><span class="hljs-type">static</span> UObject* <span class="hljs-title">LuaStringToSetUObject</span><span class="hljs-params">(UObject* objcet, FString nameAndValue)</span></span>;<br><br><span class="hljs-built_in">UFUNCTION</span>(BlueprintCallable, Category = <span class="hljs-string">&quot;UTL&quot;</span>)<br><span class="hljs-function"><span class="hljs-type">static</span> UObject* <span class="hljs-title">CSVToUObject</span><span class="hljs-params">(UClass* className, FString nameAndValue)</span></span>;<br><br><span class="hljs-built_in">UFUNCTION</span>(BlueprintCallable, Category = <span class="hljs-string">&quot;UTL&quot;</span>)<br><span class="hljs-function"><span class="hljs-type">static</span> UObject* <span class="hljs-title">CSVToSetUObject</span><span class="hljs-params">(UObject* objcet, FString nameAndValue)</span></span>;<br><br><span class="hljs-built_in">UFUNCTION</span>(BlueprintCallable, Category = <span class="hljs-string">&quot;UTL&quot;</span>)<br><span class="hljs-function"><span class="hljs-type">static</span> UObject* <span class="hljs-title">CreateObject</span><span class="hljs-params">(UClass* className)</span></span>;<br><br><span class="hljs-built_in">UFUNCTION</span>(BlueprintCallable, Category = <span class="hljs-string">&quot;UTL&quot;</span>)<br><span class="hljs-function"><span class="hljs-type">static</span> FString <span class="hljs-title">LuaStringToCSV</span><span class="hljs-params">(FString LuaString)</span></span>;<br></code></pre></td></tr></table></figure>
+<h5 id="使用举例"><a class="markdownIt-Anchor" href="#使用举例"></a> 使用举例</h5>
+<p>用第一个函数举例，该函数需要一个UObject的对象，或者子类的对象，最后返回一个FString变量，该变量是该Object的所有UPROPERTY的名称和值，字符串格式符合Lua的Table格式。</p>
+<p>比如我有如下几个Object类类型</p>
+<p>MyObject类</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-built_in">UCLASS</span>(BlueprintType, Blueprintable)<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">GAMETEST_API</span> UMyObject : <span class="hljs-keyword">public</span> UObject<br>&#123;<br>	<span class="hljs-built_in">GENERATED_BODY</span>()<br><br><span class="hljs-keyword">public</span>:<br><br>	<span class="hljs-built_in">UMyObject</span>();<br><br>	<span class="hljs-built_in">UPROPERTY</span>(EditAnywhere, BlueprintReadWrite, Category = GamePlay)<br>	<span class="hljs-type">bool</span> baseBool;<br><br>	<span class="hljs-built_in">UPROPERTY</span>(EditAnywhere, BlueprintReadWrite, Category = Gameplay)<br>	int32 baseInt;<br><br>	<span class="hljs-built_in">UPROPERTY</span>(EditAnywhere, BlueprintReadWrite, Category = Gameplay)<br>	<span class="hljs-type">float</span> baseFloat;<br><br>	<span class="hljs-built_in">UPROPERTY</span>(EditAnywhere, BlueprintReadWrite, Category = Gameplay)<br>	FString baseString;<br><br>	<span class="hljs-built_in">UPROPERTY</span>(EditAnywhere, BlueprintReadWrite, Category = Gameplay)<br>	TArray&lt;FString&gt; baseArray;<br><br>	<span class="hljs-built_in">UPROPERTY</span>(EditAnywhere, BlueprintReadWrite, Category = Gameplay)<br>	TMap&lt;int32, <span class="hljs-type">bool</span>&gt; baseMap;<br>&#125;;<br></code></pre></td></tr></table></figure>
+<p>MyObjectChild类，继承自MyObject类</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-built_in">UCLASS</span>(BlueprintType, Blueprintable)<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">GAMETEST_API</span> UMyObjectChild : <span class="hljs-keyword">public</span> UMyObject<br>&#123;<br>	<span class="hljs-built_in">GENERATED_BODY</span>()<br><br><span class="hljs-keyword">public</span>:<br><br>	<span class="hljs-built_in">UMyObjectChild</span>();<br><br>	<span class="hljs-built_in">UPROPERTY</span>(EditAnywhere, BlueprintReadWrite, Category = GamePlay)<br>	<span class="hljs-type">bool</span> childBool;<br><br>	<span class="hljs-built_in">UPROPERTY</span>(EditAnywhere, BlueprintReadWrite, Category = Gameplay)<br>	int32 childInt;<br><br>	<span class="hljs-built_in">UPROPERTY</span>(EditAnywhere, BlueprintReadWrite, Category = Gameplay)<br>	<span class="hljs-type">float</span> childFloat;<br><br>	<span class="hljs-built_in">UPROPERTY</span>(EditAnywhere, BlueprintReadWrite, Category = Gameplay)<br>	FString childString;<br><br>	<span class="hljs-built_in">UPROPERTY</span>(EditAnywhere, BlueprintReadWrite, Category = Gameplay)<br>	TArray&lt;<span class="hljs-type">bool</span>&gt; childArray;<br><br>	<span class="hljs-built_in">UPROPERTY</span>(EditAnywhere, BlueprintReadWrite, Category = Gameplay)<br>	TMap&lt;int32, int32&gt; childMap;<br>&#125;;<br></code></pre></td></tr></table></figure>
+<p>MyAnother类，其中成员变量有一个MyObject类和一个MyObjectChild类</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-built_in">UCLASS</span>(BlueprintType, Blueprintable)<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">GAMETEST_API</span> UMyAnotherObject : <span class="hljs-keyword">public</span> UObject<br>&#123;<br>	<span class="hljs-built_in">GENERATED_BODY</span>()<br><br><span class="hljs-keyword">public</span>:<br><br>	<span class="hljs-built_in">UMyAnotherObject</span>();<br><br>	<span class="hljs-built_in">UPROPERTY</span>(EditAnywhere, BlueprintReadWrite, Category = GamePlay)<br>	UMyObject* a;<br>    <br>    <span class="hljs-built_in">UPROPERTY</span>(EditAnywhere, BlueprintReadWrite, Category = GamePlay)<br>	UMyObjectChild* b;<br><br>	<span class="hljs-built_in">UPROPERTY</span>(EditAnywhere, BlueprintReadWrite, Category = GamePlay)<br>	<span class="hljs-type">bool</span> anotherbool;<br>&#125;;<br></code></pre></td></tr></table></figure>
+<p>那么假如以上所有类的成员变量在构造函数中有初始化（应该是必须有），我实例化一个MyAnotherObject的对象，将其传给此函数：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs xml">UMyAnotherObject* another = NewObject<span class="hljs-tag">&lt;<span class="hljs-name">UMyAnotherObject</span>&gt;</span>();<br>FString getObjectProperties = UObjectToLuaParser::UObjectToLuaString(another);<br></code></pre></td></tr></table></figure>
+<p>最后得到的getObjectProperties应该是如下的字符串：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-keyword">return</span>&#123;a=&#123;baseBool=<span class="hljs-literal">false</span>,baseInt=<span class="hljs-number">1</span>,baseFloat=<span class="hljs-number">1.0</span>,baseString=<span class="hljs-string">&#x27;base string&#x27;</span>,baseArray=&#123;<span class="hljs-string">&#x27;basearray01&#x27;</span>,<span class="hljs-string">&#x27;basearray02&#x27;</span>,<span class="hljs-string">&#x27;basearray03&#x27;</span>,&#125;,baseMap=&#123;[<span class="hljs-number">1</span>]=<span class="hljs-literal">true</span>,[<span class="hljs-number">2</span>]=<span class="hljs-literal">false</span>,[<span class="hljs-number">3</span>]=<span class="hljs-literal">true</span>,&#125;,&#125;,b=&#123;childBool=<span class="hljs-literal">true</span>,childInt=<span class="hljs-number">2</span>,childFloat=<span class="hljs-number">2.0</span>,childString=<span class="hljs-string">&#x27;child string&#x27;</span>,childArray=&#123;<span class="hljs-literal">true</span>,<span class="hljs-literal">false</span>,<span class="hljs-literal">true</span>,<span class="hljs-literal">false</span>,<span class="hljs-literal">true</span>,&#125;,childMap=&#123;[<span class="hljs-number">1</span>]=<span class="hljs-number">111</span>,[<span class="hljs-number">2</span>]=<span class="hljs-number">222</span>,[<span class="hljs-number">3</span>]=<span class="hljs-number">333</span>,&#125;,rotate=&#123;Pitch=<span class="hljs-number">1.0</span>,Yaw=<span class="hljs-number">1.1</span>,Roll=<span class="hljs-number">1.2</span>,&#125;,vector=&#123;X=<span class="hljs-number">111.0</span>,Y=<span class="hljs-number">222.0</span>,Z=<span class="hljs-number">333.0</span>,&#125;,baseBool=<span class="hljs-literal">false</span>,baseInt=<span class="hljs-number">1</span>,baseFloat=<span class="hljs-number">1.0</span>,baseString=<span class="hljs-string">&#x27;base string&#x27;</span>,baseArray=&#123;<span class="hljs-string">&#x27;basearray01&#x27;</span>,<span class="hljs-string">&#x27;basearray02&#x27;</span>,<span class="hljs-string">&#x27;basearray03&#x27;</span>,&#125;,baseMap=&#123;[<span class="hljs-number">1</span>]=<span class="hljs-literal">true</span>,[<span class="hljs-number">2</span>]=<span class="hljs-literal">false</span>,[<span class="hljs-number">3</span>]=<span class="hljs-literal">true</span>,&#125;,&#125;,anotherbool=<span class="hljs-literal">false</span>,&#125;<br></code></pre></td></tr></table></figure>
+<p>注意这里是没有任何空格和换行符的，最外层的大括号和return是为了Lua拿到后直接就可以dump为table进行处理，此处也可以修改最后输出的地方进行修改。下面是处理过格式的，方便对比：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><code class="hljs lua"><span class="hljs-keyword">return</span>&#123;<br>    a=&#123;<br>        baseBool=<span class="hljs-literal">false</span>,<br>        baseInt=<span class="hljs-number">1</span>,<br>        baseFloat=<span class="hljs-number">1.0</span>,<br>        baseString=<span class="hljs-string">&#x27;base string&#x27;</span>,<br>        baseArray=&#123;<br>            <span class="hljs-string">&#x27;basearray01&#x27;</span>,<br>            <span class="hljs-string">&#x27;basearray02&#x27;</span>,<br>            <span class="hljs-string">&#x27;basearray03&#x27;</span>,<br>        &#125;,<br>        baseMap=&#123;<br>            [<span class="hljs-number">1</span>]=<span class="hljs-literal">true</span>,<br>            [<span class="hljs-number">2</span>]=<span class="hljs-literal">false</span>,<br>            [<span class="hljs-number">3</span>]=<span class="hljs-literal">true</span>,<br>        &#125;,<br>    &#125;,<br>    b=&#123;<br>        childBool=<span class="hljs-literal">true</span>,<br>        childInt=<span class="hljs-number">2</span>,<br>        childFloat=<span class="hljs-number">2.0</span>,<br>        childString=<span class="hljs-string">&#x27;child string&#x27;</span>,<br>        childArray=&#123;<br>            <span class="hljs-literal">true</span>,<br>            <span class="hljs-literal">false</span>,<br>            <span class="hljs-literal">true</span>,<br>            <span class="hljs-literal">false</span>,<br>            <span class="hljs-literal">true</span>,<br>        &#125;,<br>        childMap=&#123;<br>            [<span class="hljs-number">1</span>]=<span class="hljs-number">111</span>,<br>            [<span class="hljs-number">2</span>]=<span class="hljs-number">222</span>,<br>            [<span class="hljs-number">3</span>]=<span class="hljs-number">333</span>,<br>        &#125;,<br>        rotate=&#123;<br>            Pitch=<span class="hljs-number">1.0</span>,<br>            Yaw=<span class="hljs-number">1.1</span>,<br>            Roll=<span class="hljs-number">1.2</span>,<br>        &#125;,<br>        vector=&#123;<br>            X=<span class="hljs-number">111.0</span>,<br>            Y=<span class="hljs-number">222.0</span>,<br>            Z=<span class="hljs-number">333.0</span>,<br>        &#125;,<br>        baseBool=<span class="hljs-literal">false</span>,<br>        baseInt=<span class="hljs-number">1</span>,<br>        baseFloat=<span class="hljs-number">1.0</span>,<br>        baseString=<span class="hljs-string">&#x27;base string&#x27;</span>,<br>        baseArray=&#123;<br>            <span class="hljs-string">&#x27;basearray01&#x27;</span>,<br>            <span class="hljs-string">&#x27;basearray02&#x27;</span>,<br>            <span class="hljs-string">&#x27;basearray03&#x27;</span>,<br>        &#125;,<br>        baseMap=&#123;<br>            [<span class="hljs-number">1</span>]=<span class="hljs-literal">true</span>,<br>            [<span class="hljs-number">2</span>]=<span class="hljs-literal">false</span>,<br>            [<span class="hljs-number">3</span>]=<span class="hljs-literal">true</span>,&#125;,<br>        &#125;,<br>    &#125;<br>    anotherbool=<span class="hljs-literal">false</span>,<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>需要指出的是目前**仅支持基本数据类型，TArray，TMap，FVector，FRotator，不支持不支持不支持自定义结构体。**具体原因可以参考大致原理部分。</p>
+<h5 id="函数简介"><a class="markdownIt-Anchor" href="#函数简介"></a> 函数简介</h5>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-function"><span class="hljs-type">static</span> FString <span class="hljs-title">UObjectToLuaString</span><span class="hljs-params">(UObject* Object)</span></span>;<br></code></pre></td></tr></table></figure>
+<p>上文已经举例，不再赘述。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-type">static</span> FString <span class="hljs-title">UObjectToLuaStringWithIgnore</span><span class="hljs-params">(UObject* Object, FString ignore)</span></span>;<br></code></pre></td></tr></table></figure>
+<p>ignore参数中是用逗号分隔的不需要的UPROPERTY的name，最后一个后面也要有逗号，做成字符串是为了可以直接用Lua调用方便，ignore中的UPROPERTY会在Get信息的过程中跳过</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-type">static</span> FString <span class="hljs-title">UObjectToCSV</span><span class="hljs-params">(UObject* Object)</span></span>;<br></code></pre></td></tr></table></figure>
+<p>该函数会最后将字符串修改为符合CSV文件要求的格式，在收集信息到表格的过程中可以使用</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-type">static</span> FString <span class="hljs-title">UObjectToCSVwithIgnore</span><span class="hljs-params">(UObject* Object, FString ignore)</span></span>;<br></code></pre></td></tr></table></figure>
+<p>ignore和上面第二个一样，最后的字符串和上面第三个一样符合CSV格式</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-type">static</span> FString <span class="hljs-title">GetAimValue</span><span class="hljs-params">(UObject* Object, FString Aim)</span></span>;<br></code></pre></td></tr></table></figure>
+<p>Aim和上文的ignore不同，只能存放一个UPROPERTY的name，不会进一步处理，最后返回的字符串只有这一个UPROPERTY的信息</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-type">static</span> UObject* <span class="hljs-title">SetAimValue</span><span class="hljs-params">(UClass* classNAme, FString Aim, FString nameAndValue)</span></span>;<br></code></pre></td></tr></table></figure>
+<p>第一个参数是UCLass*类，函数内部会新建一个该UClass对应的对象实例，Aim依然是一个UPROPERTY的name，会将该UPROPERTY的value设置为第三个参数中的值。注意第三个参数要求写成name=value的形式</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-type">static</span> UObject* <span class="hljs-title">LuaStringToUObject</span><span class="hljs-params">(UClass* className, FString nameAndValue)</span></span>;<br></code></pre></td></tr></table></figure>
+<p>这里注意第二个参数，第二个参数的形式和上面第一个函数最后输出的形式相同，但不需要最外层的return和大括号</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-type">static</span> UObject* <span class="hljs-title">LuaStringToSetUObject</span><span class="hljs-params">(UObject* objcet, FString nameAndValue)</span></span>;<br></code></pre></td></tr></table></figure>
+<p>和上一个函数的区别在于第一个参数，这个可以理解为给已存在的实例对象的Set方法</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-type">static</span> UObject* <span class="hljs-title">CSVToUObject</span><span class="hljs-params">(UClass* className, FString nameAndValue)</span></span>;<br></code></pre></td></tr></table></figure>
+<p>从csv字符串新建一个对象并使用第二个参数进行赋值</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-type">static</span> UObject* <span class="hljs-title">CSVToSetUObject</span><span class="hljs-params">(UObject* objcet, FString nameAndValue)</span></span>;<br></code></pre></td></tr></table></figure>
+<p>用csv字符串设置一个已存在的对象</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-type">static</span> UObject* <span class="hljs-title">CreateObject</span><span class="hljs-params">(UClass* className)</span></span>;<br></code></pre></td></tr></table></figure>
+<p>自己封装的一个从UClass创建对应对象的函数</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-type">static</span> FString <span class="hljs-title">LuaStringToCSV</span><span class="hljs-params">(FString LuaString)</span></span>;<br></code></pre></td></tr></table></figure>
+<p>一个将Lua风格的字符串改为CSV风格的函数</p>
+<h5 id="下载和使用"><a class="markdownIt-Anchor" href="#下载和使用"></a> 下载和使用</h5>
+<p>项目地址：<a target="_blank" rel="noopener" href="https://github.com/muchenhen/UObjectToLua">https://github.com/muchenhen/UObjectToLua</a></p>
+<p>Git： <a href="mailto:git@github.com">git@github.com</a>:muchenhen/UObjectToLua.git</p>
+<p>将UObjectToLua文件夹复制进项目或者引擎的Plungins文件夹，重新生成项目的解决方案，重新编译项目</p>
+<p>在其他插件中使用的话在对应的插件的.build.cs文件包含UObjectToLua模块，运行时使用的话在项目的.build.cs中包含。在要使用的地方包含对应的头文件。</p>
+<p>欢迎交流和捉虫，毕竟作者只是一个菜鸡……</p>
+
+              
+            </div>
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/UE4/">#UE4</a>
+      
+        <a href="/tags/C/">#C++</a>
+      
+        <a href="/tags/Plugin/">#Plugin</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>UE4：UObjectToLua插件简介</div>
+      <div>http://muchenhen.com/posts/42260/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>木尘痕</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年10月21日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/64469/" title="测试CI">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">测试CI</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/47560/" title="UE4:PSO使用指南">
+                        <span class="hidden-mobile">UE4:PSO使用指南</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+    <!-- 备案信息 ICP for China -->
+    <div class="beian">
+  <span>
+    <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+      
+    </a>
+  </span>
+  
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?bbb32ef470b36fe5f1e4e72f32112b68";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script>
+  (function() {
+    var enableLang = CONFIG.code_language.enable && CONFIG.code_language.default;
+    var enableCopy = CONFIG.copy_btn;
+    if (!enableLang && !enableCopy) {
+      return;
+    }
+
+    function getBgClass(ele) {
+      return Fluid.utils.getBackgroundLightness(ele) >= 0 ? 'code-widget-light' : 'code-widget-dark';
+    }
+
+    var copyTmpl = '';
+    copyTmpl += '<div class="code-widget">';
+    copyTmpl += 'LANG';
+    copyTmpl += '</div>';
+    jQuery('.markdown-body pre').each(function() {
+      var $pre = jQuery(this);
+      if ($pre.find('code.mermaid').length > 0) {
+        return;
+      }
+      if ($pre.find('span.line').length > 0) {
+        return;
+      }
+
+      var lang = '';
+
+      if (enableLang) {
+        lang = CONFIG.code_language.default;
+        if ($pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2 && $pre.children().hasClass('hljs')) {
+          lang = $pre[0].children[0].classList[1];
+        } else if ($pre[0].getAttribute('data-language')) {
+          lang = $pre[0].getAttribute('data-language');
+        } else if ($pre.parent().hasClass('sourceCode') && $pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2) {
+          lang = $pre[0].children[0].classList[1];
+          $pre.parent().addClass('code-wrapper');
+        } else if ($pre.parent().hasClass('markdown-body') && $pre[0].classList.length === 0) {
+          $pre.wrap('<div class="code-wrapper"></div>');
+        }
+        lang = lang.toUpperCase().replace('NONE', CONFIG.code_language.default);
+      }
+      $pre.append(copyTmpl.replace('LANG', lang).replace('code-widget">',
+        getBgClass($pre[0]) + (enableCopy ? ' code-widget copy-btn" data-clipboard-snippet><i class="iconfont icon-copy"></i>' : ' code-widget">')));
+
+      if (enableCopy) {
+        Fluid.utils.createScript('https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js', function() {
+          var clipboard = new window.ClipboardJS('.copy-btn', {
+            target: function(trigger) {
+              var nodes = trigger.parentNode.childNodes;
+              for (var i = 0; i < nodes.length; i++) {
+                if (nodes[i].tagName === 'CODE') {
+                  return nodes[i];
+                }
+              }
+            }
+          });
+          clipboard.on('success', function(e) {
+            e.clearSelection();
+            e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-copy', 'icon-success');
+            setTimeout(function() {
+              e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-success', 'icon-copy');
+            }, 2000);
+          });
+        });
+      }
+    });
+  })();
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,660 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="木尘痕">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="set的语法定义如下： template &lt;class Key, class Traits&#x3D;less, class Allocator&#x3D;allocator&gt; class set multiset如下： template &lt;class Key, class Compare &#x3D;less , class Allocator &#x3D;allocator &gt; class multiset">
+<meta property="og:type" content="website">
+<meta property="og:title" content="STL：set与multset 容器">
+<meta property="og:url" content="http://muchenhen.com/OLD/stl%EF%BC%9Aset%E4%B8%8Emultset-%E5%AE%B9%E5%99%A8.html">
+<meta property="og:site_name" content="虚无之境">
+<meta property="og:description" content="set的语法定义如下： template &lt;class Key, class Traits&#x3D;less, class Allocator&#x3D;allocator&gt; class set multiset如下： template &lt;class Key, class Compare &#x3D;less , class Allocator &#x3D;allocator &gt; class multiset">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2019/11/image-10.png">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2019/11/image-11.png">
+<meta property="article:published_time" content="2019-11-11T13:29:03.000Z">
+<meta property="article:modified_time" content="2024-07-14T15:26:08.244Z">
+<meta property="article:author" content="木尘痕">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.muchenhen.com/wp-content/uploads/2019/11/image-10.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>STL：set与multset 容器 - 虚无之境</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"muchenhen.com","root":"/","version":"1.9.1","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"bbb32ef470b36fe5f1e4e72f32112b68","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>虚无之境</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/NagisaKaworu.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="STL：set与multset 容器"></span>
+          
+        </div>
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      <div class="container nopadding-x-md">
+        <div id="board"
+          >
+          
+          <div class="container">
+            <div class="row">
+              <div class="col-12 col-md-10 m-auto">
+                
+
+<article class="page-content">
+  <p>set的语法定义如下：</p>
+<p>template &lt;class Key,</p>
+<p>class Traits=less<Key>,</p>
+<p>class Allocator=allocator<Key>&gt;</p>
+<p>class set</p>
+<p>multiset如下：</p>
+<p>template &lt;class Key, class Compare =less <Key>, class Allocator =allocator <Key>&gt;</p>
+<p>class multiset</p>
+<p>set根据特定的排序准则，自动将元素进行排序。multiset允许有重复元素，set不允许。</p>
+<p>需要头文件<set></p>
+<p>命名空间为std</p>
+<p>只要是可以被排序的元素类型都可以作为set的元素类型。默认排序准则是less（一个函数对象），从小到大。定义里的第三个实参可有可无，默认的内存模型是allocator，同样由标准库提供。</p>
+<p>排序准则必循遵循strict weak ordering，含义如下：</p>
+<ul>
+<li>必须是非对称的，比如操作符&lt;，x&lt;y为真则y&lt;x必须是假</li>
+<li>必须是可传递的，比如a&lt;b，b&lt;c，则a&lt;c</li>
+<li>必须是非自反的，x&lt;x为假</li>
+<li>必须是等效传递的，意思是，对于操作符&lt;，若!(a&lt;b) &amp;&amp; !(b&lt;a)为真，且!(b&lt;c) &amp;&amp; !(c&lt;b)为真，那么!(a&lt;c) &amp;&amp; !(c&lt;a)为真。意味着对于判别式op(),op(a,c),op(b,a),op(b,c),op(c,b)都为假，则op(a,c),op(c,a)为假。</li>
+</ul>
+<p>当两个元素被判定为没有任何一个小于另一个，就会被视为重复。</p>
+<p>multiset的等效元素次序是随机但是稳定的。插入和删除元素依然会保持等效元素的相对次序。</p>
+<p>不能直接改变元素值，因为回打乱原有的顺序。两个容器要改变元素值必须先删除旧元素，再插入新元素。两个容器都不提供直接访问元素的操作函数。通过迭代器进行间接访问有一个限制，对于迭代器来说，元素值是常量。</p>
+<h2 id="构造函数与析构函数"><a class="markdownIt-Anchor" href="#构造函数与析构函数"></a> 构造函数与析构函数</h2>
+<p>对于排序准则，有两种方式可以定义。</p>
+<p>template参数定义，例如：</p>
+<p>set&lt;int,greater<int>&gt; coll;</p>
+<p>第二个参数可以认为是排序准则的“类型”。实际排序准则是容器产生的函数对象。</p>
+<p>以构造函数参数定义：</p>
+<p>这种情况，同一个类型可以运用可以运用不同的排序准则，而排序准则的初始值或状态也可以不同，如果运行期才获得排序准则，而且需要用到不同的排序准则，这一方式可派上用场。如果没有指定特定的排序准则，就会采用默认排序准则，即函数对象less&lt;&gt;</p>
+<p>排序准则也被用来检验元素相等性。这样做是有一些优点的：</p>
+<p>只需要传递一个实参作为排序准则，不需要针对元素类型提供==运算符，可以堆“相等性”有相反的定义，不造成混淆。但是这种检验会花费较长的时间，因为可能会需要比较第二次。</p>
+<p>需要注意。两个容器用<mark>比较时内部元素会用自己的</mark>运算符。</p>
+<p>构造和析构函数表</p>
+<p>操作</p>
+<p>效果</p>
+<p>set c</p>
+<p>默认构造，不含任何元素建立一个空的</p>
+<p>set c(op)</p>
+<p>复制构造</p>
+<p>set c(c2)</p>
+<p>复制构造，参数是另一个类型相同的容器，会复制每个元素</p>
+<p>set c = c2</p>
+<p>复制构造</p>
+<p>set c(cv)</p>
+<p>move构造（移动构造），c11</p>
+<p>set c = rv</p>
+<p>移动构造，c11</p>
+<p>set c(begin,end)</p>
+<p>左闭右开为初值建立一个容器</p>
+<p>set c(begin,end,op)</p>
+<p>左闭右开为初值，以op为排序准则</p>
+<p>set c(initlist)</p>
+<p>以initlist为初见建立。C11</p>
+<p>set c = initlist</p>
+<p>同上</p>
+<p>c.~set()</p>
+<p>析构函数</p>
+<p>上表中的set可以是如下形式：</p>
+<p>set</p>
+<p>效果</p>
+<p>set<Elem></p>
+<p>一个set，以less&lt;&gt;为准则排序</p>
+<p>set&lt;Elem, Op&gt;</p>
+<p>一个set，以op()为排序准则</p>
+<p>multiset<Elem></p>
+<p>一个multiset，以less&lt;&gt;为排序准则</p>
+<p>multiset<Elem></p>
+<p>一个multiset，以op&lt;&gt;为排序准则</p>
+<h2 id="非变动性操作"><a class="markdownIt-Anchor" href="#非变动性操作"></a> 非变动性操作</h2>
+<p>用来查询大小，相互比较。</p>
+<p>注意元素比较动作只适合于类型相同的容器。要比较不同类型的容器，必须采用标准库比较算法。</p>
+<p>操作</p>
+<p>效果</p>
+<p>c.key_comp()</p>
+<p>返回比较准则</p>
+<p>c.value_comp()</p>
+<p>返回针对value的比较准则</p>
+<p>c.empty()</p>
+<p>返回是否为空</p>
+<p>c.size()</p>
+<p>返回目前元素数量</p>
+<p>c.max_size()</p>
+<p>返回元素个数的最大可能</p>
+<p>==</p>
+<p></p>
+<p>!=</p>
+<p></p>
+<p>&lt;</p>
+<p></p>
+<p>&gt;</p>
+<p></p>
+<p>&lt;=</p>
+<p></p>
+<p>&gt;=</p>
+<p></p>
+<p>特殊查找函数</p>
+<p>对于set和multiset，在元素快速查找方面有优化设计，所以提供了特殊的查找函数。这些函数是同名的STL算法的特殊版本，时间复杂度更低。</p>
+<p>操作</p>
+<p>效果</p>
+<p>c.count(value)</p>
+<p>返回值为value的元素个数</p>
+<p>c.find(value)</p>
+<p>返回元素值为value的第一个元素，找不到就返回end()</p>
+<p>c.lower_bound(value)</p>
+<p>返回value的第一个可安插的位置。即元素值&gt;=value的第一个位置</p>
+<p>c.upper_bound(value)</p>
+<p>返回value的最后一个可插入的位置。即元素值&gt;value的第一个位置</p>
+<p>c.equal_range(value)</p>
+<p>返回value可以插入的第一个位置和最后一个位置，也就是元素值==value的区间</p>
+<p>关于上面的几个函数的实例：</p>
+<p>#include<br />
+#include</p>
+<p>using namespace std;</p>
+<p>int main()<br />
+{<br />
+set c;<br />
+c.insert(1);<br />
+c.insert(2);</p>
+<pre><code class="hljs">c.insert(4);
+c.insert(5);
+c.insert(6);
+
+cout &lt;&lt; &quot;lower\_bound(3):&quot; &lt;&lt; \*c.lower\_bound(3) &lt;&lt; endl;
+cout &lt;&lt; &quot;upper\_bound(3):&quot; &lt;&lt; \*c.upper\_bound(3) &lt;&lt; endl;
+cout &lt;&lt; &quot;equal\_range(3):&quot; &lt;&lt; \*c.equal\_range(3).first &lt;&lt; &quot; &quot; 
+						  &lt;&lt; \*c.equal\_range(3).second &lt;&lt; endl;
+
+cout &lt;&lt; endl;
+cout &lt;&lt; &quot;lower\_bound(5):&quot; &lt;&lt; \*c.lower\_bound(5) &lt;&lt; endl;
+cout &lt;&lt; &quot;upper\_bound(5):&quot; &lt;&lt; \*c.upper\_bound(5) &lt;&lt; endl;
+cout &lt;&lt; &quot;equal\_range(5):&quot; &lt;&lt; \*c.equal\_range(5).first &lt;&lt; &quot; &quot;
+						  &lt;&lt; \*c.equal\_range(5).second &lt;&lt; endl;
+
+return 0;
+</code></pre>
+<p>}</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/11/image-10.png" srcset="/img/loading.gif" lazyload alt="_ bound (3) : 41 over_ bound (3) : 4pperequal_range (3) : 4 4_ bound (5) : 51 over_ bound (5) : 6pperequal_range (5) 6 " /></p>
+<h2 id="赋值操作"><a class="markdownIt-Anchor" href="#赋值操作"></a> 赋值操作</h2>
+<p>两个容器只提供任何容器都提供的基本复制操作，赋值操作的两端容器必须具备相同类型。排序准则本身可以不同，但“类型”必须相同。如果排序准则不同，准则本身也会连同容器一并被赋值或者交换。</p>
+<p>操作</p>
+<p>效果</p>
+<p>c = c2</p>
+<p>很明显的操作我懒得写了……以下省略</p>
+<p>c = rv</p>
+<p>右值以移动构造的方式给c</p>
+<p>c = initlist</p>
+<p></p>
+<p>c1.swap(c2)</p>
+<p></p>
+<p>swap(c1,c2)</p>
+<p></p>
+<h2 id="迭代器相关函数"><a class="markdownIt-Anchor" href="#迭代器相关函数"></a> 迭代器相关函数</h2>
+<p>两个容器不提供元素直接访问，所以只能采取范围for循环或者使用迭代器。</p>
+<p>需要注意的是，和所有关联式容器类似，迭代器是双向迭代器，对于只能接受随机访问迭代器的算法，这两个容器无法使用。并且从迭代器的角度去看，所有容器内的元素都会被视为常量，这样才能确保元素不会被改动以至于打乱原有的顺序。如果要移除容器内的元素，只能使用容器的成员函数。</p>
+<p>操作</p>
+<p>效果</p>
+<p>c.begin()</p>
+<p>返回一个双向迭代器指向第一个元素</p>
+<p>c.end()</p>
+<p>返回一个双向迭代器指向最后一个元素的下一个位置</p>
+<p>c.cbegin()</p>
+<p>返回一个const双向迭代器指向第一个元素，C11</p>
+<p>c.cend()</p>
+<p>返回一个const双向迭代器指向最后一个元素的下一个位置，C11</p>
+<p>c.rbrgin()</p>
+<p>返回一个反向的迭代器指向反向迭代的第一个元素</p>
+<p>c.rend()</p>
+<p>返回一个反向的迭代器指向反向迭代的最后一个元素的下一个位置</p>
+<p>c.crbegin()</p>
+<p>返回一个const反向迭代器指向反向迭代的第一个元素，C11</p>
+<p>c.crend()</p>
+<p>返回一个const反向迭代器指向反向迭代的最末元素的下一位置，C11</p>
+<h2 id="元素的插入和删除"><a class="markdownIt-Anchor" href="#元素的插入和删除"></a> 元素的插入和删除</h2>
+<p>对于multiset，因为存在元素的值相同的元素，部分成员函数会保存等值元素之间的相对次序插入的元素会被放在既有的等值元素的末尾。</p>
+<p>操作</p>
+<p>效果</p>
+<p>c.insert(value)</p>
+<p>插入value值返回新元素的位置，无论插入是否成功</p>
+<p>c.insert(pos,value)</p>
+<p>同上，这里的pos是一个提示值，提示了查找插入位置的起点，正确的提示值可以加快查找速度</p>
+<p>c.insert(begin,end)</p>
+<p>区间插入，无返回值</p>
+<p>c.insert(initlist)</p>
+<p>初始列表插入，无返回值，C11</p>
+<p>c.emplace(args……)</p>
+<p>插入一个以args为初值的元素，返回新元素的位置</p>
+<p>c.emplace_hint(pos,args…)</p>
+<p>同上，pos为位置提示</p>
+<p>c.erase(value)</p>
+<p>删除与value相等的所有元素，返回被删除的个数</p>
+<p>c.erase(pos)</p>
+<p>删除迭代器位置pos上的元素，无返回值</p>
+<p>c.erase(begin,end)</p>
+<p>删除区间内的所有元素，无返回值</p>
+<p>c.clear()</p>
+<p>移除所有元素，清空容器</p>
+<p>注意insert()和emplace()返回类型不完全相同。原因是set不允许重复而multiset允许。如果set插入一个已经存在的值，插入动作将失败，所以set返回类型是以pair组织起来的两个值：</p>
+<p>pair的second成员表示是否插入成功</p>
+<p>pair中的first成员表示新元素的位置，或者已经存在的同值元素的位置。</p>
+<p>set提供的接口：</p>
+<p>// (1) 单个元素<br />
+pair insert(const value_type&amp; Val);</p>
+<p>// (2) single element, perfect forwarded<br />
+template<br />
+pair insert(ValTy&amp;&amp; Val);</p>
+<p>// (3) single element with hint<br />
+iterator insert( const_iterator Where, const value_type&amp; Val);</p>
+<p>// (4) single element, perfect forwarded, with hint<br />
+template<br />
+iterator insert( const_iterator Where, ValTy&amp;&amp; Val);</p>
+<p>// (5) range<br />
+template<br />
+void insert(InputIterator First,  InputIterator Last);</p>
+<p>// (6) initializer list<br />
+void insert( initializer_list IList);</p>
+<p>//emplace<br />
+template<br />
+pair emplace(<br />
+Args&amp;&amp;… args);</p>
+<p>//emplace_hint<br />
+template<br />
+iterator emplace_hint(<br />
+const_iterator where,<br />
+Args&amp;&amp;… args);</p>
+<p>//erase<br />
+iterator erase(<br />
+const_iterator Where);</p>
+<p>iterator erase(<br />
+const_iterator First,<br />
+const_iterator Last);</p>
+<p>size_type erase(<br />
+const key_type&amp; Key);</p>
+<p>multiset提供的节口</p>
+<p>//multiset::insert // (1) single element pair insert( const value_type&amp; Val); // (2) single element, perfect forwarded template pair insert( ValTy&amp;&amp; Val); // (3) single element with hint iterator insert( const_iterator Where, const value_type&amp; Val); // (4) single element, perfect forwarded, with hint template iterator insert( const_iterator Where, ValTy&amp;&amp; Val); // (5) range template void insert( InputIterator First, InputIterator Last); // (6) initializer list void insert( initializer_list IList); //multiset::emplace template iterator emplace(Args&amp;&amp;… args); //multiset::emplace_hint template iterator emplace_hint( const_iterator where, Args&amp;&amp;… args); //multiset::erase iterator erase( const_iterator Where); iterator erase( const_iterator First, const_iterator Last); size_type erase( const key_type&amp; Key);</p>
+<h2 id="异常处理"><a class="markdownIt-Anchor" href="#异常处理"></a> 异常处理</h2>
+<p>两个容器是以节点为基础的容器，如果节点构建失败，容器仍保持原样。由于析构函数通常不抛出异常，所以节点的删除不可以失败。</p>
+<p>对于多重元素安插动作，保持元素次序这个条件会造成异常抛出时必须完全恢复原状变得不可能。因此只有单一元素插入时才支持除了成功就是无效的操作原则。</p>
+<p>运用实例</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/11/image-11.png" srcset="/img/loading.gif" lazyload alt="6 一 一 41 3 礻 35 试 2 除 4 除 43 子 4 、 7 一 6冂 乙 亠 凵 刂 " /></p>
+<p>运行期指定排序准则</p>
+<p>在必须在运行期处理排序准则或者需要对同一种数据类型采用不同的排序准则，就需要一个用来表现排序准则的特殊类型。</p>
+<p>下面是一个实例</p>
+<p>代码托管到了github：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/muchenhen/MySTLSample/tree/master/STL%E5%AE%B9%E5%99%A8/set%E4%B8%8Emultiset">运行时排序准则</a></p>
+
+
+  
+
+</article>
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+    <!-- 备案信息 ICP for China -->
+    <div class="beian">
+  <span>
+    <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+      
+    </a>
+  </span>
+  
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?bbb32ef470b36fe5f1e4e72f32112b68";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,568 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="木尘痕">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="源码： #include #include #include void framebuffer_size_callback(GLFWwindow* window, int width, int height); void processInput(GLFWwindow *window); &#x2F;&#x2F; 设置窗口大小 const unsigned int SCR_WIDTH &#x3D; 800; const un">
+<meta property="og:type" content="website">
+<meta property="og:title" content="用OpenGL绘制两个相连三角形">
+<meta property="og:url" content="http://muchenhen.com/OLD/%E7%94%A8opengl%E7%BB%98%E5%88%B6%E4%B8%A4%E4%B8%AA%E7%9B%B8%E8%BF%9E%E4%B8%89%E8%A7%92%E5%BD%A2.html">
+<meta property="og:site_name" content="虚无之境">
+<meta property="og:description" content="源码： #include #include #include void framebuffer_size_callback(GLFWwindow* window, int width, int height); void processInput(GLFWwindow *window); &#x2F;&#x2F; 设置窗口大小 const unsigned int SCR_WIDTH &#x3D; 800; const un">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2019/03/QQ%E6%88%AA%E5%9B%BE20190301165057.png">
+<meta property="article:published_time" content="2019-03-01T08:52:32.000Z">
+<meta property="article:modified_time" content="2024-07-14T15:26:08.252Z">
+<meta property="article:author" content="木尘痕">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.muchenhen.com/wp-content/uploads/2019/03/QQ%E6%88%AA%E5%9B%BE20190301165057.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>用OpenGL绘制两个相连三角形 - 虚无之境</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"muchenhen.com","root":"/","version":"1.9.1","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"bbb32ef470b36fe5f1e4e72f32112b68","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>虚无之境</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/NagisaKaworu.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="用OpenGL绘制两个相连三角形"></span>
+          
+        </div>
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      <div class="container nopadding-x-md">
+        <div id="board"
+          >
+          
+          <div class="container">
+            <div class="row">
+              <div class="col-12 col-md-10 m-auto">
+                
+
+<article class="page-content">
+  <p><img src="https://www.muchenhen.com/wp-content/uploads/2019/03/QQ%E6%88%AA%E5%9B%BE20190301165057.png" srcset="/img/loading.gif" lazyload alt="" /></p>
+<p>源码：</p>
+<p>#include #include #include void framebuffer_size_callback(GLFWwindow* window, int width, int height);<br />
+void processInput(GLFWwindow *window);</p>
+<p>// 设置窗口大小<br />
+const unsigned int SCR_WIDTH = 800;<br />
+const unsigned int SCR_HEIGHT = 600;</p>
+<p>//编写顶点着色器<br />
+const char *vertexShaderSource = “#version 460 core\n”<br />
+“layout (location = 0) in vec3 aPos;\n”<br />
+“void main()\n”<br />
+“{\n”<br />
+&quot;   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n&quot;<br />
+“}\0”;</p>
+<p>//编写片段着色器<br />
+const char *fragmentShaderSource = “#version 460 core\n”<br />
+“out vec4 FragColor;\n”<br />
+“void main()\n”<br />
+“{\n”<br />
+&quot;   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n&quot;<br />
+“}\n\0”;</p>
+<p>int main()<br />
+{<br />
+glfwInit();<br />
+glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);<br />
+glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);<br />
+glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);</p>
+<pre><code class="hljs">//创建窗口
+GLFWwindow\* window = glfwCreateWindow(SCR\_WIDTH, SCR\_HEIGHT, &quot;相连的三角行&quot;, NULL, NULL);
+//检查窗口创建
+if (window == NULL)
+&#123;
+	std::cout &lt;&lt; &quot;Failed to create GLFW window&quot; &lt;&lt; std::endl;
+	glfwTerminate();
+	return -1;
+&#125;
+glfwMakeContextCurrent(window);
+glfwSetFramebufferSizeCallback(window, framebuffer\_size\_callback);
+
+if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+&#123;
+	std::cout &lt;&lt; &quot;Failed to initialize GLAD&quot; &lt;&lt; std::endl;
+	return -1;
+&#125;
+
+// 创建并编译着色器
+// 顶点着色器
+int vertexShader = glCreateShader(GL\_VERTEX\_SHADER);
+glShaderSource(vertexShader, 1, &amp;vertexShaderSource, NULL);
+glCompileShader(vertexShader);
+// 检查编译错误
+int success;
+char infoLog\[512\];
+glGetShaderiv(vertexShader, GL\_COMPILE\_STATUS, &amp;success);
+if (!success)
+&#123;
+	glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+	std::cout &lt;&lt; &quot;ERROR::SHADER::VERTEX::COMPILATION\_FAILED\\n&quot; &lt;&lt; infoLog &lt;&lt; std::endl;
+&#125;
+// 片段着色器
+int fragmentShader = glCreateShader(GL\_FRAGMENT\_SHADER);
+glShaderSource(fragmentShader, 1, &amp;fragmentShaderSource, NULL);
+glCompileShader(fragmentShader);
+//检查编译错误
+glGetShaderiv(fragmentShader, GL\_COMPILE\_STATUS, &amp;success);
+if (!success)
+&#123;
+	glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+	std::cout &lt;&lt; &quot;ERROR::SHADER::FRAGMENT::COMPILATION\_FAILED\\n&quot; &lt;&lt; infoLog &lt;&lt; std::endl;
+&#125;
+//链接着色器
+int shaderProgram = glCreateProgram();
+glAttachShader(shaderProgram, vertexShader);
+glAttachShader(shaderProgram, fragmentShader);
+glLinkProgram(shaderProgram);
+//检查连接错误
+glGetProgramiv(shaderProgram, GL\_LINK\_STATUS, &amp;success);
+if (!success) &#123;
+	glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+	std::cout &lt;&lt; &quot;ERROR::SHADER::PROGRAM::LINKING\_FAILED\\n&quot; &lt;&lt; infoLog &lt;&lt; std::endl;
+&#125;
+glDeleteShader(vertexShader);
+glDeleteShader(fragmentShader);
+
+// 设置顶点数据和缓存，配置顶点属性
+// 添加一个新的顶点数组，形成两个三角形，共6个顶点
+float vertices\[\] = &#123;
+	//第一个三角形
+	-0.9f, -0.5f, 0.0f,  // left 
+	-0.0f, -0.5f, 0.0f,  // right
+	-0.45f, 0.5f, 0.0f,  // top 
+	//第二个三角形
+	 0.0f, -0.5f, 0.0f,  // left
+	 0.9f, -0.5f, 0.0f,  // right
+	 0.45f, 0.5f, 0.0f   // top 
+&#125;;
+
+unsigned int VBO, VAO;
+glGenVertexArrays(1, &amp;VAO);
+glGenBuffers(1, &amp;VBO);
+//绑定顶点数组对象
+glBindVertexArray(VAO);
+//绑定并设置顶点缓存
+glBindBuffer(GL\_ARRAY\_BUFFER, VBO);
+glBufferData(GL\_ARRAY\_BUFFER, sizeof(vertices), vertices, GL\_STATIC\_DRAW);
+//配置顶点属性
+glVertexAttribPointer(0, 3, GL\_FLOAT, GL\_FALSE, 3 \* sizeof(float), (void\*)0);
+glEnableVertexAttribArray(0);
+
+glBindBuffer(GL\_ARRAY\_BUFFER, 0);
+
+glBindVertexArray(0);
+
+//渲染循环
+while (!glfwWindowShouldClose(window))
+&#123;
+	//输入
+	processInput(window);
+
+	//渲染
+	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+	glClear(GL\_COLOR\_BUFFER\_BIT);
+
+	//画图
+	glUseProgram(shaderProgram);
+	glBindVertexArray(VAO);
+	glDrawArrays(GL\_TRIANGLES, 0, 6); //两个三角形共六个顶点
+
+	//交换缓冲区
+	glfwSwapBuffers(window);
+	glfwPollEvents();
+&#125;
+
+//取消用过的资源的分配
+glDeleteVertexArrays(1, &amp;VAO);
+glDeleteBuffers(1, &amp;VBO);
+
+// glfw终止，清除所有分配的资源
+glfwTerminate();
+return 0;
+</code></pre>
+<p>}</p>
+<p>//检测并响应按键输入<br />
+void processInput(GLFWwindow *window)<br />
+{<br />
+if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)<br />
+glfwSetWindowShouldClose(window, true);<br />
+}</p>
+<p>//改变窗口大小时调用<br />
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)<br />
+{<br />
+glViewport(0, 0, width, height);<br />
+}</p>
+
+
+  
+
+</article>
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+    <!-- 备案信息 ICP for China -->
+    <div class="beian">
+  <span>
+    <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+      
+    </a>
+  </span>
+  
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?bbb32ef470b36fe5f1e4e72f32112b68";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

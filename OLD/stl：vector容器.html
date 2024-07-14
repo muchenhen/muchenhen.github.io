@@ -1,0 +1,552 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="木尘痕">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="是一个以线性顺序组织给定类型元素的容器。它支持对任何元素的快速随机访问，以及与序列之间的动态添加和删除。 可以利用索引随机访问 在尾部附加或者移除元素都很快速，但是在中段或起始安插元素比较费时，插入时后面的元素必须移动以保持相对位置 大部分情况元素追加式高速的，有时候可能是缓慢的，vector可能需要重新分配内存并将现有元素复制到对应位置 &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;">
+<meta property="og:type" content="website">
+<meta property="og:title" content="STL：vector容器">
+<meta property="og:url" content="http://muchenhen.com/OLD/stl%EF%BC%9Avector%E5%AE%B9%E5%99%A8.html">
+<meta property="og:site_name" content="虚无之境">
+<meta property="og:description" content="是一个以线性顺序组织给定类型元素的容器。它支持对任何元素的快速随机访问，以及与序列之间的动态添加和删除。 可以利用索引随机访问 在尾部附加或者移除元素都很快速，但是在中段或起始安插元素比较费时，插入时后面的元素必须移动以保持相对位置 大部分情况元素追加式高速的，有时候可能是缓慢的，vector可能需要重新分配内存并将现有元素复制到对应位置 &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://www.muchenhen.com/wp-content/uploads/2019/10/image-5.png">
+<meta property="og:image" content="http://www.muchenhen.com/wp-content/uploads/2019/10/image-6.png">
+<meta property="og:image" content="http://www.muchenhen.com/wp-content/uploads/2019/10/image-7.png">
+<meta property="og:image" content="http://www.muchenhen.com/wp-content/uploads/2019/10/image-8.png">
+<meta property="og:image" content="http://www.muchenhen.com/wp-content/uploads/2019/10/image-11.png">
+<meta property="og:image" content="http://www.muchenhen.com/wp-content/uploads/2019/10/image-9.png">
+<meta property="og:image" content="http://www.muchenhen.com/wp-content/uploads/2019/10/image-10.png">
+<meta property="og:image" content="http://www.muchenhen.com/wp-content/uploads/2019/10/image-13.png">
+<meta property="article:published_time" content="2019-10-27T14:34:58.000Z">
+<meta property="article:modified_time" content="2024-07-14T15:26:08.244Z">
+<meta property="article:author" content="木尘痕">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://www.muchenhen.com/wp-content/uploads/2019/10/image-5.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>STL：vector容器 - 虚无之境</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"muchenhen.com","root":"/","version":"1.9.1","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"bbb32ef470b36fe5f1e4e72f32112b68","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>虚无之境</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/NagisaKaworu.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="STL：vector容器"></span>
+          
+        </div>
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      <div class="container nopadding-x-md">
+        <div id="board"
+          >
+          
+          <div class="container">
+            <div class="row">
+              <div class="col-12 col-md-10 m-auto">
+                
+
+<article class="page-content">
+  <p>是一个以线性顺序组织给定类型元素的容器。它支持对任何元素的快速随机访问，以及与序列之间的动态添加和删除。</p>
+<p>可以利用索引随机访问</p>
+<p>在尾部附加或者移除元素都很快速，但是在中段或起始安插元素比较费时，插入时后面的元素必须移动以保持相对位置</p>
+<p><em>大部分情况元素追加式高速的，有时候可能是缓慢的，vector可能需要重新分配内存并将现有元素复制到对应位置</em></p>
+<p>=====================================================</p>
+<p><strong>底层原理</strong></p>
+<p>底层是一个<strong>动态数组</strong>，包含三个迭代器：start和finish之间是已经被使用的空间范围，end_of_stroage是整块连续空间包括备用空间的尾部。</p>
+<p><strong>当空间不够装下数据（vec.push_back(val)）时，会自动申请另一片更大的空间（1.5倍或者2倍），然后把原来的数据拷贝到新的内存空间，接着释放原来的那片空间【vector内存增长机制】。</strong></p>
+<p>当释放或者删除（vec.clear()）里面的数据时，其存储空间不释放，仅仅是清空了里面的数据。</p>
+<p>因此，对vector的任何操作一旦引起了空间的重新配置，指向原vector的所有迭代器会都失效了。</p>
+<p>头文件</p>
+<p>#include<vector></p>
+<p>声明元素类型为int的vector</p>
+<p>vector<int> v1, v2, v3;</p>
+<p>可以通过下标直接访问对应位置的元素</p>
+<p>v1[0]</p>
+<p><strong>vector<strong><strong>中</strong></strong>size<strong><strong>和</strong></strong>capacity****的区别</strong></p>
+<p>size为当前容器中元素数量 finish - start</p>
+<p>capacity为已经分配的内存可以容纳多少元素 end_of_storage - start</p>
+<p><strong>vector****中的元素类型不能是引用</strong></p>
+<p>vector 的底层实现要求连续的对象排列，引用不是对象，没有实际地址</p>
+<p><strong>vector迭代器失效的情况</strong></p>
+<p>当插入一个元素到vector中，由于重新引起了内存分配，指向原内存的迭代器会全部失效。</p>
+<p>删除容器中一个元素后，该迭代器所指向的元素已经被删除，也会造成迭代器失效。erase方法会返回下一个有效的迭代器，所以在删除元素时需要</p>
+<p>it=vec.erase(it);</p>
+<p><strong>vector释放内存</strong></p>
+<p>vec.clear()：清空内容，但是不释放内存。</p>
+<p>vector<int>().swap(vec)：清空内容，且释放内存，想得到一个全新的vector。</p>
+<p>vec.shrink_to_fit()：请求容器降低其capacity和size匹配。</p>
+<p>vec.clear(); vec.shrink_to_fit();：清空内容，且释放内存。</p>
+<p><strong>vector常用函数</strong></p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-5.png" srcset="/img/loading.gif" lazyload alt="2345678vectorvec . (c ,ø));reverse(vec. begin() , vec . end())sort (vec. begin() , vec . end());vec . ;vec . size();find (vec. begin() , vec . end() , 1);iterator = vec.erase(iterator) " /></p>
+<p>相关函数</p>
+<p><strong>reserve</strong></p>
+<p>为容器分配空间，直接扩充到已知大小，可以保证vector中的空间大小（capacity）最少达到参数所指定的大小</p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-6.png" srcset="/img/loading.gif" lazyload alt="C++// vector_reserve. cpp// compile with: /EHsc#include#include int main( )using namespace std;vector &lt; int&gt; VI;//vector :iterator Iter;vl.push back( 1 );cout &quot;Current capacity of VIVI. capacity( ) endl;VI. reserve( 28 ) ;cout &quot;Current capacity of VIVI. capacity( ) endl;OutputCurrent capacity of VICurrent capacity of VI " /></p>
+<p><strong>resize</strong></p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/cpp/standard-library/vector-class?view=vs-2019#resize">https://docs.microsoft.com/zh-cn/cpp/standard-library/vector-class?view=vs-2019#resize</a></p>
+<p>可以改变有效空间的大小</p>
+<p>如果容器的大小小于请求的大小，则向向量添加元素，直到达到请求的大小。如果容器的大小大于请求的大小，则删除最靠近容器末端的元素，直到容器达到大小Newsize。如果容器的当前大小与请求的大小相同，则不采取任何操作。</p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-7.png" srcset="/img/loading.gif" lazyload alt="void resize(size_type Newsize);void resize(size_type Newsize, Type Val); " /></p>
+<p>esize函数<strong>重新分配</strong>大小，改变容器的大小，并且创建对象</p>
+<p>当n小于当前size()值时候，vector首先会减少size()值 保存前n个元素，然后将超出n的元素删除(remove and destroy)</p>
+<p>当n大于当前size()值时候，vector会插入相应数量的元素 使得size()值达到n，并对这些元素进行初始化，如果调用上面的第二个resize函数，指定val，vector会用val来初始化这些新插入的元素</p>
+<p>当n大于capacity()值的时候，会自动分配重新分配内存存储空间。</p>
+<p><strong>assign</strong></p>
+<p>释放当前vector原来占用的空间并开辟新的空间</p>
+<p>两个函数原型</p>
+<p>void assign(size_type Count, const Type&amp; Val);</p>
+<p>void assign(initializer_list<Type> IList);</p>
+<p>template <class InputIterator> void assign(InputIterator First, InputIterator Last);</p>
+<p>来自 &lt;<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/cpp/standard-library/vector-class?view=vs-2019#assign">https://docs.microsoft.com/en-us/cpp/standard-library/vector-class?view=vs-2019#assign</a>&gt;</p>
+<p>第一个相当于个拷贝函数，把first到last的值赋值给调用者；（注意区间的闭合）</p>
+<p>第二个把n个x赋值给调用者；</p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-8.png" srcset="/img/loading.gif" lazyload alt="Copy/ vector _ assign . cpp// compile uith: /EHsc*include*include int main()using namespace std;VI, v2, v3;vl.push back(1Ê);vl.push back(2Ê);vl.push back(3Ê);vl.push back(4Ê);vl.push back(SÊ);coutfor (auto&amp; v : vl){cout vcout endl;v2. assign(vl. begin() ,coutfor (auto&amp; v : v2){cout vcout endl;v3.assign(7, 4);coutfor (auto&amp; v : v3){cout vcout endl;v3.assign({ S, 6, 7for (auto&amp; v : v3){cout vcout endl;Vl. end())• " /></p>
+<p><strong>at</strong></p>
+<p>返回参数中下标元素的引用。</p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-11.png" srcset="/img/loading.gif" lazyload alt="Example// vector _ at. cpp// compile with: /EHsc*include*include int main( )using namespace std;vector VI;VI. push back( 18 );VI. 28 );const int &amp;ivl.at( 8int &amp;j —coutcoutOutputvl.at( 1 ) ;&quot;The first element is&quot;The second element is 'i endl;j endl;CopyCopyThe first element is leThe second element is 28 " /></p>
+<p><strong>back</strong></p>
+<p>返回向量的最后一个元素。如果向量为空，则返回值未定义。</p>
+<p><strong>front</strong></p>
+<p>返回指向向量对象中第一个元素的引用。如果向量为空，则返回未定义。</p>
+<p>如果front的返回值被赋给一个const_reference，则不能修改vector对象。如果将front的返回值赋给引用，则可以修改vector对象。</p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-9.png" srcset="/img/loading.gif" lazyload alt="// vector _ front . cpp// compile with: /EHsc*include*include int main( )using namespace std;vector VI;VI. push back( 18 );VI. 11 ) ;int&amp; i = vl.front( );const int&amp; ii = vl.front( );cout &quot;The first integer of VI is &quot;&lt;&lt; i endl;// by incrementing i, we move the front reference to the second elementcout &quot;Now, the first integer of VI is i endl; " /></p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-10.png" srcset="/img/loading.gif" lazyload alt="Microsoft Visual Studiohe first integer of VI is 10ow, the first integer of VI is 11 " /></p>
+<p>//通过增加i，我们将前面的引用移动到第二个元素</p>
+<p><strong>erase</strong></p>
+<p>将容器中的指定元素删除</p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2019/10/image-13.png" srcset="/img/loading.gif" lazyload alt="rasRemoves an element or a range of elements in a vector from specified positions.iterator erase(const_iterator Where) ;iterator erase(const iterator first,const_iterator last) ;ParametersWherePosition of the element to be removed from the vector.firstPosition of the first element removed from the vector.lastPosition just beyond the last element removed from the vector. " /></p>
+<p>![// vector erase. cpp<br />
+// compile uith: /EHsc<br />
+*include<br />
+*include <iostream><br />
+int main( )<br />
+using namespace std;<br />
+vector VI;<br />
+vector :iterator Iter;<br />
+vl.erase( Vl. begin( ) + 1,<br />
+vl . push<br />
+vl . push<br />
+vl . push<br />
+vl . push<br />
+vl . push<br />
+cout<br />
+back(<br />
+back(<br />
+back(<br />
+back(<br />
+back(<br />
+&quot;VI<br />
+far ( Iter<br />
+cout<br />
+cout end];<br />
+vl.erase( Vl. begin( ) ) ;<br />
+cout &quot;VI<br />
+far ( Iter<br />
+cout<br />
+cout endl;<br />
+cout &quot;VI<br />
+far ( Iter<br />
+cout<br />
+18<br />
+28<br />
+3e<br />
+48 ) ;<br />
+Vl. begin( )<br />
+'Iter;<br />
+Vl. begin( )<br />
+'Iter;<br />
+Vl. begin( )<br />
+'Iter;<br />
+Iter .<br />
+Iter .<br />
+vl.end( )<br />
+vl.end( )<br />
+vl.begin( )<br />
+vl.end( )<br />
+Iter<br />
+Iter++<br />
+Iter++<br />
+Iter++<br />
+cout<br />
+Output<br />
+1e<br />
+2e<br />
+2e<br />
+end];<br />
+2e 3e 48 sa<br />
+3e 4e sa<br />
+se ](<a target="_blank" rel="noopener" href="http://www.muchenhen.com/wp-content/uploads/2019/10/image-12.png">http://www.muchenhen.com/wp-content/uploads/2019/10/image-12.png</a>)</p>
+
+
+  
+
+</article>
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+    <!-- 备案信息 ICP for China -->
+    <div class="beian">
+  <span>
+    <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+      
+    </a>
+  </span>
+  
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?bbb32ef470b36fe5f1e4e72f32112b68";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

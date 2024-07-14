@@ -1,0 +1,767 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="木尘痕">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言 本文在4.27版本下完成 在编辑AnimSequence的时候，不同的动画可能需要服用Curves和AdditiveLayerTracks，为了提高效率，增加了一下原本编辑器不存在的复制粘贴方法   Curves  查看方法 在AnimSequenceBase.h文件中UAnimSequenceBase类有一个成员变量：RawCurveData 12345&#x2F;** * Raw uncompr">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UE4：AnimSequence曲线和Tracks复制">
+<meta property="og:url" content="http://muchenhen.com/posts/10235/index.html">
+<meta property="og:site_name" content="虚无之境">
+<meta property="og:description" content="前言 本文在4.27版本下完成 在编辑AnimSequence的时候，不同的动画可能需要服用Curves和AdditiveLayerTracks，为了提高效率，增加了一下原本编辑器不存在的复制粘贴方法   Curves  查看方法 在AnimSequenceBase.h文件中UAnimSequenceBase类有一个成员变量：RawCurveData 12345&#x2F;** * Raw uncompr">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/202220220525205853.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2022!%5B20220525213823%5D(httpscdn.jsdelivr.netghmuchenhenMuImageStore@mainBlogs202220220525213823.png).png">
+<meta property="article:published_time" content="2022-05-25T12:46:57.000Z">
+<meta property="article:modified_time" content="2024-07-14T15:26:08.252Z">
+<meta property="article:author" content="木尘痕">
+<meta property="article:tag" content="UE4">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="UE4 Editor">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/202220220525205853.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>UE4：AnimSequence曲线和Tracks复制 - 虚无之境</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"muchenhen.com","root":"/","version":"1.9.1","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"bbb32ef470b36fe5f1e4e72f32112b68","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>虚无之境</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/NagisaKaworu.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="UE4：AnimSequence曲线和Tracks复制"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        木尘痕
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-05-25 20:46" pubdate>
+          2022年5月25日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          14 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">UE4：AnimSequence曲线和Tracks复制</h1>
+            
+            <div class="markdown-body">
+              
+              <h1 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h1>
+<p>本文在4.27版本下完成<br />
+在编辑AnimSequence的时候，不同的动画可能需要服用Curves和AdditiveLayerTracks，为了提高效率，增加了一下原本编辑器不存在的复制粘贴方法</p>
+<p><img src="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/202220220525205853.png" srcset="/img/loading.gif" lazyload alt="20220525205853" /></p>
+<h1 id="curves"><a class="markdownIt-Anchor" href="#curves"></a> Curves</h1>
+<h2 id="查看方法"><a class="markdownIt-Anchor" href="#查看方法"></a> 查看方法</h2>
+<p>在AnimSequenceBase.h文件中UAnimSequenceBase类有一个成员变量：RawCurveData</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * Raw uncompressed float curve data </span><br><span class="hljs-comment"> */</span><br><span class="hljs-built_in">UPROPERTY</span>()<br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">FRawCurveTracks</span> RawCurveData;<br></code></pre></td></tr></table></figure>
+<p>RawCurveData中的FloatCurves保存了Curves</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-built_in">USTRUCT</span>()<br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">FRawCurveTracks</span><br>&#123;<br>	<span class="hljs-built_in">GENERATED_USTRUCT_BODY</span>()<br><br>	<span class="hljs-built_in">UPROPERTY</span>()<br>	TArray&lt;FFloatCurve&gt;		FloatCurves;<br><br><span class="hljs-meta">#<span class="hljs-keyword">if</span> WITH_EDITORONLY_DATA</span><br>	<span class="hljs-comment">/**</span><br><span class="hljs-comment">	 * @note : Currently VectorCurves are not evaluated or used for anything else but transient data for modifying bone track</span><br><span class="hljs-comment">	 *			Note that it doesn&#x27;t have UPROPERTY tag yet. In the future, we&#x27;d like this to be serialized, but not for now</span><br><span class="hljs-comment">	 **/</span><br>	<span class="hljs-built_in">UPROPERTY</span>(transient)<br>	TArray&lt;FVectorCurve&gt;	VectorCurves;<br><br>	<span class="hljs-comment">/**</span><br><span class="hljs-comment">	 * @note : TransformCurves are used to edit additive animation in editor. </span><br><span class="hljs-comment">	 **/</span><br>	<span class="hljs-built_in">UPROPERTY</span>()<br>	TArray&lt;FTransformCurve&gt;	TransformCurves;<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span> <span class="hljs-comment">// #if WITH_EDITORONLY_DATA</span></span><br>    &#123;...&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>看一下FFloatCurve：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-built_in">USTRUCT</span>()<br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">FFloatCurve</span> : <span class="hljs-keyword">public</span> FAnimCurveBase<br>&#123;<br>	<span class="hljs-built_in">GENERATED_USTRUCT_BODY</span>()<br><br>	<span class="hljs-comment">/** Curve data for float. */</span><br>	<span class="hljs-built_in">UPROPERTY</span>()<br>	FRichCurve	FloatCurve;<br><br>	<span class="hljs-built_in">FFloatCurve</span>()&#123;&#125;<br><br>	<span class="hljs-built_in">FFloatCurve</span>(FSmartName InName, int32 InCurveTypeFlags)<br>		: <span class="hljs-built_in">FAnimCurveBase</span>(InName, InCurveTypeFlags)<br>	&#123;<br>	&#125;<br><br>	<span class="hljs-comment">// we don&#x27;t want to have = operator. This only copies curves, but leaving naming and everything else intact. </span><br>	<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">CopyCurve</span><span class="hljs-params">(FFloatCurve&amp; SourceCurve)</span></span>;<br>	<span class="hljs-function">ENGINE_API <span class="hljs-type">float</span> <span class="hljs-title">Evaluate</span><span class="hljs-params">(<span class="hljs-type">float</span> CurrentTime)</span> <span class="hljs-type">const</span></span>;<br>	<span class="hljs-function">ENGINE_API <span class="hljs-type">void</span> <span class="hljs-title">UpdateOrAddKey</span><span class="hljs-params">(<span class="hljs-type">float</span> NewKey, <span class="hljs-type">float</span> CurrentTime)</span></span>;<br>	<span class="hljs-function">ENGINE_API <span class="hljs-type">void</span> <span class="hljs-title">GetKeys</span><span class="hljs-params">(TArray&lt;<span class="hljs-type">float</span>&gt;&amp; OutTimes, TArray&lt;<span class="hljs-type">float</span>&gt;&amp; OutValues)</span></span>;<br>	<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">Resize</span><span class="hljs-params">(<span class="hljs-type">float</span> NewLength, <span class="hljs-type">bool</span> bInsert<span class="hljs-comment">/* whether insert or remove*/</span>, <span class="hljs-type">float</span> OldStartTime, <span class="hljs-type">float</span> OldEndTime)</span></span>;<br>&#125;;<br></code></pre></td></tr></table></figure>
+<p>对Curves的复制就是要把实例A的RawCurveData.FloatCurves复制后添加到实例B的RawCurveData.FloatCurves中</p>
+<h2 id="添加ui和方法"><a class="markdownIt-Anchor" href="#添加ui和方法"></a> 添加UI和方法</h2>
+<p>定位到这个编辑器按钮布局相关的地方：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-comment">// AnimTimeLineTrack_Curves.cpp</span><br><span class="hljs-comment">// 这个函数是生成途中Curves那个按钮的子菜单的地方，可以在这里面增加复制粘贴的选项</span><br><span class="hljs-function">TSharedRef&lt;SWidget&gt; <span class="hljs-title">FAnimTimelineTrack_Curves::BuildCurvesSubMenu</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-comment">// 省略一些源码</span><br>    &#123;...&#125;<br>    <span class="hljs-comment">// 对于没有Curves的对象可以直接隐藏掉对应的选项</span><br>    <span class="hljs-keyword">if</span> (AnimSequenceBase-&gt;RawCurveData.FloatCurves.<span class="hljs-built_in">Num</span>() &gt; <span class="hljs-number">0</span>)<br>		&#123;<br>			MenuBuilder.<span class="hljs-built_in">AddMenuEntry</span>(<br>				<span class="hljs-built_in">LOCTEXT</span>(<span class="hljs-string">&quot;CopyAllCurves&quot;</span>, <span class="hljs-string">&quot;Copy All Curves&quot;</span>),<br>				<span class="hljs-built_in">LOCTEXT</span>(<span class="hljs-string">&quot;CopyAllCurves_ToolTip&quot;</span>, <span class="hljs-string">&quot;Copy All Curves&quot;</span>),<br>				<span class="hljs-built_in">FSlateIcon</span>(),<br>                <span class="hljs-comment">// 绑定复制方法</span><br>				<span class="hljs-built_in">FUIAction</span>(FExecuteAction::<span class="hljs-built_in">CreateSP</span>(<span class="hljs-keyword">this</span>, &amp;FAnimTimelineTrack_Curves::CopyAllCurves))<br>			);<br>		&#125;<br>        <span class="hljs-comment">// 定义一个静态变量来存储我们复制的数据</span><br>		<span class="hljs-keyword">if</span> (CurveNameKeyValueContainer.<span class="hljs-built_in">Num</span>() &gt; <span class="hljs-number">0</span>)<br>		&#123;<br>			MenuBuilder.<span class="hljs-built_in">AddMenuEntry</span>(<br>				<span class="hljs-built_in">LOCTEXT</span>(<span class="hljs-string">&quot;PasteAllCurves&quot;</span>, <span class="hljs-string">&quot;Paste All Curves&quot;</span>),<br>				<span class="hljs-built_in">LOCTEXT</span>(<span class="hljs-string">&quot;PasteAllCurves_ToolTip&quot;</span>, <span class="hljs-string">&quot;Paste All Curves&quot;</span>),<br>				<span class="hljs-built_in">FSlateIcon</span>(),<br>                <span class="hljs-comment">// 绑定粘贴方法</span><br>				<span class="hljs-built_in">FUIAction</span>(FExecuteAction::<span class="hljs-built_in">CreateSP</span>(<span class="hljs-keyword">this</span>, &amp;FAnimTimelineTrack_Curves::PasteAllCurves))<br>			);<br>		&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>然后实现一下两个方法:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><code class="hljs C++">TMap&lt; FName, TArray&lt;FRichCurveKey&gt; &gt; FAnimTimelineTrack_Curves::CurveContainer;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">FAnimTimelineTrack_Curves::CopyAllCurves</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>	CurveContainer.<span class="hljs-built_in">Empty</span>();<br><br>	<span class="hljs-function"><span class="hljs-type">const</span> FScopedTransaction <span class="hljs-title">Transaction</span><span class="hljs-params">(LOCTEXT(<span class="hljs-string">&quot;AnimCurve_CopyAllCurves&quot;</span>, <span class="hljs-string">&quot;Copy All Curves&quot;</span>))</span></span>;<br><br>	UAnimSequenceBase* AnimSequenceBase = <span class="hljs-built_in">GetModel</span>()-&gt;<span class="hljs-built_in">GetAnimSequenceBase</span>();<br>	<span class="hljs-keyword">for</span> (FFloatCurve&amp; Curve : AnimSequenceBase-&gt;RawCurveData.FloatCurves)<br>	&#123;<br>		CurveContainer.<span class="hljs-built_in">Add</span>(Curve.Name.DisplayName, Curve.FloatCurve.<span class="hljs-built_in">GetCopyOfKeys</span>());<br>	&#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">FAnimTimelineTrack_Curves::PasteAllCurves</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-function"><span class="hljs-type">const</span> FScopedTransaction <span class="hljs-title">Transaction</span><span class="hljs-params">(LOCTEXT(<span class="hljs-string">&quot;AnimCurve_PasteAllCurves&quot;</span>, <span class="hljs-string">&quot;Paste All Curves&quot;</span>))</span></span>;<br><br>	UAnimSequenceBase* AnimSequenceBase = <span class="hljs-built_in">GetModel</span>()-&gt;<span class="hljs-built_in">GetAnimSequenceBase</span>();<br>	AnimSequenceBase-&gt;<span class="hljs-built_in">Modify</span>();<br>	USkeleton* Skeleton = AnimSequenceBase-&gt;<span class="hljs-built_in">GetSkeleton</span>();<br>	FSmartName NewName;<br><br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span>&amp; T : CurveContainer) &#123;<br>		<span class="hljs-type">const</span> FSmartNameMapping* NameMapping = Skeleton-&gt;<span class="hljs-built_in">GetSmartNameContainer</span>(USkeleton::AnimCurveMappingName);<br>		SmartName::UID_Type CurveUid = NameMapping-&gt;<span class="hljs-built_in">FindUID</span>(T.Key);<br>		<span class="hljs-built_in">ensureAlways</span>(Skeleton-&gt;<span class="hljs-built_in">GetSmartNameByUID</span>(USkeleton::AnimCurveMappingName, CurveUid, NewName));<br>		<span class="hljs-keyword">if</span> (!(AnimSequenceBase-&gt;RawCurveData.<span class="hljs-built_in">GetCurveData</span>(NewName.UID) == <span class="hljs-literal">NULL</span>)) <br>        &#123;<br>			AnimSequenceBase-&gt;RawCurveData.<span class="hljs-built_in">DeleteCurveData</span>(NewName);<br>		&#125;<br>		AnimSequenceBase-&gt;RawCurveData.<span class="hljs-built_in">AddCurveData</span>(NewName);<br>		AnimSequenceBase-&gt;<span class="hljs-built_in">MarkRawDataAsModified</span>();<br><br>		<span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span>&amp; KV : T.Value) <br>        &#123;<br>			AnimSequenceBase-&gt;RawCurveData.<span class="hljs-built_in">AddFloatCurveKey</span>(NewName, AACF_Editable, KV.Time, KV.Value);<br>		&#125;<br>	&#125;<br><br>	<span class="hljs-built_in">GetModel</span>()-&gt;<span class="hljs-built_in">RefreshTracks</span>();<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>其实就是简单的将原曲线的数据存下来之后，通过RawCurveData的AddCurveData方法将数据添加给新曲线</p>
+<p><img src="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2022!%5B20220525213823%5D(httpscdn.jsdelivr.netghmuchenhenMuImageStore@mainBlogs202220220525213823.png).png" srcset="/img/loading.gif" lazyload alt="20220525213823" /></p>
+<h1 id="tracks"><a class="markdownIt-Anchor" href="#tracks"></a> Tracks</h1>
+<p>Additive Layer Tracks的复制需要注意Bone，不同角色骨骼不同的时候要注意丢弃不可用数据</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-comment">// AnimTimelineTrack.cpp</span><br><span class="hljs-comment">// 存储数据用</span><br>TMap&lt; FName, FTransformCurve&gt; FAnimTimelineTrack::TracksFTransformCurveContainer;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">FAnimTimelineTrack::CopyAllAdditiveLayerTracks</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>	TracksFTransformCurveContainer.<span class="hljs-built_in">Empty</span>();<br><br>	<span class="hljs-function"><span class="hljs-type">const</span> FScopedTransaction <span class="hljs-title">Transaction</span><span class="hljs-params">(LOCTEXT(<span class="hljs-string">&quot;AnimTracks_CopyAllTracks&quot;</span>, <span class="hljs-string">&quot;Copy All Tracks&quot;</span>))</span></span>;<br><br>	UAnimSequenceBase* SequenceBase = <span class="hljs-built_in">GetModel</span>()-&gt;<span class="hljs-built_in">GetAnimSequenceBase</span>();<br>	<span class="hljs-comment">// 按照名字和Curve存储数据</span><br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span>&amp; Curve : SequenceBase-&gt;RawCurveData.TransformCurves)<br>	&#123;<br>		TracksFTransformCurveContainer.<span class="hljs-built_in">Add</span>(Curve.Name.DisplayName, Curve);<br>	&#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">FAnimTimelineTrack::PasteAdditiveLayerTracks</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-function"><span class="hljs-type">const</span> FScopedTransaction <span class="hljs-title">Transaction</span><span class="hljs-params">(LOCTEXT(<span class="hljs-string">&quot;AnimTracks_PasteAllTracks&quot;</span>, <span class="hljs-string">&quot;Paste All Tracks&quot;</span>))</span></span>;<br><br>	UAnimSequenceBase* AnimSequenceBase = <span class="hljs-built_in">GetModel</span>()-&gt;<span class="hljs-built_in">GetAnimSequenceBase</span>();<br>	<span class="hljs-type">const</span> UAnimSequence* AnimSequence = <span class="hljs-built_in">Cast</span>&lt;UAnimSequence&gt;(AnimSequenceBase);<br>	<span class="hljs-keyword">if</span>(AnimSequence)<br>	&#123;<br>		<span class="hljs-built_in">UE_LOG</span>(LogAnimation, Display, <span class="hljs-built_in">TEXT</span>(<span class="hljs-string">&quot;Cast AnimSequence Success&quot;</span>));<br>		AnimSequenceBase-&gt;<span class="hljs-built_in">Modify</span>();<br>		TArray&lt;FTransformCurve&gt; NewTransformCurvesContainer;<br>		TArray&lt;FName&gt; AnimationTrackNames = AnimSequence-&gt;<span class="hljs-built_in">GetAnimationTrackNames</span>();<br>		<span class="hljs-keyword">for</span>(<span class="hljs-keyword">auto</span>&amp;  T: TracksFTransformCurveContainer)<br>		&#123;<br>			<span class="hljs-type">const</span> FName TrackName = T.Key;<br>			<span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span>&amp; Name : AnimationTrackNames)<br>			&#123;<br>				<span class="hljs-comment">// 只能把相同名称的赋值，不同的无法成功应用，会造成Crash，可以自己看看为什么</span><br>				<span class="hljs-keyword">if</span>(Name == TrackName)<br>				&#123;<br>					<span class="hljs-built_in">UE_LOG</span>(LogAnimation, Display, <span class="hljs-built_in">TEXT</span>(<span class="hljs-string">&quot;Animation track :  %s .&quot;</span>), *TrackName.<span class="hljs-built_in">ToString</span>());<br>					NewTransformCurvesContainer.<span class="hljs-built_in">Add</span>(T.Value);<br>					<span class="hljs-keyword">break</span>;<br>				&#125;<br>			&#125;<br>		&#125;<br><br>		<span class="hljs-comment">// 直接赋值 刷新就行了</span><br>		AnimSequenceBase-&gt;RawCurveData.TransformCurves.<span class="hljs-built_in">Empty</span>();<br>		AnimSequenceBase-&gt;RawCurveData.TransformCurves = NewTransformCurvesContainer;<br>		AnimSequenceBase-&gt;<span class="hljs-built_in">RefreshCurveData</span>();<br>		<span class="hljs-built_in">GetModel</span>()-&gt;<span class="hljs-built_in">RefreshTracks</span>();<br>	&#125;<br>&#125;<br><br><span class="hljs-comment">// 这个地方原本是没有SubMenue的需要我们自己写个函数来生成</span><br><span class="hljs-function">TSharedRef&lt;SWidget&gt; <span class="hljs-title">FAnimTimelineTrack::BuildCurvesSubMenu</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-function">FMenuBuilder <span class="hljs-title">MenuBuilder</span><span class="hljs-params">(<span class="hljs-literal">true</span>, GetModel()-&gt;GetCommandList())</span></span>;<br>	UAnimSequenceBase* AnimSequenceBase = <span class="hljs-built_in">GetModel</span>()-&gt;<span class="hljs-built_in">GetAnimSequenceBase</span>();<br>	<br>	MenuBuilder.<span class="hljs-built_in">BeginSection</span>(<span class="hljs-string">&quot;Tracks&quot;</span>, <span class="hljs-built_in">LOCTEXT</span>(<span class="hljs-string">&quot;AdditiveLayerTracksSection&quot;</span>, <span class="hljs-string">&quot;Tracks&quot;</span>));<br>	&#123;<br>		<span class="hljs-keyword">if</span> (AnimSequenceBase-&gt;RawCurveData.TransformCurves.<span class="hljs-built_in">Num</span>() &gt; <span class="hljs-number">0</span>)<br>		&#123;<br>			MenuBuilder.<span class="hljs-built_in">AddMenuEntry</span>(<br>				<span class="hljs-built_in">LOCTEXT</span>(<span class="hljs-string">&quot;CopyAllAdditiveLayerTracks&quot;</span>, <span class="hljs-string">&quot;Copy All Additive Layer Tracks&quot;</span>),<br>				<span class="hljs-built_in">LOCTEXT</span>(<span class="hljs-string">&quot;CopyAllAdditiveLayerTracks_ToolTip&quot;</span>, <span class="hljs-string">&quot;Copy All Additive Layer Tracks&quot;</span>),<br>				<span class="hljs-built_in">FSlateIcon</span>(),<br>				<span class="hljs-built_in">FUIAction</span>(FExecuteAction::<span class="hljs-built_in">CreateSP</span>(<span class="hljs-keyword">this</span>, &amp;FAnimTimelineTrack::CopyAllAdditiveLayerTracks))<br>			);<br>		&#125;<br>		<span class="hljs-keyword">if</span> (TracksFTransformCurveContainer.<span class="hljs-built_in">Num</span>() &gt; <span class="hljs-number">0</span>)<br>		&#123;<br>			MenuBuilder.<span class="hljs-built_in">AddMenuEntry</span>(<br>				<span class="hljs-built_in">LOCTEXT</span>(<span class="hljs-string">&quot;PasteAdditiveLayerTracks&quot;</span>, <span class="hljs-string">&quot;Paste Additive Layer Tracks&quot;</span>),<br>				<span class="hljs-built_in">LOCTEXT</span>(<span class="hljs-string">&quot;PasteAdditiveLayerTracks_ToolTip&quot;</span>, <span class="hljs-string">&quot;Paste Additive Layer Tracks&quot;</span>),<br>				<span class="hljs-built_in">FSlateIcon</span>(),<br>				<span class="hljs-built_in">FUIAction</span>(FExecuteAction::<span class="hljs-built_in">CreateSP</span>(<span class="hljs-keyword">this</span>, &amp;FAnimTimelineTrack::PasteAdditiveLayerTracks))<br>			);<br>		&#125;<br>	&#125;<br>	MenuBuilder.<span class="hljs-built_in">EndSection</span>();<br>	<span class="hljs-keyword">return</span> MenuBuilder.<span class="hljs-built_in">MakeWidget</span>();<br>&#125;<br><br><span class="hljs-comment">// 上面那个生成子菜单的函数在这个里面调用</span><br><span class="hljs-function">TSharedRef&lt;SWidget&gt; <span class="hljs-title">FAnimTimelineTrack::GenerateContainerWidgetForOutliner</span><span class="hljs-params">(<span class="hljs-type">const</span> TSharedRef&lt;SAnimOutlinerItem&gt;&amp; InRow)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-comment">// ...</span><br><br>	InnerHorizontalBox-&gt;<span class="hljs-built_in">AddSlot</span>()<br>		.<span class="hljs-built_in">AutoWidth</span>()<br>		.<span class="hljs-built_in">HAlign</span>(HAlign_Right)<br>		.<span class="hljs-built_in">VAlign</span>(VAlign_Center)<br>		.<span class="hljs-built_in">Padding</span>(OutlinerRightPadding, <span class="hljs-number">1.0f</span>)<br>		[<br>			PersonaUtils::<span class="hljs-built_in">MakeTrackButton</span>(<span class="hljs-built_in">LOCTEXT</span>(<span class="hljs-string">&quot;EditTracksButtonText&quot;</span>, <span class="hljs-string">&quot;Tracks&quot;</span>), FOnGetContent::<span class="hljs-built_in">CreateSP</span>(<span class="hljs-keyword">this</span>, &amp;FAnimTimelineTrack::BuildCurvesSubMenu), <span class="hljs-built_in">MakeAttributeSP</span>(<span class="hljs-keyword">this</span>, &amp;FAnimTimelineTrack::IsHovered))<br>		];<br>	<br>	<span class="hljs-comment">// ...</span><br>&#125;<br></code></pre></td></tr></table></figure>
+              
+            </div>
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/UE4/">#UE4</a>
+      
+        <a href="/tags/C/">#C++</a>
+      
+        <a href="/tags/UE4-Editor/">#UE4 Editor</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>UE4：AnimSequence曲线和Tracks复制</div>
+      <div>http://muchenhen.com/posts/10235/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>木尘痕</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年5月25日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/2274/" title="UE4：4.27版本PSO变化">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">UE4：4.27版本PSO变化</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/60086/" title="UE4：ShadecodeLibrary拆分">
+                        <span class="hidden-mobile">UE4：ShadecodeLibrary拆分</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+    <!-- 备案信息 ICP for China -->
+    <div class="beian">
+  <span>
+    <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+      
+    </a>
+  </span>
+  
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?bbb32ef470b36fe5f1e4e72f32112b68";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script>
+  (function() {
+    var enableLang = CONFIG.code_language.enable && CONFIG.code_language.default;
+    var enableCopy = CONFIG.copy_btn;
+    if (!enableLang && !enableCopy) {
+      return;
+    }
+
+    function getBgClass(ele) {
+      return Fluid.utils.getBackgroundLightness(ele) >= 0 ? 'code-widget-light' : 'code-widget-dark';
+    }
+
+    var copyTmpl = '';
+    copyTmpl += '<div class="code-widget">';
+    copyTmpl += 'LANG';
+    copyTmpl += '</div>';
+    jQuery('.markdown-body pre').each(function() {
+      var $pre = jQuery(this);
+      if ($pre.find('code.mermaid').length > 0) {
+        return;
+      }
+      if ($pre.find('span.line').length > 0) {
+        return;
+      }
+
+      var lang = '';
+
+      if (enableLang) {
+        lang = CONFIG.code_language.default;
+        if ($pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2 && $pre.children().hasClass('hljs')) {
+          lang = $pre[0].children[0].classList[1];
+        } else if ($pre[0].getAttribute('data-language')) {
+          lang = $pre[0].getAttribute('data-language');
+        } else if ($pre.parent().hasClass('sourceCode') && $pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2) {
+          lang = $pre[0].children[0].classList[1];
+          $pre.parent().addClass('code-wrapper');
+        } else if ($pre.parent().hasClass('markdown-body') && $pre[0].classList.length === 0) {
+          $pre.wrap('<div class="code-wrapper"></div>');
+        }
+        lang = lang.toUpperCase().replace('NONE', CONFIG.code_language.default);
+      }
+      $pre.append(copyTmpl.replace('LANG', lang).replace('code-widget">',
+        getBgClass($pre[0]) + (enableCopy ? ' code-widget copy-btn" data-clipboard-snippet><i class="iconfont icon-copy"></i>' : ' code-widget">')));
+
+      if (enableCopy) {
+        Fluid.utils.createScript('https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js', function() {
+          var clipboard = new window.ClipboardJS('.copy-btn', {
+            target: function(trigger) {
+              var nodes = trigger.parentNode.childNodes;
+              for (var i = 0; i < nodes.length; i++) {
+                if (nodes[i].tagName === 'CODE') {
+                  return nodes[i];
+                }
+              }
+            }
+          });
+          clipboard.on('success', function(e) {
+            e.clearSelection();
+            e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-copy', 'icon-success');
+            setTimeout(function() {
+              e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-success', 'icon-copy');
+            }, 2000);
+          });
+        });
+      }
+    });
+  })();
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

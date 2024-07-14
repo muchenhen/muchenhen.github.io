@@ -1,0 +1,548 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="木尘痕">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="初始化 每个容器都提供默认构造函数，拷贝构造函数，析构函数。 初值列 可以以一个区间或者初值列作为容器初值。 比如常量容器的初始化： &#x2F;&#x2F;用初始值初始化一个vector（c++11） const vector v1 &#x3D; {1, 2, 3, 4 }; &#x2F;&#x2F;也可用不同的语法 const vector v2 {1, 2, 3, 4 }; array&lt;&gt;容器使用初值列有特殊规则。将会在arr">
+<meta property="og:type" content="website">
+<meta property="og:title" content="STL容器共通操作">
+<meta property="og:url" content="http://muchenhen.com/OLD/stl%E5%AE%B9%E5%99%A8%E5%85%B1%E9%80%9A%E6%93%8D%E4%BD%9C.html">
+<meta property="og:site_name" content="虚无之境">
+<meta property="og:description" content="初始化 每个容器都提供默认构造函数，拷贝构造函数，析构函数。 初值列 可以以一个区间或者初值列作为容器初值。 比如常量容器的初始化： &#x2F;&#x2F;用初始值初始化一个vector（c++11） const vector v1 &#x3D; {1, 2, 3, 4 }; &#x2F;&#x2F;也可用不同的语法 const vector v2 {1, 2, 3, 4 }; array&lt;&gt;容器使用初值列有特殊规则。将会在arr">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-10-28T02:56:09.000Z">
+<meta property="article:modified_time" content="2024-07-14T15:26:08.244Z">
+<meta property="article:author" content="木尘痕">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>STL容器共通操作 - 虚无之境</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"muchenhen.com","root":"/","version":"1.9.1","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"bbb32ef470b36fe5f1e4e72f32112b68","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>虚无之境</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/NagisaKaworu.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="STL容器共通操作"></span>
+          
+        </div>
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      <div class="container nopadding-x-md">
+        <div id="board"
+          >
+          
+          <div class="container">
+            <div class="row">
+              <div class="col-12 col-md-10 m-auto">
+                
+
+<article class="page-content">
+  <h2 id="初始化"><a class="markdownIt-Anchor" href="#初始化"></a> 初始化</h2>
+<p>每个容器都提供默认构造函数，拷贝构造函数，析构函数。</p>
+<p><strong>初值列</strong></p>
+<p>可以以一个区间或者初值列作为容器初值。</p>
+<p>比如常量容器的初始化：</p>
+<p>//用初始值初始化一个vector（c++11）<br />
+const vector<int> v1 = {1, 2, 3, 4 };<br />
+//也可用不同的语法<br />
+const vector<int> v2 {1, 2, 3, 4 };</p>
+<p>array&lt;&gt;容器使用初值列有特殊规则。将会在array容器中解释。</p>
+<p>以某个给定区间初始化的构造函数，参数可以是来自另一个容器、来自c风格的数组、标准输入的元素。可以是不同容器，不同元素类型，前提是来源和目标的元素类型可以自动转换</p>
+<p>//int元素的list容器<br />
+listl;<br />
+//拷贝构造给一个float的vector容器<br />
+vectorc(l.begin(), l.end());<br />
+//c<ins>11也可以使用move迭代器来搬移所有元素<br />
+vectorc2(make_move_iterator(l.begin()), make_move_iterator(l.end()));<br />
+//用c风格数组完成初始化<br />
+int carray[] = { 1,2,3,4 };<br />
+setc3(begin(carray), end(carray));//c</ins>11中iterator定义了begin和end两个函数<br />
+//以标准输入设备完成初始化动作<br />
+deque c5{ istream_iterator(cin),istream_iterator() };<br />
+//c++11中可以使用一个move构造函数将容器初始化<br />
+vectorv1;<br />
+vectorv2 = move(v1);//新建容器会有之前的值，被当作初值的容器内容会不明确<br />
+//因为move函数是调动指针，不是逐一复制元素，效率较高<br />
+//在不需要某个容器又需要复制时使用move</p>
+<h2 id="swap"><a class="markdownIt-Anchor" href="#swap"></a> swap()</h2>
+<p>用来置换两个容器的内容，事实上知识只换了若干内部的指针，可以保证常数时间复杂度。执行之后原本存在的迭代器和引用都指向原先所指的元素，不过这些元素已经位于另一个容器中了</p>
+<p>array&lt;&gt;容器的该函数行为略有不同。因为此容器无法只在内部置换指针，所以array&lt;&gt;的swap()是线性时间复杂度，而且操作之后原本存在的迭代器和引用指向同一容器中的不同元素。</p>
+<h2 id="大小相关的操作函数"><a class="markdownIt-Anchor" href="#大小相关的操作函数"></a> 大小相关的操作函数</h2>
+<p>所有容器都提供三个与大小相关的操作函数</p>
+<p><strong>empty()</strong>：是size()==0同义快速形式，一般比后者效率高。</p>
+<p><strong>size()</strong>：返回当前容器的元素个数。</p>
+<p><strong>max_size()</strong>：返回容器所能容纳的元素个数的最大值。</p>
+<h2 id="比较"><a class="markdownIt-Anchor" href="#比较"></a> 比较</h2>
+<p>除了无序容器之外，常用的比较操作符==,!=,&lt;,&lt;=,&gt;,&gt;=都依据以下三个规则定义：</p>
+<p>比较的两个容器必须属于同一类型</p>
+<p>如果两个容器的元素全部依序相等，则这两个容器相等</p>
+<p>无序容器只定义了==,!=</p>
+<p>两个容器内的每一个元素都在另一个容器有相等元素，==就返回true，元素次序无关紧要。</p>
+<p>如果要比较两个容器，必须使用STL比较算法</p>
+<h2 id="元素访问"><a class="markdownIt-Anchor" href="#元素访问"></a> 元素访问</h2>
+<p>所有容器都支持基于范围的for循环</p>
+<p>c++11中常用的容器访问操作</p>
+<pre><code class="hljs">//定义一个vector容器
+vectornums = &#123; 1,2,3,4,5,6 &#125;;
+//访问每个元素并输出
+for (const auto&amp; elem : nums)
+&#123;
+	cout &lt;&lt; elem &lt;&lt; &quot; &quot;;
+&#125;
+//如果要改变元素就不写const
+for (auto&amp; elem : nums)
+&#123;
+	elem = 0;
+&#125;
+//对指定位置进行插入删除等操作,可以使用cbegin()和cend()产生的只读迭代器
+for (auto pos = nums.cbegin(); pos != nums.cend(); ++pos)
+&#123;
+	cout &lt;&lt; \*pos &lt;&lt; endl;
+&#125;
+//使用begin()和end()产生的迭代器进行修改
+for (auto pos = nums.begin(); pos != nums.end(); pos++)
+&#123;
+	\*pos = 0;
+&#125; 
+</code></pre>
+<h2 id="常见容器类共通操作表"><a class="markdownIt-Anchor" href="#常见容器类共通操作表"></a> 常见容器类共通操作表</h2>
+<p>操作</p>
+<p>必要</p>
+<p>效果</p>
+<p>ContType c</p>
+<p>1</p>
+<p>默认构造函数,建立一个空容器，array会有默认元素</p>
+<p>ContType c(c2)</p>
+<p>1</p>
+<p>拷贝构造</p>
+<p>ContTypr c = c2</p>
+<p>1</p>
+<p>拷贝构造</p>
+<p>ContType c(begin,end)</p>
+<p></p>
+<p>以区间内所有元素拷贝</p>
+<p>ContType c(initlist)</p>
+<p></p>
+<p>以初值列为初值，不适用于array，c++11</p>
+<p>ContType c = initlist</p>
+<p></p>
+<p>同上，但适用于array</p>
+<p>c.~ContType()</p>
+<p>1</p>
+<p>删除所有元素并释放内存</p>
+<p>c.empty()</p>
+<p>1</p>
+<p>判断容器是否为空</p>
+<p>c.size()</p>
+<p>1</p>
+<p>返回容器中元素数量</p>
+<p>c.max_size()</p>
+<p>1</p>
+<p>返回元素数量可能的最大值</p>
+<p>c1 == c2</p>
+<p>1</p>
+<p>判断两个容器是否相等</p>
+<p>c1 != c2</p>
+<p>1</p>
+<p>判断是否不等</p>
+<p>&gt;,&lt;,&gt;=,&lt;=</p>
+<p></p>
+<p>不适用于无序容器</p>
+<p>c = c2</p>
+<p>1</p>
+<p>c2所有元素值赋给c</p>
+<p>c1.swap(c2)</p>
+<p>1</p>
+<p>置换c1和c2的数据</p>
+<p>swap(c1,c2)</p>
+<p>1</p>
+<p>同上，但是个全局函数</p>
+<p>c.begin()</p>
+<p>1</p>
+<p>返回指向第一个元素的迭代器</p>
+<p>c.end()</p>
+<p>1</p>
+<p>返回指向最后一个元素的下一个位置的迭代器</p>
+<p>c.cbegin()</p>
+<p>1</p>
+<p>返回一个const迭代器，指向第一个元素，c++11</p>
+<p>c.cend()</p>
+<p>1</p>
+<p>返回一个const迭代器，指向最后一个元素的下一个位置，c++11</p>
+<p>c.clear()</p>
+<p></p>
+<p>移除所有元素，令容器为空，不适用于array</p>
+
+
+  
+
+</article>
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+    <!-- 备案信息 ICP for China -->
+    <div class="beian">
+  <span>
+    <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+      
+    </a>
+  </span>
+  
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?bbb32ef470b36fe5f1e4e72f32112b68";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

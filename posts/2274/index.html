@@ -1,0 +1,858 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="木尘痕">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言 最近项目升级了4.27版本，发现PSO部分似乎又有了什么改动，于是决定去看一下ReleaseNotes，对比一下相对4.26版本的变化。  ReleaseNotes 其中与PSO相关的几点如下：  安卓  BUG FIX  修复了在PSO缓存处理期间，如果传入的PSO在PSO缓存加载开始之前已经实例化则可能触发GLES断言的问题   Rendering  新特性  实现了可选的非阻塞光线跟">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UE4：4.27版本PSO变化">
+<meta property="og:url" content="http://muchenhen.com/posts/2274/index.html">
+<meta property="og:site_name" content="虚无之境">
+<meta property="og:description" content="前言 最近项目升级了4.27版本，发现PSO部分似乎又有了什么改动，于是决定去看一下ReleaseNotes，对比一下相对4.26版本的变化。  ReleaseNotes 其中与PSO相关的几点如下：  安卓  BUG FIX  修复了在PSO缓存处理期间，如果传入的PSO在PSO缓存加载开始之前已经实例化则可能触发GLES断言的问题   Rendering  新特性  实现了可选的非阻塞光线跟">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/202220220612203906.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/202220220612205018.png">
+<meta property="article:published_time" content="2022-06-12T03:57:42.000Z">
+<meta property="article:modified_time" content="2024-07-14T15:26:08.252Z">
+<meta property="article:author" content="木尘痕">
+<meta property="article:tag" content="UE4">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/202220220612203906.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>UE4：4.27版本PSO变化 - 虚无之境</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"muchenhen.com","root":"/","version":"1.9.1","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"bbb32ef470b36fe5f1e4e72f32112b68","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>虚无之境</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/NagisaKaworu.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="UE4：4.27版本PSO变化"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        木尘痕
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-06-12 11:57" pubdate>
+          2022年6月12日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          9.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          16 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">UE4：4.27版本PSO变化</h1>
+            
+            <div class="markdown-body">
+              
+              <h1 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h1>
+<p>最近项目升级了4.27版本，发现PSO部分似乎又有了什么改动，于是决定去看一下ReleaseNotes，对比一下相对4.26版本的变化。</p>
+<h1 id="releasenotes"><a class="markdownIt-Anchor" href="#releasenotes"></a> ReleaseNotes</h1>
+<p>其中与PSO相关的几点如下：</p>
+<h2 id="安卓"><a class="markdownIt-Anchor" href="#安卓"></a> <strong>安卓</strong></h2>
+<h3 id="bug-fix"><a class="markdownIt-Anchor" href="#bug-fix"></a> BUG FIX</h3>
+<ul>
+<li>修复了在PSO缓存处理期间，如果传入的PSO在PSO缓存加载开始之前已经实例化则可能触发GLES断言的问题</li>
+</ul>
+<h2 id="rendering"><a class="markdownIt-Anchor" href="#rendering"></a> <strong>Rendering</strong></h2>
+<h3 id="新特性"><a class="markdownIt-Anchor" href="#新特性"></a> 新特性</h3>
+<ul>
+<li>实现了可选的非阻塞光线跟踪PSO编译模式</li>
+</ul>
+<h3 id="bug-fix-2"><a class="markdownIt-Anchor" href="#bug-fix-2"></a> BUG FIX</h3>
+<ul>
+<li>修复了在CPU核数较低的计算机上光线跟踪PSO编译任务中可能出现的死锁</li>
+</ul>
+<h2 id="materials"><a class="markdownIt-Anchor" href="#materials"></a> <strong>Materials</strong></h2>
+<h3 id="新特性-2"><a class="markdownIt-Anchor" href="#新特性-2"></a> 新特性</h3>
+<ul>
+<li>包含用于PSO缓存的 stable shader keys 的文件不再是文本（scl.csv），而是二进制文件（.shk）</li>
+<li>PSO缓存收集过程中的“expand”步骤的性能有了很大提高</li>
+</ul>
+<h3 id="bug-fix-3"><a class="markdownIt-Anchor" href="#bug-fix-3"></a> BUG FIX</h3>
+<ul>
+<li>将PSO Cache的过滤规则改的宽松了，为了避免一些问题（？另外这条在RealeaseNotes里出现两次？）</li>
+</ul>
+<p>下文主要关注Materials部分的变化</p>
+<h1 id="pso部署和使用的基本流程"><a class="markdownIt-Anchor" href="#pso部署和使用的基本流程"></a> PSO部署和使用的基本流程</h1>
+<p>首先回顾一下4.26版本下我们生成和使用PSO的流程：</p>
+<ol>
+<li>打开项目的NeedsShaderStableKeys设置，在DefaultEngine.ini和相关平台的Engine.ini中添加</li>
+</ol>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-section">[DevOptions.Shaders]</span><br><span class="hljs-attr">NeedsShaderStableKeys</span>=<span class="hljs-literal">true</span><br></code></pre></td></tr></table></figure>
+<ol start="2">
+<li>打包，cook阶段生成对应的两个.scl.csv文件（4.26版本）</li>
+<li>打开DefaultEngine中PSO的相关Log设置确认成功启用PSO</li>
+</ol>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-section">[ConsoleVariables]</span><br><span class="hljs-attr">r.ShaderPipelineCache.Enabled</span>=<span class="hljs-number">1</span><br><span class="hljs-attr">r.ShaderPipelineCache.LogPSO</span>=<span class="hljs-number">1</span><br><span class="hljs-attr">r.ShaderPipelineCache.SaveBoundPSOLog</span>=<span class="hljs-number">1</span><br></code></pre></td></tr></table></figure>
+<p>游戏启动后会有Log可以确认：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs Log">LogConfig: Setting CVar [[r.ShaderPipelineCache.Enabled:1]]<br>LogConfig: Setting CVar [[r.ShaderPipelineCache.LogPSO:1]]<br>LogConfig: Setting CVar [[r.ShaderPipelineCache.SaveBoundPSOLog:1]]<br></code></pre></td></tr></table></figure>
+<ol start="4">
+<li>正常进行游戏流程，发现Saved文件夹中出现CoolectedPSOs文件夹，生成.rec.upipelinecache文件</li>
+<li>使用UE4Editor-Cmd.exe和相关命令生成.stablepc.csv文件，参考：</li>
+</ol>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs jboss-cli">Engine/Binaries/Win64/UE4Editor-Cmd.exe<br>D:<span class="hljs-string">/Client/Client.uproject</span><br>-run=ShaderPipelineCacheTools expand<br>D:<span class="hljs-string">/PSOCache/</span>*<span class="hljs-string">.rec.upipelinecache</span><br>D:<span class="hljs-string">/PSOCache/</span>*<span class="hljs-string">.scl.csv</span><br>D:<span class="hljs-string">/PSOCache/Client_GLSL_ES3_1_ANDROID.stablepc.csv</span><br></code></pre></td></tr></table></figure>
+<ol start="6">
+<li>到这一步我们应该有四个文件：
+<ul>
+<li>.scl.csv <strong>两个</strong> 打包时生成的文件</li>
+<li>.rec.upipelinecache 运行时收集的文件</li>
+<li>.stablepc.csv 第5步生成的文件</li>
+</ul>
+</li>
+<li>UE4Editor-Cmd.exe命令生成.stable.upipelinecache文件，文件路径在，参考：</li>
+</ol>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm">Engine\<span class="hljs-keyword">Binaries\Win64\UE4Editor-Cmd.exe</span><br><span class="hljs-keyword"></span>D:\TestProject\TestProject.uproject<br>-run=<span class="hljs-keyword">ShaderPipelineCacheTools </span><span class="hljs-keyword">build</span><br><span class="hljs-keyword"></span><span class="hljs-string">&quot;D:\TestProject/Build/Android/PipelineCaches/*TestProject_GLSL_ES3_1_ANDROID.stablepc.csv&quot;</span><br><span class="hljs-string">&quot;D:\TestProject/Saved/Cooked/Android_ASTC/TestProject/Metadata/PipelineCaches/ShaderStableInfo-Global-GLSL_ES3_1_ANDROID.scl.csv&quot;</span><br><span class="hljs-string">&quot;D:\TestProject/Saved/Cooked/Android_ASTC/TestProject/Metadata/PipelineCaches/ShaderStableInfo-TestProject-GLSL_ES3_1_ANDROID.scl.csv&quot;</span><br><span class="hljs-string">&quot;D:\TestProject/Saved/Cooked/Android_ASTC/TestProject/Content/PipelineCaches/Android/TestProject_GLSL_ES3_1_ANDROID.stable.upipelinecache&quot;</span><br></code></pre></td></tr></table></figure>
+<ol start="8">
+<li>将上一步生成的.stable.upipelinecache文件放在项目的Saved\Cooked对应平台的Content的PipelineCaches目录下，比如：<br />
+D:\TestProject\Saved\Cooked\Android_ASTC\TestProject\Content\PipelineCaches</li>
+<li>再次打包，这次打包就有PSO文件了，启动游戏时查看log进行确认：</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs Log">LogShaderLibrary: Display: Using ../../../TestProject/Content/ShaderArchive-TestProject-GLSL_ES3_1_ANDROID.ushaderbytecode for material shader code. Total 3053 unique shaders.<br>LogShaderLibrary: Display: Cooked Context: Using Shared Shader Library TestProject<br>LogRHI: Display: Opened pipeline cache after state change and enqueued 0 of 0 tasks for precompile.<br>LogRHI: Base name for record PSOs is ../../../TestProject/Saved/CollectedPSOs/++UE4+Release-4.25-CL-13942748-TestProject_GLSL_ES3_1_ANDROID_00087B4B08D905BBC5A827F40CA03A0C.rec.upipelinecache<br>LogRHI: FPipelineCacheFile Header Game Version: 13942748<br>LogRHI: FPipelineCacheFile Header Engine Data Version: 17<br>LogRHI: FPipelineCacheFile Header TOC Offset: 38155<br>LogRHI: FPipelineCacheFile File Size: 51011 Bytes<br>LogRHI: Opened FPipelineCacheFile: ../../../TestProject/Content/PipelineCaches/Android/TestProject_GLSL_ES3_1_ANDROID.stable.upipelinecache (GUID: 00000000000000000000000000000000) with 102 entries.<br>LogRHI: Scanning Binary program cache, using Shader Pipeline Cache version 6988202F47BA858F3F0DE483D7DB0606<br>LogRHI: AndroidEGL:SwapBuffers eglGetCompositorTimingANDROID EGL_COMPOSITE_DEADLINE_ANDROID=2718926192606265, EGL_COMPOSITE_INTERVAL_ANDROID=16559027, EGL_COMPOSITE_TO_PRESENT_LATENCY_ANDROID=14559027<br></code></pre></td></tr></table></figure>
+<p>以上流程在4.27中，按照版本信息中显示的，变化最大的是第二步生成的.scl.csv文件变成了二进制.shk文件</p>
+<h1 id="sclcsv文件"><a class="markdownIt-Anchor" href="#sclcsv文件"></a> SCL.CSV文件</h1>
+<p><img src="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/202220220612203906.png" srcset="/img/loading.gif" lazyload alt="20220612203906" /><br />
+文件里包含了材质类名与Shader类型、特性级别、目标平台、顶点工厂类型和Hash相关信息<br />
+在4.27版本中，生成的文件为.shk：<br />
+<img src="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/202220220612205018.png" srcset="/img/loading.gif" lazyload alt="20220612205018" /></p>
+<h1 id="文件的生成"><a class="markdownIt-Anchor" href="#文件的生成"></a> 文件的生成</h1>
+<p>4.26中源码如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-comment">// ShaderCodeLibrary.cpp</span><br><span class="hljs-comment">// 忽略了部分无关代码</span><br><span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">Finalize</span><span class="hljs-params">(FString OutputDir, <span class="hljs-type">bool</span> bNativeFormat, FString&amp; OutSCLCSVPath)</span></span><br><span class="hljs-function">	</span>&#123;<br>		<span class="hljs-comment">// ...</span><br><br>		<span class="hljs-comment">// Shader library</span><br>		<span class="hljs-keyword">if</span> (bSuccess &amp;&amp; StableMap.<span class="hljs-built_in">Num</span>() &gt; <span class="hljs-number">0</span>)<br>		&#123;<br>			<span class="hljs-comment">// Write to a intermediate file</span><br>            <span class="hljs-comment">// 这里生成了.scl.csv的文件路径</span><br>			FString IntermediateFormatPath = <span class="hljs-built_in">GetStableInfoArchiveFilename</span>(FPaths::<span class="hljs-built_in">ProjectSavedDir</span>() / <span class="hljs-built_in">TEXT</span>(<span class="hljs-string">&quot;Shaders&quot;</span>) / FormatName.<span class="hljs-built_in">ToString</span>(), LibraryName, FormatName);<br><br>			<span class="hljs-comment">// Write directly to the file</span><br>			&#123;<br>				<span class="hljs-function">TUniquePtr&lt;FArchive&gt; <span class="hljs-title">IntermediateFormatAr</span><span class="hljs-params">(IFileManager::Get().CreateFileWriter(*IntermediateFormatPath))</span></span>;<br><br>                <span class="hljs-comment">// 这一行是在打表，生成了csv文件的表头</span><br>				FString HeaderText = FStableShaderKeyAndValue::<span class="hljs-built_in">HeaderLine</span>();<br>				HeaderText += <span class="hljs-built_in">TCHAR</span>(<span class="hljs-string">&#x27;\n&#x27;</span>);<br>				<span class="hljs-keyword">auto</span> HeaderSrc = <span class="hljs-built_in">StringCast</span>&lt;ANSICHAR&gt;(*HeaderText, HeaderText.<span class="hljs-built_in">Len</span>());<br>                <span class="hljs-comment">// 写入文件第一行</span><br>				IntermediateFormatAr-&gt;<span class="hljs-built_in">Serialize</span>((ANSICHAR*)HeaderSrc.<span class="hljs-built_in">Get</span>(), HeaderSrc.<span class="hljs-built_in">Length</span>() * <span class="hljs-built_in">sizeof</span>(ANSICHAR));<br><br>				TAnsiStringBuilder&lt;<span class="hljs-number">512</span>&gt; LineBuffer;<br><br>                <span class="hljs-comment">// TSet&lt;FStableShaderKeyAndValue&gt; StableMap;</span><br>				<span class="hljs-keyword">for</span> (<span class="hljs-type">const</span> FStableShaderKeyAndValue&amp; Item : StableMap)<br>				&#123;<br>					LineBuffer.<span class="hljs-built_in">Reset</span>();<br>                    <span class="hljs-comment">// 将FStableShaderKeyAndValue的相关信息写入LineBuffer</span><br>					Item.<span class="hljs-built_in">AppendString</span>(LineBuffer);<br>					LineBuffer &lt;&lt; <span class="hljs-string">&#x27;\n&#x27;</span>;<br>                    <span class="hljs-comment">// 将一个FStableShaderKeyAndValue的信息写入文件</span><br>					IntermediateFormatAr-&gt;<span class="hljs-built_in">Serialize</span>(<span class="hljs-built_in">const_cast</span>&lt;ANSICHAR*&gt;(LineBuffer.<span class="hljs-built_in">ToString</span>()), LineBuffer.<span class="hljs-built_in">Len</span>() * <span class="hljs-built_in">sizeof</span>(ANSICHAR));<br>				&#125;<br>			&#125;<br><br>            <span class="hljs-comment">// ...</span><br><br>		&#125;<br>	&#125;<br></code></pre></td></tr></table></figure>
+<p>可以看出在4.26版本中是直接将每一个FStableShaderKeyAndValue的信息直接转成文本写入到文本文件中的<br />
+再看一下4.27版本：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">Finalize</span><span class="hljs-params">(FString OutputDir, FString&amp; OutSCLCSVPath)</span></span><br><span class="hljs-function">	</span>&#123;<br>		<span class="hljs-comment">// ...</span><br><br>		<span class="hljs-comment">// Shader library</span><br>		<span class="hljs-keyword">if</span> (bSuccess &amp;&amp; StableMap.<span class="hljs-built_in">Num</span>() &gt; <span class="hljs-number">0</span>)<br>		&#123;<br>			<span class="hljs-comment">// Write to a intermediate file</span><br>			FString IntermediateFormatPath = <span class="hljs-built_in">GetStableInfoArchiveFilename</span>(FPaths::<span class="hljs-built_in">ProjectSavedDir</span>() / <span class="hljs-built_in">TEXT</span>(<span class="hljs-string">&quot;Shaders&quot;</span>) / FormatName.<span class="hljs-built_in">ToString</span>(), LibraryName, FormatName);<br><br>			<span class="hljs-comment">// Write directly to the file</span><br>			&#123;<br>                <span class="hljs-comment">// PipelineCacheUtilities 用这里的方法去保存文件了</span><br>				<span class="hljs-keyword">if</span> (!UE::PipelineCacheUtilities::<span class="hljs-built_in">SaveStableKeysFile</span>(IntermediateFormatPath, StableMap))<br>				&#123;<br>					<span class="hljs-built_in">UE_LOG</span>(LogShaderLibrary, Error, <span class="hljs-built_in">TEXT</span>(<span class="hljs-string">&quot;Could not save stable map to file &#x27;%s&#x27;&quot;</span>), *IntermediateFormatPath);<br>				&#125;<br><br>				<span class="hljs-comment">// ...</span><br>			&#125;<br><br>            <span class="hljs-comment">// ...</span><br>		&#125;<br><br>		<span class="hljs-keyword">return</span> bSuccess;<br>	&#125;<br></code></pre></td></tr></table></figure>
+<p>那么去看一下UE::PipelineCacheUtilities::SaveStableKeysFile</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-comment">// PipelineCacheUtilities.h</span><br><span class="hljs-comment">/** </span><br><span class="hljs-comment">	 * Saves stable shader keys file (using a proprietary format). Stable key is a way to identify a shader independently of its output hash</span><br><span class="hljs-comment">	 * </span><br><span class="hljs-comment">	 * @param Filename filename (with path if needed)</span><br><span class="hljs-comment">	 * @param Values values to be saved</span><br><span class="hljs-comment">	 * @return true if successful</span><br><span class="hljs-comment">	 */</span><br>	<span class="hljs-function">RENDERCORE_API <span class="hljs-type">bool</span> <span class="hljs-title">SaveStableKeysFile</span><span class="hljs-params">(<span class="hljs-type">const</span> FStringView&amp; Filename, <span class="hljs-type">const</span> TSet&lt;FStableShaderKeyAndValue&gt;&amp; Values)</span></span>;<br><br><span class="hljs-comment">// ... </span><br><br><span class="hljs-comment">// PipelineCacheUtilities.cpp</span><br><span class="hljs-type">bool</span> UE::PipelineCacheUtilities::<span class="hljs-built_in">SaveStableKeysFile</span>(<span class="hljs-type">const</span> FStringView&amp; Filename, <span class="hljs-type">const</span> TSet&lt;FStableShaderKeyAndValue&gt;&amp; Values)<br>&#123;<br>	<span class="hljs-function">TUniquePtr&lt;FArchive&gt; <span class="hljs-title">FileArchiveInner</span><span class="hljs-params">(IFileManager::Get().CreateFileWriter(*FString(Filename.Len(), Filename.GetData())))</span></span>;<br>	<span class="hljs-keyword">if</span> (!FileArchiveInner)<br>	&#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>	&#125;<br>	<span class="hljs-function">TUniquePtr&lt;FArchive&gt; <span class="hljs-title">Archive</span><span class="hljs-params">(<span class="hljs-keyword">new</span> FNameAsStringIndexProxyArchive(*FileArchiveInner.Get()))</span></span>;<br><br>    <span class="hljs-comment">// 处理文件头，已经不是表头了，只取了TSet的Num</span><br>	UE::PipelineCacheUtilities::Private::FStableKeysSerializedHeader Header;<br>	Header.NumEntries = Values.<span class="hljs-built_in">Num</span>();<br><br>	*Archive &lt;&lt; Header;<br><br>	<span class="hljs-comment">// go through all the hashes and index them</span><br>    <span class="hljs-comment">// 这里要拿所有的ShaderHash和对应的Index</span><br>	TArray&lt;FSHAHash&gt; Hashes;<br>	TMap&lt;FSHAHash, int32&gt; HashToIndex;<br>    <span class="hljs-comment">// 填充HashToIndex的Map的方法（感觉lambda流行了起来……</span><br>	<span class="hljs-keyword">auto</span> IndexHash = [&amp;Hashes, &amp;HashToIndex](<span class="hljs-type">const</span> FSHAHash&amp; Hash)<br>	&#123;<br>		<span class="hljs-keyword">if</span> (HashToIndex.<span class="hljs-built_in">Find</span>(Hash) == <span class="hljs-literal">nullptr</span>)<br>		&#123;<br>			Hashes.<span class="hljs-built_in">Add</span>(Hash);<br>			HashToIndex.<span class="hljs-built_in">Add</span>(Hash, Hashes.<span class="hljs-built_in">Num</span>() - <span class="hljs-number">1</span>);<br>		&#125;<br>	&#125;;<br><br>	<span class="hljs-keyword">for</span> (<span class="hljs-type">const</span> FStableShaderKeyAndValue&amp; Item : Values)<br>	&#123;<br>        <span class="hljs-comment">// PipelineHash和OutputHash都需要，在原来的csv文件中也是两个</span><br>		<span class="hljs-built_in">IndexHash</span>(Item.PipelineHash);<br>		<span class="hljs-built_in">IndexHash</span>(Item.OutputHash);<br>	&#125;<br><br>	int32 NumHashes = Hashes.<span class="hljs-built_in">Num</span>();<br>	*Archive &lt;&lt; NumHashes;<br>	<span class="hljs-keyword">for</span> (int32 IdxHash = <span class="hljs-number">0</span>; IdxHash &lt; NumHashes; ++IdxHash)<br>	&#123;<br>		*Archive &lt;&lt; Hashes[IdxHash];<br>	&#125;<br><br>	<span class="hljs-comment">// save the rest of the properties</span><br>	<span class="hljs-keyword">for</span> (<span class="hljs-type">const</span> FStableShaderKeyAndValue&amp; ConstItem : Values)<br>	&#123;<br>		<span class="hljs-comment">// serialization unfortunately needs non-const and this is easier than const-casting every field</span><br>		FStableShaderKeyAndValue&amp; Item = <span class="hljs-built_in">const_cast</span>&lt;FStableShaderKeyAndValue&amp;&gt;(ConstItem);<br><br>		int8 CompactNamesNum = <span class="hljs-built_in">static_cast</span>&lt;int8&gt;(Item.ClassNameAndObjectPath.ObjectClassAndPath.<span class="hljs-built_in">Num</span>());<br>		<span class="hljs-built_in">ensure</span>(Item.ClassNameAndObjectPath.ObjectClassAndPath.<span class="hljs-built_in">Num</span>() &lt; <span class="hljs-number">256</span>);<br>		*Archive &lt;&lt; CompactNamesNum;<br>		<span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> Idx = <span class="hljs-number">0</span>; Idx &lt; (<span class="hljs-type">int</span>)CompactNamesNum; ++Idx)<br>		&#123;<br>			*Archive &lt;&lt; Item.ClassNameAndObjectPath.ObjectClassAndPath[Idx];<br>		&#125;<br><br>		*Archive &lt;&lt; Item.ShaderType;<br>		*Archive &lt;&lt; Item.ShaderClass;<br>		*Archive &lt;&lt; Item.MaterialDomain;<br>		*Archive &lt;&lt; Item.FeatureLevel;<br>		*Archive &lt;&lt; Item.QualityLevel;<br>		*Archive &lt;&lt; Item.TargetFrequency;<br>		*Archive &lt;&lt; Item.TargetPlatform;<br>		*Archive &lt;&lt; Item.VFType;<br>		*Archive &lt;&lt; Item.PermutationId;<br><br>		uint64 PipelineHashIdx = <span class="hljs-built_in">static_cast</span>&lt;uint64&gt;(*HashToIndex.<span class="hljs-built_in">Find</span>(Item.PipelineHash))	;<br>		<span class="hljs-built_in">WriteVarUIntToArchive</span>(*Archive, PipelineHashIdx);<br>		uint64 OutputHashIdx = <span class="hljs-built_in">static_cast</span>&lt;uint64&gt;(*HashToIndex.<span class="hljs-built_in">Find</span>(Item.OutputHash));<br>		<span class="hljs-built_in">WriteVarUIntToArchive</span>(*Archive, OutputHashIdx);<br>	&#125;<br><br>	<span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>当然，在保存的文件格式变化之后，读取的方法相应的也变了，namespace PipelineCacheUtilities只有两个行数，一个是LoadStableKeysFile，一个是SaveStableKeysFile<br />
+从csv文件变成二进制文件后直接打开文件查看信息是不能了，这么改的目的应该就是更新日志里提到的对PSO build的expand过程的性能提升，可以看流程中的第5条的命令<br />
+在ShaderPipelineCacheToolsCommandlet.cpp文件中相关的有变化的方法：</p>
+<table>
+<thead>
+<tr>
+<th>4.26</th>
+<th>4.27</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LoadStableSCL</td>
+<td>LoadStableShaderKeys</td>
+</tr>
+<tr>
+<td>LoadStableSCLs</td>
+<td>LoadStableShaderKeysMultiple</td>
+</tr>
+<tr>
+<td>If you can find the old .scl.csv file</td>
+<td>If you can find the old %s file</td>
+</tr>
+<tr>
+<td>GeneratePermuations</td>
+<td>GeneratePermutations（他们甚至改了单词的拼写错误</td>
+</tr>
+<tr>
+<td>ExpandPSOSC</td>
+<td>ExpandPSOSC（函数体中关于文件类型的修改，这里就是关于更新日志中关于expand性能提升的部分）</td>
+</tr>
+</tbody>
+</table>
+<h1 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h1>
+<p>在Material方面：</p>
+<ol>
+<li>4.26 使用csv文件作为ShaderAssetInfo文件<br />
+4.27 使用.shk的二进制文件作为ShaderAssetInfo文件</li>
+<li>4.27 对应新增了.shk文件的读写方法</li>
+<li>4.27 将PSOExpand中的一个for循环优化为ParallelFor提升性能</li>
+</ol>
+
+              
+            </div>
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/UE4/">#UE4</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>UE4：4.27版本PSO变化</div>
+      <div>http://muchenhen.com/posts/2274/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>木尘痕</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年6月12日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/46173/" title="UE4：移动端级联阴影简要分析">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">UE4：移动端级联阴影简要分析</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/10235/" title="UE4：AnimSequence曲线和Tracks复制">
+                        <span class="hidden-mobile">UE4：AnimSequence曲线和Tracks复制</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+    <!-- 备案信息 ICP for China -->
+    <div class="beian">
+  <span>
+    <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+      
+    </a>
+  </span>
+  
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?bbb32ef470b36fe5f1e4e72f32112b68";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script>
+  (function() {
+    var enableLang = CONFIG.code_language.enable && CONFIG.code_language.default;
+    var enableCopy = CONFIG.copy_btn;
+    if (!enableLang && !enableCopy) {
+      return;
+    }
+
+    function getBgClass(ele) {
+      return Fluid.utils.getBackgroundLightness(ele) >= 0 ? 'code-widget-light' : 'code-widget-dark';
+    }
+
+    var copyTmpl = '';
+    copyTmpl += '<div class="code-widget">';
+    copyTmpl += 'LANG';
+    copyTmpl += '</div>';
+    jQuery('.markdown-body pre').each(function() {
+      var $pre = jQuery(this);
+      if ($pre.find('code.mermaid').length > 0) {
+        return;
+      }
+      if ($pre.find('span.line').length > 0) {
+        return;
+      }
+
+      var lang = '';
+
+      if (enableLang) {
+        lang = CONFIG.code_language.default;
+        if ($pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2 && $pre.children().hasClass('hljs')) {
+          lang = $pre[0].children[0].classList[1];
+        } else if ($pre[0].getAttribute('data-language')) {
+          lang = $pre[0].getAttribute('data-language');
+        } else if ($pre.parent().hasClass('sourceCode') && $pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2) {
+          lang = $pre[0].children[0].classList[1];
+          $pre.parent().addClass('code-wrapper');
+        } else if ($pre.parent().hasClass('markdown-body') && $pre[0].classList.length === 0) {
+          $pre.wrap('<div class="code-wrapper"></div>');
+        }
+        lang = lang.toUpperCase().replace('NONE', CONFIG.code_language.default);
+      }
+      $pre.append(copyTmpl.replace('LANG', lang).replace('code-widget">',
+        getBgClass($pre[0]) + (enableCopy ? ' code-widget copy-btn" data-clipboard-snippet><i class="iconfont icon-copy"></i>' : ' code-widget">')));
+
+      if (enableCopy) {
+        Fluid.utils.createScript('https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js', function() {
+          var clipboard = new window.ClipboardJS('.copy-btn', {
+            target: function(trigger) {
+              var nodes = trigger.parentNode.childNodes;
+              for (var i = 0; i < nodes.length; i++) {
+                if (nodes[i].tagName === 'CODE') {
+                  return nodes[i];
+                }
+              }
+            }
+          });
+          clipboard.on('success', function(e) {
+            e.clearSelection();
+            e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-copy', 'icon-success');
+            setTimeout(function() {
+              e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-success', 'icon-copy');
+            }, 2000);
+          });
+        });
+      }
+    });
+  })();
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

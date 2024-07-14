@@ -1,0 +1,883 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="木尘痕">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="以下是通过命令行转换其他视频文件到bink的相关命令行参数的解释 在使用时大小写通用，和数字不需要空格  &#x2F;D Specify the overall data rate to compress to. 1000 and up: Data rate to compress to (in bytes per second) 1 to 200: Compress to this % of the or">
+<meta property="og:type" content="article">
+<meta property="og:title" content="BinkVideo视频转换的命令行参数">
+<meta property="og:url" content="http://muchenhen.com/posts/10561/index.html">
+<meta property="og:site_name" content="虚无之境">
+<meta property="og:description" content="以下是通过命令行转换其他视频文件到bink的相关命令行参数的解释 在使用时大小写通用，和数字不需要空格  &#x2F;D Specify the overall data rate to compress to. 1000 and up: Data rate to compress to (in bytes per second) 1 to 200: Compress to this % of the or">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-02-11T07:28:47.000Z">
+<meta property="article:modified_time" content="2024-07-14T15:26:08.256Z">
+<meta property="article:author" content="木尘痕">
+<meta property="article:tag" content="Bink">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>BinkVideo视频转换的命令行参数 - 虚无之境</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"muchenhen.com","root":"/","version":"1.9.1","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"bbb32ef470b36fe5f1e4e72f32112b68","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>虚无之境</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/NagisaKaworu.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="BinkVideo视频转换的命令行参数"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        木尘痕
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-02-11 15:28" pubdate>
+          2023年2月11日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          8 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">BinkVideo视频转换的命令行参数</h1>
+            
+            <div class="markdown-body">
+              
+              <p>以下是通过命令行转换其他视频文件到bink的相关命令行参数的解释</p>
+<p>在使用时大小写通用，和数字不需要空格</p>
+<h2 id="d"><a class="markdownIt-Anchor" href="#d"></a> /D</h2>
+<p>Specify the overall data rate to compress to.<br />
+1000 and up: Data rate to compress to (in bytes per second)<br />
+1 to 200: Compress to this % of the original file size.</p>
+<p>/D# 参数指定了要压缩到的总数据率。如果值为1000或更高，则数据率将被压缩到（以每秒字节为单位）。如果值为1到200，则将压缩到原始文件大小的此百分比。</p>
+<h2 id="m"><a class="markdownIt-Anchor" href="#m"></a> /M</h2>
+<p>/M#.# - Specify the peak data rate to limit to.<br />
+1.0 to 10.0: Keep the peak data rate to under this many times the overall rate.<br />
+1000 and up. Peak data rate to stay under (in bytes per second).</p>
+<p>/M#.# 参数指定了要限制的峰值数据率。如果值介于1.0到10.0之间，则将峰值数据率保持在总数据率的此多倍以下。如果值为1000或更高，则应保持在此以下的峰值数据率（以每秒字节为单位）。</p>
+<h2 id="j"><a class="markdownIt-Anchor" href="#j"></a> /J</h2>
+<p>/J# - Automatically promote to a key frame at what percentage change.</p>
+<p>/J# 参数指定在多大百分比的变化时自动升级为关键帧。关键帧是视频流中重要的帧，包含了一个完整的视频图像，其他帧仅包含图像的差异。更改百分比较大时自动升级为关键帧可以提高图像质量。</p>
+<p>这里的percentage change指的是图像中每个像素与上一帧像素之间的变化百分比。Bink在视频编码过程中使用关键帧来记录图像的每个像素的全部信息，以便更准确地进行解码。如果图像中的某些像素与上一帧像素的变化百分比超过了用户指定的阈值，那么Bink将自动把当前帧升级为关键帧，以便更精确地进行编码。</p>
+<h2 id="k"><a class="markdownIt-Anchor" href="#k"></a> /K</h2>
+<p>/K# - Specify key frame frequency (key every x frames).</p>
+<p>/K# 参数指定关键帧频率（每 x 帧关键帧）。频繁的关键帧可以提高图像质量，但也会增加文件大小。指定的频率决定了关键帧的数量，因此可以控制文件大小和图像质量之间的平衡。</p>
+<h2 id="p"><a class="markdownIt-Anchor" href="#p"></a> /P</h2>
+<p>/P# - Number of frames to preview (for bandwidth allocation).</p>
+<p>/P# 参数指定预览帧数（用于带宽分配）。该值决定了在压缩视频时使用多少帧来预测带宽需求。预测的带宽需求决定了压缩视频所需的码率，因此影响了文件大小和图像质量。较高的预览帧数可以提高图像质量，但也会增加文件大小。</p>
+<h2 id="s"><a class="markdownIt-Anchor" href="#s"></a> /S</h2>
+<p>/S# - Specifies the starting frame.</p>
+<p>指定开始的帧</p>
+<h2 id="e"><a class="markdownIt-Anchor" href="#e"></a> /E</h2>
+<p>/E# - Specifies the ending frame.</p>
+<p>指定结束的帧</p>
+<h2 id="f"><a class="markdownIt-Anchor" href="#f"></a> /F</h2>
+<p>/F#.# - Override the output frame rate (force the change).</p>
+<p>/F#.# 参数覆盖输出帧速率（强制更改）。该值决定了输出视频的帧速率<br />
+/F30.0 将强制将帧速率设置为30帧每秒，/F24.0 将强制将帧速率设置为24帧每秒。</p>
+<h2 id="a"><a class="markdownIt-Anchor" href="#a"></a> /A</h2>
+<p>/A#.# - Adjust the input frame rate to this output frame rate (add/remove frames).</p>
+<p>/A#.# 参数表示调整输入帧速率到该输出帧速率（添加/删除帧）。</p>
+<p>例如：/A24.0 将调整输入帧速率为24帧每秒，/A30.0 将调整输入帧速率为30帧每秒。</p>
+<p>请注意，如果您同时使用 /F 和 /A 参数，则仅使用 /F 参数。</p>
+<h2 id="t"><a class="markdownIt-Anchor" href="#t"></a> /T</h2>
+<p>T# - Bink track ID to place the sound into (0 by default).</p>
+<p>/T# 参数表示要将声音放入的 Bink 轨道 ID（默认为0）。</p>
+<h2 id="g"><a class="markdownIt-Anchor" href="#g"></a> /G</h2>
+<p>/G# - Input track to read from (0 by default - first stereo or mono audio track).</p>
+<h2 id="l"><a class="markdownIt-Anchor" href="#l"></a> /L</h2>
+<p>/L# - Sound compression level: 0=lossless, 4=perceptibly lossless, 99=very lossy<br />
+Use -1 to not process the sound data in the input file.</p>
+<p>声音压缩级别：0=无损，4=感知无损，99=非常有损<br />
+使用-1不处理输入文件中的声音数据。</p>
+<h2 id="r"><a class="markdownIt-Anchor" href="#r"></a> /R</h2>
+<p>/R# - Force the output data rate (11025, 22050, 44100, etc.).</p>
+<p>/R# 参数表示强制输出数据率（11025，22050，44100等）。</p>
+<h2 id="b"><a class="markdownIt-Anchor" href="#b"></a> /B</h2>
+<p>/B# - Force the output bits (8 or 16).</p>
+<p>/B# 参数表示强制输出位（8或16）。</p>
+<h2 id="c"><a class="markdownIt-Anchor" href="#c"></a> /C</h2>
+<p>/C# - Force the output channels (1=mono, 2=stereo).</p>
+<p>/C# 参数表示强制输出声道（1=单声道，2=立体声）。</p>
+<h2 id="l-2"><a class="markdownIt-Anchor" href="#l-2"></a> /L</h2>
+<p>/L - Use grayscale (Bink 1 only).</p>
+<p>/L 参数表示仅使用灰度色（仅适用于 Bink 1）。</p>
+<p>这意味着将把视频编码为黑白图像而不是彩色图像。</p>
+<h2 id="n"><a class="markdownIt-Anchor" href="#n"></a> /N</h2>
+<p>/N# - Specify the rate to use for keyframes (and switch to no-data-rate-borrowing)</p>
+<p>/N# 参数表示用于关键帧的速率（并切换到不使用数据率借用）。</p>
+<p>这意味着将指定关键帧的码率，并不再从非关键帧中借用码率。</p>
+<p>例如：/N3000 指定关键帧的码率为3000字节每秒。</p>
+<p>关键帧是视频编码的重要概念。它是存储完整图像的帧，其他非关键帧仅存储图像的更改。</p>
+<p>因此，对于关键帧的码率，您可以设置更高的码率以保证关键帧的图像质量，而对于非关键帧，您可以设置较低的码率以减小文件大小。</p>
+<p>例如，如果您将关键帧的码率设置为5000字节每秒，则在编码过程中保证关键帧的图像质量，并且可以为非关键帧分配较低的码率以减小文件大小。</p>
+<p>“不使用数据率借用” 指的是在压缩视频文件时，不再将额外的码率分配给非关键帧。关键帧是指存储整个视频图像的帧，非关键帧仅存储与上一帧的差异。在压缩视频文件时，通常会将额外的码率分配给非关键帧，以使压缩效果更好。然而，选择不使用数据率借用意味着仅将额外的码率分配给关键帧，因此非关键帧的质量可能会降低。</p>
+<h2 id="z"><a class="markdownIt-Anchor" href="#z"></a> /Z</h2>
+<p>/Z# - Graphics processing options:</p>
+<ul>
+<li>Bi-cubic scaling is the default and usually give the best quality.</li>
+<li>Add 100 for bi-linear scaling instead.</li>
+<li>Add 200 for box scaling instead.</li>
+<li>By default, no alpha is processed.</li>
+<li>Add 1000 to process the alpha plane.</li>
+<li>Add 2000 to process the alpha plane (as pre-multiplied).</li>
+<li>Add 3000 to process the alpha plane (and filter as pre-multiplied).</li>
+<li>Add 10000 to suppress warning about missing alpha plane.</li>
+<li>Add 20000 turn off zero alpha block weighting.</li>
+</ul>
+<p>Z#参数控制图形处理选项：</p>
+<ul>
+<li>默认情况下使用双三次缩放，通常会给出最佳质量。</li>
+<li>加上100以使用双线性缩放。</li>
+<li>加上200以使用箱式缩放。</li>
+<li>默认情况下不处理alpha。</li>
+<li>加上1000以处理alpha平面。</li>
+<li>加上2000以将alpha平面预先处理。</li>
+<li>加上3000以处理alpha平面（并将其过滤为预先乘积）。</li>
+<li>加上10000以阻止警告缺失alpha平面。</li>
+<li>加上20000以关闭零alpha块加权。</li>
+</ul>
+<p>Alpha Plane 是指图像中的透明度通道。在计算机图形学中，颜色通道和透明度通道组合起来构成一张图像。透明度通道存储了每个像素的不透明度，以便在图像合成期间对它们进行混合。在某些情况下，对 alpha 通道的处理可能会影响图像的质量和效果。</p>
+<h2 id=""><a class="markdownIt-Anchor" href="#"></a> /.</h2>
+<p>/.# - Use the denoising filter (0=no filter, 1=full denoising).</p>
+<p>是使用降噪过滤器的参数，“0=无过滤器，1=完整降噪”。</p>
+<h2 id="-2"><a class="markdownIt-Anchor" href="#-2"></a> /:</h2>
+<p>/:# - Set the smoothness percentage (0=no smooth, 100=maximum smooth).</p>
+<p>/:# 参数用于设置平滑百分比（0=不平滑，100=最大平滑）。</p>
+<p>在这里，平滑是指视频图像的抗锯齿处理。它通过使用抗锯齿滤波器来平滑图像，从而减少图像的锯齿效应和提高图像质量。/:#参数用于设置平滑的百分比，0表示不平滑，100表示最大平滑。</p>
+<h2 id="-3"><a class="markdownIt-Anchor" href="#-3"></a> /;</h2>
+<p>/;# - Video de-interlacing (0=none, 1=even, 2=odd, add 8 for blending).</p>
+<p>/;# 选项控制视频去交错的方式。<br />
+0=不进行去交错处理<br />
+1=处理偶数行<br />
+2=处理奇数行<br />
+加上 8 可以启用混合模式。</p>
+<p>Video de-interlacing是视频图像去交错的过程。电视机通常使用交错扫描技术来把动态图像显示在屏幕上，但是这种扫描技术会导致图像中出现模糊和闪烁。De-interlacing就是通过把每一帧的交错图像转换成非交错图像来消除这种问题的过程。</p>
+<h2 id="-4"><a class="markdownIt-Anchor" href="#-4"></a> /{</h2>
+<p>/{ # - Set the contrast increase (0=none, 8=default, 127=max).</p>
+<p>对比度增加指的是在视频压缩时，通过调整亮度差异来使图像更加鲜明对比。其中，数字0代表不增加对比度，8代表默认对比度增加，127代表最大对比度增加。</p>
+<h2 id="-5"><a class="markdownIt-Anchor" href="#-5"></a> /}</h2>
+<p>/}# - Set the clamp to black level (0=no clamp, 255=everything black).</p>
+<p>/}# 参数用于设置黑色限制，即将视频的黑色值限制在一个最大值。如果设置为 “0”，则不会对黑色值进行限制。如果设置为 “255”，则所有的黑色值都会被限制在最大值，这可能会导致图像变得非常黑。</p>
+<h2 id="-6"><a class="markdownIt-Anchor" href="#-6"></a> /[</h2>
+<p>/[# - Set the brightness percentage (0=fully darken, 100=don’t change, 200=twice as bright).</p>
+<p>视频亮度相关</p>
+<h2 id="-7"><a class="markdownIt-Anchor" href="#-7"></a> /]</h2>
+<p>/]#.# - Set the gamma correction (less than 1.0=darken, 1.0=don’t change, greater than 1.0=brighten)</p>
+<p>伽马矫正值</p>
+<h2 id="-8"><a class="markdownIt-Anchor" href="#-8"></a> /(</h2>
+<p>/(# - Specifies the scale to width (shrinks or zooms).</p>
+<p>视频宽度缩放</p>
+<h2 id="-9"><a class="markdownIt-Anchor" href="#-9"></a> /)</h2>
+<p>/)# - Specifies the scale to height (shrinks or zooms).</p>
+<p>高度缩放</p>
+<h2 id="x"><a class="markdownIt-Anchor" href="#x"></a> /X</h2>
+<p>/X# - Specifies the cropping left coordinate.</p>
+<p>左侧裁剪坐标</p>
+<h2 id="y"><a class="markdownIt-Anchor" href="#y"></a> /Y</h2>
+<p>/Y# - Specifies the cropping top coordinate.</p>
+<p>顶部裁剪坐标</p>
+<h2 id="w"><a class="markdownIt-Anchor" href="#w"></a> /W</h2>
+<p>/W# - Specifies the cropping width.</p>
+<p>裁剪宽度</p>
+<h2 id="h"><a class="markdownIt-Anchor" href="#h"></a> /H</h2>
+<p>/H# - Specifies the cropping height.</p>
+<p>裁剪高度</p>
+<h2 id="u"><a class="markdownIt-Anchor" href="#u"></a> /U</h2>
+<p>/U# - Specifies the maximum number of CPUs to use.</p>
+<p>指定最多使用多少CPU</p>
+<h2 id="v"><a class="markdownIt-Anchor" href="#v"></a> /V</h2>
+<p>/V# - Version of Bink file to create.<br />
+100 = Bink 1, 200 = Bink 2, 270 = Bink 2 HDR</p>
+<p>指定Bink文件的版本</p>
+
+              
+            </div>
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Bink/">#Bink</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>BinkVideo视频转换的命令行参数</div>
+      <div>http://muchenhen.com/posts/10561/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>木尘痕</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年2月11日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/52037/" title="UE4：将指定Widget保存为PNG">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">UE4：将指定Widget保存为PNG</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/23315/" title="UE4：Material的一些属性的获取">
+                        <span class="hidden-mobile">UE4：Material的一些属性的获取</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+    <!-- 备案信息 ICP for China -->
+    <div class="beian">
+  <span>
+    <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+      
+    </a>
+  </span>
+  
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?bbb32ef470b36fe5f1e4e72f32112b68";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script>
+  (function() {
+    var enableLang = CONFIG.code_language.enable && CONFIG.code_language.default;
+    var enableCopy = CONFIG.copy_btn;
+    if (!enableLang && !enableCopy) {
+      return;
+    }
+
+    function getBgClass(ele) {
+      return Fluid.utils.getBackgroundLightness(ele) >= 0 ? 'code-widget-light' : 'code-widget-dark';
+    }
+
+    var copyTmpl = '';
+    copyTmpl += '<div class="code-widget">';
+    copyTmpl += 'LANG';
+    copyTmpl += '</div>';
+    jQuery('.markdown-body pre').each(function() {
+      var $pre = jQuery(this);
+      if ($pre.find('code.mermaid').length > 0) {
+        return;
+      }
+      if ($pre.find('span.line').length > 0) {
+        return;
+      }
+
+      var lang = '';
+
+      if (enableLang) {
+        lang = CONFIG.code_language.default;
+        if ($pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2 && $pre.children().hasClass('hljs')) {
+          lang = $pre[0].children[0].classList[1];
+        } else if ($pre[0].getAttribute('data-language')) {
+          lang = $pre[0].getAttribute('data-language');
+        } else if ($pre.parent().hasClass('sourceCode') && $pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2) {
+          lang = $pre[0].children[0].classList[1];
+          $pre.parent().addClass('code-wrapper');
+        } else if ($pre.parent().hasClass('markdown-body') && $pre[0].classList.length === 0) {
+          $pre.wrap('<div class="code-wrapper"></div>');
+        }
+        lang = lang.toUpperCase().replace('NONE', CONFIG.code_language.default);
+      }
+      $pre.append(copyTmpl.replace('LANG', lang).replace('code-widget">',
+        getBgClass($pre[0]) + (enableCopy ? ' code-widget copy-btn" data-clipboard-snippet><i class="iconfont icon-copy"></i>' : ' code-widget">')));
+
+      if (enableCopy) {
+        Fluid.utils.createScript('https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js', function() {
+          var clipboard = new window.ClipboardJS('.copy-btn', {
+            target: function(trigger) {
+              var nodes = trigger.parentNode.childNodes;
+              for (var i = 0; i < nodes.length; i++) {
+                if (nodes[i].tagName === 'CODE') {
+                  return nodes[i];
+                }
+              }
+            }
+          });
+          clipboard.on('success', function(e) {
+            e.clearSelection();
+            e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-copy', 'icon-success');
+            setTimeout(function() {
+              e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-success', 'icon-copy');
+            }, 2000);
+          });
+        });
+      }
+    });
+  })();
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,533 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="木尘痕">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Chapter 3 TRANSFORMATIONS 本章的数学部分只总结结论，具体过程会总结在别的文章 几何变换的例子有平移、旋转和缩放。在这一章中，我们建立了矩阵方程，它可以用来转换三维空间中的点和向量。 目的:  了解如何用矩阵表示线性和仿射变换。 学习用于缩放、旋转和转换几何图形的坐标转换。 了解如何通过矩阵-矩阵乘法将多个变换矩阵组合成一个净变换矩阵。 找出如何将坐标从一个坐标系转换到另">
+<meta property="og:type" content="website">
+<meta property="og:title" content="DX12龙书PartⅠChapter 3 变换">
+<meta property="og:url" content="http://muchenhen.com/OLD/dx12%E9%BE%99%E4%B9%A6part%E2%85%A0chapter-3-%E5%8F%98%E6%8D%A2.html">
+<meta property="og:site_name" content="虚无之境">
+<meta property="og:description" content="Chapter 3 TRANSFORMATIONS 本章的数学部分只总结结论，具体过程会总结在别的文章 几何变换的例子有平移、旋转和缩放。在这一章中，我们建立了矩阵方程，它可以用来转换三维空间中的点和向量。 目的:  了解如何用矩阵表示线性和仿射变换。 学习用于缩放、旋转和转换几何图形的坐标转换。 了解如何通过矩阵-矩阵乘法将多个变换矩阵组合成一个净变换矩阵。 找出如何将坐标从一个坐标系转换到另">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2019/10/image-15.png">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2019/10/image-18.png">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2019/10/image-17.png">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2019/10/image-16.png">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2019/10/image-19.png">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2019/10/image-20.png">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2019/10/image-22.png">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2019/10/image-23.png">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2019/10/image-24.png">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2019/10/image-25.png">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2019/10/image-26.png">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2019/10/image-27.png">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2019/10/image-28.png">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2019/10/image-29.png">
+<meta property="article:published_time" content="2019-10-30T13:14:16.000Z">
+<meta property="article:modified_time" content="2024-07-14T15:26:08.244Z">
+<meta property="article:author" content="木尘痕">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.muchenhen.com/wp-content/uploads/2019/10/image-15.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>DX12龙书PartⅠChapter 3 变换 - 虚无之境</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"muchenhen.com","root":"/","version":"1.9.1","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"bbb32ef470b36fe5f1e4e72f32112b68","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>虚无之境</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/NagisaKaworu.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="DX12龙书PartⅠChapter 3 变换"></span>
+          
+        </div>
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      <div class="container nopadding-x-md">
+        <div id="board"
+          >
+          
+          <div class="container">
+            <div class="row">
+              <div class="col-12 col-md-10 m-auto">
+                
+
+<article class="page-content">
+  <h2 id="chapter-3-transformations"><a class="markdownIt-Anchor" href="#chapter-3-transformations"></a> Chapter 3 TRANSFORMATIONS</h2>
+<p>本章的数学部分只总结结论，具体过程会总结在别的文章</p>
+<p>几何变换的例子有平移、旋转和缩放。在这一章中，我们建立了矩阵方程，它可以用来转换三维空间中的点和向量。</p>
+<p>目的:</p>
+<ol>
+<li>了解如何用矩阵表示线性和仿射变换。</li>
+<li>学习用于缩放、旋转和转换几何图形的坐标转换。</li>
+<li>了解如何通过矩阵-矩阵乘法将多个变换矩阵组合成一个净变换矩阵。</li>
+<li>找出如何将坐标从一个坐标系转换到另一个坐标系，以及如何用矩阵表示坐标变换的变化。</li>
+<li>熟悉用于构造转换矩阵的DirectX数学库提供的函数子集。</li>
+</ol>
+<h2 id="31线性变换"><a class="markdownIt-Anchor" href="#31线性变换"></a> 3.1线性变换</h2>
+<h3 id="311定义"><a class="markdownIt-Anchor" href="#311定义"></a> 3.1.1定义</h3>
+<p>一个函数输入一个三维向量，输出一个三维向量。称作为线性变换。</p>
+<h3 id="312矩阵表示"><a class="markdownIt-Anchor" href="#312矩阵表示"></a> 3.1.2矩阵表示</h3>
+<p>参考线性代数</p>
+<h3 id="313缩放"><a class="markdownIt-Anchor" href="#313缩放"></a> 3.1.3缩放</h3>
+<p>如图</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-15.png" srcset="/img/loading.gif" lazyload alt="" /></p>
+<p>左侧是原始目标，中间的是Y轴缩放，最右侧是X轴缩放</p>
+<p>通过下面的式子来定义缩放变换：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-18.png" srcset="/img/loading.gif" lazyload alt="S(x, y, z) = (sxx, syy, szz) " /></p>
+<p>缩放变换是相对于坐标原点的，按照三个轴上的单位向量进行。</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-17.png" srcset="/img/loading.gif" lazyload alt=".o,sz .O) =.l,szy o,szs(k) " /></p>
+<p>换成矩阵表示就是</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-16.png" srcset="/img/loading.gif" lazyload alt="sO0ooo " /></p>
+<p>我们称这个矩阵是缩放矩阵</p>
+<p>该矩阵的逆矩阵为</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-19.png" srcset="/img/loading.gif" lazyload alt="l/sx " /></p>
+<p>举个例子：</p>
+<p>假设目前有一个矩形，左下角点为（-4，-4，0），右上角为（4，4，0），是一个位于xoy面上的正方形。对该矩形在x轴上缩放0.5个单位，在y轴缩放2.0个单位，z轴不变，对应的缩放矩阵是：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-20.png" srcset="/img/loading.gif" lazyload alt="0.5o " /></p>
+<p>对两个点进行缩放运算</p>
+<p>![0.5<br />
+[-4,궈,이 0<br />
+0<br />
+0<br />
+2<br />
+0<br />
+0<br />
+0 =[-2,-8,0] [4,4,0]<br />
+0.5<br />
+0<br />
+0<br />
+0<br />
+0<br />
+20 =<a target="_blank" rel="noopener" href="https://www.muchenhen.com/wp-content/uploads/2019/10/image-21.png">2,8,이<br />
+0<br />
+1 </a></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-22.png" srcset="/img/loading.gif" lazyload alt="Scaling:(4, 4,0)-8,0) " /></p>
+<h3 id="314旋转"><a class="markdownIt-Anchor" href="#314旋转"></a> 3.1.4旋转</h3>
+<p>在这个部分，描述了一个向量v绕着坐标轴n旋转一个θ角。注意，测量的角度是向下看n轴的顺时针方向的角度，假设n的模=1。</p>
+<p>旋转的矩阵表示如下：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-23.png" srcset="/img/loading.gif" lazyload alt="oOcoso—sin Osin 0cosocososin OoO—sin Ocosocoso—sin 0sin Ocosooo1oooo1 " /></p>
+<p>举个例子：</p>
+<p>我们定义一个左下角坐标为（-1，0，-1），右上角为（1，0，1）的矩形。要求将其绕Y轴顺时针旋转-30度（即逆时针30度），对应的Y轴旋转矩阵为：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-24.png" srcset="/img/loading.gif" lazyload alt="cososin OoO—sin Ocosocos(sin (-300)-300)O —sin (—30 )oI0 " /></p>
+<p>将举行的两个点坐标与旋转矩阵相乘可以得到：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-25.png" srcset="/img/loading.gif" lazyload alt="" /></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-26.png" srcset="/img/loading.gif" lazyload alt="" /></p>
+<h2 id="32仿射变换"><a class="markdownIt-Anchor" href="#32仿射变换"></a> 3.2仿射变换</h2>
+<p>此部分总结在其他文章</p>
+<h2 id="33-composition-of-transformation"><a class="markdownIt-Anchor" href="#33-composition-of-transformation"></a> 3.3 Composition of Transformation</h2>
+<p>成分转换</p>
+<p>假设S是一个缩放矩阵，R是一个旋转矩阵，T是一个位移矩阵。假设有一个cube，是由八个向量Vi所确定的，如果要将三个变换依次应用于每个顶点，最简单的办法是一步一步来。但是由于矩阵乘法有结合律，所以可以简化，求出一个矩阵C，使C满足C=SRT。如下：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-27.png" srcset="/img/loading.gif" lazyload alt="for " /></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-28.png" srcset="/img/loading.gif" lazyload alt="v, (SRT)zv,&quot;' for i " /></p>
+<p>可以将矩阵C看作三个变换封装的一个净变换矩阵。</p>
+<p>这对性能有很重要的影响，比如假设有20000个点的某个对象，不用封装矩阵的话，会需要进行20000*3次的矩阵乘法运算，使用组合之后的矩阵只需要进行20000次。</p>
+<p>再次注意：是结合律，绝对是没有交换律的。</p>
+<h2 id="34坐标变换"><a class="markdownIt-Anchor" href="#34坐标变换"></a> 3.4坐标变换</h2>
+<p>同一个向量在不同的坐标系有不同的相对于坐标系的坐标。计算机图形学中经常使用多个坐标系，所以需要知道如何在坐标系之间转换。位置不是向量的属性，是点的属性，所以坐标系变换是针对点的。</p>
+<h2 id="35变换矩阵与坐标系变换"><a class="markdownIt-Anchor" href="#35变换矩阵与坐标系变换"></a> 3.5变换矩阵与坐标系变换</h2>
+<p>其实在数学上，对一个对象进行的变换（平移，旋转，缩放等）和坐标系的变换是等价的。一个主动的变换可以被视为坐标系转换的变化。</p>
+<h2 id="36-directx数学变换函数"><a class="markdownIt-Anchor" href="#36-directx数学变换函数"></a> 3.6 DIRECTX数学变换函数</h2>
+<p>// Constructs a scaling matrix: 构造一个缩放矩阵<br />
+XMMATRIX XM_CALLCONV XMMatrixScaling( float ScaleX, float ScaleY, float ScaleZ);</p>
+<p>// Constructs a scaling matrix from components in vector:从向量中的分量构造一个缩放矩阵<br />
+XMMATRIX XM_CALLCONV XMMatrixScalingFromVector( FXMVECTOR Scale);</p>
+<p>// Constructs a x-axis rotation matrix Rx: 构造一个x轴旋转矩阵，顺时针旋转<br />
+XMMATRIX XM_CALLCONV XMMatrixRotationX(float Angle);</p>
+<p>// Constructs a y-axis rotation matrix Ry: 构造一个y轴旋转矩阵，顺时针<br />
+XMMATRIX XM_CALLCONV XMMatrixRotationY(float Angle);</p>
+<p>// Constructs a z-axis rotation matrix Rz: z轴，顺时针<br />
+XMMATRIX XM_CALLCONV XMMatrixRotationZ(float Angle);</p>
+<p>// Constructs an arbitrary axis rotation matrix Rn: 构造任意轴旋转矩阵，第一个参数是轴所对应的向量，第二个参数是顺时针角度<br />
+XMMATRIX XM_CALLCONV XMMatrixRotationAxis(FXMVECTOR Axis, float Angle);</p>
+<p>//Constructs a translation matrix: 平移矩阵<br />
+XMMATRIX XM_CALLCONV XMMatrixTranslation( float OffsetX, float OffsetY, float OffsetZ);</p>
+<p>//Constructs a translation matrix from components in a vector: 从向量的分量构造平移矩阵<br />
+XMMATRIX XM_CALLCONV XMMatrixTranslationFromVector( FXMVECTOR Offset);</p>
+<p>// Computes the vector-matrix product vM where vw = 1 for transforming points: 计算向量矩阵乘积vM，其中vw = 1表示转换点<br />
+XMVECTOR XM_CALLCONV XMVector3TransformCoord( FXMVECTOR V, CXMMATRIX M);</p>
+<p>// Computes the vector-matrix product vM where vw = 0 for transforming vectors:计算向量矩阵乘积vM，其中vw = 0表示向量的变换<br />
+XMVECTOR XM_CALLCONV XMVector3TransformNormal( FXMVECTOR V, CXMMATRIX M);</p>
+<h2 id="37总结"><a class="markdownIt-Anchor" href="#37总结"></a> 3.7总结</h2>
+<p>1、基本变换矩阵——缩放、旋转和平移——由下列形式给出:</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-29.png" srcset="/img/loading.gif" lazyload alt="" /></p>
+<p>2、我们用4×4矩阵来表示变换，用1×4齐次坐标来描述点和向量，其中我们通过设置第四个分量为w = 1来表示一个点，通过设置w = 0来表示一个向量。这样，平移作用于点而不是向量。</p>
+<p>关于为什么要使用4*4矩阵的原因</p>
+<p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/36296104">为什么directX里表示三维坐标要建一个4*4的矩阵？</a></p>
+<p>3、如果一个矩阵的所有行向量都是单位长度并且相互正交，那么这个矩阵就是正交的。一个正交矩阵的特殊性质是它的逆等于它的转置，从而使得逆的计算简单而有效。所有的旋转矩阵都是正交的。</p>
+<p>4. 根据矩阵乘法的结合律，我们可以将多个变换矩阵合并成一个变换矩阵。</p>
+<p>5、如果矩阵M将坐标系A映射到坐标系B中，那么矩阵M的逆矩阵将坐标系B映射到坐标系A中。</p>
+<p>6、主动变换可以解释为坐标变换的变化，反之亦然。对于某些情况，更直观的做法是使用多个坐标系统，并在对象保持不变但其坐标表示方式发生变化的系统之间进行转换，因为它是相对于不同的参照系进行描述的。</p>
+
+
+  
+
+</article>
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+    <!-- 备案信息 ICP for China -->
+    <div class="beian">
+  <span>
+    <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+      
+    </a>
+  </span>
+  
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?bbb32ef470b36fe5f1e4e72f32112b68";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

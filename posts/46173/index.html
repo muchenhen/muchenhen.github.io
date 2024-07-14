@@ -1,0 +1,1037 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="木尘痕">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言 假装过一下移动端渲染管线的源码，其实是看一下移动端的固定方向光源对移动物体生成阴影的部分。 本文重点在UE4 关于CSM阴影的这部分源码，其他的略过 之前从来没有看过这部分源码，本人基础也很薄弱，rendering方面能力不足，本文仅仅是给我的脑子梳理一下，避免稀里糊涂的看完不出三天就忘记了…… 学而不思则罔~  目录：  前言 流程梳理  简单描述 详细流程   源码学习  移动端渲染主">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UE4：移动端级联阴影简要分析">
+<meta property="og:url" content="http://muchenhen.com/posts/46173/index.html">
+<meta property="og:site_name" content="虚无之境">
+<meta property="og:description" content="前言 假装过一下移动端渲染管线的源码，其实是看一下移动端的固定方向光源对移动物体生成阴影的部分。 本文重点在UE4 关于CSM阴影的这部分源码，其他的略过 之前从来没有看过这部分源码，本人基础也很薄弱，rendering方面能力不足，本文仅仅是给我的脑子梳理一下，避免稀里糊涂的看完不出三天就忘记了…… 学而不思则罔~  目录：  前言 流程梳理  简单描述 详细流程   源码学习  移动端渲染主">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-06-16T02:35:59.000Z">
+<meta property="article:modified_time" content="2024-07-14T15:26:08.252Z">
+<meta property="article:author" content="木尘痕">
+<meta property="article:tag" content="UE4">
+<meta property="article:tag" content="Rendering">
+<meta property="article:tag" content="Mobile">
+<meta property="article:tag" content="Shadow">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>UE4：移动端级联阴影简要分析 - 虚无之境</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"muchenhen.com","root":"/","version":"1.9.1","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"bbb32ef470b36fe5f1e4e72f32112b68","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>虚无之境</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/NagisaKaworu.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="UE4：移动端级联阴影简要分析"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        木尘痕
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-06-16 10:35" pubdate>
+          2022年6月16日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          28k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          47 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="UE4"
+        id="heading-38422113d07c877f67c1939fae5bbd34" role="tab" data-toggle="collapse" href="#collapse-38422113d07c877f67c1939fae5bbd34"
+        aria-expanded="true"
+      >
+        UE4
+        <span class="list-group-count">(7)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-38422113d07c877f67c1939fae5bbd34"
+           role="tabpanel" aria-labelledby="heading-38422113d07c877f67c1939fae5bbd34">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/posts/36675/" title="UE4:反射系统获取UPROPERTY"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">UE4:反射系统获取UPROPERTY</span>
+        </a>
+      
+    
+      
+      
+        <a href="/posts/52092/" title="UE4：使用Python导出LevelSequence轨道的Actor名字获取问题"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">UE4：使用Python导出LevelSequence轨道的Actor名字获取问题</span>
+        </a>
+      
+    
+      
+      
+        <a href="/posts/11838/" title="UE4：修改Shader压缩格式减小包体"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">UE4：修改Shader压缩格式减小包体</span>
+        </a>
+      
+    
+      
+      
+        <a href="/posts/21321/" title="UE4：关于Texture Streaming的一部分总结"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">UE4：关于Texture Streaming的一部分总结</span>
+        </a>
+      
+    
+      
+      
+        <a href="/posts/34123/" title="UE4：移动端俯视角远距离摄像机的级联阴影优化"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">UE4：移动端俯视角远距离摄像机的级联阴影优化</span>
+        </a>
+      
+    
+      
+      
+        <a href="/posts/46173/" title="UE4：移动端级联阴影简要分析"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">UE4：移动端级联阴影简要分析</span>
+        </a>
+      
+    
+      
+      
+        <a href="/posts/7908/" title="UE4：自定义材质属性节点规避材质编译问题"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">UE4：自定义材质属性节点规避材质编译问题</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">UE4：移动端级联阴影简要分析</h1>
+            
+            <div class="markdown-body">
+              
+              <h1 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h1>
+<p>假装过一下移动端渲染管线的源码，其实是看一下移动端的固定方向光源对移动物体生成阴影的部分。<br />
+本文重点在UE4 关于CSM阴影的这部分源码，其他的略过<br />
+之前从来没有看过这部分源码，本人基础也很薄弱，rendering方面能力不足，本文仅仅是给我的脑子梳理一下，避免稀里糊涂的看完不出三天就忘记了……<br />
+学而不思则罔~</p>
+<hr />
+<p>目录：</p>
+<ul>
+<li><a href="#%E5%89%8D%E8%A8%80">前言</a></li>
+<li><a href="#%E6%B5%81%E7%A8%8B%E6%A2%B3%E7%90%86">流程梳理</a>
+<ul>
+<li><a href="#%E7%AE%80%E5%8D%95%E6%8F%8F%E8%BF%B0">简单描述</a></li>
+<li><a href="#%E8%AF%A6%E7%BB%86%E6%B5%81%E7%A8%8B">详细流程</a></li>
+</ul>
+</li>
+<li><a href="#%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0">源码学习</a>
+<ul>
+<li><a href="#%E7%A7%BB%E5%8A%A8%E7%AB%AF%E6%B8%B2%E6%9F%93%E4%B8%BB%E5%87%BD%E6%95%B0">移动端渲染主函数</a></li>
+<li><a href="#%E7%A7%BB%E5%8A%A8%E7%AB%AFinitviews">移动端InitViews</a></li>
+<li><a href="#%E7%A7%BB%E5%8A%A8%E7%AB%AF%E5%88%9D%E5%A7%8B%E5%8C%96%E5%8A%A8%E6%80%81%E9%98%B4%E5%BD%B1">移动端初始化动态阴影</a>
+<ul>
+<li><a href="#%E7%A7%BB%E5%8A%A8%E7%AB%AF%E5%88%9D%E5%A7%8B%E5%8C%96%E5%8A%A8%E6%80%81%E9%98%B4%E5%BD%B1%E7%9A%84%E5%87%BD%E6%95%B0">移动端初始化动态阴影的函数</a></li>
+<li><a href="#%E4%B8%8D%E5%90%8Cscene%E5%8F%AF%E4%BB%A5%E5%85%B1%E7%94%A8%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E5%8A%A8%E6%80%81%E9%98%B4%E5%BD%B1%E7%9A%84%E9%83%A8%E5%88%86">不同Scene可以共用的初始化动态阴影的部分</a></li>
+<li><a href="#%E4%B8%BA%E5%BD%93%E5%89%8Dview%E6%B7%BB%E5%8A%A0%E5%85%A8%E5%9C%BA%E6%99%AF%E9%98%B4%E5%BD%B1%E4%BF%A1%E6%81%AF">为当前View添加全场景阴影信息</a>
+<ul>
+<li><a href="#%E8%AE%BE%E7%BD%AE%E6%8A%95%E5%BD%B1%E9%98%B4%E5%BD%B1%E5%88%9D%E5%A7%8B%E5%8C%96%E5%99%A8">设置投影阴影初始化器</a></li>
+<li><a href="#%E7%94%9F%E6%88%90%E6%8A%95%E5%BD%B1%E9%98%B4%E5%BD%B1%E7%9A%84%E4%BF%A1%E6%81%AF">生成投影阴影的信息</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E7%9B%B8%E5%85%B3%E7%BB%93%E6%9E%84%E4%BD%93">相关结构体</a>
+<ul>
+<li><a href="#fwholesceneprojectedshadowinitializer">FWholeSceneProjectedShadowInitializer</a></li>
+<li><a href="#fprojectedshadowinitializer">FProjectedShadowInitializer</a></li>
+<li><a href="#fboxspherebounds">FBoxSphereBounds</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h1 id="流程梳理"><a class="markdownIt-Anchor" href="#流程梳理"></a> 流程梳理</h1>
+<p><font color = #5555FF>函数</font><br />
+<font color = #FFFF00>类或结构体</font><br />
+<font color = #FF0000>变量</font></p>
+<h2 id="简单描述"><a class="markdownIt-Anchor" href="#简单描述"></a> 简单描述</h2>
+<p>简单的文字描述一下UE4 CSM实现大概的流程，防止本文作者出现猪脑过载迹象……</p>
+<font size=3>
+<ol>
+<li>移动端的主渲染流程开始</li>
+<li>渲染进入初始化View阶段</li>
+<li>初始化View中有一个阶段是生成动态阴影</li>
+<li>生成动态阴影的其中一步是创建全场景投影阴影，就是生成CSM阴影</li>
+</ol>
+<p>生成CSM的流程：</p>
+<ol>
+<li>确认级联的数量</li>
+<li>对每一个级联生成投影阴影信息</li>
+<li>据阴影数据构造灯光视锥体和灯光变换矩阵</li>
+<li>确认物体是否在灯光视锥中产生阴影，并确认阴影落在了第几级的级联</li>
+<li>分配CSM深度Target，但是在移动端会延迟分配的时机以便确认是否可以将聚光灯阴影与之结合</li>
+</ol>
+</font>
+<h2 id="详细流程"><a class="markdownIt-Anchor" href="#详细流程"></a> 详细流程</h2>
+<font size=3>
+<ul>
+<li><strong>1、</strong> <font color = #FFFF00>FMobileSceneRenderer</font>的<font color = #5555FF>Render</font>函数，是移动端渲染的主流程函数</li>
+<li><strong>2、</strong> <font color = #5555FF>Render</font>函数中调用了<font color = #5555FF>InitViews</font>函数</li>
+<li><strong>3、</strong> <font color = #5555FF>InitViews</font>函数调用了<font color = #5555FF>FMobileSceneRenderer::InitDynamicShadows</font>函数，为每一个View寻找可见的动态阴影，该函数又调用了<font color = #5555FF>FSceneRenderer::InitDynamicShadows</font></li>
+<li><strong>4、</strong> <font color = #5555FF>InitDynamicShadows</font> 函数中<font color = #5555FF>AddViewDependentWholeSceneShadowsForView</font> 处理了CSM相关数据，该函数生成了指定灯光的所有wholesceneshadows的<font color = #FFFF00>FProjectedShadowInfo</font>
+<ul>
+<li><strong>4.1、</strong> 确认是否需要为View创建whole scene view dependent shadow</li>
+<li><strong>4.2、</strong> <font color = #5555FF>GetNumViewDependentWholeSceneShadows</font> 函数确认级联的数量</li>
+<li><strong>4.3、</strong> 根据级联数量开始对每一个级联进行处理
+<ul>
+<li><strong>4.3.1、</strong> 声明<font color = #FFFF00>FWholeSceneProjectedShadowInitializer</font>类型的一个变量</li>
+<li><strong>4.3.2、</strong> 通过<font color = #5555FF>GetViewDependentWholeSceneProjectedShadowInitializer</font>函数对上面那个变量填充其成员
+<ul>
+<li><strong>4.3.2.1、</strong> <font color = #5555FF>GetShadowSplitBounds</font>计算该级联部分的视锥体的包围球
+<ul>
+<li><strong>4.3.2.1.1、</strong> 通过神奇的方式算出来了这个球的中心和半径，得到了包围球</li>
+<li><strong>4.3.2.1.2、</strong> 计算阴影裁剪体<font color = #5555FF>ComputeShadowCullingVolume</font>
+<ul>
+<li><strong>4.3.2.1.2.1、</strong> 计算出了一个凸多面体<br />
+该投影裁剪体在后续的<font color = #5555FF>GatherDynamicMeshElements</font> 的过程中有使用到</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>4.3.3、</strong> 创建投影阴影信息
+<ul>
+<li><strong>4.3.3.1、</strong> 声明FProjectedShadowInfo变量</li>
+<li><strong>4.3.3.2、</strong> 通过SetupWholeSceneProjection函数对上面那个变量进行成员填充，需要用到前面创建的FWholeSceneProjectedShadowInitializer
+<ul>
+<li><strong>4.3.3.2.1、</strong> 填充了各种变量</li>
+<li><strong>4.3.3.2.1、</strong> 通过神奇的方式更新了PreShadowTranslation，说是可以避免</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>5、</strong> <font color = #5555FF>InitProjectedShadowVisibility</font>，计算投影阴影的可见性</li>
+<li><strong>6、</strong> <font color = #5555FF>UpdatePreshadowCache</font>，清除旧的preshadows并尝试向缓存中添加新的</li>
+<li><strong>7、</strong> <font color = #5555FF>GatherShadowPrimitives</font>，收集用于绘制各种阴影类型的图元列表</li>
+<li><strong>8、</strong> <font color = #5555FF>AllocateShadowDepthTargets</font>，分配阴影深度渲染目标
+<ul>
+<li><strong>8.1、</strong> 非移动端会在这里面调用<font color = #5555FF>AllocateCSMDepthTargets</font>，但是移动端会<font color = #FF0000>MobileWholeSceneDirectionalShadows</font>.Append(WholeSceneDirectionalShadows)延迟分配时机</li>
+<li><strong>8.2、</strong> <font color = #5555FF>AllocateMobileCSMAndSpotLightShadowDepthTargets(RHICmdList, <font color = #FF0000>MobileWholeSceneDirectionalShadows</font>)</font>进行分配</li>
+</ul>
+</li>
+<li><strong>9、</strong> <font color = #5555FF>GatherShadowDynamicMeshElements</font>，从阴影图元数组生成网格元素数组</li>
+</ul>
+</font>
+<h1 id="源码学习"><a class="markdownIt-Anchor" href="#源码学习"></a> 源码学习</h1>
+<h2 id="移动端渲染主函数"><a class="markdownIt-Anchor" href="#移动端渲染主函数"></a> 移动端渲染主函数</h2>
+<p>那么我们首先来到移动端渲染代码的地方：FMobileSceneRenderer<br />
+位于SceneRendering.h文件中</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-comment">// Renderer that implements simple forward shading and associated features.</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">FMobileSceneRenderer</span> : <span class="hljs-keyword">public</span> FSceneRenderer<br>&#123;<br>	<span class="hljs-comment">// ....</span><br><br>	<span class="hljs-comment">//  Renders the view family. </span><br>	<span class="hljs-function"><span class="hljs-keyword">virtual</span> <span class="hljs-type">void</span> <span class="hljs-title">Render</span><span class="hljs-params">(FRHICommandListImmediate&amp; RHICmdList)</span> <span class="hljs-keyword">override</span></span>;<br><br>	<span class="hljs-comment">// ....</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>那么我们直奔Render函数，看看里面都要干啥</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-comment">/** </span><br><span class="hljs-comment">* Renders the view family. </span><br><span class="hljs-comment">*/</span><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">FMobileSceneRenderer::Render</span><span class="hljs-params">(FRHICommandListImmediate&amp; RHICmdList)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-comment">// ...</span><br><br>	<span class="hljs-comment">// Find the visible primitives and prepare targets and buffers for rendering</span><br>	<span class="hljs-built_in">InitViews</span>(RHICmdList);<br><br>	<span class="hljs-comment">// ...</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="移动端initviews"><a class="markdownIt-Anchor" href="#移动端initviews"></a> 移动端InitViews</h2>
+<p>别的步骤暂时略过，发现InitViews里处理了dynamic shadows：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-type">const</span> <span class="hljs-type">bool</span> bDynamicShadows = ViewFamily.EngineShowFlags.DynamicShadows;<br><br><span class="hljs-keyword">if</span> (bDynamicShadows &amp;&amp; !<span class="hljs-built_in">IsSimpleForwardShadingEnabled</span>(ShaderPlatform))<br>&#123;<br>	<span class="hljs-comment">// Setup dynamic shadows.</span><br>	<span class="hljs-built_in">InitDynamicShadows</span>(RHICmdList);		<br>&#125;<br><span class="hljs-keyword">else</span><br>&#123;<br>	<span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> only do this when CSM + static is required.</span><br>	<span class="hljs-built_in">PrepareViewVisibilityLists</span>();<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>看上面的意思就是，开启了动态阴影的选项，并且不是简单前向渲染的话，是要InitDynamicShadows的，那么本文的主要目标就出现了，着重看一下FMobileSceneRenderer::InitDynamicShadows</p>
+<h2 id="移动端初始化动态阴影"><a class="markdownIt-Anchor" href="#移动端初始化动态阴影"></a> 移动端初始化动态阴影</h2>
+<h3 id="移动端初始化动态阴影的函数"><a class="markdownIt-Anchor" href="#移动端初始化动态阴影的函数"></a> 移动端初始化动态阴影的函数</h3>
+<p>FMobileSceneRenderer::InitDynamicShadows</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-comment">/** Finds the visible dynamic shadows for each view. */</span><br><span class="hljs-comment">// 查找每个视图的可见动态阴影。</span><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">FMobileSceneRenderer::InitDynamicShadows</span><span class="hljs-params">(FRHICommandListImmediate&amp; RHICmdList)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-comment">// 这个值决定了Primitive是否可以接收CSM阴影 不等于0才可以</span><br>	<span class="hljs-type">static</span> <span class="hljs-keyword">auto</span>* MyCVarMobileEnableStaticAndCSMShadowReceivers = IConsoleManager::<span class="hljs-built_in">Get</span>().<span class="hljs-built_in">FindTConsoleVariableDataInt</span>(<span class="hljs-built_in">TEXT</span>(<span class="hljs-string">&quot;r.Mobile.EnableStaticAndCSMShadowReceivers&quot;</span>));<br>	<span class="hljs-type">const</span> <span class="hljs-type">bool</span> bCombinedStaticAndCSMEnabled = MyCVarMobileEnableStaticAndCSMShadowReceivers-&gt;<span class="hljs-built_in">GetValueOnRenderThread</span>()!=<span class="hljs-number">0</span>;<br>	<span class="hljs-comment">// 这个值，开启的时候，被可移动方向光的Primitive，只有当Primitive确定在CSM的范围里的时候，才会通过CSM Shader来进行渲染</span><br>	<span class="hljs-type">static</span> <span class="hljs-keyword">auto</span>* CVarMobileEnableMovableLightCSMShaderCulling = IConsoleManager::<span class="hljs-built_in">Get</span>().<span class="hljs-built_in">FindTConsoleVariableDataInt</span>(<span class="hljs-built_in">TEXT</span>(<span class="hljs-string">&quot;r.Mobile.EnableMovableLightCSMShaderCulling&quot;</span>));<br>	<span class="hljs-type">const</span> <span class="hljs-type">bool</span> bMobileEnableMovableLightCSMShaderCulling = CVarMobileEnableMovableLightCSMShaderCulling-&gt;<span class="hljs-built_in">GetValueOnRenderThread</span>() == <span class="hljs-number">1</span>;<br><br>	<span class="hljs-comment">// initialize CSMVisibilityInfo for each eligible light.</span><br>	<span class="hljs-comment">// 为每一个符合条件的灯光初始化CSMVisibilityInfo</span><br>	<span class="hljs-comment">// Scene-&gt;MobileDirectionalLights 对于移动端，是每个照明通道中的第一个平行光。</span><br>	<span class="hljs-keyword">for</span> (FLightSceneInfo* MobileDirectionalLightSceneInfo : Scene-&gt;MobileDirectionalLights)<br>	&#123;<br>		<span class="hljs-type">const</span> FLightSceneProxy* LightSceneProxy = MobileDirectionalLightSceneInfo ? MobileDirectionalLightSceneInfo-&gt;Proxy : <span class="hljs-literal">nullptr</span>;<br>		<span class="hljs-keyword">if</span> (LightSceneProxy)<br>		&#123;<br>			<span class="hljs-comment">// UseCSMForDynamicObjects 此灯光是否应仅为动态对象创建CSM</span><br>			<span class="hljs-comment">// Primitive可以接收CSM阴影 且 灯光仅为动态对象创建CSM</span><br>			<span class="hljs-type">bool</span> bLightHasCombinedStaticAndCSMEnabled = bCombinedStaticAndCSMEnabled &amp;&amp; LightSceneProxy-&gt;<span class="hljs-built_in">UseCSMForDynamicObjects</span>();<br>			<span class="hljs-comment">// CSM开了剔除 且 光源是可移动的 且 需要渲染阴影（ShouldRenderViewIndependentWholeSceneShadows</span><br>			<span class="hljs-type">bool</span> bMovableLightUsingCSM = bMobileEnableMovableLightCSMShaderCulling &amp;&amp; LightSceneProxy-&gt;<span class="hljs-built_in">IsMovable</span>() &amp;&amp; MobileDirectionalLightSceneInfo-&gt;<span class="hljs-built_in">ShouldRenderViewIndependentWholeSceneShadows</span>();<br><br>			<span class="hljs-comment">// 上面两个满足一个</span><br>			<span class="hljs-keyword">if</span> (bLightHasCombinedStaticAndCSMEnabled || bMovableLightUsingCSM)<br>			&#123;<br>				<span class="hljs-comment">// Scene里的图元数量</span><br>				int32 PrimitiveCount = Scene-&gt;Primitives.<span class="hljs-built_in">Num</span>();<br>				<span class="hljs-comment">// Views 是FSceneRenderer的成员变量 正在渲染的视图</span><br>				<span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span>&amp; View : Views)<br>				&#123;<br>					<span class="hljs-comment">// TArray&lt;FVisibleLightViewInfo&gt; VisibleLightInfos; 从灯光ID到可见性的映射</span><br>					<span class="hljs-comment">// FVisibleLightViewInfo 是 （可见光在其特定的可见视图里的）可见光的信息</span><br>					<span class="hljs-comment">// MobileDirectionalLightSceneInfo-&gt;Id // int32 Id; // 如果bVisible==true，则这是“Scene-&gt;PrimitiveOctree”中primitive的索引。</span><br>					FMobileCSMSubjectPrimitives&amp; MobileCSMSubjectPrimitives = View.VisibleLightInfos[MobileDirectionalLightSceneInfo-&gt;Id].MobileCSMSubjectPrimitives;<br>					<span class="hljs-comment">// MobileCSMSubjectPrimitives 是FMobileCSMSubjectPrimitives</span><br>					<span class="hljs-comment">// FMobileCSMSubjectPrimitives 是 CSM投影体的列表 被移动端渲染器用来剔除（接受静态和CSM阴影的）图元</span><br>					MobileCSMSubjectPrimitives.<span class="hljs-built_in">InitShadowSubjectPrimitives</span>(PrimitiveCount);<br>				&#125;<br>			&#125;<br>		&#125;<br>	&#125;<br>	<span class="hljs-comment">// 上面这个循环对场景中的移动端方向光进行遍历，对符合CSM条件的灯光，遍历所有View，初始化每一个view中可见灯光信息里该平行光的CSM投影体的列表，这个列表保存在View的VisibleLightInfos的对应灯光ID的对象的MobileCSMSubjectPrimitives变量里</span><br><br>	<span class="hljs-comment">// 调用公共的初始化动态阴影的函数，这个跳到下面去看</span><br>	FSceneRenderer::<span class="hljs-built_in">InitDynamicShadows</span>(RHICmdList, DynamicIndexBuffer, DynamicVertexBuffer, DynamicReadBuffer);<br><br>	<span class="hljs-built_in">PrepareViewVisibilityLists</span>();<br><br>	<span class="hljs-type">bool</span> bAlwaysUseCSM = <span class="hljs-literal">false</span>;<br>	<span class="hljs-keyword">for</span> (FLightSceneInfo* MobileDirectionalLightSceneInfo : Scene-&gt;MobileDirectionalLights)<br>	&#123;<br>		<span class="hljs-type">const</span> FLightSceneProxy* LightSceneProxy = MobileDirectionalLightSceneInfo ? MobileDirectionalLightSceneInfo-&gt;Proxy : <span class="hljs-literal">nullptr</span>;<br>		<span class="hljs-keyword">if</span> (LightSceneProxy)<br>		&#123;<br>			<span class="hljs-type">bool</span> bLightHasCombinedStaticAndCSMEnabled = bCombinedStaticAndCSMEnabled &amp;&amp; LightSceneProxy-&gt;<span class="hljs-built_in">UseCSMForDynamicObjects</span>();<br>			<span class="hljs-type">bool</span> bMovableLightUsingCSM = bMobileEnableMovableLightCSMShaderCulling &amp;&amp; LightSceneProxy-&gt;<span class="hljs-built_in">IsMovable</span>() &amp;&amp; MobileDirectionalLightSceneInfo-&gt;<span class="hljs-built_in">ShouldRenderViewIndependentWholeSceneShadows</span>();<br>			<br>			<span class="hljs-comment">// non-csm culling movable light will force all draws to use CSM shaders.</span><br>			<span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> Cases in which a light channel uses a shadow casting non-csm culled movable light we only really need to use CSM on primitives that match the light channel.</span><br>			bAlwaysUseCSM = bAlwaysUseCSM || (!bMobileEnableMovableLightCSMShaderCulling &amp;&amp; LightSceneProxy-&gt;<span class="hljs-built_in">IsMovable</span>() &amp;&amp; MobileDirectionalLightSceneInfo-&gt;<span class="hljs-built_in">ShouldRenderViewIndependentWholeSceneShadows</span>());<br>			<span class="hljs-keyword">if</span> (bLightHasCombinedStaticAndCSMEnabled || bMovableLightUsingCSM)<br>			&#123;<br>				<span class="hljs-built_in">BuildCSMVisibilityState</span>(MobileDirectionalLightSceneInfo);<br>			&#125;<br>		&#125;<br>	&#125;<br><br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span>&amp; View : Views)<br>	&#123;<br>		FMobileCSMVisibilityInfo&amp; MobileCSMVisibilityInfo = View.MobileCSMVisibilityInfo;<br>		MobileCSMVisibilityInfo.bAlwaysUseCSM = bAlwaysUseCSM;<br>	&#125;<br><br>	&#123;<br>		<span class="hljs-comment">// Check for modulated shadows. </span><br>		bModulatedShadowsInUse = <span class="hljs-literal">false</span>;<br>		<span class="hljs-keyword">for</span> (TSparseArray&lt;FLightSceneInfoCompact&gt;::TConstIterator <span class="hljs-built_in">LightIt</span>(Scene-&gt;Lights); LightIt &amp;&amp; bModulatedShadowsInUse == <span class="hljs-literal">false</span>; ++LightIt)<br>		&#123;<br>			<span class="hljs-type">const</span> FLightSceneInfoCompact&amp; LightSceneInfoCompact = *LightIt;<br>			FLightSceneInfo* LightSceneInfo = LightSceneInfoCompact.LightSceneInfo;<br>			FVisibleLightInfo&amp; VisibleLightInfo = VisibleLightInfos[LightSceneInfo-&gt;Id];<br>			<span class="hljs-comment">// Mobile renderer only projects modulated shadows.</span><br>			bModulatedShadowsInUse = VisibleLightInfo.ShadowsToProject.<span class="hljs-built_in">Num</span>() &gt; <span class="hljs-number">0</span>;<br>		&#125;<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="不同scene可以共用的初始化动态阴影的部分"><a class="markdownIt-Anchor" href="#不同scene可以共用的初始化动态阴影的部分"></a> 不同Scene可以共用的初始化动态阴影的部分</h3>
+<p>FSceneRenderer::InitDynamicShadows</p>
+<p><span id="FSceneRenderer::InitDynamicShadows"><strong>FSceneRenderer::InitDynamicShadows</strong></span></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">FSceneRenderer::InitDynamicShadows</span><span class="hljs-params">(FRHICommandListImmediate&amp; RHICmdList, FGlobalDynamicIndexBuffer&amp; DynamicIndexBuffer, FGlobalDynamicVertexBuffer&amp; DynamicVertexBuffer, FGlobalDynamicReadBuffer&amp; DynamicReadBuffer)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-comment">// ... 省略部分源码</span><br><br>	<span class="hljs-comment">// 确认是否为移动端</span><br>	<span class="hljs-type">const</span> <span class="hljs-type">bool</span> bMobile = FeatureLevel &lt; ERHIFeatureLevel::SM5;<br><br>	&#123;<br>		<span class="hljs-comment">// ... 省略部分源码</span><br>		<span class="hljs-keyword">for</span> (TSparseArray&lt;FLightSceneInfoCompact&gt;::TConstIterator <span class="hljs-built_in">LightIt</span>(Scene-&gt;Lights); LightIt; ++LightIt)<br>		&#123;<br>			<span class="hljs-comment">// ... 省略部分源码</span><br><br>			<span class="hljs-comment">// Only consider lights that may have shadows.</span><br>			<span class="hljs-comment">// 只考虑生成阴影的灯光</span><br>			<span class="hljs-keyword">if</span> ((LightSceneInfoCompact.bCastStaticShadow || LightSceneInfoCompact.bCastDynamicShadow) &amp;&amp; <span class="hljs-built_in">GetShadowQuality</span>() &gt; <span class="hljs-number">0</span>)<br>			&#123;<br>				<span class="hljs-comment">// see if the light is visible in any view</span><br>				<span class="hljs-comment">// 该灯光是不是在某一个view中可见</span><br>				<span class="hljs-type">bool</span> bIsVisibleInAnyView = <span class="hljs-literal">false</span>;<br><br>				<span class="hljs-comment">// ... 省略部分源码</span><br>				<span class="hljs-keyword">if</span> (bIsVisibleInAnyView)<br>				&#123;<br>					<span class="hljs-comment">// 可以创建任何一种阴影的话</span><br>					<span class="hljs-comment">// 移动端运行时不存在</span><br>					<span class="hljs-keyword">if</span> (bCreateShadowForMovableLight || bCreateShadowToPreviewStaticLight || bCreateShadowForOverflowStaticShadowing)<br>					&#123;<br>						<span class="hljs-comment">// Try to create a whole scene projected shadow.</span><br>						<span class="hljs-comment">// 试图去创建全场景投影阴影</span><br>						<span class="hljs-built_in">CreateWholeSceneProjectedShadow</span>(LightSceneInfo, NumPointShadowCachesUpdatedThisFrame, NumSpotShadowCachesUpdatedThisFrame);<br>					&#125;<br><br>					<span class="hljs-comment">// Allow movable and stationary lights to create CSM, or static lights that are unbuilt</span><br>					<span class="hljs-comment">// 允许可移动光源和定向光源或者是没有build灯光的静态光源创建CSM</span><br>					<span class="hljs-comment">// 没有build灯光的静态光源创建是为了预览</span><br>					<span class="hljs-keyword">if</span> ((!LightSceneInfo-&gt;Proxy-&gt;<span class="hljs-built_in">HasStaticLighting</span>() &amp;&amp; LightSceneInfoCompact.bCastDynamicShadow) || bCreateShadowToPreviewStaticLight)<br>					&#123;<br>						<span class="hljs-comment">// ...</span><br>						<span class="hljs-comment">// 对于移动端来讲 !bMobile肯定是false了</span><br>						<span class="hljs-comment">// LightSceneInfo-&gt;Proxy-&gt;UseCSMForDynamicObjects() 是true，因为要用CSM</span><br>						<span class="hljs-comment">// 至少有一个true 可以进入AddViewDependentWholeSceneShadowsForView</span><br>						<span class="hljs-keyword">if</span>( !bMobile ||<br>							((LightSceneInfo-&gt;Proxy-&gt;<span class="hljs-built_in">UseCSMForDynamicObjects</span>() || LightSceneInfo-&gt;Proxy-&gt;<span class="hljs-built_in">IsMovable</span>()) <br>								<span class="hljs-comment">// Mobile uses the scene&#x27;s MobileDirectionalLights only for whole scene shadows.</span><br>								<span class="hljs-comment">// 移动端仅对整个场景阴影使用场景的MobileDirectionalLights</span><br>								&amp;&amp; (LightSceneInfo == Scene-&gt;MobileDirectionalLights[<span class="hljs-number">0</span>] || LightSceneInfo == Scene-&gt;MobileDirectionalLights[<span class="hljs-number">1</span>] || LightSceneInfo == Scene-&gt;MobileDirectionalLights[<span class="hljs-number">2</span>])))<br>						&#123;<br>							<span class="hljs-comment">// 跳下去看一下这个</span><br>							<span class="hljs-comment">// 收集了CSM相关的数据</span><br>							<span class="hljs-built_in">AddViewDependentWholeSceneShadowsForView</span>(ViewDependentWholeSceneShadows, ViewDependentWholeSceneShadowsThatNeedCulling, VisibleLightInfo, *LightSceneInfo);<br>						&#125;<br><br>						<span class="hljs-comment">// ...</span><br>					&#125;<br>				&#125;<br>			&#125;<br>		&#125;<br><br>		<span class="hljs-comment">// ...</span><br>		<span class="hljs-comment">// Calculate visibility of the projected shadows.</span><br>		<span class="hljs-built_in">InitProjectedShadowVisibility</span>(RHICmdList);<br>	&#125;<br><br>	<span class="hljs-comment">// Clear old preshadows and attempt to add new ones to the cache</span><br>	<span class="hljs-built_in">UpdatePreshadowCache</span>(FSceneRenderTargets::<span class="hljs-built_in">Get</span>(RHICmdList));<br><br>	<span class="hljs-comment">// Gathers the list of primitives used to draw various shadow types</span><br>	<span class="hljs-built_in">GatherShadowPrimitives</span>(PreShadows, ViewDependentWholeSceneShadowsThatNeedCulling, bStaticSceneOnly);<br><br>	<span class="hljs-built_in">AllocateShadowDepthTargets</span>(RHICmdList);<br><br>	<span class="hljs-comment">// Generate mesh element arrays from shadow primitive arrays</span><br>	<span class="hljs-built_in">GatherShadowDynamicMeshElements</span>(DynamicIndexBuffer, DynamicVertexBuffer, DynamicReadBuffer);<br><br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="为当前view添加全场景阴影信息"><a class="markdownIt-Anchor" href="#为当前view添加全场景阴影信息"></a> 为当前View添加全场景阴影信息</h3>
+<p>FSceneRenderer::AddViewDependentWholeSceneShadowsForView<br />
+收集CSM相关的数据</p>
+<ol>
+<li>创建了ProjectedShadowInitializer</li>
+<li>用ProjectedShadowInitializer创建了ProjectedShadowInfo</li>
+<li>将ProjectedShadowInfo保存到了InitDynamicShadows函数里的局部变量VisibleLightInfo和ViewDependentWholeSceneShadows中</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-comment">//</span><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">FSceneRenderer::AddViewDependentWholeSceneShadowsForView</span><span class="hljs-params">(</span></span><br><span class="hljs-params"><span class="hljs-function">	TArray&lt;FProjectedShadowInfo*, SceneRenderingAllocator&gt;&amp; ShadowInfos, </span></span><br><span class="hljs-params"><span class="hljs-function">	TArray&lt;FProjectedShadowInfo*, SceneRenderingAllocator&gt;&amp; ShadowInfosThatNeedCulling,</span></span><br><span class="hljs-params"><span class="hljs-function">	FVisibleLightInfo&amp; VisibleLightInfo, </span></span><br><span class="hljs-params"><span class="hljs-function">	FLightSceneInfo&amp; LightSceneInfo)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-comment">// ...</span><br><br>	<span class="hljs-comment">// Allow each view to create a whole scene view dependent shadow</span><br>	<span class="hljs-comment">// 允许每一个view去创建一个 whole scene view dependent shadow（CSM是Whole Scene Shadow的一种）</span><br>	<span class="hljs-comment">// 我们项目的战斗场景中view数量为1</span><br>	<span class="hljs-keyword">for</span> (int32 ViewIndex = <span class="hljs-number">0</span>; ViewIndex &lt; Views.<span class="hljs-built_in">Num</span>(); ViewIndex++)<br>	&#123;<br>		<span class="hljs-comment">// 取到对应ViewInfo</span><br>		FViewInfo&amp; View = Views[ViewIndex];<br><br>		<span class="hljs-comment">// FLightSceneProxy -&gt; ShadowAmount // 控制阴影遮挡量</span><br>		<span class="hljs-comment">// 是1</span><br>		<span class="hljs-type">const</span> <span class="hljs-type">float</span> LightShadowAmount = LightSceneInfo.Proxy-&gt;<span class="hljs-built_in">GetShadowAmount</span>();<br>		TArray&lt;<span class="hljs-type">float</span>, TInlineAllocator&lt;<span class="hljs-number">2</span>&gt; &gt; FadeAlphas;<br>		FadeAlphas.<span class="hljs-built_in">Init</span>(<span class="hljs-number">0.0f</span>, Views.<span class="hljs-built_in">Num</span>());<br>		<span class="hljs-comment">// ViewIndex 0 的FadeAlphas 是 1</span><br>		FadeAlphas[ViewIndex] = LightShadowAmount;<br><br>		<span class="hljs-comment">// 在只有一个view的时候下方循环没有意义 暂时跳过不管</span><br>		<span class="hljs-comment">// ...	</span><br>		<br>		<span class="hljs-comment">// If rendering in stereo mode we render shadow depths only for the left eye, but project for both eyes!</span><br>		<span class="hljs-comment">// 如果是在立体声模式渲染，只对左眼渲染阴影深度但是会对两只眼睛都进行投影 ？？？</span><br>		<span class="hljs-keyword">if</span> (IStereoRendering::<span class="hljs-built_in">IsAPrimaryView</span>(View))<br>		&#123;<br>			<span class="hljs-comment">// 这个在我们移动端一看就是false啊</span><br>			<span class="hljs-type">const</span> <span class="hljs-type">bool</span> bExtraDistanceFieldCascade = LightSceneInfo.<span class="hljs-built_in">ShouldRenderLightViewIndependent</span>()<br>				&amp;&amp; LightSceneInfo.Proxy-&gt;<span class="hljs-built_in">ShouldCreateRayTracedCascade</span>(View.<span class="hljs-built_in">GetFeatureLevel</span>(), LightSceneInfo.<span class="hljs-built_in">IsPrecomputedLightingValid</span>(), View.MaxShadowCascades);<br><br>			<span class="hljs-comment">// 这个那还是1</span><br>			<span class="hljs-type">const</span> int32 ProjectionCount = LightSceneInfo.Proxy-&gt;<span class="hljs-built_in">GetNumViewDependentWholeSceneShadows</span>(View, LightSceneInfo.<span class="hljs-built_in">IsPrecomputedLightingValid</span>()) + (bExtraDistanceFieldCascade?<span class="hljs-number">1</span>:<span class="hljs-number">0</span>);<br><br>			<span class="hljs-comment">// ...</span><br><br>			FSceneRenderTargets&amp; SceneContext_ConstantsOnly = FSceneRenderTargets::<span class="hljs-built_in">Get_FrameConstantsOnly</span>();<br><br><br>			<span class="hljs-comment">// todo: this code can be simplified by computing all the distances in one place - avoiding some redundant work and complexity</span><br>			<span class="hljs-comment">// UE 还没干的事情  通过在一个地方计算所有距离，可以简化此代码 避免一些冗余工作和复杂性</span><br>			<span class="hljs-comment">// 看了一眼5.0还是没做 再议</span><br>			<span class="hljs-keyword">for</span> (int32 Index = <span class="hljs-number">0</span>; Index &lt; ProjectionCount; Index++)<br>			&#123;<br>				<span class="hljs-comment">// 声明了一个WholeSceneProjectedShadow的初始化器</span><br>				FWholeSceneProjectedShadowInitializer ProjectedShadowInitializer;<br><br>				<span class="hljs-comment">// 0</span><br>				int32 LocalIndex = Index;<br><br>				<span class="hljs-comment">// Indexing like this puts the ray traced shadow cascade last (might not be needed)</span><br>				<span class="hljs-comment">// bExtraDistanceFieldCascade是false</span><br>				<span class="hljs-keyword">if</span>(bExtraDistanceFieldCascade &amp;&amp; LocalIndex + <span class="hljs-number">1</span> == ProjectionCount)<br>				&#123;<br>					LocalIndex = INDEX_NONE;<br>				&#125;<br><br>				<span class="hljs-comment">// 通过GetViewDependentWholeSceneProjectedShadowInitializer去填充WholeSceneProjectedShadow的初始化器的相关成员</span><br>				<span class="hljs-comment">// 跳到下面看FWholeSceneProjectedShadowInitializer是什么</span><br>				<span class="hljs-comment">// 跳到下面看GetViewDependentWholeSceneProjectedShadowInitializer干了什么</span><br>				<span class="hljs-comment">// 简单总结一下这个函数里都干了什么：</span><br>				<span class="hljs-comment">// 1. 通过视口摄像机的远近平面的八个点创建了一个包围球</span><br>				<span class="hljs-comment">// 2. 填充了ProjectedShadowInitializer的各项属性，其中有些值和1里的包围球的值有关</span><br>				<span class="hljs-keyword">if</span> (LightSceneInfo.Proxy-&gt;<span class="hljs-built_in">GetViewDependentWholeSceneProjectedShadowInitializer</span>(View, LocalIndex, LightSceneInfo.<span class="hljs-built_in">IsPrecomputedLightingValid</span>(), ProjectedShadowInitializer))<br>				&#123;<br>					<span class="hljs-comment">// ShadowBuffer分辨率</span><br>					<span class="hljs-function"><span class="hljs-type">const</span> FIntPoint <span class="hljs-title">ShadowBufferResolution</span><span class="hljs-params">(</span></span><br><span class="hljs-params"><span class="hljs-function">					FMath::Clamp(GetCachedScalabilityCVars().MaxCSMShadowResolution, <span class="hljs-number">1</span>, (int32)GMaxShadowDepthBufferSizeX),</span></span><br><span class="hljs-params"><span class="hljs-function">					FMath::Clamp(GetCachedScalabilityCVars().MaxCSMShadowResolution, <span class="hljs-number">1</span>, (int32)GMaxShadowDepthBufferSizeY))</span></span>;<br><br>					<span class="hljs-comment">// Create the projected shadow info.</span><br>					<span class="hljs-comment">// 创建投影阴影信息对象</span><br>					FProjectedShadowInfo* ProjectedShadowInfo = <span class="hljs-built_in">new</span>(FMemStack::<span class="hljs-built_in">Get</span>(), <span class="hljs-number">1</span>, <span class="hljs-number">16</span>) FProjectedShadowInfo;<br><br>					<span class="hljs-comment">// ES31小于 是0</span><br>					uint32 ShadowBorder = <span class="hljs-built_in">NeedsUnatlasedCSMDepthsWorkaround</span>(FeatureLevel) ? <span class="hljs-number">0</span> : SHADOW_BORDER;<br><br>					<span class="hljs-comment">// 给ProjectedShadowInfo对象填充信息</span><br>					ProjectedShadowInfo-&gt;<span class="hljs-built_in">SetupWholeSceneProjection</span>(<br>						&amp;LightSceneInfo,<br>						&amp;View,<br>						ProjectedShadowInitializer,<br>						ShadowBufferResolution.X - ShadowBorder * <span class="hljs-number">2</span>,<br>						ShadowBufferResolution.Y - ShadowBorder * <span class="hljs-number">2</span>,<br>						ShadowBorder,<br>						<span class="hljs-literal">false</span>	<span class="hljs-comment">// no RSM</span><br>						);<br><br>					<span class="hljs-comment">// 是1</span><br>					ProjectedShadowInfo-&gt;FadeAlphas = FadeAlphas;<br>					<span class="hljs-comment">// 填充完了ProjectedShadowInfo的各种信息</span><br><br>					FVisibleLightInfo&amp; LightViewInfo = VisibleLightInfos[LightSceneInfo.Id];<br>					<span class="hljs-comment">// 将填充完了的投影阴影信息添加到了这几个地方</span><br>					VisibleLightInfo.MemStackProjectedShadows.<span class="hljs-built_in">Add</span>(ProjectedShadowInfo);<br>					VisibleLightInfo.AllProjectedShadows.<span class="hljs-built_in">Add</span>(ProjectedShadowInfo);<br>					ShadowInfos.<span class="hljs-built_in">Add</span>(ProjectedShadowInfo);<br><br>					<span class="hljs-comment">// ...</span><br>				&#125;<br>			&#125;<br><br>			<span class="hljs-comment">// 下面这部分在移动端相当于没有，暂时略过</span><br>			FSceneViewState* ViewState = (FSceneViewState*)View.State;<br>			<span class="hljs-keyword">if</span> (ViewState)<br>			&#123;<br>				<span class="hljs-comment">// 移动端ES是NULL</span><br>				FLightPropagationVolume* LightPropagationVolume = ViewState-&gt;<span class="hljs-built_in">GetLightPropagationVolume</span>(View.<span class="hljs-built_in">GetFeatureLevel</span>());<br>				<br>				<span class="hljs-type">float</span> LPVIntensity = <span class="hljs-number">0.f</span>;<br><br>				<span class="hljs-comment">// ...</span><br><br>				<span class="hljs-comment">// ...</span><br>			&#125;<br>		&#125;<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="设置投影阴影初始化器"><a class="markdownIt-Anchor" href="#设置投影阴影初始化器"></a> 设置投影阴影初始化器</h4>
+<ol>
+<li>就是那个每个级联的SplitNear和SplitFar，就是分割级联，这个是在计算包围球的时候才计算的，具体计算方法是GetSplitDistance</li>
+<li>计算了每个级联的外界包围球，具体方法是GetShadowSplitBounds</li>
+<li>计算了这个球的内接盒</li>
+<li>在计算包围球的同时计算了阴影裁剪体</li>
+</ol>
+<p><span id="GetViewDependentWholeSceneProjectedShadowInitializer"><strong>GetViewDependentWholeSceneProjectedShadowInitializer</strong></span></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-comment">/**</span><br><span class="hljs-comment">    * Sets up a projected shadow initializer that&#x27;s dependent on the current view for shadows from the entire scene.</span><br><span class="hljs-comment">    设置投影阴影初始化器，该初始化器依赖于整个场景中阴影的当前视图。</span><br><span class="hljs-comment">    * @param InCascadeIndex ShadowSplitIndex or INDEX_NONE for the the DistanceFieldCascade</span><br><span class="hljs-comment">    * @return True if the whole-scene projected shadow should be used.</span><br><span class="hljs-comment">    如果应使用整个场景投影阴影，则返回True。</span><br><span class="hljs-comment">    */</span><br><span class="hljs-function"><span class="hljs-keyword">virtual</span> <span class="hljs-type">bool</span> <span class="hljs-title">GetViewDependentWholeSceneProjectedShadowInitializer</span><span class="hljs-params">(<span class="hljs-type">const</span> FSceneView&amp; View, int32 InCascadeIndex, <span class="hljs-type">bool</span> bPrecomputedLightingIsValid, FWholeSceneProjectedShadowInitializer&amp; OutInitializer)</span> <span class="hljs-type">const</span> <span class="hljs-keyword">override</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-comment">// false</span><br>    <span class="hljs-type">const</span> <span class="hljs-type">bool</span> bRayTracedCascade = (InCascadeIndex == INDEX_NONE);<br><br>    <span class="hljs-comment">// 根据摄像机的远近平面的八个点生成了一个包围球</span><br>    FSphere Bounds = FDirectionalLightSceneProxy::<span class="hljs-built_in">GetShadowSplitBounds</span>(View, InCascadeIndex, bPrecomputedLightingIsValid, &amp;OutInitializer.CascadeSettings);<br><br>    <span class="hljs-comment">// 还没具体看</span><br>    <span class="hljs-comment">// 简单看了一下这个函数的返回值 return FMath::Min&lt;int32&gt;(NumCascades, MaxShadowCascades);</span><br>    <span class="hljs-comment">// MaxShadowCascades是View.MaxShadowCascades 要渲染的最大阴影级联数</span><br>    <span class="hljs-comment">// </span><br>    uint32 NumNearCascades = <span class="hljs-built_in">GetNumShadowMappedCascades</span>(View.MaxShadowCascades, bPrecomputedLightingIsValid);<br><br>    <span class="hljs-comment">// Last cascade is the ray traced shadow, if enabled</span><br>    <span class="hljs-comment">// ShadowSplitIndex是级联阴影分割视锥的索引，是传进来的参数，如果是ray traced shadow的话必须是上面获得的NumNearCascades，就是得是最后一个</span><br>    OutInitializer.CascadeSettings.ShadowSplitIndex = bRayTracedCascade ? NumNearCascades : InCascadeIndex;<br><br>    <span class="hljs-comment">// 虽然不知道为啥，用前面算出来的球的半径除以根号3</span><br>	<span class="hljs-comment">// 是Box边长的一半，是神奇的计算方法</span><br>    <span class="hljs-type">const</span> <span class="hljs-type">float</span> ShadowExtent = Bounds.W / FMath::<span class="hljs-built_in">Sqrt</span>(<span class="hljs-number">3.0f</span>);<br><br>    <span class="hljs-comment">// 这里定义了一个FBoxSphereBounds的对象</span><br>    <span class="hljs-comment">// FBoxSphereBounds就是保存了包围球和包围盒的属性信息，原点，上面算出来的Extent，以及球的半径</span><br>	<span class="hljs-comment">// 往后看了一下- -这里这个FBoxSphereBounds就是存了一下算出来的包围球的Origin、半径、半径除以根号3的值组成的FVector，之后用到这三个值的地方都从这个对象取值</span><br>    <span class="hljs-function"><span class="hljs-type">const</span> FBoxSphereBounds <span class="hljs-title">SubjectBounds</span><span class="hljs-params">(Bounds.Center, FVector(ShadowExtent, ShadowExtent, ShadowExtent), Bounds.W)</span></span>;<br><br>	<span class="hljs-comment">// FVector</span><br>    <span class="hljs-comment">// A translation that is applied to world-space before transforming by one of the shadow matrices.</span><br>    <span class="hljs-comment">// 无情机翻：在通过一个阴影矩阵进行变换之前应用于世界空间的变换。</span><br>    <span class="hljs-comment">// 通过一个阴影矩阵进行变化之前，被应用于世界空间的，一个，translation？平移</span><br>    <span class="hljs-comment">// 为啥把包围球的中心点取了个反？</span><br>    OutInitializer.PreShadowTranslation = -Bounds.Center;<br><br>	<span class="hljs-comment">// FMatrix</span><br>    <span class="hljs-comment">// 世界空间转光照空间的矩阵</span><br>	<span class="hljs-comment">// 等价于灯光旋转矩阵的逆矩阵</span><br>    OutInitializer.WorldToLight = <span class="hljs-built_in">FInverseRotationMatrix</span>(<span class="hljs-built_in">GetDirection</span>().<span class="hljs-built_in">GetSafeNormal</span>().<span class="hljs-built_in">Rotation</span>());<br><br>	<span class="hljs-comment">// FVector</span><br>    <span class="hljs-comment">// Non-uniform scale to be applied after WorldToLight.</span><br>    <span class="hljs-comment">// 无情机翻：WorldToLight之后应用的非均匀比例</span><br>    OutInitializer.Scales = <span class="hljs-built_in">FVector</span>(<span class="hljs-number">1.0f</span>,<span class="hljs-number">1.0f</span> / Bounds.W,<span class="hljs-number">1.0f</span> / Bounds.W);<br><br>	<span class="hljs-comment">// FVector</span><br>    <span class="hljs-comment">// 注释都没有！</span><br>    OutInitializer.FaceDirection = <span class="hljs-built_in">FVector</span>(<span class="hljs-number">1</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>);<br><br>	<span class="hljs-comment">// FBoxSphereBounds</span><br>    <span class="hljs-comment">// 连个注释都没有！</span><br>    <span class="hljs-comment">// 原点改成0了</span><br>    OutInitializer.SubjectBounds = <span class="hljs-built_in">FBoxSphereBounds</span>(FVector::ZeroVector, SubjectBounds.BoxExtent, SubjectBounds.SphereRadius);<br><br>	<span class="hljs-comment">// FVector4</span><br>    <span class="hljs-comment">// 连个注释都没有！</span><br>    OutInitializer.WAxis = <span class="hljs-built_in">FVector4</span>(<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">1</span>);<br><br>	<span class="hljs-comment">// float</span><br>    <span class="hljs-comment">// 连个注释都没有！</span><br>    <span class="hljs-comment">// Use the minimum of half the world, things further away do not cast shadows,</span><br>    <span class="hljs-comment">// However, if the cascade bounds are larger, then extend the casting distance far enough to encompass the cascade.</span><br>    <span class="hljs-comment">// 使用半个世界的最小值，更远的物体不会投射阴影，但是，如果层叠边界更大，则将投射距离延伸到足以覆盖层叠的程度。</span><br>	<span class="hljs-comment">// #define WORLD_MAX					2097152.0				/* Maximum size of the world */</span><br>	<span class="hljs-comment">// #define HALF_WORLD_MAX				(WORLD_MAX * 0.5)		/* Half the maximum size of the world */</span><br>	<span class="hljs-comment">// 包围球半径的负值和世界最小尺寸的一半，两者取较小的，就是不能比世界最大尺寸的一半的负值还要小，那就不在世界内了</span><br>    OutInitializer.MinLightW = FMath::<span class="hljs-built_in">Min</span>&lt;<span class="hljs-type">float</span>&gt;(-HALF_WORLD_MAX, -SubjectBounds.SphereRadius);<br><br>    <span class="hljs-comment">// Range must extend to end of cascade bounds</span><br>    <span class="hljs-comment">// 范围必须扩展到级联边界的末尾</span><br>    <span class="hljs-type">const</span> <span class="hljs-type">float</span> MaxLightW = SubjectBounds.SphereRadius;<br><br>	<span class="hljs-comment">// float</span><br>    <span class="hljs-comment">// 连个注释都没有！</span><br>	<span class="hljs-comment">// MinLightW是负的包围球半径，MaxLightW是正的包围球半径，就是求出来一个包围球直径</span><br>	<span class="hljs-comment">// 如果球的半径大于了世界最大尺寸的一半的时候，这个MaxDistanceToCastInLightW是比世界尺寸要大的？</span><br>    OutInitializer.MaxDistanceToCastInLightW = MaxLightW - OutInitializer.MinLightW;<br>    <span class="hljs-comment">// 那移动端肯定是false啊</span><br>    OutInitializer.bRayTracedDistanceField = bRayTracedCascade;<br>    <span class="hljs-comment">//  When enabled, the cascade only renders objects marked with bCastFarShadows enabled (e.g. Landscape).</span><br>    <span class="hljs-comment">// 启用时，级联仅渲染标记为已启用bCastFarShadows的对象（例如，Landscape）。</span><br>    OutInitializer.CascadeSettings.bFarShadowCascade = !bRayTracedCascade &amp;&amp; OutInitializer.CascadeSettings.ShadowSplitIndex &gt;= (int32)NumNearCascades;<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="生成投影阴影的信息"><a class="markdownIt-Anchor" href="#生成投影阴影的信息"></a> 生成投影阴影的信息</h4>
+<p><span id="SetupWholeSceneProjection"><strong>SetupWholeSceneProjection</strong></span></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-comment">// ShadowSetup.cpp</span><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">FProjectedShadowInfo::SetupWholeSceneProjection</span><span class="hljs-params">(</span></span><br><span class="hljs-params"><span class="hljs-function">	FLightSceneInfo* InLightSceneInfo,</span></span><br><span class="hljs-params"><span class="hljs-function">	FViewInfo* InDependentView,</span></span><br><span class="hljs-params"><span class="hljs-function">	<span class="hljs-type">const</span> FWholeSceneProjectedShadowInitializer&amp; Initializer,</span></span><br><span class="hljs-params"><span class="hljs-function">	uint32 InResolutionX,</span></span><br><span class="hljs-params"><span class="hljs-function">	uint32 InResolutionY,</span></span><br><span class="hljs-params"><span class="hljs-function">	uint32 InBorderSize,</span></span><br><span class="hljs-params"><span class="hljs-function">	<span class="hljs-type">bool</span> bInReflectiveShadowMap)</span></span><br><span class="hljs-function"></span>&#123;	<br>	<span class="hljs-comment">// 从这里开始进行了一系列的变量赋值</span><br>	<span class="hljs-comment">// FLightSceneInfo</span><br>	LightSceneInfo = InLightSceneInfo;<br>	<span class="hljs-comment">// FLightSceneInfoCompact</span><br>	LightSceneInfoCompact = InLightSceneInfo;<br>	<span class="hljs-comment">// FViewInfo</span><br>	DependentView = InDependentView;<br>	<span class="hljs-comment">// FVector</span><br>	PreShadowTranslation = Initializer.PreShadowTranslation;<br>	<span class="hljs-comment">// FShadowCascadeSettings</span><br>	CascadeSettings = Initializer.CascadeSettings;<br>	<span class="hljs-comment">// </span><br>	ResolutionX = InResolutionX;<br>	ResolutionY = InResolutionY;<br>	<span class="hljs-comment">//</span><br>	bDirectionalLight = InLightSceneInfo-&gt;Proxy-&gt;<span class="hljs-built_in">GetLightType</span>() == LightType_Directional;<br>	bOnePassPointLightShadow = Initializer.bOnePassPointLightShadow;<br>	bRayTracedDistanceField = Initializer.bRayTracedDistanceField;<br>	bWholeSceneShadow = <span class="hljs-literal">true</span>;<br>	bTransmission = InLightSceneInfo-&gt;Proxy-&gt;<span class="hljs-built_in">Transmission</span>();<br>	bHairStrandsDeepShadow = InLightSceneInfo-&gt;Proxy-&gt;<span class="hljs-built_in">CastsHairStrandsDeepShadow</span>();<br>	<span class="hljs-comment">// mobile 所以 false</span><br>	bReflectiveShadowmap = bInReflectiveShadowMap; <br>	<span class="hljs-comment">// 居然是0耶</span><br>	BorderSize = InBorderSize;<br><br>	FVector	XAxis, YAxis;<br>	Initializer.FaceDirection.<span class="hljs-built_in">FindBestAxisVectors</span>(XAxis,YAxis);<br>	<span class="hljs-comment">// 从世界空间转换到灯光视图空间的矩阵</span><br>	<span class="hljs-comment">// 都是在FWholeSceneProjectedShadowInitializer中计算过的</span><br>	<span class="hljs-type">const</span> FMatrix WorldToLightScaled = Initializer.WorldToLight * <span class="hljs-built_in">FScaleMatrix</span>(Initializer.Scales);<br>	<span class="hljs-type">const</span> FMatrix WorldToFace = WorldToLightScaled * <span class="hljs-built_in">FBasisVectorMatrix</span>(-XAxis,YAxis,Initializer.FaceDirection.<span class="hljs-built_in">GetSafeNormal</span>(),FVector::ZeroVector);<br><br>	MaxSubjectZ = WorldToFace.<span class="hljs-built_in">TransformPosition</span>(Initializer.SubjectBounds.Origin).Z + Initializer.SubjectBounds.SphereRadius;<br>	MinSubjectZ = FMath::<span class="hljs-built_in">Max</span>(MaxSubjectZ - Initializer.SubjectBounds.SphereRadius * <span class="hljs-number">2</span>,Initializer.MinLightW);<br><br>	<span class="hljs-comment">// 这次看的是从Mobile管线过来的 这个是false 没有RSM</span><br>	<span class="hljs-keyword">if</span>(bInReflectiveShadowMap)<br>	&#123;<br>		<span class="hljs-comment">// 因为mobile没有RSM我把这里跳过啦！</span><br>	&#125;<br>	<span class="hljs-keyword">else</span><br>	&#123;<br>		<span class="hljs-comment">// 是方向光！</span><br>		<span class="hljs-keyword">if</span>(bDirectionalLight)<br>		&#123;<br>			<span class="hljs-comment">// Limit how small the depth range can be for smaller cascades</span><br>			<span class="hljs-comment">// 对于比较小的级联，限制最小的depth，不能太小</span><br>			<span class="hljs-comment">// This is needed for shadow modes like subsurface shadows which need depth information outside of the smaller cascade depth range</span><br>			<span class="hljs-comment">// 对于某些阴影模式是必须要的（比如 subsurface阴影（需要在很小的级联depth范围之外的depth信息），这又是啥？</span><br>			<span class="hljs-comment">//@todo - expose this value to the ini</span><br>			<span class="hljs-comment">// 是一个限制范围数字，为什么是5000 不重要</span><br>			<span class="hljs-type">const</span> <span class="hljs-type">float</span> DepthRangeClamp = <span class="hljs-number">5000</span>;<br>			<span class="hljs-comment">// 最大值不能小于5000</span><br>			MaxSubjectZ = FMath::<span class="hljs-built_in">Max</span>(MaxSubjectZ, DepthRangeClamp);<br>			<span class="hljs-comment">// 最小值不能小于-5000</span><br>			MinSubjectZ = FMath::<span class="hljs-built_in">Min</span>(MinSubjectZ, -DepthRangeClamp);<br><br>			<span class="hljs-comment">// Transform the shadow&#x27;s position into shadowmap space</span><br>			<span class="hljs-comment">// 将阴影的位置变换为shadowmap空间</span><br>			<span class="hljs-comment">// 这个PreShadowTranslation是计算出的包围球的origin取反，这里再次取反，这不又回去了吗</span><br>			<span class="hljs-type">const</span> FVector TransformedPosition = WorldToFace.<span class="hljs-built_in">TransformPosition</span>(-PreShadowTranslation);<br><br>			<span class="hljs-comment">// Largest amount that the shadowmap will be downsampled to during sampling</span><br>			<span class="hljs-comment">// shadowmap将会被降采样到所允许的最大数量</span><br>			<span class="hljs-comment">// We need to take this into account when snapping to get a stable result</span><br>			<span class="hljs-comment">// </span><br>			<span class="hljs-comment">// This corresponds to the maximum kernel filter size used by subsurface shadows in ShadowProjectionPixelShader.usf</span><br>			<span class="hljs-type">const</span> int32 MaxDownsampleFactor = <span class="hljs-number">4</span>;<br>			<span class="hljs-comment">// Determine the distance necessary to snap the shadow&#x27;s position to the nearest texel</span><br>			<span class="hljs-comment">// 确定将阴影位置捕捉到最近的纹理所需的距离</span><br>			<span class="hljs-type">const</span> <span class="hljs-type">float</span> SnapX = FMath::<span class="hljs-built_in">Fmod</span>(TransformedPosition.X, <span class="hljs-number">2.0f</span> * MaxDownsampleFactor / InResolutionX);<br>			<span class="hljs-type">const</span> <span class="hljs-type">float</span> SnapY = FMath::<span class="hljs-built_in">Fmod</span>(TransformedPosition.Y, <span class="hljs-number">2.0f</span> * MaxDownsampleFactor / InResolutionY);<br>			<span class="hljs-comment">// Snap the shadow&#x27;s position and transform it back into world space</span><br>			<span class="hljs-comment">// This snapping prevents sub-texel camera movements which removes view dependent aliasing from the final shadow result</span><br>			<span class="hljs-comment">// This only maintains stable shadows under camera translation and rotation</span><br>			<span class="hljs-comment">// 捕捉阴影的位置并将其转换回世界空间</span><br>			<span class="hljs-comment">// 此捕捉可防止sub-texel摄影机移动，从而从最终阴影结果中移除与视图相关的锯齿</span><br>			<span class="hljs-comment">// 这只会在摄影机平移和旋转下保持稳定的阴影</span><br>			<span class="hljs-comment">// 意思是为了避免摄像机移动的造成的锯齿或者抖动，重新计算了PreShadowTranslation</span><br>			<span class="hljs-type">const</span> FVector SnappedWorldPosition = WorldToFace.<span class="hljs-built_in">InverseFast</span>().<span class="hljs-built_in">TransformPosition</span>(TransformedPosition - <span class="hljs-built_in">FVector</span>(SnapX, SnapY, <span class="hljs-number">0.0f</span>));<br><br>			<span class="hljs-comment">//上面做的就是 按照某种规则重新计算了PreShadowTranslation，也就是包围球的origin，通过这个计算可以避免摄像机移动造成的锯齿和抖动</span><br>			PreShadowTranslation = -SnappedWorldPosition;<br>		&#125;<br><br>		<span class="hljs-keyword">if</span> (CascadeSettings.ShadowSplitIndex &gt;= <span class="hljs-number">0</span> &amp;&amp; bDirectionalLight)<br>		&#123;<br>			<span class="hljs-built_in">checkSlow</span>(InDependentView);<br>			<span class="hljs-comment">// 计算FProjectedShadowInfo的ShadowBound</span><br>			ShadowBounds = InLightSceneInfo-&gt;Proxy-&gt;<span class="hljs-built_in">GetShadowSplitBounds</span>(<br>				*InDependentView, <br>				bRayTracedDistanceField ? INDEX_NONE : CascadeSettings.ShadowSplitIndex, <br>				InLightSceneInfo-&gt;<span class="hljs-built_in">IsPrecomputedLightingValid</span>(), <br>				<span class="hljs-number">0</span>);<br>		&#125;<br>		<span class="hljs-keyword">else</span><br>		&#123;<br>			ShadowBounds = <span class="hljs-built_in">FSphere</span>(-Initializer.PreShadowTranslation, Initializer.SubjectBounds.SphereRadius);<br>		&#125;<br><br>		<span class="hljs-comment">// Any meshes between the light and the subject can cast shadows, also any meshes inside the subject region</span><br>		<span class="hljs-comment">// 灯光和对象之间的任何网格都可以投射阴影，也可以投射对象区域内的任何网格</span><br>		<span class="hljs-comment">// CasterMatrix？？是什么？？</span><br>		<span class="hljs-comment">// 阴影投射矩阵，肯定是用来处理变换的，但是不知道是处理什么变换</span><br>		<span class="hljs-type">const</span> FMatrix CasterMatrix = WorldToFace * <span class="hljs-built_in">FShadowProjectionMatrix</span>(Initializer.MinLightW, MaxSubjectZ, Initializer.WAxis);<br>		<span class="hljs-comment">// 获取投射阴影的视锥体</span><br>		<span class="hljs-comment">// Frustum containing all potential shadow casters. </span><br>		<span class="hljs-comment">// 包含所有潜在阴影投射者的平截头体，是FProjectedShadowInfo的成员变量</span><br>		<span class="hljs-comment">// 根据函数的参数变量名，const FMatrix&amp; ViewProjectionMatrix，是一个视图投影矩阵</span><br>		<span class="hljs-comment">// 该函数通过CasterMatrix，生成了CasterFrustum的六个Planes</span><br>、		<span class="hljs-built_in">GetViewFrustumBounds</span>(CasterFrustum, CasterMatrix, <span class="hljs-literal">true</span>);<br>	&#125;<br><br>	<span class="hljs-built_in">checkf</span>(MaxSubjectZ &gt; MinSubjectZ, <span class="hljs-built_in">TEXT</span>(<span class="hljs-string">&quot;MaxSubjectZ %f MinSubjectZ %f SubjectBounds.SphereRadius %f&quot;</span>), MaxSubjectZ, MinSubjectZ, Initializer.SubjectBounds.SphereRadius);<br><br>	MinPreSubjectZ = Initializer.MinLightW;<br><br>	SubjectAndReceiverMatrix = WorldToFace * <span class="hljs-built_in">FShadowProjectionMatrix</span>(MinSubjectZ, MaxSubjectZ, Initializer.WAxis);<br>	<span class="hljs-comment">// For CSM the subject is the same as the receiver (i.e., the cascade bounds)</span><br>	ReceiverMatrix = SubjectAndReceiverMatrix;<br><br>	<span class="hljs-type">float</span> MaxSubjectDepth = SubjectAndReceiverMatrix.<span class="hljs-built_in">TransformPosition</span>(<br>		Initializer.SubjectBounds.Origin<br>		+ WorldToLightScaled.<span class="hljs-built_in">InverseFast</span>().<span class="hljs-built_in">TransformVector</span>(Initializer.FaceDirection) * Initializer.SubjectBounds.SphereRadius<br>		).Z;<br><br>	<span class="hljs-keyword">if</span> (bOnePassPointLightShadow)<br>	&#123;<br>		MaxSubjectDepth = Initializer.SubjectBounds.SphereRadius;<br>	&#125;<br><br>	InvMaxSubjectDepth = <span class="hljs-number">1.0f</span> / MaxSubjectDepth;<br><br>	<span class="hljs-comment">// Store the view matrix</span><br>	<span class="hljs-comment">// Reorder the vectors to match the main view, since ShadowViewMatrix will be used to override the main view&#x27;s view matrix during shadow depth rendering</span><br>	ShadowViewMatrix = Initializer.WorldToLight * <br>		<span class="hljs-built_in">FMatrix</span>(<br>		<span class="hljs-built_in">FPlane</span>(<span class="hljs-number">0</span>,	<span class="hljs-number">0</span>,	<span class="hljs-number">1</span>,	<span class="hljs-number">0</span>),<br>		<span class="hljs-built_in">FPlane</span>(<span class="hljs-number">1</span>,	<span class="hljs-number">0</span>,	<span class="hljs-number">0</span>,	<span class="hljs-number">0</span>),<br>		<span class="hljs-built_in">FPlane</span>(<span class="hljs-number">0</span>,	<span class="hljs-number">1</span>,	<span class="hljs-number">0</span>,	<span class="hljs-number">0</span>),<br>		<span class="hljs-built_in">FPlane</span>(<span class="hljs-number">0</span>,	<span class="hljs-number">0</span>,	<span class="hljs-number">0</span>,	<span class="hljs-number">1</span>));<br><br>	InvReceiverMatrix = ReceiverMatrix.<span class="hljs-built_in">InverseFast</span>();<br><br>	<span class="hljs-comment">// ReceiverFrustum 接收阴影的视锥体</span><br>	<span class="hljs-built_in">GetViewFrustumBounds</span>(ReceiverFrustum, ReceiverMatrix, <span class="hljs-literal">true</span>);<br><br>	<span class="hljs-built_in">UpdateShaderDepthBias</span>();<br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="相关结构体"><a class="markdownIt-Anchor" href="#相关结构体"></a> 相关结构体</h2>
+<h3 id="fwholesceneprojectedshadowinitializer"><a class="markdownIt-Anchor" href="#fwholesceneprojectedshadowinitializer"></a> FWholeSceneProjectedShadowInitializer</h3>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-comment">/** Information needed to create a whole scene projected shadow. */</span><br><span class="hljs-comment">// 创建整个场景投影阴影所需的信息</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">ENGINE_API</span> FWholeSceneProjectedShadowInitializer : <span class="hljs-keyword">public</span> FProjectedShadowInitializer<br>&#123;<br><span class="hljs-keyword">public</span>:<br>	FShadowCascadeSettings CascadeSettings;<br>	<span class="hljs-type">bool</span> bOnePassPointLightShadow;<br>	<span class="hljs-type">bool</span> bRayTracedDistanceField;<br><br>	<span class="hljs-built_in">FWholeSceneProjectedShadowInitializer</span>() :<br>		<span class="hljs-built_in">bOnePassPointLightShadow</span>(<span class="hljs-literal">false</span>),<br>		<span class="hljs-built_in">bRayTracedDistanceField</span>(<span class="hljs-literal">false</span>)<br>	&#123;&#125;<br><br>	<span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">IsCachedShadowValid</span><span class="hljs-params">(<span class="hljs-type">const</span> FWholeSceneProjectedShadowInitializer&amp; CachedShadow)</span> <span class="hljs-type">const</span></span><br><span class="hljs-function">	</span>&#123;<br>		<span class="hljs-keyword">return</span> FProjectedShadowInitializer::<span class="hljs-built_in">IsCachedShadowValid</span>((<span class="hljs-type">const</span> FProjectedShadowInitializer&amp;)CachedShadow)<br>			&amp;&amp; bOnePassPointLightShadow == CachedShadow.bOnePassPointLightShadow<br>			&amp;&amp; bRayTracedDistanceField == CachedShadow.bRayTracedDistanceField;<br>	&#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+<h3 id="fprojectedshadowinitializer"><a class="markdownIt-Anchor" href="#fprojectedshadowinitializer"></a> FProjectedShadowInitializer</h3>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-comment">/** A projected shadow transform. */</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">ENGINE_API</span> FProjectedShadowInitializer<br>&#123;<br><span class="hljs-keyword">public</span>:<br><br>	<span class="hljs-comment">/** A translation that is applied to world-space before transforming by one of the shadow matrices. */</span><br>	<span class="hljs-comment">// 通过一个阴影矩阵进行变化之前的，被应用于世界空间的，一个，translation ？平移</span><br>	FVector PreShadowTranslation;<br><br>	FMatrix WorldToLight;<br>	<span class="hljs-comment">/** Non-uniform scale to be applied after WorldToLight. */</span><br>	FVector Scales;<br><br>	FVector FaceDirection;<br>	FBoxSphereBounds SubjectBounds;<br>	FVector4 WAxis;<br>	<span class="hljs-type">float</span> MinLightW;<br>	<span class="hljs-type">float</span> MaxDistanceToCastInLightW;<br><br>	<span class="hljs-comment">/** Default constructor. */</span><br>	<span class="hljs-built_in">FProjectedShadowInitializer</span>()<br>	&#123;&#125;<br><br>	<span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">IsCachedShadowValid</span><span class="hljs-params">(<span class="hljs-type">const</span> FProjectedShadowInitializer&amp; CachedShadow)</span> <span class="hljs-type">const</span></span><br><span class="hljs-function">	</span>&#123;<br>		<span class="hljs-keyword">return</span> PreShadowTranslation == CachedShadow.PreShadowTranslation<br>			&amp;&amp; WorldToLight == CachedShadow.WorldToLight<br>			&amp;&amp; Scales == CachedShadow.Scales<br>			&amp;&amp; FaceDirection == CachedShadow.FaceDirection<br>			&amp;&amp; SubjectBounds.Origin == CachedShadow.SubjectBounds.Origin<br>			&amp;&amp; SubjectBounds.BoxExtent == CachedShadow.SubjectBounds.BoxExtent<br>			&amp;&amp; SubjectBounds.SphereRadius == CachedShadow.SubjectBounds.SphereRadius<br>			&amp;&amp; WAxis == CachedShadow.WAxis<br>			&amp;&amp; MinLightW == CachedShadow.MinLightW<br>			&amp;&amp; MaxDistanceToCastInLightW == CachedShadow.MaxDistanceToCastInLightW;<br>	&#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+<h3 id="fboxspherebounds"><a class="markdownIt-Anchor" href="#fboxspherebounds"></a> FBoxSphereBounds</h3>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * Structure for a combined axis aligned bounding box and bounding sphere with the same origin. (28 bytes).</span><br><span class="hljs-comment"> 具有相同原点的组合轴对包围盒和包围球的结构。（28字节）。????</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">FBoxSphereBounds</span><br>&#123;<br>	<span class="hljs-comment">/** Holds the origin of the bounding box and sphere. */</span><br>    <span class="hljs-comment">// 包围盒和球的原点</span><br>	FVector	Origin;<br>    <span class="hljs-comment">// 包围盒的的边长的一半</span><br>	<span class="hljs-comment">/** Holds the extent of the bounding box. */</span><br>	FVector BoxExtent;<br><br>	<span class="hljs-comment">/** Holds the radius of the bounding sphere. */</span><br>    <span class="hljs-comment">// 包围球的半径</span><br>	<span class="hljs-type">float</span> SphereRadius;<br>&#125;<br></code></pre></td></tr></table></figure>
+              
+            </div>
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/UE4/" class="category-chain-item">UE4</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/UE4/">#UE4</a>
+      
+        <a href="/tags/Rendering/">#Rendering</a>
+      
+        <a href="/tags/Mobile/">#Mobile</a>
+      
+        <a href="/tags/Shadow/">#Shadow</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>UE4：移动端级联阴影简要分析</div>
+      <div>http://muchenhen.com/posts/46173/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>木尘痕</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年6月16日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/34123/" title="UE4：移动端俯视角远距离摄像机的级联阴影优化">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">UE4：移动端俯视角远距离摄像机的级联阴影优化</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/2274/" title="UE4：4.27版本PSO变化">
+                        <span class="hidden-mobile">UE4：4.27版本PSO变化</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+    <!-- 备案信息 ICP for China -->
+    <div class="beian">
+  <span>
+    <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+      
+    </a>
+  </span>
+  
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?bbb32ef470b36fe5f1e4e72f32112b68";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script>
+  (function() {
+    var enableLang = CONFIG.code_language.enable && CONFIG.code_language.default;
+    var enableCopy = CONFIG.copy_btn;
+    if (!enableLang && !enableCopy) {
+      return;
+    }
+
+    function getBgClass(ele) {
+      return Fluid.utils.getBackgroundLightness(ele) >= 0 ? 'code-widget-light' : 'code-widget-dark';
+    }
+
+    var copyTmpl = '';
+    copyTmpl += '<div class="code-widget">';
+    copyTmpl += 'LANG';
+    copyTmpl += '</div>';
+    jQuery('.markdown-body pre').each(function() {
+      var $pre = jQuery(this);
+      if ($pre.find('code.mermaid').length > 0) {
+        return;
+      }
+      if ($pre.find('span.line').length > 0) {
+        return;
+      }
+
+      var lang = '';
+
+      if (enableLang) {
+        lang = CONFIG.code_language.default;
+        if ($pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2 && $pre.children().hasClass('hljs')) {
+          lang = $pre[0].children[0].classList[1];
+        } else if ($pre[0].getAttribute('data-language')) {
+          lang = $pre[0].getAttribute('data-language');
+        } else if ($pre.parent().hasClass('sourceCode') && $pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2) {
+          lang = $pre[0].children[0].classList[1];
+          $pre.parent().addClass('code-wrapper');
+        } else if ($pre.parent().hasClass('markdown-body') && $pre[0].classList.length === 0) {
+          $pre.wrap('<div class="code-wrapper"></div>');
+        }
+        lang = lang.toUpperCase().replace('NONE', CONFIG.code_language.default);
+      }
+      $pre.append(copyTmpl.replace('LANG', lang).replace('code-widget">',
+        getBgClass($pre[0]) + (enableCopy ? ' code-widget copy-btn" data-clipboard-snippet><i class="iconfont icon-copy"></i>' : ' code-widget">')));
+
+      if (enableCopy) {
+        Fluid.utils.createScript('https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js', function() {
+          var clipboard = new window.ClipboardJS('.copy-btn', {
+            target: function(trigger) {
+              var nodes = trigger.parentNode.childNodes;
+              for (var i = 0; i < nodes.length; i++) {
+                if (nodes[i].tagName === 'CODE') {
+                  return nodes[i];
+                }
+              }
+            }
+          });
+          clipboard.on('success', function(e) {
+            e.clearSelection();
+            e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-copy', 'icon-success');
+            setTimeout(function() {
+              e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-success', 'icon-copy');
+            }, 2000);
+          });
+        });
+      }
+    });
+  })();
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

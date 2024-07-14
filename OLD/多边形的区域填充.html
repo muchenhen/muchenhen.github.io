@@ -1,0 +1,624 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="木尘痕">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="详细的函数实现思路需要缓缓思路 扫描线算法实现区域填充，算法核心为求扫描线与多边形边线的交点。 按照求交，排序，交点配对，区间填色的步骤 此处详细知识看相关的计算机图形学的书籍，一般都有对多边形域的填充的相关内容。以下着重C++实现算法。 1**、算法的基本思想** 此处略去对于一条扫描线的一般四个步骤。 对于求交点，是关键的一步，需要尽量少的计算求出交点，并且要注意特殊交点。如果按照正常的线段求">
+<meta property="og:type" content="website">
+<meta property="og:title" content="多边形的区域填充">
+<meta property="og:url" content="http://muchenhen.com/OLD/%E5%A4%9A%E8%BE%B9%E5%BD%A2%E7%9A%84%E5%8C%BA%E5%9F%9F%E5%A1%AB%E5%85%85.html">
+<meta property="og:site_name" content="虚无之境">
+<meta property="og:description" content="详细的函数实现思路需要缓缓思路 扫描线算法实现区域填充，算法核心为求扫描线与多边形边线的交点。 按照求交，排序，交点配对，区间填色的步骤 此处详细知识看相关的计算机图形学的书籍，一般都有对多边形域的填充的相关内容。以下着重C++实现算法。 1**、算法的基本思想** 此处略去对于一条扫描线的一般四个步骤。 对于求交点，是关键的一步，需要尽量少的计算求出交点，并且要注意特殊交点。如果按照正常的线段求">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2018/10/1.jpg">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2018/10/2.png">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2018/10/3.png">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2018/10/4.png">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2018/10/5.png">
+<meta property="article:published_time" content="2018-10-24T14:47:53.000Z">
+<meta property="article:modified_time" content="2024-07-14T15:26:08.252Z">
+<meta property="article:author" content="木尘痕">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.muchenhen.com/wp-content/uploads/2018/10/1.jpg">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>多边形的区域填充 - 虚无之境</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"muchenhen.com","root":"/","version":"1.9.1","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"bbb32ef470b36fe5f1e4e72f32112b68","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>虚无之境</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/NagisaKaworu.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="多边形的区域填充"></span>
+          
+        </div>
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      <div class="container nopadding-x-md">
+        <div id="board"
+          >
+          
+          <div class="container">
+            <div class="row">
+              <div class="col-12 col-md-10 m-auto">
+                
+
+<article class="page-content">
+  <p><strong>详细的函数实现思路需要缓缓思路</strong></p>
+<p>扫描线算法实现区域填充，算法核心为求扫描线与多边形边线的交点。</p>
+<p>按照求交，排序，交点配对，区间填色的步骤</p>
+<p>此处详细知识看相关的计算机图形学的书籍，一般都有对多边形域的填充的相关内容。以下着重C++实现算法。</p>
+<p><strong>1</strong>**、算法的基本思想**</p>
+<p>此处略去对于一条扫描线的一般四个步骤。</p>
+<p>对于求交点，是关键的一步，需要尽量少的计算求出交点，并且要注意特殊交点。如果按照正常的线段求交点的方法进行计算，会导致计算量过大。</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/10/1.jpg" srcset="/img/loading.gif" lazyload alt="" /></p>
+<p>如图可知：</p>
+<p>1、同一条扫描线并不会同时和所有的边有交点。</p>
+<p>2、相邻的扫描线与同一直线的交点位置存在递推关系，这一点可以用来把乘法换成加法</p>
+<p>对于第一点，按照孙家广《计算机图形学》中，在处理一条扫描时，仅对与他相交的多边形的边进行求交运算。把与当前扫描线相交的边称为**活性边（活动边），**并把它们按与扫描线交点x坐标递增的顺序存放在一个链表中，称此链表为活性链表（AET）。例如扫描线4的“活动边表”由P1P2和P3P4两条边组成，而扫描线7的“活动边表”由P1P2、P6P1、P5P6和P4P5四条边组成。</p>
+<p>对于第二点，由图可以轻易发现，当前的活动边已经通过直线段求交点算法求出了交点，下一条活动边的交点不需要再求交计算，通过步进关系可以直接得到新交点坐标为（x + △x, y + 1）。前面提到过，步进关系△x是个常量，与直线的斜率有关，易得出△x=-b/a，斜率的倒数。推导的过程可以参考老师上课讲的任意斜率的数值微分法。</p>
+<p>接下来要考虑整个核心的**活性边表，**其实是关于扫描线的单链表。为了定义链表，首先需要定义“边”的数据类型，此处使用结构体</p>
+<p>typedef struct tagEDGE<br />
+{<br />
+double xi;<br />
+double dx;<br />
+int ymax;<br />
+}EDGE;</p>
+<p>需要注意的是，扫描填充在意的只是交点的x坐标。Dx用来简化求下一条活性边交点的运算。同时，如果下一条扫描线与“边”没有交点之后，需要从边表删除掉该“边”。判断是否有交点需要看扫描线y是否大于该边的两端端点的y值，所以需要定义一下边的y坐标的最大值ymax。</p>
+<p>如果多边形不自交，关于一条“边”从当前到下一条扫描线延续，交点的顺序是不变的，有图象可以看出来。但是如果多边形自交了，比如对顶三角形，就会出现交点顺序改变，此时需要重新排序，因为扫描线是连贯的，仅有个别点需要重排序，可以使用冒泡排序：<a target="_blank" rel="noopener" href="https://www.muchenhen.com/2018/08/29/%e5%86%92%e6%b3%a1%e6%8e%92%e5%ba%8f/">冒泡排序</a></p>
+<p><strong>这些都是书上有的东西啊！关于新交上的边肯定是要添加到表里面啊，最好插进去的时候就排好序啊，所以<a target="_blank" rel="noopener" href="https://www.muchenhen.com/2018/10/28/%e6%8f%92%e5%85%a5%e6%8e%92%e5%ba%8f/">插入排序</a>啊！</strong></p>
+<p>下面是扫描线4和扫描线7的活性边表</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/10/2.png" srcset="/img/loading.gif" lazyload alt="" /></p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/10/3.png" srcset="/img/loading.gif" lazyload alt="" /></p>
+<p>每一条扫描线都需要一个活性边表，所以为了方便更新活性边表，建立一个新边表。</p>
+<p><strong>以下是我的个人看法，书上写的比较专业</strong>**= =**</p>
+<p>**建立新边表的目的：**为了不用计算每一条扫描线与边的交点，可以利用活性边表方便归纳出所有扫描线的活性边表。可以用新边表直接补全活性边表</p>
+<p><strong>建立“新边表”的规则是</strong>：如果某条边的较低端点（y坐标较小的那个点）的y坐标与扫描线y相等，则该边就是扫描线y的新边，应该加入扫描线y的“新边表”。</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/10/4.png" srcset="/img/loading.gif" lazyload alt="" /></p>
+<p>下面是补全的活性边表</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/10/5.png" srcset="/img/loading.gif" lazyload alt="" /></p>
+<p><strong>2</strong>**、特殊边和定点处理**</p>
+<p>**水平边：**麻烦直接画出来，不然全都是交点！</p>
+<p><strong>顶点：为了保证偶数个交点，按照课本的方法对不同的点算不同的次数。</strong></p>
+<p>**填充边界：**书上说了左开右闭，行规。</p>
+<p><strong>3</strong>**、算法实现**</p>
+<p>以下所有代码仅涉及了C++基本语法啊，不会的自己百度啊</p>
+<p>画线算法不再赘述。</p>
+<p>基本上需要这几个函数：</p>
+<p><strong>首先需要定义新边表的数据结构。定义“新边表”为一个数组，数组的每个元素存放对应扫描线的所有“新边”。</strong></p>
+<p><strong>ScanLinePolygonFill</strong>**：**在开始对每条扫描线处理之前，需要先计算出多边形的ymax和ymin并初始化“新边表”（调用下面那个）。</p>
+<p><strong>InitScanLineNewEdgeTable</strong>**：**根据多边形的顶点和边的情况初始化“新边表”。</p>
+<p><strong>ProcessScanLineFill</strong>函数开始对每条扫描线进行处理。</p>
+<p><strong>InsertNetListToAet</strong>函数负责将扫描线对应的所有新边插入到AET中，插入操作到保证AET还是有序表，应用插入排序。</p>
+<p>**FillAetScanLine()**函数执行具体的填充动作，它将AET中的边交点成对取出组成填充区间，然后根据“左闭右开”的原则对每个区间填充。</p>
+<p>**RemoveNonActiveEdgeFromAet()**函数负责将对下一条扫描线来说已经不是“活动边”的边从AET中删除，删除的条件就是当前扫描线y与边的ymax相等，如果有多条边满足这个条件，则一并全部删除。</p>
+<p><strong>UpdateAndResortAet</strong>函数更新边表中每项的xi值，就是根据扫描线的连贯性用dx对其进行修正，并且根据xi从小到大的原则对更新后的AET表重新排序。</p>
+<p>#include #include const int POINTNUM=7;      //多边形点数.</p>
+<p>//定义结构体用于活性边表AET和新边表NET<br />
+typedef struct XET<br />
+{<br />
+float x;<br />
+float dx,ymax;<br />
+XET* next;<br />
+} AET,NET;</p>
+<p>//定义点结构体point<br />
+struct point<br />
+{<br />
+float x;<br />
+float y;<br />
+} polypoint[POINTNUM]= { {250,50},{50,150},{550,400},{250,250},{100,350},{100,100},{120,30} }; //多边形顶点</p>
+<p>void PolyScan()<br />
+{<br />
+//计算最高点的y坐标(扫描到此结束)<br />
+int MaxY=0;<br />
+int i;<br />
+for(i=0; iMaxY)<br />
+MaxY=polypoint[i].y;</p>
+<pre><code class="hljs">//初始化AET表
+AET \*pAET=new AET;
+pAET-&gt;next=NULL;
+
+//初始化NET表
+NET \*pNET\[1024\];
+for(i=0; i&lt;=MaxY; i++)
+&#123;
+    pNET\[i\]=new NET;
+    pNET\[i\]-&gt;next=NULL;
+&#125;
+glClear(GL\_COLOR\_BUFFER\_BIT);        //赋值的窗口显示.
+glColor3f(0.0,0.0,0.0);             //设置直线的颜色红色
+glBegin(GL\_POINTS);
+//扫描并建立NET表
+for(i=0; i&lt;=MaxY; i++)
+&#123;
+    for(int j=0; jpolypoint\[j\].y)
+            &#123;
+                NET \*p=new NET;
+                p-&gt;x=polypoint\[j\].x;
+                p-&gt;ymax=polypoint\[(j-1+POINTNUM)%POINTNUM\].y;
+                p-&gt;dx=(polypoint\[(j-1+POINTNUM)%POINTNUM\].x-polypoint\[j\].x)/(polypoint\[(j-1+POINTNUM)%POINTNUM\].y-polypoint\[j\].y);
+                p-&gt;next=pNET\[i\]-&gt;next;
+                pNET\[i\]-&gt;next=p;
+            &#125;
+            if(polypoint\[(j+1+POINTNUM)%POINTNUM\].y&gt;polypoint\[j\].y)
+            &#123;
+                NET \*p=new NET;
+                p-&gt;x=polypoint\[j\].x;
+                p-&gt;ymax=polypoint\[(j+1+POINTNUM)%POINTNUM\].y;
+                p-&gt;dx=(polypoint\[(j+1+POINTNUM)%POINTNUM\].x-polypoint\[j\].x)/(polypoint\[(j+1+POINTNUM)%POINTNUM\].y-polypoint\[j\].y);
+                p-&gt;next=pNET\[i\]-&gt;next;
+                pNET\[i\]-&gt;next=p;
+            &#125;
+        &#125;
+&#125;
+//建立并更新活性边表AET
+for(i=0; i&lt;=MaxY; i++)
+&#123;
+    //计算新的交点x,更新AET
+    NET \*p=pAET-&gt;next;
+    while(p)
+    &#123;
+        p-&gt;x=p-&gt;x + p-&gt;dx;
+        p=p-&gt;next;
+    &#125;
+    //更新后新AET先排序/
+    //断表排序,不再开辟空间
+    AET \*tq=pAET;
+    p=pAET-&gt;next;
+    tq-&gt;next=NULL;
+    while(p)
+    &#123;
+        while(tq-&gt;next &amp;&amp; p-&gt;x &gt;= tq-&gt;next-&gt;x)
+            tq=tq-&gt;next;
+        NET \*s=p-&gt;next;
+        p-&gt;next=tq-&gt;next;
+        tq-&gt;next=p;
+        p=s;
+        tq=pAET;
+    &#125;
+    //(改进算法)先从AET表中删除ymax==i的结点
+    AET \*q=pAET;
+    p=q-&gt;next;
+    while(p)
+    &#123;
+        if(p-&gt;ymax==i)
+        &#123;
+            q-&gt;next=p-&gt;next;
+            delete p;
+            p=q-&gt;next;
+        &#125;
+        else
+        &#123;
+            q=q-&gt;next;
+            p=q-&gt;next;
+        &#125;
+    &#125;
+    //将NET中的新点加入AET,并用插入法按X值递增排序
+    p=pNET\[i\]-&gt;next;
+    q=pAET;
+    while(p)
+    &#123;
+        while(q-&gt;next &amp;&amp; p-&gt;x &gt;= q-&gt;next-&gt;x)
+            q=q-&gt;next;
+        NET \*s=p-&gt;next;
+        p-&gt;next=q-&gt;next;
+        q-&gt;next=p;
+        p=s;
+        q=pAET;
+    &#125;
+    //配对填充颜色
+
+    p=pAET-&gt;next;
+    while(p &amp;&amp; p-&gt;next)
+    &#123;
+        for(float j=p-&gt;x; j&lt;=p-&gt;next-&gt;x; j++)
+            glVertex2i(static\_cast(j),i);
+        p=p-&gt;next-&gt;next;//考虑端点情况
+    &#125;
+&#125;
+glEnd();
+glFlush();
+</code></pre>
+<p>}</p>
+<p>void init(int argc,char** argv)<br />
+{<br />
+glutInit(&amp;argc,argv);  //I初始化 GLUT.<br />
+glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);  =<br />
+glutInitWindowPosition(50,100);  //设置窗口的顶部和左边位置<br />
+glutInitWindowSize(800,600);  //设置窗口的高度和宽度<br />
+glutCreateWindow(“Scan Program”);</p>
+<pre><code class="hljs">glClearColor(1.0,1.0,1.0,0); //窗口背景颜色为白色
+glMatrixMode(GL\_PROJECTION);
+gluOrtho2D(0,600,0,450);
+</code></pre>
+<p>}</p>
+<p>void myDisplay(void)<br />
+{<br />
+glClear(GL_COLOR_BUFFER_BIT);<br />
+glColor3f(0.0,0.4,0.2);<br />
+glPointSize(1);<br />
+glBegin(GL_POINTS);<br />
+PolyScan();<br />
+glEnd();<br />
+glFlush();<br />
+}</p>
+<p>int main(int argc,char** argv)<br />
+{<br />
+init(argc,argv);<br />
+glutDisplayFunc(myDisplay);<br />
+glutMainLoop();<br />
+return 0;<br />
+}</p>
+
+
+  
+
+</article>
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+    <!-- 备案信息 ICP for China -->
+    <div class="beian">
+  <span>
+    <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+      
+    </a>
+  </span>
+  
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?bbb32ef470b36fe5f1e4e72f32112b68";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

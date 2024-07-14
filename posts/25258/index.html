@@ -1,0 +1,783 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="木尘痕">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言 本文基于4.27版本 UE本身提供了很多STAT命令来帮助实时查看游戏运行时的一些数据： 【Stat命令表】 在游戏运行时通过控制台输入对应指令即可 不过直接使用命令，只会在屏幕上实时看到数据，如果使用Insights或者Frondend等工具，则会同时获取到大量的信息，不方便对数据的整理 比如，需要对游戏内所有的蒙太奇资源进行检查，来排查某些蒙太奇是否在某个性能指标上存在问题，希望可以快">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UE4：C++直接获取STATS相关值的方式">
+<meta property="og:url" content="http://muchenhen.com/posts/25258/index.html">
+<meta property="og:site_name" content="虚无之境">
+<meta property="og:description" content="前言 本文基于4.27版本 UE本身提供了很多STAT命令来帮助实时查看游戏运行时的一些数据： 【Stat命令表】 在游戏运行时通过控制台输入对应指令即可 不过直接使用命令，只会在屏幕上实时看到数据，如果使用Insights或者Frondend等工具，则会同时获取到大量的信息，不方便对数据的整理 比如，需要对游戏内所有的蒙太奇资源进行检查，来排查某些蒙太奇是否在某个性能指标上存在问题，希望可以快">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2023/20230901161409.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2023/20230901162557.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2023/20230901173311.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2023/20230901175713.png">
+<meta property="article:published_time" content="2023-09-01T07:30:21.000Z">
+<meta property="article:modified_time" content="2024-07-14T15:26:08.256Z">
+<meta property="article:author" content="木尘痕">
+<meta property="article:tag" content="UE4">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2023/20230901161409.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>UE4：C++直接获取STATS相关值的方式 - 虚无之境</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"muchenhen.com","root":"/","version":"1.9.1","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"bbb32ef470b36fe5f1e4e72f32112b68","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>虚无之境</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/NagisaKaworu.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="UE4：C++直接获取STATS相关值的方式"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        木尘痕
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-09-01 15:30" pubdate>
+          2023年9月1日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          9 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">UE4：C++直接获取STATS相关值的方式</h1>
+            
+            <div class="markdown-body">
+              
+              <h2 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h2>
+<p>本文基于4.27版本</p>
+<p>UE本身提供了很多STAT命令来帮助实时查看游戏运行时的一些数据：</p>
+<p><a target="_blank" rel="noopener" href="https://docs.unrealengine.com/4.27/zh-CN/TestingAndOptimization/PerformanceAndProfiling/StatCommands/">【Stat命令表】</a></p>
+<p>在游戏运行时通过控制台输入对应指令即可</p>
+<p>不过直接使用命令，只会在屏幕上实时看到数据，如果使用Insights或者Frondend等工具，则会同时获取到大量的信息，不方便对数据的整理</p>
+<p>比如，需要对游戏内所有的蒙太奇资源进行检查，来排查某些蒙太奇是否在某个性能指标上存在问题，希望可以快速的自动化测试，记录数据方便快速地进行筛选并反馈给美术，就需要自己稍微组织一下逻辑，并且直接借一下STATS的统计数据</p>
+<h2 id="stats统计数据"><a class="markdownIt-Anchor" href="#stats统计数据"></a> STATS统计数据</h2>
+<p>这里使用Cascade Particle来举例</p>
+<p>按照官方文档所示<a target="_blank" rel="noopener" href="https://docs.unrealengine.com/4.27/zh-CN/TestingAndOptimization/PerformanceAndProfiling/StatCommands/StatsSystemOverview/">【统计数据系统概述】</a></p>
+<p>比如在<code>Engine/Source/Runtime/Engine/Public/ParticleHelper.h</code>这个文件中定义到的很多STATS：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2023/20230901161409.png" srcset="/img/loading.gif" lazyload alt="ParticleHelper" /></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-built_in">DECLARE_STATS_GROUP</span>(<span class="hljs-built_in">TEXT</span>(<span class="hljs-string">&quot;ParticlesOverview&quot;</span>), STATGROUP_ParticlesOverview, STATCAT_Advanced);<br><br></code></pre></td></tr></table></figure>
+<p><code>STATGROUP_ParticlesOverview</code>和<code>STATGROUP_Particles</code>是GroupId，直接在控制台上使用的时候是直接输入<code>stat ParticlesOverview</code>或者<code>stat Particles</code>即可</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-built_in">DECLARE_DWORD_COUNTER_STAT_EXTERN</span>(<span class="hljs-built_in">TEXT</span>(<span class="hljs-string">&quot;Sprite Particles&quot;</span>),STAT_SpriteParticles,STATGROUP_Particles, );<br></code></pre></td></tr></table></figure>
+<p>其中<code>STAT_SpriteParticles</code>则是一个计数器，声明一个DWORD类型的计数器统计数据。由上面的声明可知，该计数器的名字为<code>Sprite Particles</code>，StatID为STAT_SpriteParticles，GroupId为<code>STATGROUP_Particles</code>，</p>
+<p>全局搜索这个StatID可以找到：<br />
+<img src="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2023/20230901162557.png" srcset="/img/loading.gif" lazyload alt="STAT_SpriteParticles" /></p>
+<p>在<code>Engine/Source/Runtime/Engine/Private/Particles/ParticleEmitterInstances.cpp</code>中有：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-built_in">INC_DWORD_STAT_BY</span>(STAT_SpriteParticles, ActiveParticles);<br></code></pre></td></tr></table></figure>
+<p>给该计数器增加了指定值，指定值为<code>ActiveParticles</code></p>
+<p>同样在这个文件的另一个位置：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-built_in">DEC_DWORD_STAT_BY</span>(STAT_SpriteParticles, ActiveParticles);<br></code></pre></td></tr></table></figure>
+<p>给该计数器减少了指定值，指定值为<code>ActiveParticles</code></p>
+<p>如果开启了STAT，这两个宏就会在对应的逻辑位置被执行，从而改变了计数器的值</p>
+<h2 id="通过c直接获取stats数据"><a class="markdownIt-Anchor" href="#通过c直接获取stats数据"></a> 通过C++直接获取STATS数据</h2>
+<p>在<code>Engine/Source/Developer/FunctionalTesting/Public/AutomationBlueprintFunctionLibrary.h</code>提供了一些方法</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-built_in">UFUNCTION</span>(BlueprintCallable, Category = <span class="hljs-string">&quot;Automation&quot;</span>, meta = (HidePin = <span class="hljs-string">&quot;WorldContextObject&quot;</span>, DefaultToSelf = <span class="hljs-string">&quot;WorldContextObject&quot;</span>))<br><span class="hljs-function"><span class="hljs-type">static</span> <span class="hljs-type">void</span> <span class="hljs-title">EnableStatGroup</span><span class="hljs-params">(UObject* WorldContextObject, FName GroupName)</span></span>;<br><br><span class="hljs-built_in">UFUNCTION</span>(BlueprintCallable, Category = <span class="hljs-string">&quot;Automation&quot;</span>, meta = (HidePin = <span class="hljs-string">&quot;WorldContextObject&quot;</span>, DefaultToSelf = <span class="hljs-string">&quot;WorldContextObject&quot;</span>))<br><span class="hljs-function"><span class="hljs-type">static</span> <span class="hljs-type">void</span> <span class="hljs-title">DisableStatGroup</span><span class="hljs-params">(UObject* WorldContextObject, FName GroupName)</span></span>;<br><br><span class="hljs-built_in">UFUNCTION</span>(BlueprintCallable, Category = <span class="hljs-string">&quot;Automation&quot;</span>)<br><span class="hljs-function"><span class="hljs-type">static</span> <span class="hljs-type">float</span> <span class="hljs-title">GetStatIncAverage</span><span class="hljs-params">(FName StatName)</span></span>;<br><br><span class="hljs-built_in">UFUNCTION</span>(BlueprintCallable, Category = <span class="hljs-string">&quot;Automation&quot;</span>)<br><span class="hljs-function"><span class="hljs-type">static</span> <span class="hljs-type">float</span> <span class="hljs-title">GetStatIncMax</span><span class="hljs-params">(FName StatName)</span></span>;<br><br><span class="hljs-built_in">UFUNCTION</span>(BlueprintCallable, Category = <span class="hljs-string">&quot;Automation&quot;</span>)<br><span class="hljs-function"><span class="hljs-type">static</span> <span class="hljs-type">float</span> <span class="hljs-title">GetStatExcAverage</span><span class="hljs-params">(FName StatName)</span></span>;<br><br><span class="hljs-built_in">UFUNCTION</span>(BlueprintCallable, Category = <span class="hljs-string">&quot;Automation&quot;</span>)<br><span class="hljs-function"><span class="hljs-type">static</span> <span class="hljs-type">float</span> <span class="hljs-title">GetStatExcMax</span><span class="hljs-params">(FName StatName)</span></span>;<br><br><span class="hljs-built_in">UFUNCTION</span>(BlueprintCallable, Category = <span class="hljs-string">&quot;Automation&quot;</span>)<br><span class="hljs-function"><span class="hljs-type">static</span> <span class="hljs-type">float</span> <span class="hljs-title">GetStatCallCount</span><span class="hljs-params">(FName StatName)</span></span>;<br></code></pre></td></tr></table></figure>
+<p>按照前文的例子，这里函数中的<code>GroupName</code>指的就是<code>STATGROUP_Particles</code>，<code>StatName</code>指的就是<code>STAT_SpriteParticles</code></p>
+<p>但是看一下函数的具体实现：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">UAutomationBlueprintFunctionLibrary::EnableStatGroup</span><span class="hljs-params">(UObject* WorldContextObject, FName GroupName)</span></span><br><span class="hljs-function"></span>&#123;<br><span class="hljs-meta">#<span class="hljs-keyword">if</span> STATS</span><br>	<span class="hljs-keyword">if</span> (FGameThreadStatsData* StatsData = FLatestGameThreadStatsData::<span class="hljs-built_in">Get</span>().Latest)<br>	&#123;<br>		<span class="hljs-type">const</span> FString GroupNameString = <span class="hljs-built_in">FString</span>(<span class="hljs-built_in">TEXT</span>(<span class="hljs-string">&quot;STATGROUP_&quot;</span>)) + GroupName.<span class="hljs-built_in">ToString</span>();<br>		<span class="hljs-type">const</span> FName GroupNameFull = <span class="hljs-built_in">FName</span>(*GroupNameString, EFindName::FNAME_Find);<br>		<span class="hljs-keyword">if</span>(StatsData-&gt;GroupNames.<span class="hljs-built_in">Contains</span>(GroupNameFull))<br>		&#123;<br>			<span class="hljs-keyword">return</span>;<br>		&#125;<br>	&#125;<br><br>	<span class="hljs-keyword">if</span> (APlayerController* TargetPC = UGameplayStatics::<span class="hljs-built_in">GetPlayerController</span>(WorldContextObject, <span class="hljs-number">0</span>))<br>	&#123;<br>		TargetPC-&gt;<span class="hljs-built_in">ConsoleCommand</span>( <span class="hljs-built_in">FString</span>(<span class="hljs-built_in">TEXT</span>(<span class="hljs-string">&quot;stat &quot;</span>)) + GroupName.<span class="hljs-built_in">ToString</span>() + <span class="hljs-built_in">FString</span>(<span class="hljs-built_in">TEXT</span>(<span class="hljs-string">&quot; -nodisplay&quot;</span>)), <span class="hljs-comment">/*bWriteToLog=*/</span><span class="hljs-literal">false</span>);<br>	&#125;<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>这里能看到其实就是执行了一下命令行，并且实际要传进来的GroupName应该是去掉了<code>STATGROUP_</code>的</p>
+<p>而几个获取数据的函数，最后实际上是：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">if</span> STATS</span><br><span class="hljs-keyword">template</span> &lt;EComplexStatField::Type ValueType, <span class="hljs-type">bool</span> bCallCount = <span class="hljs-literal">false</span>&gt;<br><span class="hljs-type">float</span> <span class="hljs-built_in">HelperGetStat</span>(FName StatName)<br>&#123;<br>	<span class="hljs-keyword">if</span> (FGameThreadStatsData* StatsData = FLatestGameThreadStatsData::<span class="hljs-built_in">Get</span>().Latest)<br>	&#123;<br>		<span class="hljs-keyword">if</span> (<span class="hljs-type">const</span> FComplexStatMessage* StatMessage = StatsData-&gt;<span class="hljs-built_in">GetStatData</span>(StatName))<br>		&#123;<br>			<span class="hljs-keyword">if</span>(bCallCount)<br>			&#123;<br>				<span class="hljs-keyword">return</span> StatMessage-&gt;<span class="hljs-built_in">GetValue_CallCount</span>(ValueType);	<br>			&#125;<br>			<span class="hljs-keyword">else</span><br>			&#123;<br>				<span class="hljs-keyword">return</span> FPlatformTime::<span class="hljs-built_in">ToMilliseconds</span>(StatMessage-&gt;<span class="hljs-built_in">GetValue_Duration</span>(ValueType));<br>			&#125;<br>		&#125;<br>	&#125;<br><br><span class="hljs-meta">#<span class="hljs-keyword">if</span> WITH_EDITOR</span><br>	FText WarningOut = FText::<span class="hljs-built_in">Format</span>(<span class="hljs-built_in">LOCTEXT</span>(<span class="hljs-string">&quot;StatNotFound&quot;</span>, <span class="hljs-string">&quot;Could not find stat data for &#123;0&#125;, did you call ToggleStatGroup with enough time to capture data?&quot;</span>), FText::<span class="hljs-built_in">FromName</span>(StatName));<br>	<span class="hljs-built_in">FMessageLog</span>(<span class="hljs-string">&quot;PIE&quot;</span>).<span class="hljs-built_in">Warning</span>(WarningOut);<br>	<span class="hljs-built_in">UE_LOG</span>(AutomationFunctionLibrary, Warning, <span class="hljs-built_in">TEXT</span>(<span class="hljs-string">&quot;%s&quot;</span>), *WarningOut.<span class="hljs-built_in">ToString</span>());<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br><br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0.f</span>;<br>&#125;<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br></code></pre></td></tr></table></figure>
+<p>这里要传递进来的StatName应该是<code>STAT_SpriteParticles</code>这样的完整名字</p>
+<p>但是在这里发现一个问题，比如，在<code>ParticleHelper.h</code>中定义了非常多的计数器，其中有一部分是没有办法通过这种方式获取到的</p>
+<p>经过调试有发现：<br />
+<img src="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2023/20230901173311.png" srcset="/img/loading.gif" lazyload alt="StatsData" /></p>
+<p>这里的数量确实没有所有的该Group下的计数器，也就是说并不是所有被定义过的计数器都可通过该接口来获取。</p>
+<p>其中额外发现对于类似于<code>STAT_SpriteParticles</code>这种<code>COUNT</code>类型的计数器，实机的位置是在<code>StatsData-&gt;ActiveStatGroups</code>的<code>CountersAggregate</code></p>
+<p><img src="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2023/20230901175713.png" srcset="/img/loading.gif" lazyload alt="20230901175713" /></p>
+<p>如果要获取这一类的计数器，可以通过这种方式来获取，下面的代码是获取<code>STAT_SpriteParticles</code>的例子：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">if</span> STATS</span><br>    <span class="hljs-keyword">if</span> (FGameThreadStatsData* StatsData = FLatestGameThreadStatsData::<span class="hljs-built_in">Get</span>().Latest)<br>    &#123;<br>        <span class="hljs-keyword">for</span> (FActiveStatGroupInfo ActiveStatGroup : StatsData-&gt;ActiveStatGroups)<br>        &#123;<br>            <span class="hljs-keyword">for</span> (FComplexStatMessage CountersAggregate : ActiveStatGroup.CountersAggregate)<br>            &#123;<br>                <span class="hljs-type">const</span> <span class="hljs-type">double</span> IncAveValueDouble = CountersAggregate.<span class="hljs-built_in">GetValue_double</span>(EComplexStatField::IncAve);<br>                <span class="hljs-type">const</span> <span class="hljs-type">double</span> IncMaxValueDouble = CountersAggregate.<span class="hljs-built_in">GetValue_double</span>(EComplexStatField::IncMax);<br>                FName Name = CountersAggregate.<span class="hljs-built_in">GetShortName</span>();<br>				<span class="hljs-keyword">if</span> (Name == <span class="hljs-built_in">TEXT</span>(<span class="hljs-string">&quot;STAT_SpriteParticles&quot;</span>))<br>                &#123;<br>                    PeakCascadeSpriteParticleCount = FMath::<span class="hljs-built_in">Max</span>(PeakCascadeSpriteParticleCount, <span class="hljs-built_in">static_cast</span>&lt;<span class="hljs-type">int</span>&gt;(IncMaxValueDouble));<br>                    AverageCascadeSpriteParticleCount = <span class="hljs-built_in">static_cast</span>&lt;<span class="hljs-type">int</span>&gt;(IncAveValueDouble);<br>                &#125;<br>            &#125;<br>        &#125;<br>    &#125;<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br></code></pre></td></tr></table></figure>
+              
+            </div>
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/UE4/">#UE4</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>UE4：C++直接获取STATS相关值的方式</div>
+      <div>http://muchenhen.com/posts/25258/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>木尘痕</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年9月1日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/26609/" title="UE4：4.27升级安卓SDK到30后的文件保存问题">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">UE4：4.27升级安卓SDK到30后的文件保存问题</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/55560/" title="UE4：iOS自定义文本输入框">
+                        <span class="hidden-mobile">UE4：iOS自定义文本输入框</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+    <!-- 备案信息 ICP for China -->
+    <div class="beian">
+  <span>
+    <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+      
+    </a>
+  </span>
+  
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?bbb32ef470b36fe5f1e4e72f32112b68";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script>
+  (function() {
+    var enableLang = CONFIG.code_language.enable && CONFIG.code_language.default;
+    var enableCopy = CONFIG.copy_btn;
+    if (!enableLang && !enableCopy) {
+      return;
+    }
+
+    function getBgClass(ele) {
+      return Fluid.utils.getBackgroundLightness(ele) >= 0 ? 'code-widget-light' : 'code-widget-dark';
+    }
+
+    var copyTmpl = '';
+    copyTmpl += '<div class="code-widget">';
+    copyTmpl += 'LANG';
+    copyTmpl += '</div>';
+    jQuery('.markdown-body pre').each(function() {
+      var $pre = jQuery(this);
+      if ($pre.find('code.mermaid').length > 0) {
+        return;
+      }
+      if ($pre.find('span.line').length > 0) {
+        return;
+      }
+
+      var lang = '';
+
+      if (enableLang) {
+        lang = CONFIG.code_language.default;
+        if ($pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2 && $pre.children().hasClass('hljs')) {
+          lang = $pre[0].children[0].classList[1];
+        } else if ($pre[0].getAttribute('data-language')) {
+          lang = $pre[0].getAttribute('data-language');
+        } else if ($pre.parent().hasClass('sourceCode') && $pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2) {
+          lang = $pre[0].children[0].classList[1];
+          $pre.parent().addClass('code-wrapper');
+        } else if ($pre.parent().hasClass('markdown-body') && $pre[0].classList.length === 0) {
+          $pre.wrap('<div class="code-wrapper"></div>');
+        }
+        lang = lang.toUpperCase().replace('NONE', CONFIG.code_language.default);
+      }
+      $pre.append(copyTmpl.replace('LANG', lang).replace('code-widget">',
+        getBgClass($pre[0]) + (enableCopy ? ' code-widget copy-btn" data-clipboard-snippet><i class="iconfont icon-copy"></i>' : ' code-widget">')));
+
+      if (enableCopy) {
+        Fluid.utils.createScript('https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js', function() {
+          var clipboard = new window.ClipboardJS('.copy-btn', {
+            target: function(trigger) {
+              var nodes = trigger.parentNode.childNodes;
+              for (var i = 0; i < nodes.length; i++) {
+                if (nodes[i].tagName === 'CODE') {
+                  return nodes[i];
+                }
+              }
+            }
+          });
+          clipboard.on('success', function(e) {
+            e.clearSelection();
+            e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-copy', 'icon-success');
+            setTimeout(function() {
+              e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-success', 'icon-copy');
+            }, 2000);
+          });
+        });
+      }
+    });
+  })();
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

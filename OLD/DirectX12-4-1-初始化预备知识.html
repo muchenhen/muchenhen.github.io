@@ -1,0 +1,571 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="木尘痕">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="目的:  基本了解Direct3D在3D硬件编程中的作用。 了解COM在Direct3D中扮演的角色。 学习基本的图形概念，如2D图像如何存储，页面翻转，深度缓冲，多采样，以及CPU和GPU如何交互。 学习如何使用性能计数器函数获得高分辨率计时器读数。 了解如何初始化Direct3D。 熟悉本书所有演示使用的应用程序框架的一般结构。   4.1.1 Direct3D 12 概述 D3D是一个低级图">
+<meta property="og:type" content="website">
+<meta property="og:title" content="DirectX12:4.1 初始化预备知识">
+<meta property="og:url" content="http://muchenhen.com/OLD/DirectX12-4-1-%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86.html">
+<meta property="og:site_name" content="虚无之境">
+<meta property="og:description" content="目的:  基本了解Direct3D在3D硬件编程中的作用。 了解COM在Direct3D中扮演的角色。 学习基本的图形概念，如2D图像如何存储，页面翻转，深度缓冲，多采样，以及CPU和GPU如何交互。 学习如何使用性能计数器函数获得高分辨率计时器读数。 了解如何初始化Direct3D。 熟悉本书所有演示使用的应用程序框架的一般结构。   4.1.1 Direct3D 12 概述 D3D是一个低级图">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-10-06T07:45:03.000Z">
+<meta property="article:modified_time" content="2024-07-14T15:26:08.240Z">
+<meta property="article:author" content="木尘痕">
+<meta property="article:tag" content="DirectX12">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>DirectX12:4.1 初始化预备知识 - 虚无之境</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"muchenhen.com","root":"/","version":"1.9.1","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"bbb32ef470b36fe5f1e4e72f32112b68","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>虚无之境</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/NagisaKaworu.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="DirectX12:4.1 初始化预备知识"></span>
+          
+        </div>
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      <div class="container nopadding-x-md">
+        <div id="board"
+          >
+          
+          <div class="container">
+            <div class="row">
+              <div class="col-12 col-md-10 m-auto">
+                
+
+<article class="page-content">
+  <p>目的:</p>
+<ol>
+<li>基本了解Direct3D在3D硬件编程中的作用。</li>
+<li>了解COM在Direct3D中扮演的角色。</li>
+<li>学习基本的图形概念，如2D图像如何存储，页面翻转，深度缓冲，多采样，以及CPU和GPU如何交互。</li>
+<li>学习如何使用性能计数器函数获得高分辨率计时器读数。</li>
+<li>了解如何初始化Direct3D。</li>
+<li>熟悉本书所有演示使用的应用程序框架的一般结构。</li>
+</ol>
+<h2 id="411-direct3d-12-概述"><a class="markdownIt-Anchor" href="#411-direct3d-12-概述"></a> 4.1.1 Direct3D 12 概述</h2>
+<p>D3D是一个低级图形API，用于控制和编程GPU，用硬件加速渲染。与11对比，除了一些新的渲染特性，还进行了重新设计，<strong>性能优化上极大减少了CPU开销，改进了多线程支持，API抽象程度降低</strong>。使用更加困难，但是性能更好。</p>
+<h2 id="412-组件对象模型com"><a class="markdownIt-Anchor" href="#412-组件对象模型com"></a> 4.1.2 组件对象模型COM</h2>
+<p>Component Object Model 简称COM，是一种允许DirectX独立于编程语言并具有向后兼容性的技术。通常将COM对象称为接口，可以将其视为c++类来使用。但不能使用new方法来获取一个指向COM对象的指针，需要用特定的函数处理。自身采用引用计数，计数为0会自行释放所占用的内存。</p>
+<p>Windows提供Microsoft::WRL::ComPtr类管理COM对象的生命周期，其中三个常用方法为：</p>
+<ol>
+<li>Get：返回一个指向此底层COM接口的指针</li>
+<li>GetAddressOf：返回一个指向此底层COM接口的指针的地址</li>
+<li>Reset：将此ComPtr实例设置为nullptr，直接复制为nullptr效果一样</li>
+</ol>
+<h2 id="413-纹理格式"><a class="markdownIt-Anchor" href="#413-纹理格式"></a> 4.1.3 纹理格式</h2>
+<p>一般的2D纹理存储图像的对应像素的颜色值。但是纹理可以有更广泛的用途，一维纹理就像数据元素的一维数组，二维纹理就像数据元素的二维数组，三维纹理就相对于三维数组。GPU可以对其进行特殊操作，比如滤波和多重采样。</p>
+<p>纹理是以重数据元素构成的矩阵，但只能存储特定格式的数据元素。</p>
+<p>注意，纹理不能存储任意类型的数据。只能存储DXGI_FORMAT枚举类型。</p>
+<p>下面有几个例子：</p>
+<ol>
+<li>DXGI_FORMAT_R32G32B32_FLOAT: 每个元素有三个32位浮点组件。</li>
+<li>DXGI_FORMAT_R16G16B16A16_UNORM: 每个元素有四个映射到[0,1]范围的16位组件。</li>
+<li>DXGI_FORMAT_R32G32_UINT: 每个元素都有两个32位无符号整数组件。</li>
+<li>DXGI_FORMAT_R8G8B8A8_UNORM: 每个元素有四个映射到[0,1]范围的8位无符号组件。</li>
+<li>DXGI_FORMAT_R8G8B8A8_SNORM: 每个元素有四个映射到[- 1,1]范围的8位有符号组件。</li>
+<li>DXGI_FORMAT_R8G8B8A8_SINT: 每个元素有四个映射到[- 128,127]范围的8位有符号整数组件。</li>
+<li>DXGI_FORMAT_R8G8B8A8_UINT: 每个元素有四个映射到[0,255]范围的8位无符号整数组件。</li>
+</ol>
+<p>RGBA分别代表红绿蓝，透明度。虽然这些类型名字是和颜色有关的，但是并不意味着必须存储颜色信息。比如：</p>
+<p>DXGI_FORMAT_R32G32B32_FLOAT</p>
+<p>是可以存储任何3D向量的。</p>
+<p>另外有<strong>无类型格式</strong>的纹理类型，用来预留内存，等纹理被绑定到管线后再解释是什么数据类型，比如</p>
+<p>DXGI_FORMAT_R16G16B16A16_TYPELESS</p>
+<p>除了上文提到的，DXGI_FORMAT枚举类型还可以用来描述顶点以及索引的数据格式。</p>
+<h2 id="414-the-swap-china-and-page-flipping"><a class="markdownIt-Anchor" href="#414-the-swap-china-and-page-flipping"></a> 4.1.4 The Swap China and Page Flipping</h2>
+<p>交换链和页面翻转</p>
+<p>为了不让玩家看到没渲染完毕的画面，需要在后台渲染好之后在交换指针，后台变前台，前台变后台继续渲染下一帧。前后缓冲区形成了交换链。</p>
+<p>D3D中交换链是 IDXGISwapChain 接口。该接口存储前后缓冲区的纹理数据，并提供调整缓冲区大小的方法。</p>
+<p>交换操作称为Presenting，呈现、提交、显示。</p>
+<p>IDXGISwapChain::ResizeBuffers</p>
+<p>IDXGISwapChain::Present</p>
+<p>使用两个缓冲区称为双缓冲。可以使用两个以上的缓冲区，使用三个就是三缓冲，一般两个缓冲区就够了。</p>
+<p>缓冲区可以提升效率，但也会带来新的问题，画面闪烁、撕裂，掉帧等，解决这些问题就需要垂直同步</p>
+<h2 id="415-深度缓冲"><a class="markdownIt-Anchor" href="#415-深度缓冲"></a> 4.1.5 深度缓冲</h2>
+<p>深度缓冲是纹理的一个例子。不存储颜色信息，存储的是特定像素的深度信息。与后缓冲区的像素一一对应。深度信息的0.0表示离查看器最近的，1.0表示最远。</p>
+<p>如图一个简单的场景，存在遮挡关系，需要让DirectX确定像素的前后关系，就是用了深度缓冲或Z-buffer的技术。使用深度缓冲时，绘制对象的顺序就不重要了。</p>
+<p>再进行任何渲染前，深度缓冲区会被清除为默认值，通常是1.0，即可行的深度最大值。后缓冲区也会重置为默认颜色。</p>
+<p>每一个像素点，遇到深度值小于当前深度值的时候会更新，否则不更新。</p>
+<p>深度缓冲是一个纹理，需要有特定的存储格式：</p>
+<ol>
+<li>DXGI_FORMAT_D32_FLOAT_S8X24_UINT: 指定32位浮点深度缓冲区，8位(无符号整数)预留给模板缓冲区映射到[0,255]范围，24位不用于填充。</li>
+<li>DXGI_FORMAT_D32_FLOAT: 指定一个32位浮点深度缓冲区。</li>
+<li>DXGI_FORMAT_D24_UNORM_S8_UINT: 指定一个映射到[0,1]范围的无符号24位深度缓冲区，并为模板缓冲区保留8位(无符号整数)映射到[0,255]范围。该缓冲区可以称为模板缓冲区，会在第11章详述。</li>
+<li>DXGI_FORMAT_D16_UNORM:指定映射到[0,1]范围的无符号16位深度缓冲区。</li>
+</ol>
+<h2 id="416-resources-and-descriptors"><a class="markdownIt-Anchor" href="#416-resources-and-descriptors"></a> 4.1.6 Resources and Descriptors</h2>
+<p>资源和描述符</p>
+<p>渲染过程中，GPU会不断的写入和读取资源。比如从缓冲区读取纹理或位置信息，写操作向后台缓冲区或者模板缓冲区写入数据等。</p>
+<p>在绘制命令发出之前，需要绑定或者链接资源到即将要渲染的drawcall的渲染管道。有些资源每次渲染会变化，就需要更新绑定信息。但是GPU资源不是直接绑定到渲染管线的。资源是通过<strong>描述符</strong>对象被间接引用的，可以将其视为向GPU描述资源的轻量级结构，本质上，它是一种间接的层次;给定一个资源描述符，GPU可以获取实际的资源数据，并知道它的必要信息。</p>
+<p>使用描述符的原因：</p>
+<p>GPU资源，本身是普通的内存块，可以被管线不同阶段使用。并且有时候某个阶段只需要资源中的部分数据被绑定到管线上，需要有方法将部分资源从整块中取出。还有一种情况，就是无类型格式，需要描述符为GPU解释资源类型。</p>
+<p>主要作用有，获取局部资源，向管线解释资源类型，告知资源如何使用，用在什么阶段。</p>
+<h2 id="417-多重采样"><a class="markdownIt-Anchor" href="#417-多重采样"></a> 4.1.7 多重采样</h2>
+<p>抗锯齿/多重采样MSAA</p>
+<p>显示器像素不是无穷小的，会有走样。</p>
+<p>抗锯齿通过采样和相邻像素来生成一个像素的最终颜色，使图像更平滑。</p>
+<p>显示器分辨率增加，减小像素点的大小也可以显著减少走样现象。但是好的显示器比较贵。而且硬件总会受限。</p>
+<p>所以可以应用超采样技术（SSAA）。原理是让后缓冲区和深度缓冲区为屏幕分辨率的4倍大小，交换前后缓冲时，进行向下采样，每4个像素点的颜色平均成一个。超采样通过软件分辨率来实现。但是超采样对内存和像素处理又多了较高的要求，四倍的内存和像素处理数量，满足条件的硬件也不是很便宜的。</p>
+<p>D3D支持一种折中的技术，称为多重采样。这种技术不用对每一个像素进行计算，它计算一次中心像素的颜色，然后基于可视性和覆盖性，将得到的信息分享给其他子像素。比如4X多重采样，1个像素中有4个子像素，后缓冲区和深度缓冲也是分辨率的四倍，但是不用计算四个子像素的颜色，而是计算像素中心的颜色，基于每个子像素被深度/模板测试的结果和子像素中心是否在多边形内部这两个因素，将这个颜色分给四个子像素。</p>
+<p>除此之外还有更多的反锯齿技术。</p>
+<h2 id="418-directx中的msaa"><a class="markdownIt-Anchor" href="#418-directx中的msaa"></a> 4.1.8 DirectX中的MSAA</h2>
+<p>DXGI_SAMPLE_DESC</p>
+<p>该结构体有两个成员，定义如下:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-keyword">typedef</span> <span class="hljs-keyword">struct</span> <span class="hljs-title class_">DXGI_SAMPLE_DESC</span> &#123;<br>    UINT Count;<br>    UINT Quality；<br>&#125; DXGI_SAMPLE_DESC;<br></code></pre></td></tr></table></figure>
+<p>Count成员指定每像素采样的数量，Quality用于指定所需的质量级别，“质量级别”的含义可能因硬件制造商而异。</p>
+<p>两个参数越大，效果越好，但是开销也会更高。</p>
+<p>质量级别的范围取决于纹理格式和每像素采样的数量。</p>
+<p>可以使用ID3D12Device::CheckFeatureSupport方法查询给定纹理格式的质量级别数量和样本数量。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-keyword">typedef</span> <span class="hljs-keyword">struct</span> <span class="hljs-title class_">D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS</span>&#123;<br>    _In_  DXGI_FORMAT Format;<br>    _In_  UINT SampleCount;<br>    _In_  D3D12_MULTISAMPLE_QUALITY_LEVEL_FLAGS Flags;<br>    _Out_  UINT NumQualityLevels;<br>&#125;D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS;<br></code></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs c++c">D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS msQualityLevels;<br>msQualityLevels.Format = mBackBufferFormat;<br>msQualityLevels.SampleCount = 4;<br>msQualityLevels.Flags = D3D12_MULTISAMPLE_QUALITY_LEVELS_FLAG_NONE;<br>msQualityLevels.NumQualityLevels = 0;<br>ThrowIfFailed(<br>	md3dDevice-&gt;CheckFeatureSupport(<br>        D3D12_FEATURE_MULTISAMPLE_QUALITY_LEVELS,<br>        &amp;msQualityLevels,<br>        sizeof(msQualityLevels)<br>        )<br>    );<br></code></pre></td></tr></table></figure>
+<p>其中第二个参数兼具输入和输出的属性。</p>
+<p>如果不希望使用多重采样，可以将采样数量设置为1，质量级别设置为0。</p>
+<p>创建交换链缓冲区和深度缓冲区时都需要填写该结构体，而且设置一定要相同。</p>
+<h2 id="419feature-levels"><a class="markdownIt-Anchor" href="#419feature-levels"></a> 4.1.9Feature Levels</h2>
+<p>功能级别</p>
+<p>Direct3D 11引入了特征级别的概念(在代码中由D3D_FEATURE_LEVEL枚举类型表示)，它大致对应于从版本9到版本11的各种Direct3D版本:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-keyword">enum</span> <span class="hljs-title class_">D3D_FEATURE_LEVEL</span> &#123;<br>    D3D_FEATURE_LEVEL_9_1 = <span class="hljs-number">0x9100</span>,<br>    D3D_FEATURE_LEVEL_9_2 = <span class="hljs-number">0x9200</span>,<br>    D3D_FEATURE_LEVEL_9_3 = <span class="hljs-number">0x9300</span>,<br>    D3D_FEATURE_LEVEL_10_0 = <span class="hljs-number">0xa000</span>,<br>    D3D_FEATURE_LEVEL_10_1 = <span class="hljs-number">0xa100</span>,<br>    D3D_FEATURE_LEVEL_11_0 = <span class="hljs-number">0xb000</span>,<br>    D3D_FEATURE_LEVEL_11_1 = <span class="hljs-number">0xb100</span><br>&#125;D3D_FEATURE_LEVEL;<br></code></pre></td></tr></table></figure>
+<p>一个支持feature level 11的GPU必须支持整个Direct3D 11功能集。如果用户的硬件不支持某个级别，则应用程序可以退回到旧的级别。</p>
+<h2 id="4110-directx-图形基础结构"><a class="markdownIt-Anchor" href="#4110-directx-图形基础结构"></a> 4.1.10 DirectX 图形基础结构</h2>
+<p>DirectX Graphics Infrastructure (DXGI) 是一个与Direct3D一起使用的API。</p>
+<p>主要目的是让多种图形API中所共有的底层人物可以借助一些通用API来进行处理。</p>
+<p>例如，2D渲染API和3D渲染API一样需要交换链和页面翻转来获得平滑的动画，因此，交换链接口IDXGISwapChain就是DXGI API的一部分。</p>
+<p>DXGI处理其他常见的图形功能，如全屏模式转换、枚举图形系统信息(如显示适配器、监视器和支持的显示模式，分辨率、刷新率等。它还定义了各种受支持的表面格式DXGI_FORMAT。</p>
+<p>DXGI的一个关键接口：<strong>IDXGIFactory</strong>。它主要用于创建IDXGISwapChain接口和枚举显示适配器。显示适配器实现图形化功能。显示适配器是一个物理硬件(例如，显卡)或者是系统提供的一个软件显示适配器，用来模拟硬件图形功能。一个系统可以有多个适配器(例如有多个显卡)。适配器由IDXGIAdapter接口表示。可以用以下代码枚举系统上的所有适配器:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">D3DApp::LogAdapters</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    UINT i = <span class="hljs-number">0</span>; <br>    IDXGIAdapter* adapter = <span class="hljs-literal">nullptr</span>;<br>    std::vector adapterList;<br>    <span class="hljs-keyword">while</span> (mdxgiFactory-&gt;<span class="hljs-built_in">EnumAdapters</span>(i, &amp;adapter) != DXGI_ERROR_NOT_FOUND)<br>    &#123;<br>        DXGI_ADAPTER_DESC desc; <br>        adapter-&gt;<span class="hljs-built_in">GetDesc</span>(&amp;desc);<br>        std::wstring text = L”***Adapter: “;<br>        text += desc.Description; text += L”\n”;<br>        <span class="hljs-built_in">OutputDebugString</span>(text.<span class="hljs-built_in">c_str</span>());<br>        adapterList.<span class="hljs-built_in">push_back</span>(adapter);<br>        ++i;<br>    &#125;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">size_t</span> i = <span class="hljs-number">0</span>; i &lt; adapterList.<span class="hljs-built_in">size</span>(); ++i)<br>    &#123;<br>        <span class="hljs-built_in">LogAdapterOutputs</span>(adapterList[i]);<br>        <span class="hljs-built_in">ReleaseCom</span>(adapterList[i]);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>下面是这个方法的输出示例：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c++">***Adapter: NVIDIA GeForce GTX <span class="hljs-number">760</span><br>***Adapter: Microsoft Basic Render Driver<br></code></pre></td></tr></table></figure>
+<p>Microsoft Basic Render Driver在Win8及以上版本中都有。</p>
+<p>一个系统可以有多个显示器。一个显示器就是一个显示输出（display output）。显示输出由IDXGIOutput接口表示。每个适配器都与一个或多个显示输出相关联。例如，考虑一个具有两个显卡和三个显示器的系统，其中两个显示器连接到一个显卡，而第三个显示器连接到另一个显卡。在本例中，一个适配器有两个与之关联的显示输出，而另一个适配器有一个与之关联的显示输出。可以用以下代码枚举与适配器关联的所有输出：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs arduino"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">D3DApp::LogAdapterOutputs</span><span class="hljs-params">(IDXGIAdapter* adapter)</span></span><br><span class="hljs-function"></span>&#123;<br>    UINT i = <span class="hljs-number">0</span>; <br>    IDXGIOutput* output = <span class="hljs-literal">nullptr</span>;<br>    <span class="hljs-keyword">while</span> (adapter-&gt;<span class="hljs-built_in">EnumOutputs</span>(i, &amp;output) != DXGI_ERROR_NOT_FOUND)<br>    &#123;<br>        DXGI_OUTPUT_DESC desc; <br>        output-&gt;<span class="hljs-built_in">GetDesc</span>(&amp;desc);<br>        std::wstring text = L”***Output: “;<br>        text += desc.DeviceName; <br>        text += L”\n”;<br>        <span class="hljs-built_in">OutputDebugString</span>(text.<span class="hljs-built_in">c_str</span>());<br>        <span class="hljs-built_in">LogOutputDisplayModes</span>(output, DXGI_FORMAT_B8G8R8A8_UNORM);<br>        <span class="hljs-built_in">ReleaseCom</span>(output);<br>        ++i;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>注意，根据文档，显卡正常的情况下，“Microsoft Basic Render Driver”没有显示输出。</p>
+<p>每个监视器都支持一组显示模式。显示模式是指DXGI_MODE_DESC中的以下数据:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-keyword">typedef</span> <span class="hljs-keyword">struct</span> <span class="hljs-title class_">DXGI_MODE_DESC</span> &#123;<br>	UINT Width; <span class="hljs-comment">// 分辨率宽度</span><br>    UINT Height;<span class="hljs-comment">// 分辨率高度</span><br>    DXGI_RATIONAL RefreshRate; <span class="hljs-comment">//刷新率</span><br>    DXGI_FORMAT Format;<span class="hljs-comment">// 显示格式</span><br>    DXGI_MODE_SCANLINE_ORDER ScanlineOrdering;<span class="hljs-comment">// 逐行扫描 隔行扫描</span><br>    DXGI_MODE_SCALING Scaling;<span class="hljs-comment">// 图像相对于屏幕拉伸的方式</span><br>&#125; DXGI_MODE_DESC;<br><br><span class="hljs-keyword">typedef</span> <span class="hljs-keyword">struct</span> <span class="hljs-title class_">DXGI_RATIONAL</span> &#123;<br>    UINT Numerator;<br>    UINT Denominator;<br>&#125; DXGI_RATIONAL;<br><br><span class="hljs-keyword">typedef</span> <span class="hljs-keyword">enum</span> <span class="hljs-title class_">DXGI_MODE_SCANLINE_ORDER</span> &#123;<br>    DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED = <span class="hljs-number">0</span>,<span class="hljs-comment">//未指定</span><br>    DXGI_MODE_SCANLINE_ORDER_PROGRESSIVE = <span class="hljs-number">1</span>,<span class="hljs-comment">//逐行扫描</span><br>    DXGI_MODE_SCANLINE_ORDER_UPPER_FIELD_FIRST = <span class="hljs-number">2</span>,<span class="hljs-comment">//高场优先</span><br>    DXGI_MODE_SCANLINE_ORDER_LOWER_FIELD_FIRST = <span class="hljs-number">3</span><span class="hljs-comment">//低场优先</span><br>&#125; DXGI_MODE_SCANLINE_ORDER;<br><br><span class="hljs-keyword">typedef</span> <span class="hljs-keyword">enum</span> <span class="hljs-title class_">DXGI_MODE_SCALING</span> &#123;<br>    DXGI_MODE_SCALING_UNSPECIFIED = <span class="hljs-number">0</span>,<span class="hljs-comment">//未指定</span><br>    DXGI_MODE_SCALING_CENTERED = <span class="hljs-number">1</span>,<span class="hljs-comment">//不做缩放，将图像显示在屏幕正中</span><br>    DXGI_MODE_SCALING_STRETCHED = <span class="hljs-number">2</span><span class="hljs-comment">//根据屏幕的分辨率对图像进行拉伸缩放</span><br>&#125; DXGI_MODE_SCALING;<br></code></pre></td></tr></table></figure>
+<p>确定显示模式的具体格式之后，可以通过以下代码获得某个显示输出对改格式所支持的全部显示模式：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">D3DApp::LogOutputDisplayModes</span><span class="hljs-params">(IDXGIOutput* output, DXGI_FORMAT format)</span></span><br><span class="hljs-function"></span>&#123;<br>	UINT count = <span class="hljs-number">0</span>;<br>	UINT flags = <span class="hljs-number">0</span>;<br><br>	<span class="hljs-comment">// 用nullptr作为参数调用此函数，可以获取符合条件的显示模式的个数</span><br>	output-&gt;<span class="hljs-built_in">GetDisplayModeList</span>(format, flags, &amp;count, <span class="hljs-literal">nullptr</span>);<br><br>	<span class="hljs-function">std::vector&lt;DXGI_MODE_DESC&gt; <span class="hljs-title">modeList</span><span class="hljs-params">(count)</span></span>;<br>	output-&gt;<span class="hljs-built_in">GetDisplayModeList</span>(format, flags, &amp;count, &amp;modeList[<span class="hljs-number">0</span>]);<br><br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span>&amp; x : modeList)<br>	&#123;<br>		UINT n = x.RefreshRate.Numerator;<br>		UINT d = x.RefreshRate.Denominator;<br>		std::wstring text =<br>			<span class="hljs-string">L&quot;Width = &quot;</span> + std::<span class="hljs-built_in">to_wstring</span>(x.Width) + <span class="hljs-string">L&quot; &quot;</span> +<br>			<span class="hljs-string">L&quot;Height = &quot;</span> + std::<span class="hljs-built_in">to_wstring</span>(x.Height) + <span class="hljs-string">L&quot; &quot;</span> +<br>			<span class="hljs-string">L&quot;Refresh = &quot;</span> + std::<span class="hljs-built_in">to_wstring</span>(n) + <span class="hljs-string">L&quot;/&quot;</span> + std::<span class="hljs-built_in">to_wstring</span>(d) +<br>			<span class="hljs-string">L&quot;\n&quot;</span>;<br><br>		::<span class="hljs-built_in">OutputDebugString</span>(text.<span class="hljs-built_in">c_str</span>());<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>下面是这段代码的一些输出示例：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c++">***Output: [\\.\DISPLAY2](file:<span class="hljs-comment">//./DISPLAY2)</span><br> …<br>Width = <span class="hljs-number">1920</span> Height = <span class="hljs-number">1080</span> Refresh = <span class="hljs-number">59950</span>/<span class="hljs-number">1000</span><br>Width = <span class="hljs-number">1920</span> Height = <span class="hljs-number">1200</span> Refresh = <span class="hljs-number">59950</span>/<span class="hljs-number">1000</span><br></code></pre></td></tr></table></figure>
+<p>在进入全屏模式时，枚举显示模式尤为重要。为了获得最佳的全屏性能，指定的显示模式(包括刷新率)必须与显示器支持的显示模式完全匹配。指定枚举显示模式保证了这点。</p>
+<p>更多资料：</p>
+<p>DXGI Overview:<br />
+<a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows/win32/direct3ddxgi/d3d10-graphics-programming-guide-dxgi?redirectedfrom=MSDN">https://docs.microsoft.com/zh-cn/windows/win32/direct3ddxgi/d3d10-graphics-programming-guide-dxgi?redirectedfrom=MSDN</a></p>
+<p>DirectX Graphics Infrastructure:</p>
+<p>Best Improvements:<br />
+<a target="_blank" rel="noopener" href="http://msdn.microsoft.com/en-us/library/windows/desktop/ee417025(v=vs.85).aspx">http://msdn.microsoft.com/en-us/library/windows/desktop/ee417025(v=vs.85).aspx</a></p>
+<p>DXGI 1.4 Improvements:<br />
+<a target="_blank" rel="noopener" href="https://msdn.microsoft.com/en-us/library/windows/desktop/mt427784%28v=vs.85%29.aspx">https://msdn.microsoft.com/en-us/library/windows/desktop/mt427784(v=vs.85).aspx</a>](<a target="_blank" rel="noopener" href="https://msdn.microsoft.com/en-us/library/windows/desktop/mt427784(v=vs.85).aspx">https://msdn.microsoft.com/en-us/library/windows/desktop/mt427784(v=vs.85).aspx</a>)</p>
+<h2 id="4111检查功能支持"><a class="markdownIt-Anchor" href="#4111检查功能支持"></a> 4.1.11检查功能支持</h2>
+<p>之前使用ID3D12Device::CheckFeatureSupport方法来检查当前图形驱动程序的多采样支持。但这只是可以用这个函数检查的其中一个特性支持，该方法的原型如下:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function">HRESULT <span class="hljs-title">ID3D12Device::CheckFeatureSupport</span><span class="hljs-params">(</span></span><br><span class="hljs-params"><span class="hljs-function">D3D12_FEATURE Feature,</span></span><br><span class="hljs-params"><span class="hljs-function"><span class="hljs-type">void</span> *pFeatureSupportData,</span></span><br><span class="hljs-params"><span class="hljs-function">UINT FeatureSupportDataSize)</span></span>;<br></code></pre></td></tr></table></figure>
+<p>译文：</p>
+<p><strong>Feature</strong>: D3D12_FEATURE枚举类型的一个成员，标识我们想要检查的特性的类型:</p>
+<ul>
+<li>D3D12_FEATURE_D3D12_OPTIONS:检查当前图形驱动对各种Direct3D 12特性的支持情况。</li>
+<li>D3D12_FEATURE_ARCHITECTURE:检查图形适配器中GPU的硬件体系架构特性。</li>
+<li>D3D12_FEATURE_FEATURE_LEVELS:检查功能级别的支持情况。</li>
+<li>4D3D12_FEATURE_FORMAT_SUPPORT:检查对于给定纹理格式的支持情况（例如，该格式是否可以用作渲染目标，该格式是否可以与混合一起使用）。</li>
+<li>D3D12_FEATURE_MULTISAMPLE_QUALITY_LEVELS:检查对多重采样的支持情况。</li>
+</ul>
+<p><strong>pFeatureSupportData</strong>:指向某种数据结构的指针，存储了检测到的特定功能支持的信息。具体类型取决于Feature参数，参数与对应的具体数据结构如下:</p>
+<ul>
+<li>D3D12_FEATURE_D3D12_OPTIONS—&gt;D3D12_FEATURE_DATA_D3D12_OPTIONS</li>
+<li>D3D12_FEATURE_ARCHITECTURE—&gt;D3D12_FEATURE_DATA_ARCHITECTURE</li>
+<li>D3D12_FEATURE_FEATURE_LEVELS—&gt;D3D12_FEATURE_DATA_FEATURE_LEVELS</li>
+<li>D3D12_FEATURE_FORMAT_SUPPORT—&gt;D3D12_FEATURE_DATA_FORMAT_SUPPORT</li>
+<li>D3D12_FEATURE_MULTISAMPLE_QUALITY_LEVELS—&gt;D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS</li>
+</ul>
+<p><strong>FeatureSupportDataSize</strong>:传回pFeatureSupportData参数中的数据结构的大小。</p>
+<p>ID3D12Device::CheckFeatureSupport函数检查对许多特性的支持，包括一些高级特性。</p>
+<p>有关每种功能结构的数据成员的详细信息，请参阅SDK文档。下面有一个例子展示了如何检查支持的特性级别(§4.1.9):</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-keyword">typedef</span> <span class="hljs-keyword">struct</span> <span class="hljs-title class_">D3D12_FEATURE_DATA_FEATURE_LEVELS</span><br>&#123; <br>    UINT NumFeatureLevels;<br>    <span class="hljs-type">const</span> D3D_FEATURE_LEVEL* pFeatureLevelsRequested;<br>    D3D_FEATURE_LEVEL MaxSupportedFeatureLevel;<br>&#125; D3D12_FEATURE_DATA_FEATURE_LEVELS;<br><br>D3D_FEATURE_LEVEL featureLevels[<span class="hljs-number">3</span>] =<br>&#123;<br>    D3D_FEATURE_LEVEL_11_0, <span class="hljs-comment">// 首先检查是否支持11</span><br>    D3D_FEATURE_LEVEL_10_0, <span class="hljs-comment">// 再检查是否支持10</span><br>    D3D_FEATURE_LEVEL_9_3 <span class="hljs-comment">//最后检查9.3</span><br>&#125;;<br>D3D12_FEATURE_DATA_FEATURE_LEVELS featureLevelsInfo;<br>featureLevelsInfo.NumFeatureLevels = <span class="hljs-number">3</span>;<br>featureLevelsInfo.pFeatureLevelsRequested = featureLevels;<br>md3dDevice-&gt;<span class="hljs-built_in">CheckFeatureSupport</span>(D3D12_FEATURE_FEATURE_LEVELS, &amp;featureLevelsInfo,<span class="hljs-built_in">sizeof</span>(featureLevelsInfo));<br></code></pre></td></tr></table></figure>
+<p>需要注意：CheckFeatureSupport方法的第二个参数兼具输入与输出的属性。</p>
+<p>作为输入的时候，需要先指定功能级别数组NumFeatureLevels中元素的个数，再将pFeatureSupportData指针指向功能级别数组，最后该函数把MaxSupportedFeatureLevel返回当前硬件可支持的最高功能级别。</p>
+<h2 id="4112-residency"><a class="markdownIt-Anchor" href="#4112-residency"></a> 4.1.12 Residency</h2>
+<p>资源驻留</p>
+<p>一个复杂的游戏会使用大量的资源，比如纹理和3D网格，但是GPU并不是一直需要这些资源。</p>
+<p>在Direct3D 12中，应用程序通过控制资源在显存中的去留，主动管理资源的驻留情况。基本的想法是最小化应用程序使用的GPU内存，因为可能没有足够的内存来存储整个游戏的所有资源，或者用户运行的其他应用程序需要GPU内存。</p>
+<p>需要注意，考虑到性能，应用程序应该避免在很短的时间内交换相同的GPU内存中的资源，因为这样做有开销。典型的场景是游戏关卡或者区域的切换。</p>
+<p>默认情况下，当一个资源被创建时会驻留在显存中，当资源被销毁时就会GPU中清除。</p>
+<p>当然，有手动控制资源常驻的方法：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function">HRESULT <span class="hljs-title">ID3D12Device::MakeResident</span><span class="hljs-params">(UINT NumObjects, ID3D12Pageable* <span class="hljs-type">const</span>* ppObjects)</span></span>;<br><span class="hljs-function">HRESULT <span class="hljs-title">ID3D12Device::Evict</span><span class="hljs-params">(UINT NumObjects, ID3D12Pageable* <span class="hljs-type">const</span>* ppObjects)</span></span>;<br></code></pre></td></tr></table></figure>
+<p>对于这两种方法，第二个参数是ID3D12Pageable资源的数组，第一个参数是数组中的资源数量。</p>
+<p>神秘代码：<a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows/win32/direct3d12/residency?redirectedfrom=MSDN">mt186622</a></p>
+
+
+  
+
+</article>
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+    <!-- 备案信息 ICP for China -->
+    <div class="beian">
+  <span>
+    <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+      
+    </a>
+  </span>
+  
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?bbb32ef470b36fe5f1e4e72f32112b68";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

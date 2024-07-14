@@ -1,0 +1,790 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="木尘痕">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="问题： 4.27将targetSDK版本改为30之后，打包之后的dev版本无法在设备写入文件  SDK升级相关修改 1private string GetSdkApiLevel(AndroidToolChain ToolChain) 在UEDeployAndroid.cs文件中，这个函数会根据TargetSDKVersion来返回对应的SDK版本，如果你的本地环境有多个UE版本或者有通过Andr">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UE4：4.27升级安卓SDK到30后的文件保存问题">
+<meta property="og:url" content="http://muchenhen.com/posts/26609/index.html">
+<meta property="og:site_name" content="虚无之境">
+<meta property="og:description" content="问题： 4.27将targetSDK版本改为30之后，打包之后的dev版本无法在设备写入文件  SDK升级相关修改 1private string GetSdkApiLevel(AndroidToolChain ToolChain) 在UEDeployAndroid.cs文件中，这个函数会根据TargetSDKVersion来返回对应的SDK版本，如果你的本地环境有多个UE版本或者有通过Andr">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2023/20231110001203.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2023/20231110001217.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2023/20231110001230.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2023/20231110001240.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2023/20231110001248.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2023/20231110001256.png">
+<meta property="article:published_time" content="2023-11-09T16:10:15.000Z">
+<meta property="article:modified_time" content="2024-07-14T15:26:08.256Z">
+<meta property="article:author" content="木尘痕">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2023/20231110001203.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>UE4：4.27升级安卓SDK到30后的文件保存问题 - 虚无之境</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"muchenhen.com","root":"/","version":"1.9.1","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"bbb32ef470b36fe5f1e4e72f32112b68","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>虚无之境</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/NagisaKaworu.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="UE4：4.27升级安卓SDK到30后的文件保存问题"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        木尘痕
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-11-10 00:10" pubdate>
+          2023年11月10日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          9 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">UE4：4.27升级安卓SDK到30后的文件保存问题</h1>
+            
+            <div class="markdown-body">
+              
+              <h2 id="问题"><a class="markdownIt-Anchor" href="#问题"></a> 问题：</h2>
+<p>4.27将targetSDK版本改为30之后，打包之后的dev版本无法在设备写入文件</p>
+<h2 id="sdk升级相关修改"><a class="markdownIt-Anchor" href="#sdk升级相关修改"></a> SDK升级相关修改</h2>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c#"><span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-built_in">string</span> <span class="hljs-title">GetSdkApiLevel</span>(<span class="hljs-params">AndroidToolChain ToolChain</span>)</span><br></code></pre></td></tr></table></figure>
+<p>在<code>UEDeployAndroid.cs</code>文件中，这个函数会根据<code>TargetSDKVersion</code>来返回对应的SDK版本，如果你的本地环境有多个UE版本或者有通过Android Studio安装过SDK的话，可能会出现返回错误的情况，可以在这里手动指定，比如直接ruturn你需要的版本号</p>
+<p>同理，也有可能会出错的地方是build-tools的版本，可以在<code>GetBuildToolsVersion</code>函数中手动指定版本</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c#"><span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-built_in">string</span> <span class="hljs-title">GetBuildToolsVersion</span>()</span><br></code></pre></td></tr></table></figure>
+<p>这里我能够成功通过4.27打包TargetSDK 30版本所用的环境如下：</p>
+<ul>
+<li>build-tools: 30.0.3</li>
+<li>NDK: 21.4.7075529</li>
+<li>jdk: 1.8.0_271</li>
+</ul>
+<h2 id="存储空间权限相关"><a class="markdownIt-Anchor" href="#存储空间权限相关"></a> 存储空间权限相关</h2>
+<p>首先捋一下一些概念</p>
+<p>根据安卓文档的说法，数据和文件存储主要分为四类，我们主要关注<code>App-specific storage</code>和<code>Shared storage</code></p>
+<p>其中<code>getFilesDir()</code> or <code>getCacheDir()</code> 返回内部存储空间的路径<br />
+<code>getExternalFilesDir()</code> 或 <code>getExternalCacheDir()</code>返回外部存储空间</p>
+<p>以上“内部存储路径”和“外部存储路径”都是<code>App-specific storage</code>，在API 19以上都不需要任何权限，其他应用无法访问，卸载时会被删除</p>
+<p>举例，创建了一个API 30的原生安卓应用，包名com.example.test，然后打印一下这几个路径：<br />
+<img src="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2023/20231110001203.png" srcset="/img/loading.gif" lazyload width="70%"></p>
+<p>尝试在这四个路径下创建test.test文件：</p>
+<img src="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2023/20231110001217.png" srcset="/img/loading.gif" lazyload width="70%">
+<img src="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2023/20231110001230.png" srcset="/img/loading.gif" lazyload width="70%">
+<p>另外两个internal目录是无法看到的</p>
+<p>看一下UE相关的log：</p>
+<img src="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2023/20231110001240.png" srcset="/img/loading.gif" lazyload width="70%">
+<p>可以定位到AndroidJNI文件中，首先是在JNI_OnLoad<br />
+这个函数里</p>
+<img src="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2023/20231110001248.png" srcset="/img/loading.gif" lazyload width="70%">
+<p>可以看到这里是通过Android的<code>Environment</code>的<code>getExternalStorageDirectory</code>函数获取到了External存储空间对应的路径</p>
+<p>然后是在<code>Java_com_epicgames_ue4_GameActivity_nativeSetGlobalActivity</code>  这个函数里面<br />
+<img src="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2023/20231110001256.png" srcset="/img/loading.gif" lazyload width="70%"></p>
+<p>根据不同的情况重新修改了<code>GFilePathBase</code><br />
+这个函数会在GameActivity的onCreate阶段调用</p>
+<p>为了开发调试方便起见，可以考虑修改这两处的位置，将GFilePathBase指向一个可以更加容易访问的位置</p>
+<p>由于安卓的限制，在TargetSDK版本在Android 10及以上已经不能在根目录下创建文件夹，但是可以在<code>Documents</code>或者<code>Download</code>文件夹下进行读写，这里选择直接将GFilePathBase改为Documents下面，其他不做改变</p>
+<p>但是这样会有一个新问题，如果存在了同名文件，是没有权限覆盖文件的，需要应用声明<code>MANAGE_EXTERNAL_STORAGE</code>这个权限，并在启动应用时主动申请，由用户手动授权</p>
+<p>如果没有在AndroidManifest文件中声明需要这个权限的话，在系统的权限授权界面是不会看到该应用的，极其在启动的时候申请也无法授权</p>
+<p>如果只是需要将Project下的某些文件获取到，比如Log文件或者PSO缓存文件等，也可以考虑在dev和shipping模式下都将base目录指向应用的External目录，在Java侧添加接口来将文件复制到Documents目录，只需要注意检查Documents目录下的重名文件即可。安卓30以上经过测试，release版本的应用也不需要权限</p>
+<h2 id="参考实现"><a class="markdownIt-Anchor" href="#参考实现"></a> 参考实现</h2>
+<p>java侧的一些方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 封装一个复制文件的方法</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">CopyFile</span><span class="hljs-params">(File file, File destFile)</span><br>&#123;<br>	<span class="hljs-keyword">if</span> (!destFile.exists())<br>	&#123;<br>		<span class="hljs-keyword">try</span><br>		&#123;<br>			destFile.createNewFile();<br>		&#125;<br>		<span class="hljs-keyword">catch</span> (IOException e)<br>		&#123;<br>			e.printStackTrace();<br>		&#125;<br>	&#125;<br>	<span class="hljs-type">FileInputStream</span> <span class="hljs-variable">fis</span> <span class="hljs-operator">=</span> <span class="hljs-literal">null</span>;<br>	<span class="hljs-type">FileOutputStream</span> <span class="hljs-variable">fos</span> <span class="hljs-operator">=</span> <span class="hljs-literal">null</span>;<br>	<span class="hljs-keyword">try</span><br>	&#123;<br>		fis = <span class="hljs-keyword">new</span> <span class="hljs-title class_">FileInputStream</span>(file);<br>		fos = <span class="hljs-keyword">new</span> <span class="hljs-title class_">FileOutputStream</span>(destFile);<br>		<span class="hljs-type">byte</span>[] buffer = <span class="hljs-keyword">new</span> <span class="hljs-title class_">byte</span>[<span class="hljs-number">1024</span>];<br>		<span class="hljs-type">int</span> len;<br>		<span class="hljs-keyword">while</span> ((len = fis.read(buffer)) != -<span class="hljs-number">1</span>)<br>		&#123;<br>			fos.write(buffer, <span class="hljs-number">0</span>, len);<br>		&#125;<br>	&#125;<br>	<span class="hljs-keyword">catch</span> (IOException e)<br>	&#123;<br>		e.printStackTrace();<br>	&#125; <span class="hljs-keyword">finally</span><br>	&#123;<br>		<span class="hljs-keyword">if</span> (fis != <span class="hljs-literal">null</span>)<br>		&#123;<br>			<span class="hljs-keyword">try</span><br>			&#123;<br>				fis.close();<br>			&#125;<br>			<span class="hljs-keyword">catch</span> (IOException e)<br>			&#123;<br>				e.printStackTrace();<br>			&#125;<br>		&#125;<br>		<span class="hljs-keyword">if</span> (fos != <span class="hljs-literal">null</span>)<br>		&#123;<br>			<span class="hljs-keyword">try</span><br>			&#123;<br>				fos.close();<br>			&#125;<br>			<span class="hljs-keyword">catch</span> (IOException e)<br>			&#123;<br>				e.printStackTrace();<br>			&#125;<br>		&#125;<br>	&#125;<br>&#125;<br><br><span class="hljs-comment">// 封装一个复制文件夹的方法</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">CopyFiles</span><span class="hljs-params">(String SourceDirPath, String DestDirPath)</span><br>&#123;<br>	Log.debug(<span class="hljs-string">&quot;CopyFiles: SourceDirPath: &quot;</span> + SourceDirPath + <span class="hljs-string">&quot; DestDirPath: &quot;</span> + DestDirPath);<br>	<span class="hljs-type">File</span> <span class="hljs-variable">sourceDir</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">File</span>(SourceDirPath);<br>	<span class="hljs-type">File</span> <span class="hljs-variable">destDir</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">File</span>(DestDirPath);<br>	<span class="hljs-keyword">if</span> (!destDir.exists())<br>	&#123;<br>		destDir.mkdirs();<br>	&#125;<br>	<span class="hljs-keyword">if</span> (sourceDir.exists() &amp;&amp; sourceDir.isDirectory())<br>	&#123;<br>		File[] files = sourceDir.listFiles();<br>		<span class="hljs-keyword">for</span> (File file : files)<br>		&#123;<br>			<span class="hljs-keyword">if</span> (file.isFile())<br>			&#123;<br>				<span class="hljs-type">File</span> <span class="hljs-variable">destFile</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">File</span>(destDir, file.getName());<br>				CopyFile(file, destFile);<br>			&#125;<br>			<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (file.isDirectory())<br>			&#123;<br>				<span class="hljs-type">String</span> <span class="hljs-variable">destPath</span> <span class="hljs-operator">=</span> destDir.getAbsolutePath() + <span class="hljs-string">&quot;/&quot;</span> + file.getName();<br>				CopyFiles(file.getAbsolutePath(), destPath);<br>			&#125;<br>		&#125;<br>	&#125;<br>	<span class="hljs-keyword">else</span><br>	&#123;<br>		<span class="hljs-keyword">if</span>(!sourceDir.exists())<br>		&#123;<br>			Log.debug(<span class="hljs-string">&quot;CopyFiles: SourceDirPath does not exist: &quot;</span> + SourceDirPath);<br>		&#125;<br>		<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(!sourceDir.isDirectory())<br>		&#123;<br>			Log.debug(<span class="hljs-string">&quot;CopyFiles: SourceDirPath is not a directory: &quot;</span> + SourceDirPath);<br>		&#125;<br>	&#125;<br>&#125;<br><br><span class="hljs-comment">// 获取项目名的方法，如果在AndroidManifest中声明了ProjectName的话，就直接返回，否则返回包名的最后一段</span><br><span class="hljs-keyword">public</span> String <span class="hljs-title function_">GetProjectName</span><span class="hljs-params">()</span><br>&#123;<br>	String projectName;<br>	<span class="hljs-keyword">if</span> (_bundle.containsKey(<span class="hljs-string">&quot;com.epicgames.ue4.GameActivity.ProjectName&quot;</span>))<br>	&#123;<br>		projectName = _bundle.getString(<span class="hljs-string">&quot;com.epicgames.ue4.GameActivity.ProjectName&quot;</span>);<br>		Log.debug(<span class="hljs-string">&quot;Found ProjectName = &quot;</span> + projectName);<br>	&#125;<br>	<span class="hljs-keyword">else</span><br>	&#123;<br>		<span class="hljs-type">String</span> <span class="hljs-variable">packageName</span> <span class="hljs-operator">=</span> getPackageName();<br>		String[] packageSegments = packageName.split(<span class="hljs-string">&quot;\\.&quot;</span>);<br>		<span class="hljs-type">String</span> <span class="hljs-variable">lastSegment</span> <span class="hljs-operator">=</span> packageSegments[packageSegments.length - <span class="hljs-number">1</span>];<br>		projectName = lastSegment;<br>	&#125;<br>	<span class="hljs-keyword">return</span> projectName;<br>&#125;<br><br><span class="hljs-comment">// 获取项目的Saved目录</span><br><span class="hljs-keyword">public</span> String <span class="hljs-title function_">GetProjectSavedDir</span><span class="hljs-params">()</span><br>&#123;<br>	<span class="hljs-type">String</span> <span class="hljs-variable">projectName</span> <span class="hljs-operator">=</span> GetProjectName();<br>	<span class="hljs-type">String</span> <span class="hljs-variable">path</span> <span class="hljs-operator">=</span> getExternalFilesDir(<span class="hljs-literal">null</span>).getAbsolutePath();<br>	<span class="hljs-keyword">return</span> path + <span class="hljs-string">&quot;/UE4Game/&quot;</span> + projectName + <span class="hljs-string">&quot;/&quot;</span> + projectName + <span class="hljs-string">&quot;/Saved&quot;</span>;<br>&#125;<br><br><span class="hljs-comment">// 获取Documents目录的绝对路径</span><br><span class="hljs-keyword">public</span> String <span class="hljs-title function_">GetDocumentsProjectDirPath</span><span class="hljs-params">()</span><br>&#123;<br>	<span class="hljs-type">String</span> <span class="hljs-variable">projectName</span> <span class="hljs-operator">=</span> GetProjectName();<br>	<span class="hljs-type">String</span> <span class="hljs-variable">path</span> <span class="hljs-operator">=</span> android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOCUMENTS).getAbsolutePath();<br>	<span class="hljs-keyword">return</span> path + <span class="hljs-string">&quot;/&quot;</span> + projectName;<br>&#125;<br><br><span class="hljs-comment">// 将Saved目录下的文件复制到Documents目录下，避免权限问题，加上时间戳防止出现重名文件夹导致复制失败</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">AndroidThunkJava_CopySavedFilesToDocuments</span><span class="hljs-params">()</span><br>&#123;<br>	<span class="hljs-type">String</span> <span class="hljs-variable">savedDirPath</span> <span class="hljs-operator">=</span> GetProjectSavedDir();<br>	<span class="hljs-type">String</span> <span class="hljs-variable">timeStamp</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SimpleDateFormat</span>(<span class="hljs-string">&quot;yyyyMMdd_HHmmss&quot;</span>).format(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>());<br>	<span class="hljs-type">String</span> <span class="hljs-variable">destDirPath</span> <span class="hljs-operator">=</span> GetDocumentsProjectDirPath() + <span class="hljs-string">&quot;/CopiedSaved_&quot;</span> + timeStamp;<br>	CopyFiles(savedDirPath, destDirPath);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>在C++侧的AndroidJNI中添加对应接口的声明，就可以在安卓版本中使用了</p>
+<h2 id="参考文档"><a class="markdownIt-Anchor" href="#参考文档"></a> 参考文档</h2>
+<p><a target="_blank" rel="noopener" href="https://developer.android.google.cn/training/data-storage?hl=zh-cn">https://developer.android.google.cn/training/data-storage?hl=zh-cn</a></p>
+<p><a target="_blank" rel="noopener" href="https://developer.android.google.cn/training/data-storage/shared/documents-files?hl=zh-cn">https://developer.android.google.cn/training/data-storage/shared/documents-files?hl=zh-cn</a></p>
+
+              
+            </div>
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Android/">#Android</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>UE4：4.27升级安卓SDK到30后的文件保存问题</div>
+      <div>http://muchenhen.com/posts/26609/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>木尘痕</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年11月10日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/47622/" title="UE4：自定义iOS文本输入界面的补充说明">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">UE4：自定义iOS文本输入界面的补充说明</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/25258/" title="UE4：C++直接获取STATS相关值的方式">
+                        <span class="hidden-mobile">UE4：C++直接获取STATS相关值的方式</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+    <!-- 备案信息 ICP for China -->
+    <div class="beian">
+  <span>
+    <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+      
+    </a>
+  </span>
+  
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?bbb32ef470b36fe5f1e4e72f32112b68";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script>
+  (function() {
+    var enableLang = CONFIG.code_language.enable && CONFIG.code_language.default;
+    var enableCopy = CONFIG.copy_btn;
+    if (!enableLang && !enableCopy) {
+      return;
+    }
+
+    function getBgClass(ele) {
+      return Fluid.utils.getBackgroundLightness(ele) >= 0 ? 'code-widget-light' : 'code-widget-dark';
+    }
+
+    var copyTmpl = '';
+    copyTmpl += '<div class="code-widget">';
+    copyTmpl += 'LANG';
+    copyTmpl += '</div>';
+    jQuery('.markdown-body pre').each(function() {
+      var $pre = jQuery(this);
+      if ($pre.find('code.mermaid').length > 0) {
+        return;
+      }
+      if ($pre.find('span.line').length > 0) {
+        return;
+      }
+
+      var lang = '';
+
+      if (enableLang) {
+        lang = CONFIG.code_language.default;
+        if ($pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2 && $pre.children().hasClass('hljs')) {
+          lang = $pre[0].children[0].classList[1];
+        } else if ($pre[0].getAttribute('data-language')) {
+          lang = $pre[0].getAttribute('data-language');
+        } else if ($pre.parent().hasClass('sourceCode') && $pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2) {
+          lang = $pre[0].children[0].classList[1];
+          $pre.parent().addClass('code-wrapper');
+        } else if ($pre.parent().hasClass('markdown-body') && $pre[0].classList.length === 0) {
+          $pre.wrap('<div class="code-wrapper"></div>');
+        }
+        lang = lang.toUpperCase().replace('NONE', CONFIG.code_language.default);
+      }
+      $pre.append(copyTmpl.replace('LANG', lang).replace('code-widget">',
+        getBgClass($pre[0]) + (enableCopy ? ' code-widget copy-btn" data-clipboard-snippet><i class="iconfont icon-copy"></i>' : ' code-widget">')));
+
+      if (enableCopy) {
+        Fluid.utils.createScript('https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js', function() {
+          var clipboard = new window.ClipboardJS('.copy-btn', {
+            target: function(trigger) {
+              var nodes = trigger.parentNode.childNodes;
+              for (var i = 0; i < nodes.length; i++) {
+                if (nodes[i].tagName === 'CODE') {
+                  return nodes[i];
+                }
+              }
+            }
+          });
+          clipboard.on('success', function(e) {
+            e.clearSelection();
+            e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-copy', 'icon-success');
+            setTimeout(function() {
+              e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-success', 'icon-copy');
+            }, 2000);
+          });
+        });
+      }
+    });
+  })();
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

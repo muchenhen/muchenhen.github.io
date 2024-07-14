@@ -1,0 +1,508 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="木尘痕">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="三个常用的直线扫描转换算法 数值微分法 简要描述： 根据端点算出直线斜率。从端点开始，x坐标每次加一，用增量的思想，取整数点。由于整型会面对舍入运算，需要对y值增加0.5 。 计算举例： 设两个端点为(0,0)(5,3)，计算出k值为0.6，计算过程如下：  对于k&gt;1的情况，需要把xy交换，y每次增加1，x每次增加k分之q1。 适用于任意斜率的伪代码如下： voidDDALine(int">
+<meta property="og:type" content="website">
+<meta property="og:title" content="图像生成01直线段扫描转换">
+<meta property="og:url" content="http://muchenhen.com/OLD/%E5%9B%BE%E5%83%8F%E7%94%9F%E6%88%9001%E7%9B%B4%E7%BA%BF%E6%AE%B5%E6%89%AB%E6%8F%8F%E8%BD%AC%E6%8D%A2.html">
+<meta property="og:site_name" content="虚无之境">
+<meta property="og:description" content="三个常用的直线扫描转换算法 数值微分法 简要描述： 根据端点算出直线斜率。从端点开始，x坐标每次加一，用增量的思想，取整数点。由于整型会面对舍入运算，需要对y值增加0.5 。 计算举例： 设两个端点为(0,0)(5,3)，计算出k值为0.6，计算过程如下：  对于k&gt;1的情况，需要把xy交换，y每次增加1，x每次增加k分之q1。 适用于任意斜率的伪代码如下： voidDDALine(int">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2018/12/1001-1.png">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2018/12/1002.png">
+<meta property="article:published_time" content="2018-12-16T04:01:22.000Z">
+<meta property="article:modified_time" content="2024-07-14T15:26:08.248Z">
+<meta property="article:author" content="木尘痕">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.muchenhen.com/wp-content/uploads/2018/12/1001-1.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>图像生成01直线段扫描转换 - 虚无之境</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"muchenhen.com","root":"/","version":"1.9.1","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"bbb32ef470b36fe5f1e4e72f32112b68","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>虚无之境</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/NagisaKaworu.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="图像生成01直线段扫描转换"></span>
+          
+        </div>
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      <div class="container nopadding-x-md">
+        <div id="board"
+          >
+          
+          <div class="container">
+            <div class="row">
+              <div class="col-12 col-md-10 m-auto">
+                
+
+<article class="page-content">
+  <p>三个常用的直线扫描转换算法</p>
+<p><strong>数值微分法</strong></p>
+<p>简要描述：</p>
+<p>根据端点算出直线斜率。从端点开始，x坐标每次加一，用增量的思想，取整数点。由于整型会面对舍入运算，需要对y值增加0.5 。</p>
+<p>计算举例：</p>
+<p>设两个端点为(0,0)(5,3)，计算出k值为0.6，计算过程如下：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1001-1.png" srcset="/img/loading.gif" lazyload alt="" /></p>
+<p>对于k&gt;1的情况，需要把xy交换，y每次增加1，x每次增加k分之q1。</p>
+<p>适用于任意斜率的伪代码如下：</p>
+<p>voidDDALine(int x0,int y0,int x1,int y1)<br />
+{<br />
+Int dx,dy,n,k;<br />
+float xinc,yinc,x,y;<br />
+dx=x1-x0;<br />
+dy=y1-y0;<br />
+if(abs(dx)&gt;abs(dy))//用来判断直线斜率<br />
+n=abs(dx);<br />
+else<br />
+n=abs(dy);<br />
+xinc=(float)dx/n;//求出x的增量<br />
+yinc=(float)dy/n;//求出y的增量<br />
+x=(float)x0;<br />
+y=(float)y0;<br />
+for(k=1;k&lt;=n;k++)//开始从起点循环<br />
+{<br />
+Drawpixel(int(x+0.5),int(y+0.5),color);//画点<br />
+x+=xinc;<br />
+y+=yinc;<br />
+}<br />
+}</p>
+<p><strong>中点画线法</strong></p>
+<p>该算法也采用了增量思想。</p>
+<p>以k小于1的直线为例，设起点的坐标为x0,y0 ,则下一个点的坐标的x值增加1，y的值只能增加0或者1，在0和1中选择接近理想直线的点。</p>
+<p>选择点的方法是与“中点”的值进行比较。假设下一个点为P1(xp1,yp1) 或P2(xp1,yp2) , 理想直线的点为Q(xq,yq)，P1与P2的中点为M。则M坐标应为(x0+1,y0+0.5) , yp1=y0+0 ,yp2=y0+1 ,比较yq与y0+0.5，若yq比y0+0.5大，则应该取上方的点，否则取下方的点。</p>
+<p>算法实现时的判定使用直线一般式方程，设终点为x1,y1 ，F(x,y)=ax+by+c，其中a为y1-y0，b为x1-x0，c为x0y1-x1y0。直线上的点F(x,y)=0,直线上的点大于0，直线下小于0。</p>
+<p>计算过程举例：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1002.png" srcset="/img/loading.gif" lazyload alt="" /></p>
+<p>任意斜率伪码：</p>
+<p>MidpointLine(int x0, int y0, int x1, int y1, int color)<br />
+{<br />
+int a,b,delta1,delta2,d,x,y;//a是直线x的系数，b是直线y的系数，来自一般式方程<br />
+a=y0-y1;//一般式的a就是等于俩端点y值的差,按例子中是2，此处取负值是为了应对任意斜率的直线<br />
+b=x1-x0;//b就是俩端点x的差<br />
+d=2*a+b;//d是我们构造的判别式的值，用来判断取哪个点，具体取法在下面的选择分支里，为了避免浮点数计算0.5没了所以变成了2a+b<br />
+delta1=2*a;//d的其中一个增量，对应的是d大于等于0，上面翻倍了这里也要翻倍<br />
+delta2=2*(a+b);//另一个情况的增量，也是翻倍了<br />
+x=x0;//从端点开始画点了<br />
+y=y0;//同上<br />
+Drawpixel(x,y,color);//先把端点画上<br />
+while(x <strong>Bresenham画线算法</strong></p>
+<p>总体思路与中点画线法相同，但是在判断点的坐标时采用了不同方法。设起始坐标(x0,y0)，则计算下一个点(x0+1,y1)中的y值，设理想y值为ny，若ny-y1&lt;1，则说明下一个点应该取y0，否则应该取y0+1。</p>
+<p>Bresenham (GLint x1,GLint y1,GLint x2,GLint y2)<br />
+{<br />
+if(x20.0)<br />
+{<br />
+p=2*dy-dx;<br />
+while(x=1的情况<br />
+if(k&gt;=1.0)<br />
+{<br />
+p=dy;<br />
+while(yk&gt;-1的情况<br />
+if(k&gt;-1&amp;&amp;k&lt;0)<br />
+{<br />
+p=2*dy+dx;<br />
+while(x=0)<br />
+p+=twoDy;<br />
+else<br />
+{<br />
+y–;<br />
+p+=twoSum;<br />
+}<br />
+setPixel(x,y);<br />
+}<br />
+}<br />
+//k&lt;-1的情况<br />
+if(k&lt;=-1)<br />
+{<br />
+p=2*dx-dy;<br />
+while(y&gt;y2)<br />
+{<br />
+y–;<br />
+if(p&gt;=0)<br />
+p-=twoDx;<br />
+else<br />
+{<br />
+x++;<br />
+p-=twoSum;<br />
+}<br />
+setPixel(x,y);<br />
+}<br />
+}<br />
+}</p>
+
+
+  
+
+</article>
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+    <!-- 备案信息 ICP for China -->
+    <div class="beian">
+  <span>
+    <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+      
+    </a>
+  </span>
+  
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?bbb32ef470b36fe5f1e4e72f32112b68";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

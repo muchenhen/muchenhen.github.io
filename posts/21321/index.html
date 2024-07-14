@@ -1,0 +1,959 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="木尘痕">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言 Leader告诉我可以看下Texture Streaming相关，这里总结一下下 日常费解.jpg      UE4的Texture Streaming 纹理流送系统或流送器是引擎的一部分，负责增大和减小每个纹理的分辨率。该系统使您可以拥有良好的视觉质量， 同时有效地管理可用内存。（来自UE4官方文档机翻） 看完这句话我的脑子里冒出来的问题大概有：  为什么要有流送系统？ 它流送的是啥？">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UE4：关于Texture Streaming的一部分总结">
+<meta property="og:url" content="http://muchenhen.com/posts/21321/index.html">
+<meta property="og:site_name" content="虚无之境">
+<meta property="og:description" content="前言 Leader告诉我可以看下Texture Streaming相关，这里总结一下下 日常费解.jpg      UE4的Texture Streaming 纹理流送系统或流送器是引擎的一部分，负责增大和减小每个纹理的分辨率。该系统使您可以拥有良好的视觉质量， 同时有效地管理可用内存。（来自UE4官方文档机翻） 看完这句话我的脑子里冒出来的问题大概有：  为什么要有流送系统？ 它流送的是啥？">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/202220220620222820.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/202220220701230324.png">
+<meta property="article:published_time" content="2022-07-01T01:30:43.000Z">
+<meta property="article:modified_time" content="2024-07-14T15:26:08.252Z">
+<meta property="article:author" content="木尘痕">
+<meta property="article:tag" content="UE4">
+<meta property="article:tag" content="Optimization">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/202220220620222820.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>UE4：关于Texture Streaming的一部分总结 - 虚无之境</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"muchenhen.com","root":"/","version":"1.9.1","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"bbb32ef470b36fe5f1e4e72f32112b68","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>虚无之境</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/NagisaKaworu.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="UE4：关于Texture Streaming的一部分总结"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        木尘痕
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-07-01 09:30" pubdate>
+          2022年7月1日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          6 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="UE4"
+        id="heading-38422113d07c877f67c1939fae5bbd34" role="tab" data-toggle="collapse" href="#collapse-38422113d07c877f67c1939fae5bbd34"
+        aria-expanded="true"
+      >
+        UE4
+        <span class="list-group-count">(7)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-38422113d07c877f67c1939fae5bbd34"
+           role="tabpanel" aria-labelledby="heading-38422113d07c877f67c1939fae5bbd34">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/posts/36675/" title="UE4:反射系统获取UPROPERTY"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">UE4:反射系统获取UPROPERTY</span>
+        </a>
+      
+    
+      
+      
+        <a href="/posts/52092/" title="UE4：使用Python导出LevelSequence轨道的Actor名字获取问题"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">UE4：使用Python导出LevelSequence轨道的Actor名字获取问题</span>
+        </a>
+      
+    
+      
+      
+        <a href="/posts/11838/" title="UE4：修改Shader压缩格式减小包体"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">UE4：修改Shader压缩格式减小包体</span>
+        </a>
+      
+    
+      
+      
+        <a href="/posts/21321/" title="UE4：关于Texture Streaming的一部分总结"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">UE4：关于Texture Streaming的一部分总结</span>
+        </a>
+      
+    
+      
+      
+        <a href="/posts/34123/" title="UE4：移动端俯视角远距离摄像机的级联阴影优化"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">UE4：移动端俯视角远距离摄像机的级联阴影优化</span>
+        </a>
+      
+    
+      
+      
+        <a href="/posts/46173/" title="UE4：移动端级联阴影简要分析"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">UE4：移动端级联阴影简要分析</span>
+        </a>
+      
+    
+      
+      
+        <a href="/posts/7908/" title="UE4：自定义材质属性节点规避材质编译问题"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">UE4：自定义材质属性节点规避材质编译问题</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">UE4：关于Texture Streaming的一部分总结</h1>
+            
+            <div class="markdown-body">
+              
+              <h1 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h1>
+<p>Leader告诉我可以看下Texture Streaming相关，这里总结一下下</p>
+<p>日常费解.jpg</p>
+<div align=center> 
+<img src="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/202220220620222820.png" srcset="/img/loading.gif" lazyload width="40%">
+</div>
+<h1 id="ue4的texture-streaming"><a class="markdownIt-Anchor" href="#ue4的texture-streaming"></a> UE4的Texture Streaming</h1>
+<p>纹理流送系统或流送器是引擎的一部分，负责增大和减小每个纹理的分辨率。该系统使您可以拥有良好的视觉质量， 同时有效地管理可用内存。（来自UE4官方文档机翻）<br />
+看完这句话我的脑子里冒出来的问题大概有：</p>
+<ol>
+<li>为什么要有流送系统？</li>
+<li>它流送的是啥？</li>
+<li>流送系统怎么管理内存了？</li>
+<li>流送系统如何影响画质了？</li>
+</ol>
+<p>大概是这样的：</p>
+<p>依然是LOD的思想，在绘制远距离物体的时候，最终在屏幕上该物体占据的像素数量极小的情况下，如果依然使用较大的贴图（比如在屏幕上占了32<em>32像素但是用了一个1024</em>1024大小的贴图），采样会产生锯齿或者摩尔纹，显示质量是有问题的，而且显然很浪费显存。再考虑到硬件算理有限，不能当场进行卷积来消除这些画面问题，最好的办法就是在这种情况下直接用小点的接近屏幕上显示大小的贴图。</p>
+<p>于是多级渐进纹理Mipmap出现了，这样可以在远处的时候直接用小尺寸贴图，解决掉画面的锯齿之类的问题，但是他消耗的显存就更大了，多出来几份Mips占用了更多的显存。</p>
+<p>解决了一个问题使显存问题稍微严重了一点，那么再去想办法解决内存的问题，这种过程算是开发的常见情况了……- -</p>
+<p>为了解决内存占用过大的问题，UE4这里做了一个纹理流送系统，通过一些计算获取当前最合适的Mips，将其加载，可以节约很多内存</p>
+<p>这样基本就解决了两个问题，只不多最后是多带来了一点点的CPU开销罢了……</p>
+<p>其余的相关概述可以看<a target="_blank" rel="noopener" href="https://docs.unrealengine.com/4.27/zh-CN/RenderingAndGraphics/Textures/Streaming/Overview/">官方文档</a></p>
+<p>比较需要注意的是，小于等于Mip7也就是64*64的Mip是会常驻内存的</p>
+<h1 id="stat-streaming"><a class="markdownIt-Anchor" href="#stat-streaming"></a> Stat Streaming</h1>
+<p>UE4提供了一个关于Streaming的控制台调试命令，可以分析内存使用状况</p>
+<p><img src="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/202220220701230324.png" srcset="/img/loading.gif" lazyload alt="官网偷的图" /></p>
+<p>按照官方的解释，Pool指的是理想情况预计使用的内存，并不是当前实际占用的内存，Mips则是当前已经占用的内存</p>
+<p>逐个解释一下图上的Memory Counters参数：</p>
+<p><strong>Safety Pool</strong></p>
+<p>这个值是在Engine的配置文件中指定的，比如BaseEngine.ini，属于TextureStreaming模块，是一个预留内存，主要是用在AsyncTextureStreaming计算可分配内存</p>
+<p><strong>Temporary Pool</strong></p>
+<p>这个值可以通过r.Streaming.MaxTempMemoryAllowed控制，PrepareAsyncTask中会使用这个值，在处理所有纹理时让纹理都处于其所需的Mips</p>
+<p><strong>Streaming Pool</strong></p>
+<p>流送池大小，在移动端是PoolSize - Safety Pool - Temporary Pool - NonStreaming Mips剩余的空间</p>
+<p>在PC端是PoolSize给定的大小</p>
+<p>其中存放了Visible Mips，Hidden Mips， Forced Mips， Cached Mips</p>
+<p>这个值在移动端会因为NonStreaming Mips的增或减少而进行波动</p>
+<p><strong>Required Pool</strong></p>
+<p>计算出来的理想状态下需要的池子的大小，详细的后面一起说</p>
+<p><strong>Visible Mips</strong></p>
+<p>可见纹理当前占用的所需内存，不包括Forced Mips</p>
+<p><strong>Hidden Mips</strong></p>
+<p>非可见纹理，不包括Forced Mips</p>
+<p><strong>Forced Mips</strong></p>
+<p>强制流入纹理当前占据的所需内存，不包括被明确指定为不可流送的纹理</p>
+<p><strong>Cached Mips</strong></p>
+<p>不再需要的纹理所占据的内存，只要有空间，不会立即从内存中释放</p>
+<p><strong>Wanted Mips</strong></p>
+<p>Visible Mips + Hidden Mips + Forced Mips</p>
+<p>上面这些值，假设PoolSize给了一个足够的值，Required Pool会等于Wanted Mips，符合理论，预计需要的和实际需要的相同，因为有足够大的空间</p>
+<p>并且在这种情况下，会有一部分暂时不再需要的纹理被缓存在Pool里，实际目前占用的内存是Wanted+Cached</p>
+<p>如果我们减小PoolSize，向Required Pool的值逼近，Streaming Pool的大小越来越小的时候，Cached Mips就会逐渐从内存里释放，给其他的腾地方</p>
+<p>如果继续减小PoolSize，导致Streaming Pool的大小小于Required Pool的大小，会发现画面中的贴图质量随着Pool的变小慢慢下降，为了实际占用的内存不超过我们给的限制，引擎会降低自己对纹理大小的要求，降低1级、2级、3级……</p>
+<p>直到给了一个1M的大小，所有的流送的贴图都变成了最小的，没有可以下降的余地了，这个时候Wanted Mips会明显小于Required Pool，但是会大于Streaming Pool（给的可用太小了）</p>
+<p>这里懒的去截图了，写得也已经很清楚了，几个参数的关系就如上所说</p>
+<h1 id="相关控制台指令"><a class="markdownIt-Anchor" href="#相关控制台指令"></a> 相关控制台指令</h1>
+<p><strong>r.Streaming.PoolSize</strong></p>
+<p>运行时可以动态修改流送池大小</p>
+<p>0 表示不受任何限制<br />
+100 设置为100M大小</p>
+<p><strong>r.Streaming.FramesForFullUpdate</strong></p>
+<p>重新计算Texture需求的Mip等级的时间间隔，单位是帧</p>
+<p><strong>r.Streaming.HLODStrategy</strong></p>
+<p>0 流送所有Mip<br />
+1 仅流送最后一级Mip，其他等级的始终加载到内存里</p>
+<p><strong>r.Streaming.DropMips</strong></p>
+<p>会立即清理内存<br />
+0 不清理任何Mips<br />
+1 只会清理Cached Mip<br />
+2 会清理掉Cached Mips和Hidden Mips，使用后可以看到Stat上关于这两个所占内存的变化，程序所占用的RAM也会发生变化</p>
+<p><strong>r.Streaming.UseAllMips</strong></p>
+<p>1 会使用所有的可用Mips，在FStreamingRenderAsset::UpdateDynamicData函数里，会计算LODBias，如果是1则会跳过计算直接为0，没有偏移</p>
+<p><strong>r.MobileMaxLoadedMips</strong> 和 <strong>r.MobileReduceLoadedMips</strong></p>
+<p>简称为Max和Reduce</p>
+<p>这两个在同一个函数中被调用，</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-function"><span class="hljs-type">static</span> int32 <span class="hljs-title">MobileReduceLoadedMips</span><span class="hljs-params">(int32 NumTotalMips)</span></span><br><span class="hljs-function"></span>&#123;<br>	int32 NumReduceMips = FMath::<span class="hljs-built_in">Max</span>(<span class="hljs-number">0</span>, CVarMobileReduceLoadedMips.<span class="hljs-built_in">GetValueOnAnyThread</span>());<br>	int32 MaxLoadedMips = FMath::<span class="hljs-built_in">Clamp</span>(CVarMobileMaxLoadedMips.<span class="hljs-built_in">GetValueOnAnyThread</span>(), <span class="hljs-number">1</span>, GMaxTextureMipCount);<br><br>	int32 NumMips = NumTotalMips;<br>	<span class="hljs-comment">// Reduce number of mips as requested</span><br>	NumMips = FMath::<span class="hljs-built_in">Max</span>(NumMips - NumReduceMips, <span class="hljs-number">1</span>);<br>	<span class="hljs-comment">// Clamp number of mips as requested</span><br>	NumMips = FMath::<span class="hljs-built_in">Min</span>(NumMips, MaxLoadedMips);<br>	<br>	<span class="hljs-keyword">return</span> NumMips;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>其中Max会被Clamp到1和GMaxTextureMipCount之间（默认值15）<br />
+Reduce最低只能是0<br />
+函数参数Num，先减去NumReduceMips，最小取到1，然后和Max之间取较大的一个<br />
+该函数只有一个地方调用，就是</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-meta">#<span class="hljs-keyword">if</span> !PLATFORM_SUPPORTS_TEXTURE_STREAMING <span class="hljs-comment">// eg, Android</span></span><br>		NumMips = <span class="hljs-built_in">MobileReduceLoadedMips</span>(NumMips);<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br></code></pre></td></tr></table></figure>
+<p>平台不支持Streaming<br />
+NumMips在Texture2D的CreateResource函数中用来检查MipLevel<br />
+目前不会还有不支持的吧！= =不必在考虑这个了吧</p>
+<p><strong>r.Streaming.MipBias</strong></p>
+<p>调试时非常有用的一个指令，在r.Streaming.UsePerTextureBias设置为0的情况下，MipBias会作为全局的Mips向下偏移的参数，比如等于1的时候，最后使用的Mip会是计算出的理想Mip的向下一级，可以用来调试确认合适的Mip</p>
+<p>这个指令不仅是贴图，静态模型也会受影响</p>
+<h1 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h1>
+<p>学习了一下UE4纹理流送相关的知识，debug用的相关参数的意义，有助于排查游戏中的Texture使用和打包相关的问题</p>
+<p>可以通过<strong>r.Streaming.PoolSize</strong>进行调试，结合Stat Streaming信息来寻找游戏比较合适的一个Pool的大小</p>
+
+              
+            </div>
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/UE4/" class="category-chain-item">UE4</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/UE4/">#UE4</a>
+      
+        <a href="/tags/Optimization/">#Optimization</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>UE4：关于Texture Streaming的一部分总结</div>
+      <div>http://muchenhen.com/posts/21321/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>木尘痕</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年7月1日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/7931/" title="TinyRenderer 2：三角形光栅化和背面剔除">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">TinyRenderer 2：三角形光栅化和背面剔除</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/34123/" title="UE4：移动端俯视角远距离摄像机的级联阴影优化">
+                        <span class="hidden-mobile">UE4：移动端俯视角远距离摄像机的级联阴影优化</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+    <!-- 备案信息 ICP for China -->
+    <div class="beian">
+  <span>
+    <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+      
+    </a>
+  </span>
+  
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?bbb32ef470b36fe5f1e4e72f32112b68";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script>
+  (function() {
+    var enableLang = CONFIG.code_language.enable && CONFIG.code_language.default;
+    var enableCopy = CONFIG.copy_btn;
+    if (!enableLang && !enableCopy) {
+      return;
+    }
+
+    function getBgClass(ele) {
+      return Fluid.utils.getBackgroundLightness(ele) >= 0 ? 'code-widget-light' : 'code-widget-dark';
+    }
+
+    var copyTmpl = '';
+    copyTmpl += '<div class="code-widget">';
+    copyTmpl += 'LANG';
+    copyTmpl += '</div>';
+    jQuery('.markdown-body pre').each(function() {
+      var $pre = jQuery(this);
+      if ($pre.find('code.mermaid').length > 0) {
+        return;
+      }
+      if ($pre.find('span.line').length > 0) {
+        return;
+      }
+
+      var lang = '';
+
+      if (enableLang) {
+        lang = CONFIG.code_language.default;
+        if ($pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2 && $pre.children().hasClass('hljs')) {
+          lang = $pre[0].children[0].classList[1];
+        } else if ($pre[0].getAttribute('data-language')) {
+          lang = $pre[0].getAttribute('data-language');
+        } else if ($pre.parent().hasClass('sourceCode') && $pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2) {
+          lang = $pre[0].children[0].classList[1];
+          $pre.parent().addClass('code-wrapper');
+        } else if ($pre.parent().hasClass('markdown-body') && $pre[0].classList.length === 0) {
+          $pre.wrap('<div class="code-wrapper"></div>');
+        }
+        lang = lang.toUpperCase().replace('NONE', CONFIG.code_language.default);
+      }
+      $pre.append(copyTmpl.replace('LANG', lang).replace('code-widget">',
+        getBgClass($pre[0]) + (enableCopy ? ' code-widget copy-btn" data-clipboard-snippet><i class="iconfont icon-copy"></i>' : ' code-widget">')));
+
+      if (enableCopy) {
+        Fluid.utils.createScript('https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js', function() {
+          var clipboard = new window.ClipboardJS('.copy-btn', {
+            target: function(trigger) {
+              var nodes = trigger.parentNode.childNodes;
+              for (var i = 0; i < nodes.length; i++) {
+                if (nodes[i].tagName === 'CODE') {
+                  return nodes[i];
+                }
+              }
+            }
+          });
+          clipboard.on('success', function(e) {
+            e.clearSelection();
+            e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-copy', 'icon-success');
+            setTimeout(function() {
+              e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-success', 'icon-copy');
+            }, 2000);
+          });
+        });
+      }
+    });
+  })();
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

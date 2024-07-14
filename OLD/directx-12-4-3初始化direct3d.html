@@ -1,0 +1,658 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="木尘痕">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="终于到初始化了，已经第4.3节了 初始化也是一个麻烦的过程，但所幸只需要进行一次。初始化Direct3D的过程可以分为以下几个步骤: • 1. 使用D3D12CreateDevice函数创建ID3D12Device。 • 2. 创建一个ID3D12Fence对象和查询描述符大小。 • 3.检查4X MSAA质量水平支持。 • 4. 创建命令队列、命令列表分配器和主命令列表。 • 5. 描述并创建交">
+<meta property="og:type" content="website">
+<meta property="og:title" content="DIRECTX 12 4.3初始化DIRECT3D">
+<meta property="og:url" content="http://muchenhen.com/OLD/directx-12-4-3%E5%88%9D%E5%A7%8B%E5%8C%96direct3d.html">
+<meta property="og:site_name" content="虚无之境">
+<meta property="og:description" content="终于到初始化了，已经第4.3节了 初始化也是一个麻烦的过程，但所幸只需要进行一次。初始化Direct3D的过程可以分为以下几个步骤: • 1. 使用D3D12CreateDevice函数创建ID3D12Device。 • 2. 创建一个ID3D12Fence对象和查询描述符大小。 • 3.检查4X MSAA质量水平支持。 • 4. 创建命令队列、命令列表分配器和主命令列表。 • 5. 描述并创建交">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-11-12T05:55:21.000Z">
+<meta property="article:modified_time" content="2024-07-14T15:26:08.244Z">
+<meta property="article:author" content="木尘痕">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>DIRECTX 12 4.3初始化DIRECT3D - 虚无之境</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"muchenhen.com","root":"/","version":"1.9.1","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"bbb32ef470b36fe5f1e4e72f32112b68","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>虚无之境</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/NagisaKaworu.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="DIRECTX 12 4.3初始化DIRECT3D"></span>
+          
+        </div>
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      <div class="container nopadding-x-md">
+        <div id="board"
+          >
+          
+          <div class="container">
+            <div class="row">
+              <div class="col-12 col-md-10 m-auto">
+                
+
+<article class="page-content">
+  <p>终于到初始化了，已经第4.3节了<br />
+初始化也是一个麻烦的过程，但所幸只需要进行一次。初始化Direct3D的过程可以分为以下几个步骤:<br />
+• 1. 使用D3D12CreateDevice函数创建ID3D12Device。<br />
+• 2. 创建一个ID3D12Fence对象和查询描述符大小。<br />
+• 3.检查4X MSAA质量水平支持。<br />
+• 4. 创建命令队列、命令列表分配器和主命令列表。<br />
+• 5. 描述并创建交换链。<br />
+• 6. 创建应用程序需要的描述符堆。<br />
+• 7. 调整后端缓冲区的大小，并为后端缓冲区创建一个呈现目标视图。<br />
+• 8. 创建深度/模板缓冲区及其关联的深度/模板视图。<br />
+• 9. 设置视口和裁剪矩形。</p>
+<p>4.3.1创建设备<br />
+初始化Direct3D首先创建Direct3D 12设备(ID3D12Device)。该设备表示一个显示适配器。通常，显示适配器是一个物理的3D硬件块(例如，显卡);然而，一个系统也可以有一个软件显示适配器来模拟3D硬件功能(例如，WARP适配器)。Direct3D 12设备用于检查特性支持，并创建所有其他Direct3D接口对象，如资源、标识符和命令列表。设备可以通过以下功能来创建:<br />
+HRESULT WINAPI D3D12CreateDevice(<br />
+IUnknown* pAdapter,<br />
+D3D_FEATURE_LEVEL MinimumFeatureLevel,<br />
+REFIID riid, // 预期:ID3D12Device<br />
+void** ppDevice );<br />
+pAdapter：指定要创建的设备表示的显示适配器。为该参数指定null将使用主显示适配器。<br />
+MinimumFeatureLevel：应用程序需要支持的最低功能级别;如果适配器不支持此功能级别，则设备创建将失败。<br />
+riid：要创建的ID3D12Device接口的COM ID。<br />
+ppDevice：返回创建的设备。<br />
+下面是这个函数调用的一个例子:<br />
+e is an example call of this function: #if defined(DEBUG) || defined(_DEBUG) // Enable the D3D12 debug layer.<br />
+{<br />
+ComPtr debugController; ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(&amp;debugController))); debugController-&gt;EnableDebugLayer(); } #endif<br />
+ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&amp;mdxgiFactory)));<br />
+// Try to create hardware device. HRESULT hardwareResult = D3D12CreateDevice(<br />
+nullptr, // default adapter D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&amp;md3dDevice));<br />
+// Fallback to WARP device. if(FAILED(hardwareResult)) {<br />
+ComPtr pWarpAdapter; ThrowIfFailed(mdxgiFactory-</p>
+<blockquote>
+<p>EnumWarpAdapter(IID_PPV_ARGS(&amp;pWarpAdapter)));<br />
+ThrowIfFailed(D3D12CreateDevice( pWarpAdapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&amp;md3dDevice)));<br />
+}<br />
+首先为调试模式构建启用调试层。当调试层启用后，Direct3D将启用额外的调试并向vc++输出窗口发送调试消息，如下所示:<br />
+D3D12 ERROR: ID3D12CommandList::Reset: Reset fails because the command list was not closed.</p>
+</blockquote>
+<p>还要注意，如果对D3D12CreateDevice的调用失败，将退回到WARP设备，这是一个软件适配器。WARP代表Windows高级栅格化平台。在Windows 7及以下版本中，WARP设备支持功能级别10.1;在Windows 8上，WARP设备支持高达11.1级的特性。为了创建一个WARP适配器，需要创建一个IDXGIFactory4对象，以便枚举WARP适配器：<br />
+ComPtr mdxgiFactory;<br />
+CreateDXGIFactory1(IID_PPV_ARGS(&amp;mdxgiFactory));<br />
+mdxgiFactory-&gt;EnumWarpAdapter( IID_PPV_ARGS(&amp;pWarpAdapter));<br />
+mdxgiFactory对象也将用于创建交换链。</p>
+<p>4.3.2 Create the Fence and Descriptor Sizes<br />
+标题不会翻译，不知道具体使用的哪个名词，容我查一下资料再修改<br />
+在创建完设备后，需要创建一个用于GPU和CPU同步的Fence。 由于使用了描述符，因此需要知道不同的描述符的大小。 由于描述符大小不同的GPU有不同的值，因此我们需要查询其大小。可以cache描述符大小一边需要的时候取用：<br />
+ThrowIfFailed(md3dDevice-&gt;CreateFence( 0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&amp;mFence))); mRtvDescriptorSize = md3dDevice-</p>
+<blockquote>
+<p>GetDescriptorHandleIncrementSize( D3D12_DESCRIPTOR_HEAP_TYPE_RTV); mDsvDescriptorSize = md3dDevice-<br />
+GetDescriptorHandleIncrementSize( D3D12_DESCRIPTOR_HEAP_TYPE_DSV); mCbvSrvDescriptorSize = md3dDevice-<br />
+GetDescriptorHandleIncrementSize(<br />
+D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);</p>
+</blockquote>
+<p>4.3.3 Check 4X MSAA Quality Support<br />
+检查对4X MSAA的支持。选择4X的原因是因为其开销并不是很大，因为所有的Direct3D 11功能设备支持4X MSAA的所有渲染目标格式。因此，它可以保证在Direct3D 11硬件上可用。但是必须检查所支持的质量水平，可以通过以下方法实现:<br />
+D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS<br />
+msQualityLevels; msQualityLevels.Format = mBackBufferFormat; msQualityLevels.SampleCount = 4; msQualityLevels.Flags =<br />
+D3D12_MULTISAMPLE_QUALITY_LEVELS_FLAG_NONE;<br />
+msQualityLevels.NumQualityLevels = 0; ThrowIfFailed(md3dDevice-&gt;CheckFeatureSupport(<br />
+D3D12_FEATURE_MULTISAMPLE_QUALITY_LEVELS, &amp;msQualityLevels, sizeof(msQualityLevels)));<br />
+m4xMsaaQuality = msQualityLevels.NumQualityLevels;<br />
+assert(m4xMsaaQuality &gt; 0 &amp;&amp; “Unexpected MSAA quality level.”);<br />
+由于4XMSAA是肯定被支持的，检测出来的等级肯定大于0。 可以在这里设置一个断言。</p>
+<p>4.3.4创建命令队列和命令列表<br />
+4.2.1讲过的东西<br />
+queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;<br />
+queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;</p>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs scss">Device-&gt;<span class="hljs-built_in">CreateCommandQueue</span>(&amp;queueDesc, IID_PPV_ARGS(CommandQueue));<br><br>Device-&gt;<span class="hljs-built_in">CreateCommandAllocator</span>(D3D12_COMMAND_LIST_TYPE_DIRECT,<br>    IID_PPV_ARGS(CommandAllocator));<br><br>Device-&gt;<span class="hljs-built_in">CreateCommandList</span>(<span class="hljs-number">0</span>, D3D12_COMMAND_LIST_TYPE_DIRECT,<br>    CommandAllocator, nullptr, IID_PPV_ARGS(CommandList));<br><br>CommandList-&gt;<span class="hljs-built_in">Close</span>();<br></code></pre></td></tr></table></figure>
+<p>4.3.5描述并创建交换链<br />
+初始化的下一步是创建交换链。创建交换链的时候首先需要填充DXGI_SWAP_CHAIN_DESC结构。 需要这个结构来描述要创建什么属性的交换链。</p>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs abnf">struct DXGI_SWAP_CHAIN_DESC<br>&#123;<br>    DXGI_MODE_DESC BufferDesc<span class="hljs-comment">;</span><br>    DXGI_SAMPLE_DESC SampleDesc<span class="hljs-comment">;</span><br>    DXGI_USAGE BufferUsage<span class="hljs-comment">;</span><br>    UINT BufferCount<span class="hljs-comment">;</span><br>    HWND OutputWindow<span class="hljs-comment">;</span><br>    BOOL Windowed<span class="hljs-comment">;</span><br>    DXGI_SWAP_EFFECT SwapEffect<span class="hljs-comment">;</span><br>    UINT Flags<span class="hljs-comment">;</span><br>&#125;<span class="hljs-comment">;</span><br><br>struct DXGI_MODE_DESC<br>&#123;<br>    UINT Width<span class="hljs-comment">; //缓存的宽度</span><br>    UINT Height<span class="hljs-comment">; //缓存的高度</span><br>    DXGI_RATIONAL RefreshRate<span class="hljs-comment">;</span><br>    DXGI_FORMAT Format<span class="hljs-comment">; //缓存的格式</span><br>    DXGI_MODE_SCANLINE_ORDER ScanlineOrdering<span class="hljs-comment">;</span><br>    DXGI_MODE_SCALING Scaling<span class="hljs-comment">; //如何在显示器上缩放显示</span><br>&#125;<span class="hljs-comment">;</span><br></code></pre></td></tr></table></figure>
+<p>会使用较为常用的属性去填充下面的成员。 如果想了解更多填充的属性可以去参阅SDK文档。</p>
+<p>BufferDesc: 描述创建的BackBuffer的属性，主要属性就是宽度高度以及格式。其余的可以参考SDK文档。<br />
+SampleDesc: 多重采样的数量和质量等级，设置成采样数量为1，质量等级为0。<br />
+BufferUsage: 设置为DXGI_USAGE_RENDER_TARGET_OUTPUT。<br />
+BufferCount: 在交换链中要使用多少个缓冲，使用双缓冲设置为2。<br />
+OutputWindow: 要呈现的窗口的句柄。<br />
+Windowed: 设置为true就是窗口模式，否则是全屏模式。<br />
+SwapEffect: 设置为DXGI_SWAP_EFFECT_FLIP_DISCARD。<br />
+Flags: 一些其他设置。如果设置了DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH，那么在切换到全屏模式的时候就会选择一个最适合当前程序的显示模式，如果你没有设置这个属性，那么切换成全屏的时候就使用当前桌面的显示模式。<br />
+在填充完毕这个结构后，就可以创建交换链了。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">HRESULT <span class="hljs-title">IDXGIFactory::CreateSwapChain</span><span class="hljs-params">(</span></span><br><span class="hljs-params"><span class="hljs-function">    IUnknown *pDevice, <span class="hljs-comment">//ID3D12CommandQueue</span></span></span><br><span class="hljs-params"><span class="hljs-function">    DXGI_SWAP_CHAIN_DESC *pDesc,</span></span><br><span class="hljs-params"><span class="hljs-function">    IDXGISwapChain **ppSwapChain)</span></span>;<br></code></pre></td></tr></table></figure>
+<p>下面的代码展示了如何在示例框架中创建交换链。注意，这个函数已经被设计成可以被多次调用。它将在创建新交换链之前破坏旧的交换链。这允许用不同的设置重新创建交换链，而且可以在运行时更改多采样设置。<br />
+DXGI_FORMAT mBackBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM; void D3DApp::CreateSwapChain() {<br />
+// Release the previous swapchain we will be recreating. mSwapChain.Reset();<br />
+DXGI_SWAP_CHAIN_DESC sd; sd.BufferDesc.Width = mClientWidth; sd.BufferDesc.Height = mClientHeight; sd.BufferDesc.RefreshRate.Numerator = 60; sd.BufferDesc.RefreshRate.Denominator = 1; sd.BufferDesc.Format = mBackBufferFormat; sd.BufferDesc.ScanlineOrdering =<br />
+DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED; sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED; sd.SampleDesc.Count = m4xMsaaState ? 4 : 1; sd.SampleDesc.Quality = m4xMsaaState ? (m4xMsaaQuality - 1) : 0; sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; sd.BufferCount = SwapChainBufferCount; sd.OutputWindow = mhMainWnd; sd.Windowed = true; sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD; sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH; // Note: Swap chain uses queue to perform flush. ThrowIfFailed(mdxgiFactory-&gt;CreateSwapChain( mCommandQueue.Get(), &amp;sd, mSwapChain.GetAddressOf()));<br />
+}</p>
+<p>4.3.6 Create the Descriptor Heaps<br />
+需要创建描述符堆来存储描述符。<br />
+描述符堆由ID3D12DescriptorHeap接口表示。Heap创建方法是<br />
+ID3D12Device: CreateDescriptorHeap接口。在本章的示例程序中，<br />
+需要在交换链中使用的缓冲个数相同数量的Render Target View去描述交换链中的缓冲资源，这些资源将存储最后要呈现的内容。 还需要一个Depth/Stencil View去描述一个用于深度测试的Depth/Stencil Buffer资源。 因此需要一个堆存储Render Target View和Depth/Stencil View。</p>
+<p>下面是代码：<br />
+ComPtr mRtvHeap; ComPtr mDsvHeap; void D3DApp::CreateRtvAndDsvDescriptorHeaps() {<br />
+D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc; rtvHeapDesc.NumDescriptors = SwapChainBufferCount; rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV; rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE; rtvHeapDesc.NodeMask = 0; ThrowIfFailed(md3dDevice-&gt;CreateDescriptorHeap( &amp;rtvHeapDesc, IID_PPV_ARGS(mRtvHeap.GetAddressOf())));<br />
+D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc; dsvHeapDesc.NumDescriptors = 1; dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV; dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE; dsvHeapDesc.NodeMask = 0; ThrowIfFailed(md3dDevice-&gt;CreateDescriptorHeap( &amp;dsvHeapDesc, IID_PPV_ARGS(mDsvHeap.GetAddressOf())));<br />
+}<br />
+创建堆之后需要能够访问它们存储的描述符。应用程序通过句柄引用描述符。<br />
+4.3.7创建渲染目标视图<br />
+必须先为资源创建一个描述符，然后将其绑定到管道阶段。为了将后台缓冲区绑定到管道的输出合并阶段需要为后台缓冲区创建一个呈现目标视图。<br />
+第一步是获取交换链中的缓冲区资源：<br />
+HRESULT IDXGISwapChain::GetBuffer( UINT Buffer, REFIID riid,<br />
+void **ppSurface);<br />
+Buffer:一想要获取的特定的后置缓冲的索引(如果有多个的话)。<br />
+riid: ID3D12Resource接口的COM ID，需要获得一个指向它的指针。<br />
+ppSurface：返回一个指向ID3D12Resource（代表后置缓存）的指针。<br />
+对IDXGISwapChain::GetBuffer的调用增加了返回缓冲区的COM引用计数，所以必须在完成后释放它。使用ComPtr可以自动完成。<br />
+创建渲染目标视图可以使用<br />
+ID3D12Device: CreateRenderTargetView方法:<br />
+void ID3D12Device::CreateRenderTargetView(<br />
+ID3D12Resource *pResource, const D3D12_RENDER_TARGET_VIEW_DESC *pDesc,<br />
+D3D12_CPU_DESCRIPTOR_HANDLE DestDescriptor);</p>
+<p>4.3.8 创建深度/模板缓冲区和视图<br />
+4.1.5说过深度缓冲是一个2D的texture，存储了最近的可见对象的深度信息。<br />
+使用D3D12_RESOURCE_DESC结构来创建texture，然后调用ID3D12Device::CreateCommittedResource<br />
+D3D12_RESOURCE_DESC结构：</p>
+<p>typedef struct D3D12_RESOURCE_DESC {<br />
+D3D12_RESOURCE_DIMENSION Dimension; UINT64 Alignment; UINT64 Width; UINT Height; UINT16 DepthOrArraySize; UINT16 MipLevels; DXGI_FORMAT Format; DXGI_SAMPLE_DESC SampleDesc; D3D12_TEXTURE_LAYOUT Layout; D3D12_RESOURCE_MISC_FLAG MiscFlags;<br />
+} D3D12_RESOURCE_DESC;</p>
+<p>其中的各个参数：<br />
+1. Dimension：资源的维度，它是下列枚举类型之一：<br />
+enum D3D12_RESOURCE_DIMENSION {<br />
+D3D12_RESOURCE_DIMENSION_UNKNOWN = 0,<br />
+D3D12_RESOURCE_DIMENSION_BUFFER = 1,<br />
+D3D12_RESOURCE_DIMENSION_TEXTURE1D = 2,<br />
+D3D12_RESOURCE_DIMENSION_TEXTURE2D = 3,<br />
+D3D12_RESOURCE_DIMENSION_TEXTURE3D = 4<br />
+} D3D12_RESOURCE_DIMENSION;<br />
+2. Width：texture在texels中的宽度。对于缓冲区资源，指的是缓冲区中的字节数。<br />
+3. Height：texture在texels中的高度。<br />
+4. DepthOrArraySize：texture在texels中的深度，或者是texture数组的大小，数组仅仅只能针对1D和2D的texture，无发建立3Dtextures的数组。<br />
+5. MipLevels：mipmap级别的数量。mipmap会在纸糊的章节介绍。<br />
+6. Format：指定texels格式的DXGI_FORMAT枚举类型的成员。<br />
+7. SampleDesc：多重采样的数量和质量等级。用于深度/模板缓冲的多重采样的参数必须与渲染目标匹配。<br />
+8. Layout：指定texture layout的D3D12_TEXTURE_LAYOUT枚举类型的成员。<br />
+9. MiscFlags：杂项资源标志。对于深度/模板缓冲区资源，指定D3D12_RESOURCE_MISC_DEPTH_STENCIL。</p>
+<p>GPU资源以堆的形式存在，堆本质上是带有特定属性的GPU内存块。CreateCommittedResource方法使用指定的属性创建资源并将其提交到特定的堆。<br />
+HRESULT ID3D12Device::CreateCommittedResource(<br />
+const D3D12_HEAP_PROPERTIES *pHeapProperties,<br />
+D3D12_HEAP_MISC_FLAG HeapMiscFlags,<br />
+const D3D12_RESOURCE_DESC *pResourceDesc,<br />
+D3D12_RESOURCE_USAGE InitialResourceState,<br />
+const D3D12_CLEAR_VALUE *pOptimizedClearValue,<br />
+REFIID riidResource, void **ppvResource);<br />
+typedef struct D3D12_HEAP_PROPERTIES {<br />
+D3D12_HEAP_TYPE Type;<br />
+D3D12_CPU_PAGE_PROPERTIES CPUPageProperties;<br />
+D3D12_MEMORY_POOL MemoryPoolPreference;<br />
+UINT CreationNodeMask;<br />
+UINT VisibleNodeMask;<br />
+} D3D12_HEAP_PROPERTIES;</p>
+<p>1.pHeapProperties：要提交资源的堆的属性。其中一些属性用于高级用途。需要关心的主要属性是D3D12_HEAP_TYPE，它可以是D3D12_HEAP_PROPERTIES枚举类型的以下成员之一：<br />
+1.1 D3D12_HEAP_TYPE_DEFAULT: 默认堆。提交资源的地方，这些资源只会被GPU访问。以深度/模板缓冲区为例:GPU读写深度/模板缓冲区。CPU不需要访问它，因此深度/模板缓冲区将被放置在默认堆中。<br />
+1.2 D3D12_HEAP_TYPE_UPLOAD: Upload heap. 从CPU提交资源，上传数据到GPU资源。<br />
+1.3 D3D12_HEAP_TYPE_READBACK: Read-back heap. 需要由CPU读取的资源的地方。<br />
+1.4 D3D12_HEAP_TYPE_CUSTOM:有关高级使用场景，请参阅MSDN文档了解更多信息。<br />
+2.HeapMiscFlags：提交资源的堆的附加标志。通常使用D3D12_HEAP_MISC_NONE<br />
+3.pResourceDesc：指向一个D3D12_RESOURCE_DESC实例的指针，该实例描述了想要创建的资源。<br />
+4.InitialResourceState：使用此参数设置资源创建时的初始状态。对于深度/模板缓冲区，初始状态将是D3D12_RESOURCE_USAGE_INITIAL，然后将其转换为D3D12_RESOURCE_USAGE_DEPTH，以便将其作为深度/模板缓冲区绑定到管道。<br />
+5.pOptimizedClearValue：指向D3D12_CLEAR_VALUE对象的指针，该对象描述了用于清除资源的优化值。匹配优化清除值的清除调用可能比不匹配优化清除值的清除调用更快。也可以为此指定Null。<br />
+struct D3D12_CLEAR_VALUE<br />
+{<br />
+DXGI_FORMAT Format;<br />
+union<br />
+{ FLOAT Color[ 4 ];<br />
+D3D12_DEPTH_STENCIL_VALUE DepthStencil;<br />
+};<br />
+} D3D12_CLEAR_VALUE;<br />
+6.riidResource： ID3D12Resource接口的COM ID，需要获得一个指向它的指针。<br />
+7.ppvResource：返回一个ID3D12Resource的指针，该指针表示新创建的资源。</p>
+<p>此外，在使用深度/模板缓冲区之前，须创建一个关联的深度/模板视图来绑定到管道上。这类似于创建render target视图。下面的代码示例展示了如何创建深度/模板纹理及其相应的深度/模板视图：<br />
+// Create the depth/stencil buffer and view.<br />
+D3D12_RESOURCE_DESC depthStencilDesc; depthStencilDesc.Dimension =<br />
+D3D12_RESOURCE_DIMENSION_TEXTURE2D; depthStencilDesc.Alignment = 0;<br />
+depthStencilDesc.Width = mClientWidth;<br />
+depthStencilDesc.Height = mClientHeight; depthStencilDesc.DepthOrArraySize = 1;<br />
+depthStencilDesc.MipLevels = 1;<br />
+depthStencilDesc.Format = mDepthStencilFormat; depthStencilDesc.SampleDesc.Count = m4xMsaaState ? 4 : 1; depthStencilDesc.SampleDesc.Quality = m4xMsaaState ?<br />
+(m4xMsaaQuality - 1) : 0;<br />
+depthStencilDesc.Layout =D3D12_TEXTURE_LAYOUT_UNKNOWN;<br />
+depthStencilDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;<br />
+D3D12_CLEAR_VALUE optClear; optClear.Format = mDepthStencilFormat; optClear.DepthStencil.Depth = 1.0f; optClear.DepthStencil.Stencil = 0;<br />
+ThrowIfFailed(md3dDevice-&gt;CreateCommittedResource(<br />
+&amp;CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),<br />
+D3D12_HEAP_FLAG_NONE, &amp;depthStencilDesc,<br />
+D3D12_RESOURCE_STATE_COMMON, &amp;optClear, IID_PPV_ARGS(mDepthStencilBuffer.GetAddressOf())));<br />
+// Create descriptor to mip level 0 of entire resource using the<br />
+// format of the resource.<br />
+md3dDevice-&gt;CreateDepthStencilView(<br />
+mDepthStencilBuffer.Get(), nullptr, DepthStencilView());<br />
+// Transition the resource from its initial state to be used as a depth<br />
+buffer.<br />
+mCommandList-&gt;ResourceBarrier(1,<br />
+&amp;CD3DX12_RESOURCE_BARRIER::Transition( mDepthStencilBuffer.Get(),<br />
+D3D12_RESOURCE_STATE_COMMON,<br />
+D3D12_RESOURCE_STATE_DEPTH_WRITE));</p>
+<p>使用CD3DX12_HEAP_PROPERTIES辅助构造函数来创建堆属性结构，其实现方式如下：</p>
+<p>explicit CD3DX12_HEAP_PROPERTIES(<br />
+D3D12_HEAP_TYPE type, UINT creationNodeMask = 1,<br />
+UINT nodeMask = 1 )<br />
+{ Type = type; CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;<br />
+MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;<br />
+CreationNodeMask = creationNodeMask;<br />
+VisibleNodeMask = nodeMask;<br />
+}</p>
+<p>4.3.9 Set the Viewport</p>
+<p>通常将3D场景绘制到整个后台缓冲区，其中后台缓冲区的大小对应于整个屏幕(全屏模式)或窗口的整个client区域。然而，有时只想把3D场景绘制到一个后缓冲区的子矩形中，比如下图：</p>
+<p>绘制的后缓冲区的子矩形称为viewport，它由以下结构描述：<br />
+typedef struct D3D12_VIEWPORT {<br />
+FLOAT TopLeftX;<br />
+FLOAT TopLeftY;<br />
+FLOAT Width;<br />
+FLOAT Height;<br />
+FLOAT MinDepth;<br />
+FLOAT MaxDepth;<br />
+} D3D12_VIEWPORT;<br />
+前四个数据成员定义了相对于后缓冲区的视口矩形(注意，可以指定分数像素坐标，数据成员的类型是float)。在Direct3D中，深度值以0到1的规格化范围存储在深度缓冲区中。使用MinDepth和MaxDepth成员将深度间隔[0,1]转换为深度间隔[MinDepth, MaxDepth]。能够变换深度范围可以达到一定的效果;例如，可以设置MinDepth=0和MaxDepth=0，这样用这个viewport绘制的所有对象的深度值都将为0，并出现在场景中所有其他对象的前面。但是，通常将MinDepth设置为0，将MaxDepth设置为1，这样就不会修改深度值。填写完D3D12_VIEWPORT结构后，使用ID3D12CommandList::RSSetViewports方法用Direct3D设置viewport。下面的例子创建并设置了一个viewport，它可以绘制到整个后台缓冲区:<br />
+D3D12_VIEWPORT vp;<br />
+vp.TopLeftX = 0.0f;<br />
+vp.TopLeftY = 0.0f;<br />
+vp.Width = static_cast(mClientWidth);<br />
+vp.Height = static_cast(mClientHeight);<br />
+vp.MinDepth = 0.0f;<br />
+vp.MaxDepth = 1.0f;<br />
+mCommandList-&gt;RSSetViewports(1, &amp;vp);</p>
+<p>第一个参数是要绑定的视口数量(对于高级效果使用多个视口)，第二个参数是指向视口数组的指针。<br />
+不能为同一个呈现目标指定多个视图。多个视口用于同时呈现多个呈现目标的高级技术。<br />
+每当命令列表重置时，视图端口都需要重置。<br />
+可以使用viewport来实现双人游戏的分屏，创建两个视图，一个用于屏幕的左侧，另一个用于屏幕的右侧。然后可以从Player 1的视角将3D场景绘制到左侧的视图中，并从Player 2的视角将3D场景绘制到右侧的视图中。</p>
+<p>4.3.10 Set the Scissor Rectangles<br />
+设置裁剪矩形<br />
+可以对后缓冲区定义一个裁剪矩形，使在这个矩形外的像素被剔除。这可以用于优化。例如，如果知道屏幕的某个区域将包含一个矩形的UI元素，那么就不需要处理UI元素遮住的3D世界的像素。裁剪矩形由D3D12_RECT结构定义，其类型如下:<br />
+typedef struct tagRECT<br />
+{<br />
+LONG left;<br />
+LONG top;<br />
+LONG right;<br />
+LONG bottom;<br />
+} RECT;<br />
+D3D设置裁剪矩形使用 ID3D12CommandList::RSSetScissorRects方法。下列的例子创建和设置了一个裁剪矩形覆盖了后缓冲区的左上象限：<br />
+mScissorRect = { 0, 0, mClientWidth/2, mClientHeight/2 };<br />
+mCommandList-&gt;RSSetScissorRects(1, &amp;mScissorRect);<br />
+……<br />
+4.3结束了，然而我们还是没有任何的示例代码，没有渲染出哪怕一个空窗口</p>
+
+
+  
+
+</article>
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+    <!-- 备案信息 ICP for China -->
+    <div class="beian">
+  <span>
+    <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+      
+    </a>
+  </span>
+  
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?bbb32ef470b36fe5f1e4e72f32112b68";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

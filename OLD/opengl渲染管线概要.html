@@ -1,0 +1,675 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="木尘痕">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="渲染管线概要   顶点数据 Vertex Data 一系列顶点的集合  顶点 Vertex 一个3D坐标的数据的集合 顶点属性 Vertex Atrribute 用来表示顶点数据，例如一个3D位置和一些颜色值    顶点输入   数组 保存每一个顶点的3D位置   标准化设备坐标 Normalized Device Coordinates 3个轴为-1.0到1.0，坐标值必须在此范围之内   顶点">
+<meta property="og:type" content="website">
+<meta property="og:title" content="OpenGL渲染管线概要">
+<meta property="og:url" content="http://muchenhen.com/OLD/opengl%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF%E6%A6%82%E8%A6%81.html">
+<meta property="og:site_name" content="虚无之境">
+<meta property="og:description" content="渲染管线概要   顶点数据 Vertex Data 一系列顶点的集合  顶点 Vertex 一个3D坐标的数据的集合 顶点属性 Vertex Atrribute 用来表示顶点数据，例如一个3D位置和一些颜色值    顶点输入   数组 保存每一个顶点的3D位置   标准化设备坐标 Normalized Device Coordinates 3个轴为-1.0到1.0，坐标值必须在此范围之内   顶点">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://www.muchenhen.com/wp-content/uploads/2019/03/%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF%E6%A6%82%E8%A6%81.png">
+<meta property="article:published_time" content="2019-03-01T07:07:00.000Z">
+<meta property="article:modified_time" content="2024-07-14T15:26:08.244Z">
+<meta property="article:author" content="木尘痕">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://www.muchenhen.com/wp-content/uploads/2019/03/%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF%E6%A6%82%E8%A6%81.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>OpenGL渲染管线概要 - 虚无之境</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"muchenhen.com","root":"/","version":"1.9.1","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"bbb32ef470b36fe5f1e4e72f32112b68","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>虚无之境</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/NagisaKaworu.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="OpenGL渲染管线概要"></span>
+          
+        </div>
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      <div class="container nopadding-x-md">
+        <div id="board"
+          >
+          
+          <div class="container">
+            <div class="row">
+              <div class="col-12 col-md-10 m-auto">
+                
+
+<article class="page-content">
+  <p><a target="_blank" rel="noopener" href="http://www.muchenhen.com/wp-content/uploads/2019/03/%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF%E6%A6%82%E8%A6%81.png"><img src="http://www.muchenhen.com/wp-content/uploads/2019/03/%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF%E6%A6%82%E8%A6%81.png" srcset="/img/loading.gif" lazyload alt="" /></a>渲染管线概要</p>
+<ul>
+<li>
+<p>顶点数据 Vertex Data 一系列顶点的集合</p>
+<ul>
+<li>顶点 Vertex 一个3D坐标的数据的集合</li>
+<li>顶点属性 Vertex Atrribute 用来表示顶点数据，例如一个3D位置和一些颜色值</li>
+</ul>
+</li>
+<li>
+<p>顶点输入</p>
+<ul>
+<li>
+<p>数组 保存每一个顶点的3D位置</p>
+</li>
+<li>
+<p>标准化设备坐标 Normalized Device Coordinates 3个轴为-1.0到1.0，坐标值必须在此范围之内</p>
+</li>
+<li>
+<p>顶点着色器 在GPU上创建内存储存顶点数据，解释这些内存并指定如何发送给显卡，接着会处理在内存中指定数量的顶点。</p>
+</li>
+<li>
+<p>顶点缓冲对象 Vertex Buffer Objects 管理VS创建的内存，在显存中储存大量顶点。</p>
+<ul>
+<li>
+<p>glGenBuffers函数 使用glGenBuffers函数和一个缓冲ID生成一个VBO对象： unsigned int VBO; glGenBuffers(1, &amp;VBO);</p>
+</li>
+<li>
+<p>顶点缓冲类型 GL_ARRAY_BUFFER</p>
+</li>
+<li>
+<p>glBindBuffer函数 绑定不同类型的缓冲，把新创建的缓冲绑定到GL_ARRAY_BUFFER目标上 glBindBuffer(GL_ARRAY_BUFFER, VBO); ​</p>
+</li>
+<li>
+<p>glBufferData函数 把之前定义的顶点数据复制到缓冲的内存中： glBufferData(GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW);</p>
+<ul>
+<li>
+<p>目标的缓冲类型</p>
+</li>
+<li>
+<p>指定传输数据大小，单位为字节</p>
+</li>
+<li>
+<p>希望发送的实际数据</p>
+</li>
+<li>
+<p>指定显卡如何管理给定数据</p>
+<ul>
+<li>GL_STATIC_DRAW 数据不会或几乎不会改变</li>
+<li>GL_DYNAMIC_DRAW 数据会被改变很多</li>
+<li>GL_STREAM_DRAW 数据每次绘制时都会改变</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>图元 Primitive 指定数据所表示的渲染类型</p>
+<ul>
+<li>GL_POINTS 一系列点</li>
+<li>GL_TRIANGLES 一系列三角形</li>
+<li>GL_LINE_STRIP 一系列连续直线</li>
+<li>GL_LINES 每一对顶点被解释为一条直线</li>
+</ul>
+</li>
+<li>
+<p>渲染管线 Graphics Pipeline</p>
+<ul>
+<li>
+<p>顶点着色器 Vertex Shader 把3D坐标转为另一种3D坐标 允许对顶点属性进行一些基本处理​</p>
+<ul>
+<li>
+<p>编写</p>
+</li>
+<li>
+<p>编译</p>
+<ul>
+<li>
+<p>glCreateShader函数 创建着色器，将着色器类型以参数形式传给函数</p>
+</li>
+<li>
+<p>glShaderSource函数</p>
+<ul>
+<li>要编译的着色器对象</li>
+<li>指定传递的源码字符串数量</li>
+<li>顶点着色器的真正的源码</li>
+<li>NULL</li>
+</ul>
+</li>
+<li>
+<p>glCompileShader函数</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>图元装配 Primitive Assembly 将所有点装配成指定图元</p>
+</li>
+<li>
+<p>几何着色器 Geometry Shader 输入：图元形式的一系列顶点集合 输出：通过产生新顶点构造出新的或是其他的图元生成其他形状​</p>
+</li>
+<li>
+<p>光栅化 Rasterization Stage 将图元映射为屏幕上的像素，生成片段</p>
+</li>
+<li>
+<p>裁切 Clipping 丢弃视图之外的像素</p>
+</li>
+<li>
+<p>片段着色器 Fragment Shader 计算一个像素的最终颜色，通常包含3D场景的数据，如光照、阴影、光的颜色</p>
+<ul>
+<li>
+<p>片段 Fragment 光栅化生成</p>
+</li>
+<li>
+<p>输出变量 输出一个四分量向量，表示颜色的RGBA值</p>
+</li>
+<li>
+<p>编译</p>
+<ul>
+<li>glCreatShader</li>
+<li>glShaderSource</li>
+<li>glCompileShader</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>Alpha测试与混合 Blending 深度值判断消隐，并根据透明度进行混合​</p>
+</li>
+</ul>
+</li>
+<li>
+<p>着色器程序 着色器程序对象Shader Program Object是多个着色器合并之后并最终链接完成的版本</p>
+<ul>
+<li>
+<p>创建一个程序对象 unsigned int shaderProgram;​</p>
+<ul>
+<li>
+<p>glCreateProgram函数 创建一个程序并返回新创建程序对象的ID引用</p>
+</li>
+<li>
+<p>glAttachShader函数</p>
+<ul>
+<li>程序对象</li>
+<li>着色器对象</li>
+</ul>
+</li>
+<li>
+<p>glLinkProgram函数 得到的结果是一个程序对象</p>
+</li>
+<li>
+<p>glUseProgram函数 激活这个程序对象，该函数调用之后，每一个着色器调用和渲染调用都会使用这个程序对象</p>
+</li>
+<li>
+<p>glDeleteShader函数 着色器对象链接到程序对象后删除着色器对象</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>顶点属性</p>
+<ul>
+<li>
+<p>顶点数据缓冲</p>
+<ul>
+<li>紧密排列 Tightly Packed</li>
+</ul>
+</li>
+<li>
+<p>glVertexAttribPointer函数 每个顶点属性从一个VBO管理的内存中获得它的数据，而具体是从哪个VBO（程序中可以有多个VBO）获取则是通过在调用glVetexAttribPointer时绑定到GL_ARRAY_BUFFER的VBO决定的。由于在调用glVetexAttribPointer之前绑定的是先前定义的VBO对象，顶点属性0现在会链接到它的顶点数据。</p>
+<ul>
+<li>配置的顶点属性 在定义顶点着色器中定义的position顶点属性的位置值Location</li>
+<li>顶点属性的大小 三维的vec3则由三个值组成，大小是3</li>
+<li>数据类型 如GL_FLOAT</li>
+<li>是否标准化 GL_TRUE所有数据会被映射到0到1，signed为-1到1</li>
+<li>步长 Stride 连续顶点属性组之间的间隔。当数组为紧密排列时可以设置为0让OpenGL决定步长</li>
+<li>偏移量 Offset 参数类型为 void*，表示位置数据在缓冲中起始位置的偏移量</li>
+</ul>
+</li>
+<li>
+<p>glEnableVertexAttribArray函数 启用顶点属性</p>
+</li>
+</ul>
+</li>
+<li>
+<p>顶点数组对象 Vertex Array Object 可以像顶点缓冲对象那样被绑定，任何随后的顶点属性调用都会储存在这个VAO中。这样的好处就是，当配置顶点属性指针时，你只需要将那些调用执行一次，之后再绘制物体的时候只需要绑定相应的VAO就行了。这使在不同顶点数据和属性配置之间切换变得非常简单，只需要绑定不同的VAO就行了。刚刚设置的所有状态都将存储在VAO中。</p>
+<ul>
+<li>
+<p>创建</p>
+<ul>
+<li>glGenVertexArrays函数</li>
+</ul>
+</li>
+<li>
+<p>绑定VAO</p>
+<ul>
+<li>glBindVertexArray函数</li>
+</ul>
+</li>
+<li>
+<p>顶点数组复制</p>
+<ul>
+<li>glBindBuffer函数</li>
+<li>glBufferData函数</li>
+</ul>
+</li>
+<li>
+<p>设置顶点属性指针</p>
+<ul>
+<li>glVertexAttribPointer函数</li>
+<li>glEnableVertexAttribArray函数</li>
+</ul>
+</li>
+<li>
+<p>绘制物体</p>
+<ul>
+<li>glUseProgram函数</li>
+<li>glBindVertexArray函数</li>
+<li>glDrawArrays绘制函数 使用当前激活的着色器，之前定义的顶点属性配置和VBO的顶点数据来绘制图元</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>索引缓冲对象 Elment Buffer Object 也叫做Index Buffer Object​ EBO是一个专门存储所以的缓冲，OpenGL调用这些顶点的索引来决定该绘制哪个顶点。​</p>
+<ul>
+<li>
+<p>创建</p>
+</li>
+<li>
+<p>绑定</p>
+</li>
+<li>
+<p>顶点数组复制</p>
+</li>
+<li>
+<p>索引数组复制到索引缓冲</p>
+<ul>
+<li>glBindBuffer函数</li>
+<li>glBufferData函数</li>
+</ul>
+</li>
+<li>
+<p>设置顶点属性指针</p>
+</li>
+<li>
+<p>绘制</p>
+<ul>
+<li>glDrawElements函数</li>
+<li>glBindVertexArray函数</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+  
+
+</article>
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+    <!-- 备案信息 ICP for China -->
+    <div class="beian">
+  <span>
+    <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+      
+    </a>
+  </span>
+  
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?bbb32ef470b36fe5f1e4e72f32112b68";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

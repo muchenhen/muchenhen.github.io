@@ -1,0 +1,820 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="木尘痕">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言 本文是一次问题和解决的记录，其中相关的具体细节有部分我并不完全理解，无法作出有效总结……  问题 新增ShaderingModel之后，使用了原本的CustomData0和CustomData1材质属性，结果发现在编译后的metal文件中，存在相同的局部变量，进行了重复采样，导致在ios上相关的材质GPU消耗直接翻倍 拿一段生成的metal来做例子，如下： 12345float4 _197">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UE4：自定义材质属性节点规避材质编译问题">
+<meta property="og:url" content="http://muchenhen.com/posts/7908/index.html">
+<meta property="og:site_name" content="虚无之境">
+<meta property="og:description" content="前言 本文是一次问题和解决的记录，其中相关的具体细节有部分我并不完全理解，无法作出有效总结……  问题 新增ShaderingModel之后，使用了原本的CustomData0和CustomData1材质属性，结果发现在编译后的metal文件中，存在相同的局部变量，进行了重复采样，导致在ios上相关的材质GPU消耗直接翻倍 拿一段生成的metal来做例子，如下： 12345float4 _197">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-07-22T03:43:01.000Z">
+<meta property="article:modified_time" content="2024-07-14T15:26:08.252Z">
+<meta property="article:author" content="木尘痕">
+<meta property="article:tag" content="UE4">
+<meta property="article:tag" content="Rendering">
+<meta property="article:tag" content="Material">
+<meta property="article:tag" content="Shader">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>UE4：自定义材质属性节点规避材质编译问题 - 虚无之境</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"muchenhen.com","root":"/","version":"1.9.1","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"bbb32ef470b36fe5f1e4e72f32112b68","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>虚无之境</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/NagisaKaworu.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="UE4：自定义材质属性节点规避材质编译问题"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        木尘痕
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-07-22 11:43" pubdate>
+          2022年7月22日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          9 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">UE4：自定义材质属性节点规避材质编译问题</h1>
+            
+            <div class="markdown-body">
+              
+              <h1 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h1>
+<p>本文是一次问题和解决的记录，其中相关的具体细节有部分我并不完全理解，无法作出有效总结……</p>
+<h1 id="问题"><a class="markdownIt-Anchor" href="#问题"></a> 问题</h1>
+<p>新增ShaderingModel之后，使用了原本的CustomData0和CustomData1材质属性，结果发现在编译后的metal文件中，存在相同的局部变量，进行了重复采样，导致在ios上相关的材质GPU消耗直接翻倍</p>
+<p>拿一段生成的metal来做例子，如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs c++">float4 _197 = Material_Texture2D_1.<span class="hljs-built_in">sample</span>(Material_Texture2D_1Sampler, <span class="hljs-built_in">float2</span>(in_var_TEXCOORD0[<span class="hljs-number">0</span>].x, in_var_TEXCOORD0[<span class="hljs-number">0</span>].y));<br>half4 _198 = <span class="hljs-built_in">half4</span>(_197);<br>float4 _214 = Material_Texture2D_2.<span class="hljs-built_in">sample</span>(Material_Texture2D_2Sampler, <span class="hljs-built_in">float2</span>(<span class="hljs-built_in">half2</span>(<span class="hljs-built_in">min</span>(<span class="hljs-built_in">max</span>(_193 - (<span class="hljs-built_in">half</span>(<span class="hljs-number">1.0</span>) - <span class="hljs-built_in">half</span>(Material.Material_ScalarExpressions[<span class="hljs-number">0</span>].x * <span class="hljs-built_in">float</span>(_198.x))), <span class="hljs-built_in">half</span>(<span class="hljs-number">0.0</span>)), <span class="hljs-built_in">half</span>(<span class="hljs-number">1.0</span>)), <span class="hljs-built_in">half</span>(<span class="hljs-number">0.5</span>))));<br>float4 _280 = Material_Texture2D_1.<span class="hljs-built_in">sample</span>(Material_Texture2D_1Sampler, <span class="hljs-built_in">float2</span>(in_var_TEXCOORD0[<span class="hljs-number">0</span>].x, in_var_TEXCOORD0[<span class="hljs-number">0</span>].y));<br>float4 _293 = Material_Texture2D_2.<span class="hljs-built_in">sample</span>(Material_Texture2D_2Sampler, <span class="hljs-built_in">float2</span>(<span class="hljs-built_in">half2</span>(<span class="hljs-built_in">min</span>(<span class="hljs-built_in">max</span>(_193 - (<span class="hljs-built_in">half</span>(<span class="hljs-number">1.0</span>) - <span class="hljs-built_in">half</span>(Material.Material_ScalarExpressions[<span class="hljs-number">0</span>].x * <span class="hljs-built_in">float</span>(<span class="hljs-built_in">half4</span>(_280).x))), <span class="hljs-built_in">half</span>(<span class="hljs-number">0.0</span>)), <span class="hljs-built_in">half</span>(<span class="hljs-number">1.0</span>)), <span class="hljs-built_in">half</span>(<span class="hljs-number">0.5</span>))));<br></code></pre></td></tr></table></figure>
+<p>仔细看一下就会发现<br />
+把_198替换成half4(_197)</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c++">float4 _214 = Material_Texture2D_2.<span class="hljs-built_in">sample</span>(Material_Texture2D_2Sampler, <span class="hljs-built_in">float2</span>(<span class="hljs-built_in">half2</span>(<span class="hljs-built_in">min</span>(<span class="hljs-built_in">max</span>(_193 - (<span class="hljs-built_in">half</span>(<span class="hljs-number">1.0</span>) - <span class="hljs-built_in">half</span>(Material.Material_ScalarExpressions[<span class="hljs-number">0</span>].x * <span class="hljs-built_in">float</span>(<span class="hljs-built_in">half4</span>(_197).x))), <span class="hljs-built_in">half</span>(<span class="hljs-number">0.0</span>)), <span class="hljs-built_in">half</span>(<span class="hljs-number">1.0</span>)), <span class="hljs-built_in">half</span>(<span class="hljs-number">0.5</span>))));<br>float4 _293 = Material_Texture2D_2.<span class="hljs-built_in">sample</span>(Material_Texture2D_2Sampler, <span class="hljs-built_in">float2</span>(<span class="hljs-built_in">half2</span>(<span class="hljs-built_in">min</span>(<span class="hljs-built_in">max</span>(_193 - (<span class="hljs-built_in">half</span>(<span class="hljs-number">1.0</span>) - <span class="hljs-built_in">half</span>(Material.Material_ScalarExpressions[<span class="hljs-number">0</span>].x * <span class="hljs-built_in">float</span>(<span class="hljs-built_in">half4</span>(_280).x))), <span class="hljs-built_in">half</span>(<span class="hljs-number">0.0</span>)), <span class="hljs-built_in">half</span>(<span class="hljs-number">1.0</span>)), <span class="hljs-built_in">half</span>(<span class="hljs-number">0.5</span>))));<br></code></pre></td></tr></table></figure>
+<p>此时214和293只有197和280这俩不一样<br />
+再看一下197和280</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c++">float4 _197 = Material_Texture2D_1.<span class="hljs-built_in">sample</span>(Material_Texture2D_1Sampler, <span class="hljs-built_in">float2</span>(in_var_TEXCOORD0[<span class="hljs-number">0</span>].x, in_var_TEXCOORD0[<span class="hljs-number">0</span>].y));<br>float4 _280 = Material_Texture2D_1.<span class="hljs-built_in">sample</span>(Material_Texture2D_1Sampler, <span class="hljs-built_in">float2</span>(in_var_TEXCOORD0[<span class="hljs-number">0</span>].x, in_var_TEXCOORD0[<span class="hljs-number">0</span>].y));<br></code></pre></td></tr></table></figure>
+<p>一模一样啊……<br />
+_280与_197一样……<br />
+也就是说_293与_214一模一样……<br />
+sample直接重复了一次，没有合并优化掉…</p>
+<p>据leader和大佬们分析，是因为我们在自定义ShadingModel的时候使用了原本EMaterialProperty的MP_CustomData0和MP_CustomData1，所以最后在metal文件中这两个相关的值没有成功的被优化合并。</p>
+<h1 id="尝试策略"><a class="markdownIt-Anchor" href="#尝试策略"></a> 尝试策略</h1>
+<p>leader让我添加新的自定义的材质属性，但是要注意不要和customData0和customData1一致，参考一下基础的几个材质属性，看一下这样能不能成功在metal里优化掉这个问题</p>
+<p>打开引擎的r.DumpShaderDebugInfo选项后在材质编译生成的.rewritten.hlsl里看到</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function">half3 <span class="hljs-title">GetMaterialCustomData0</span><span class="hljs-params">(FMaterialPixelParameters Parameters)</span></span><br></code></pre></td></tr></table></figure>
+<p>CustomData0是在<strong>FMaterialPixelParameters</strong>结构体里面的</p>
+<p>这个结构体在MaterialTemplate.ush</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">/** </span><br><span class="hljs-comment"> * Parameters needed by pixel shader material inputs, related to Geometry.</span><br><span class="hljs-comment"> * These are independent of vertex factory.</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">FMaterialPixelParameters</span><br>&#123;<br>    <span class="hljs-comment">// 太长了......</span><br>&#125;;<br></code></pre></td></tr></table></figure>
+<p>但是有些属性比如透明度是这样的：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function">half <span class="hljs-title">GetMaterialOpacity</span><span class="hljs-params">(FPixelMaterialInputs PixelMaterialInputs)</span></span><br></code></pre></td></tr></table></figure>
+<p>是在结构体<strong>FPixelMaterialInputs</strong>里的</p>
+<p>这个结构体也在aterialTemplate.ush</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">/** </span><br><span class="hljs-comment"> * Parameters calculated from the pixel material inputs.</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">FPixelMaterialInputs</span><br>&#123;<br>%s<br>&#125;;<br></code></pre></td></tr></table></figure>
+<p>那么如果我们自定义一个材质属性用来给自定义的ShadingModel输入值的话，将这个材质属性和透明度保持近似，也放在FPixelMaterialInputs结构体里面，应该可以成功优化掉，而不是像customData一样。</p>
+<p><strong>FDeferredShadingSceneRenderer::Render()<strong>中会调用</strong>RenderBasePass()</strong>，之后在BasePassPixelShader.usf中会计算GBuffer</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs C++">FGBufferData GBuffer = (FGBufferData)<span class="hljs-number">0</span>;<br><br>GBuffer.GBufferAO = MaterialAO;<br>GBuffer.PerObjectGBufferData = <span class="hljs-built_in">GetPrimitiveData</span>(MaterialParameters.PrimitiveId).PerObjectGBufferData;<br>GBuffer.Depth = MaterialParameters.ScreenPosition.w;<br>GBuffer.PrecomputedShadowFactors = <span class="hljs-built_in">GetPrecomputedShadowMasks</span>(LightmapVTPageTableResult, Interpolants, MaterialParameters.PrimitiveId, MaterialParameters.AbsoluteWorldPosition, VolumetricLightmapBrickTextureUVs);<br><br><span class="hljs-type">const</span> <span class="hljs-type">float</span> GBufferDither = <span class="hljs-built_in">InterleavedGradientNoise</span>(MaterialParameters.SvPosition.xy, View.StateFrameIndexMod8);<br><span class="hljs-comment">// Use GBuffer.ShadingModelID after SetGBufferForShadingModel(..) because the ShadingModel input might not be the same as the output</span><br><span class="hljs-built_in">SetGBufferForShadingModel</span>(<br>    GBuffer,<br>    MaterialParameters,<br>    Opacity,<br>    BaseColor,<br>    Metallic,<br>    Specular,<br>    Roughness,<br>    Anisotropy,<br>    SubsurfaceColor,<br>    SubsurfaceProfile,<br>    GBufferDither,<br>    ShadingModel<br>    );<br></code></pre></td></tr></table></figure>
+<p>SetGBufferForShadingModel函数位于ShadingModelsMaterial.ush中</p>
+<p>在SetGBufferForShadingModel的函数体中可以看到部分参数是直接赋值的，但是GBuffer.CustomData要根据不同的ShaderModel进行赋值。</p>
+<p>在UE4本身原有的ShaderModel中，SHADINGMODELID_CLEAR_COAT有使用CustomData0和CustomData1，代码是这样的：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (ShadingModel == SHADINGMODELID_CLEAR_COAT)<br>	&#123;<br>		<span class="hljs-type">float</span> ClearCoat				= <span class="hljs-built_in">saturate</span>( <span class="hljs-built_in">GetMaterialCustomData0</span>(MaterialParameters) );<br>		<span class="hljs-type">float</span> ClearCoatRoughness	= <span class="hljs-built_in">saturate</span>( <span class="hljs-built_in">GetMaterialCustomData1</span>(MaterialParameters) );<br>		GBuffer.CustomData.x = ClearCoat;<br>		GBuffer.CustomData.y = ClearCoatRoughness;<br><br>		<span class="hljs-comment">// ……省略部分代码</span><br>    &#125;<br></code></pre></td></tr></table></figure>
+<p>而里面调用到的GetMaterialCustomData0和GetMaterialCustomData1来自MaterialTemplate.ush</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-function">half <span class="hljs-title">GetMaterialCustomData0</span><span class="hljs-params">(FMaterialPixelParameters Parameters)</span></span><br><span class="hljs-function"></span>&#123;<br>%s;<br>&#125;<br><br><span class="hljs-function">half <span class="hljs-title">GetMaterialCustomData1</span><span class="hljs-params">(FMaterialPixelParameters Parameters)</span></span><br><span class="hljs-function"></span>&#123;<br>%s;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>可以看出这里参数是从<strong>FMaterialPixelParameters</strong>获取的</p>
+<p>而像透明度之类的参数是这样的：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-function">half <span class="hljs-title">GetMaterialOpacityRaw</span><span class="hljs-params">(FPixelMaterialInputs PixelMaterialInputs)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-keyword">return</span> PixelMaterialInputs.Opacity;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>这里参数是<strong>FPixelMaterialInputs</strong></p>
+<p>那么把自定义参数也加到这个里面去，并提供类似的Get函数</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-function">half3 <span class="hljs-title">GetMaterialCustomData3</span><span class="hljs-params">(FPixelMaterialInputs PixelMaterialInputs)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-keyword">return</span> PixelMaterialInputs.CustomData3;<br>&#125;<br><br><span class="hljs-function">half <span class="hljs-title">GetMaterialCustomData4</span><span class="hljs-params">(FPixelMaterialInputs PixelMaterialInputs)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-keyword">return</span> PixelMaterialInputs.CustomData4;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>在BasePassPixelShader.usf中，调用SetGBufferForShadingModel的时候将新增加的变量也传过去</p>
+<p>在ShadingModelsMaterial.ush中</p>
+<p>void SetGBufferForShadingModel函数</p>
+<p>根据不同的ShadingModel，GBuffer需要有不同的赋值操作，对于我们新增的着色模型，之前是通过CustomData0和customData1获得的，在这里改成直接传进来的两个新增的自定义参数</p>
+<p>完成以上步骤之后，再次检查了编译后的debug信息以及对metal平台进行测试，原本没有被优化掉的sample成功优化掉了</p>
+<h1 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h1>
+<p>在自定义ShadingModel的时候，如果使用CustomData0和CustomData1两个材质属性，可能，有可能会在部分平台（比如metal）存在shader编译的优化问题，导致性能表现较差，可以考虑使用自定义材质属性节点来使材质编译能够正确优化。</p>
+<h1 id="参考"><a class="markdownIt-Anchor" href="#参考"></a> 参考</h1>
+<p>关于如果自定义ShadingModel和新增材质属性，这篇大佬写的很仔细，手把手教学型：<br />
+<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/446587397">UE4 shadingmodel终极版之如何新增材质接口(4.27)</a></p>
+
+              
+            </div>
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/UE4/" class="category-chain-item">UE4</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/UE4/">#UE4</a>
+      
+        <a href="/tags/Rendering/">#Rendering</a>
+      
+        <a href="/tags/Material/">#Material</a>
+      
+        <a href="/tags/Shader/">#Shader</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>UE4：自定义材质属性节点规避材质编译问题</div>
+      <div>http://muchenhen.com/posts/7908/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>木尘痕</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年7月22日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/49950/" title="UE4：材质节点VertexNormalWS输入的一个小问题">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">UE4：材质节点VertexNormalWS输入的一个小问题</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/52092/" title="UE4：使用Python导出LevelSequence轨道的Actor名字获取问题">
+                        <span class="hidden-mobile">UE4：使用Python导出LevelSequence轨道的Actor名字获取问题</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+    <!-- 备案信息 ICP for China -->
+    <div class="beian">
+  <span>
+    <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+      
+    </a>
+  </span>
+  
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?bbb32ef470b36fe5f1e4e72f32112b68";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script>
+  (function() {
+    var enableLang = CONFIG.code_language.enable && CONFIG.code_language.default;
+    var enableCopy = CONFIG.copy_btn;
+    if (!enableLang && !enableCopy) {
+      return;
+    }
+
+    function getBgClass(ele) {
+      return Fluid.utils.getBackgroundLightness(ele) >= 0 ? 'code-widget-light' : 'code-widget-dark';
+    }
+
+    var copyTmpl = '';
+    copyTmpl += '<div class="code-widget">';
+    copyTmpl += 'LANG';
+    copyTmpl += '</div>';
+    jQuery('.markdown-body pre').each(function() {
+      var $pre = jQuery(this);
+      if ($pre.find('code.mermaid').length > 0) {
+        return;
+      }
+      if ($pre.find('span.line').length > 0) {
+        return;
+      }
+
+      var lang = '';
+
+      if (enableLang) {
+        lang = CONFIG.code_language.default;
+        if ($pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2 && $pre.children().hasClass('hljs')) {
+          lang = $pre[0].children[0].classList[1];
+        } else if ($pre[0].getAttribute('data-language')) {
+          lang = $pre[0].getAttribute('data-language');
+        } else if ($pre.parent().hasClass('sourceCode') && $pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2) {
+          lang = $pre[0].children[0].classList[1];
+          $pre.parent().addClass('code-wrapper');
+        } else if ($pre.parent().hasClass('markdown-body') && $pre[0].classList.length === 0) {
+          $pre.wrap('<div class="code-wrapper"></div>');
+        }
+        lang = lang.toUpperCase().replace('NONE', CONFIG.code_language.default);
+      }
+      $pre.append(copyTmpl.replace('LANG', lang).replace('code-widget">',
+        getBgClass($pre[0]) + (enableCopy ? ' code-widget copy-btn" data-clipboard-snippet><i class="iconfont icon-copy"></i>' : ' code-widget">')));
+
+      if (enableCopy) {
+        Fluid.utils.createScript('https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js', function() {
+          var clipboard = new window.ClipboardJS('.copy-btn', {
+            target: function(trigger) {
+              var nodes = trigger.parentNode.childNodes;
+              for (var i = 0; i < nodes.length; i++) {
+                if (nodes[i].tagName === 'CODE') {
+                  return nodes[i];
+                }
+              }
+            }
+          });
+          clipboard.on('success', function(e) {
+            e.clearSelection();
+            e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-copy', 'icon-success');
+            setTimeout(function() {
+              e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-success', 'icon-copy');
+            }, 2000);
+          });
+        });
+      }
+    });
+  })();
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

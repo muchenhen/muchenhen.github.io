@@ -1,0 +1,535 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="木尘痕">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="在三维计算机图形学中，我们使用矩阵来简洁地描述几何变换，如缩放、旋转、平移，以及将点或向量的坐标从一帧变换到另一帧。本章探讨矩阵的数学。 目的:  了解矩阵及其运算。 发现向量矩阵乘法如何被视为一个线性组合。 学习单位矩阵是什么，矩阵的转置，行列式和逆是什么。 熟悉用于矩阵数学的DirectX数学库提供的类和函数的子集。  2.1定义 2.2矩阵乘法 2.3矩阵转置 2.4单位矩阵 2.5矩阵行列">
+<meta property="og:type" content="website">
+<meta property="og:title" content="DX12龙书PartⅠChapter 2 矩阵">
+<meta property="og:url" content="http://muchenhen.com/OLD/dx12%E9%BE%99%E4%B9%A6part%E2%85%A0chapter-2-%E7%9F%A9%E9%98%B5.html">
+<meta property="og:site_name" content="虚无之境">
+<meta property="og:description" content="在三维计算机图形学中，我们使用矩阵来简洁地描述几何变换，如缩放、旋转、平移，以及将点或向量的坐标从一帧变换到另一帧。本章探讨矩阵的数学。 目的:  了解矩阵及其运算。 发现向量矩阵乘法如何被视为一个线性组合。 学习单位矩阵是什么，矩阵的转置，行列式和逆是什么。 熟悉用于矩阵数学的DirectX数学库提供的类和函数的子集。  2.1定义 2.2矩阵乘法 2.3矩阵转置 2.4单位矩阵 2.5矩阵行列">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2019/10/image-14.png">
+<meta property="article:published_time" content="2019-10-28T10:27:26.000Z">
+<meta property="article:modified_time" content="2024-07-14T15:26:08.244Z">
+<meta property="article:author" content="木尘痕">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.muchenhen.com/wp-content/uploads/2019/10/image-14.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>DX12龙书PartⅠChapter 2 矩阵 - 虚无之境</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"muchenhen.com","root":"/","version":"1.9.1","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"bbb32ef470b36fe5f1e4e72f32112b68","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>虚无之境</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/NagisaKaworu.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="DX12龙书PartⅠChapter 2 矩阵"></span>
+          
+        </div>
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      <div class="container nopadding-x-md">
+        <div id="board"
+          >
+          
+          <div class="container">
+            <div class="row">
+              <div class="col-12 col-md-10 m-auto">
+                
+
+<article class="page-content">
+  <p>在三维计算机图形学中，我们使用矩阵来简洁地描述几何变换，如缩放、旋转、平移，以及将点或向量的坐标从一帧变换到另一帧。本章探讨矩阵的数学。</p>
+<p>目的:</p>
+<ol>
+<li>了解矩阵及其运算。</li>
+<li>发现向量矩阵乘法如何被视为一个线性组合。</li>
+<li>学习单位矩阵是什么，矩阵的转置，行列式和逆是什么。</li>
+<li>熟悉用于矩阵数学的DirectX数学库提供的类和函数的子集。</li>
+</ol>
+<p>2.1定义</p>
+<p>2.2矩阵乘法</p>
+<p>2.3矩阵转置</p>
+<p>2.4单位矩阵</p>
+<p>2.5矩阵行列式</p>
+<p>2.6伴随矩阵</p>
+<p>2.7矩阵的逆</p>
+<h2 id="以上内容为线性代数知识不赘述"><a class="markdownIt-Anchor" href="#以上内容为线性代数知识不赘述"></a> 以上内容为线性代数知识，不赘述</h2>
+<h2 id="28-directx-math-matrices"><a class="markdownIt-Anchor" href="#28-directx-math-matrices"></a> <strong>2.8 DIRECTX MATH MATRICES</strong></h2>
+<p>DirectX数学矩阵</p>
+<h2 id="281矩阵类型"><a class="markdownIt-Anchor" href="#281矩阵类型"></a> <strong>2.8.1矩阵类型</strong></h2>
+<p>为了在DirectX数学中表示4×4矩阵，我们使用了XMMATRIX类，它在DirectXMath.h头文件中定义</p>
+<p>XMMATRIX使用四个XMVECTOR实例来使用SIMD。而且，XMMATRIX为矩阵运算提供了重载的运算符。</p>
+<p>除了使用各种构造函数之外，还可以使用XMMatrixSet函数创建XMMATRIX实例:</p>
+<p>XMMATRIX XM_CALLCONV XMMatrixSet(</p>
+<p>float m00, float m01, float m02, float m03,</p>
+<p>float m10, float m11, float m12, float m13,</p>
+<p>float m20, float m21, float m22, float m23,</p>
+<p>float m30, float m31, float m32, float m33);</p>
+<p>我们使用以下方法将数据从XMFLOAT4X4加载到XMMATRIX:</p>
+<p>inline XMMATRIX XM_CALLCONV</p>
+<p>XMLoadFloat4x4(const XMFLOAT4X4* pSource);</p>
+<p>我们使用以下方法将数据从XMMATRIX存储到XMFLOAT4X4:</p>
+<p>inline void XM_CALLCONV</p>
+<p>XMStoreFloat4x4(XMFLOAT4X4* pDestination, FXMMATRIX M);</p>
+<h2 id="282矩阵函数"><a class="markdownIt-Anchor" href="#282矩阵函数"></a> <strong>2.8.2矩阵函数</strong></h2>
+<p>XMMATRIX XM_CALLCONV XMMatrixIdentity();</p>
+<p>// Returns the identity matrix I 返回单位矩阵I</p>
+<p>bool XM_CALLCONV XMMatrixIsIdentity( FXMMATRIX M);</p>
+<p>// Returns true if M is the identity matrix 如果是单位矩阵返回true</p>
+<p>// Input M</p>
+<p>XMMATRIX XM_CALLCONV XMMatrixMultiply( FXMMATRIX A, CXMMATRIX B);</p>
+<p>// Returns the matrix product AB 返回矩阵AB的乘积</p>
+<p>// Input A</p>
+<p>// Input B</p>
+<p>XMMATRIX XM_CALLCONV XMMatrixTranspose( FXMMATRIX M);</p>
+<p>// Returns MT 返回矩阵转置</p>
+<p>// Input M</p>
+<p>XMVECTOR XM_CALLCONV XMMatrixDeterminant(  FXMMATRIX M);</p>
+<p>// Returns(det M, det M, det M, det M) 返回矩阵行列式</p>
+<p>// Input M XMMATRIX XM_CALLCONV</p>
+<p>XMMatrixInverse(XMVECTOR* pDeterminant, FXMMATRIX M);</p>
+<p>// Returns M−1 返回矩阵的逆</p>
+<p>// Input (det M, det M, det M, det M)</p>
+<p>// Input M</p>
+<p>When we declare a XMMATRIX</p>
+<h2 id="283例子"><a class="markdownIt-Anchor" href="#283例子"></a> <strong>2.8.3例子</strong></h2>
+<p>#include // for XMVerifyCPUSupport<br />
+#include #include #include using namespace std;<br />
+using namespace DirectX;<br />
+using namespace DirectX::PackedVector;</p>
+<p>// Overload the  “&lt;&lt;” operators so that we can use cout to<br />
+//重载“&lt;&lt;”操作符，以便我们可以使用cout<br />
+// output XMVECTOR and XMMATRIX objects.<br />
+//输出XMVECTOR和XMMATRIX对象。<br />
+ostream&amp; XM_CALLCONV operator &lt;&lt; (ostream&amp; os, FXMVECTOR v)<br />
+{<br />
+XMFLOAT4 dest;<br />
+XMStoreFloat4(&amp;dest, v);</p>
+<pre><code class="hljs">os &lt;&lt; &quot;(&quot; &lt;&lt; dest.x &lt;&lt; &quot;, &quot; &lt;&lt; dest.y &lt;&lt; &quot;, &quot; &lt;&lt; dest.z &lt;&lt; &quot;, &quot; &lt;&lt; dest.w &lt;&lt; &quot;)&quot;;
+return os;
+</code></pre>
+<p>}</p>
+<p>ostream&amp; XM_CALLCONV operator &lt;&lt; (ostream&amp; os, FXMMATRIX m)<br />
+{<br />
+for (int i = 0; i &lt; 4; ++i)<br />
+{<br />
+os &lt;&lt; XMVectorGetX(m.r[i]) &lt;&lt; “\t”;<br />
+os &lt;&lt; XMVectorGetY(m.r[i]) &lt;&lt; “\t”;<br />
+os &lt;&lt; XMVectorGetZ(m.r[i]) &lt;&lt; “\t”;<br />
+os &lt;&lt; XMVectorGetW(m.r[i]);<br />
+os &lt;&lt; endl;<br />
+}<br />
+return os;<br />
+}</p>
+<p>int main()<br />
+{<br />
+// Check support for SSE2 (Pentium4, AMD K8, and above).<br />
+//检查是否支持SSE2<br />
+if (!XMVerifyCPUSupport())<br />
+{<br />
+cout &lt;&lt; “directx math not supported” &lt;&lt; endl;<br />
+return 0;<br />
+}</p>
+<pre><code class="hljs">XMMATRIX A(1.0f, 0.0f, 0.0f, 0.0f,
+    0.0f, 2.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 4.0f, 0.0f,
+    1.0f, 2.0f, 3.0f, 1.0f);
+
+XMMATRIX B = XMMatrixIdentity();//定义了一个单位矩阵
+
+XMMATRIX C = A \* B;//矩阵乘法
+
+XMMATRIX D = XMMatrixTranspose(A);//A的转置
+
+XMVECTOR det = XMMatrixDeterminant(A);//A的行列式
+XMMATRIX E = XMMatrixInverse(&amp;det, A);//A的逆
+
+XMMATRIX F = A \* E;//A乘A的逆矩阵，结果是单位阵
+
+cout &lt;&lt; &quot;A = &quot; &lt;&lt; endl &lt;&lt; A &lt;&lt; endl;
+cout &lt;&lt; &quot;B = &quot; &lt;&lt; endl &lt;&lt; B &lt;&lt; endl;
+cout &lt;&lt; &quot;C = A\*B = &quot; &lt;&lt; endl &lt;&lt; C &lt;&lt; endl;
+cout &lt;&lt; &quot;D = transpose(A) = &quot; &lt;&lt; endl &lt;&lt; D &lt;&lt; endl;
+cout &lt;&lt; &quot;det = determinant(A) = &quot; &lt;&lt; det &lt;&lt; endl &lt;&lt; endl;
+cout &lt;&lt; &quot;E = inverse(A) = &quot; &lt;&lt; endl &lt;&lt; E &lt;&lt; endl;
+cout &lt;&lt; &quot;F = A\*E = &quot; &lt;&lt; endl &lt;&lt; F &lt;&lt; endl;
+
+return 0;
+</code></pre>
+<p>}</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2019/10/image-14.png" srcset="/img/loading.gif" lazyload alt="" /></p>
+
+
+  
+
+</article>
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+    <!-- 备案信息 ICP for China -->
+    <div class="beian">
+  <span>
+    <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+      
+    </a>
+  </span>
+  
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?bbb32ef470b36fe5f1e4e72f32112b68";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

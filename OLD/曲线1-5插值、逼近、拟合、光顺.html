@@ -1,0 +1,493 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="木尘痕">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="插值 插值是一种函数逼近的重要方法。 例如给定函数f(x)在区间[a,b]中互异的n个点的值：  基于这个列表数据，寻找一个函数（简称Y函数）去逼近f(x)（简称X函数）。若要求Y函数在xi处与X函数相等，称这样的函数逼近问题为插值问题，称Y函数为X函数的插值函数，xi为插值节点。 在插值节点处两个函数相等，在其他处用Y函数近似替代X函数。 线性插值 假设给定函数f(x)在两个不同点x1和x2的值">
+<meta property="og:type" content="website">
+<meta property="og:title" content="曲线1.5插值、逼近、拟合、光顺">
+<meta property="og:url" content="http://muchenhen.com/OLD/%E6%9B%B2%E7%BA%BF1-5%E6%8F%92%E5%80%BC%E3%80%81%E9%80%BC%E8%BF%91%E3%80%81%E6%8B%9F%E5%90%88%E3%80%81%E5%85%89%E9%A1%BA.html">
+<meta property="og:site_name" content="虚无之境">
+<meta property="og:description" content="插值 插值是一种函数逼近的重要方法。 例如给定函数f(x)在区间[a,b]中互异的n个点的值：  基于这个列表数据，寻找一个函数（简称Y函数）去逼近f(x)（简称X函数）。若要求Y函数在xi处与X函数相等，称这样的函数逼近问题为插值问题，称Y函数为X函数的插值函数，xi为插值节点。 在插值节点处两个函数相等，在其他处用Y函数近似替代X函数。 线性插值 假设给定函数f(x)在两个不同点x1和x2的值">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2018/12/1501.png">
+<meta property="og:image" content="http://www.muchenhen.com/wp-content/uploads/2018/12/1502.png">
+<meta property="og:image" content="http://www.muchenhen.com/wp-content/uploads/2018/12/1503.png">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2018/12/1504.png">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2018/12/1505.png">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2018/12/1506.png">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2018/12/1507.png">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2018/12/1508.png">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2018/12/1509.png">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2018/12/1510.png">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2018/12/1511.png">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2018/12/1512.png">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2018/12/1513.png">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2018/12/1514.png">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2018/12/1515.png">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2018/12/1516.png">
+<meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2018/12/1517.png">
+<meta property="article:published_time" content="2018-12-15T14:04:36.000Z">
+<meta property="article:modified_time" content="2024-07-14T15:26:08.252Z">
+<meta property="article:author" content="木尘痕">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.muchenhen.com/wp-content/uploads/2018/12/1501.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>曲线1.5插值、逼近、拟合、光顺 - 虚无之境</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"muchenhen.com","root":"/","version":"1.9.1","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"bbb32ef470b36fe5f1e4e72f32112b68","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>虚无之境</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/NagisaKaworu.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="曲线1.5插值、逼近、拟合、光顺"></span>
+          
+        </div>
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      <div class="container nopadding-x-md">
+        <div id="board"
+          >
+          
+          <div class="container">
+            <div class="row">
+              <div class="col-12 col-md-10 m-auto">
+                
+
+<article class="page-content">
+  <p><strong>插值</strong></p>
+<p>插值是一种函数逼近的重要方法。</p>
+<p>例如给定函数f(x)在区间[a,b]中互异的n个点的值：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1501.png" srcset="/img/loading.gif" lazyload alt="" /></p>
+<p>基于这个列表数据，寻找一个函数（简称Y函数）去逼近f(x)（简称X函数）。若要求Y函数在xi处与X函数相等，称这样的函数逼近问题为插值问题，称Y函数为X函数的插值函数，xi为插值节点。</p>
+<p>在插值节点处两个函数相等，在其他处用Y函数近似替代X函数。</p>
+<p><strong>线性插值</strong></p>
+<p>假设给定函数f(x)在两个不同点x1和x2的值：</p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2018/12/1502.png" srcset="/img/loading.gif" lazyload alt="" /></p>
+<p>现在要求用一个线性函数来近似代替，线性函数如下：</p>
+<p><img src="http://www.muchenhen.com/wp-content/uploads/2018/12/1503.png" srcset="/img/loading.gif" lazyload alt="" /></p>
+<p>选择线性函数的系数a，b使得：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1504.png" srcset="/img/loading.gif" lazyload alt="" /></p>
+<p>则称该线性函数为原函数的线性插值函数，如下图所示：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1505.png" srcset="/img/loading.gif" lazyload alt="" /></p>
+<p>线性插值函数可以写成：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1506.png" srcset="/img/loading.gif" lazyload alt="" /></p>
+<p>记：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1507.png" srcset="/img/loading.gif" lazyload alt="" /></p>
+<p>记上式为插值函数的截断误差，[x1,x2]为插值区间。当x在区间之外时，用插值函数近似替代原函数，称为外插。</p>
+<p><strong>抛物线插值</strong></p>
+<p>又称为二次插值。若已知函数f(x)存在三个互异点x1，x2，x3的函数值为y1、y2、y3，要求构造一个函数：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1508.png" srcset="/img/loading.gif" lazyload alt="" /></p>
+<p>要使在节点处原函数与二次插值函数的值相等，如下图：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1509.png" srcset="/img/loading.gif" lazyload alt="" /></p>
+<p>根据在x1，x2，x3处的值相等可以构造线性方程组，就可以求出abc构造出插值函数。</p>
+<p><strong>逼近</strong></p>
+<p>在插值点过多时，构造插值函数很困难，而且过多的插值点也会存在误差，没有必要寻找一个插值函数通过所有的插值点。方便起见往往选择一个次数较低的函数，在某种意义上最佳逼近这些插值点。逼近的方法很多，最常用的是**<em>最小二乘法</em>**。</p>
+<p>假设一直一组插值点：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1510.png" srcset="/img/loading.gif" lazyload alt="" /></p>
+<p>要求构造一个m（m&lt;n-1）次多项式函数y=F(x)逼近这些点。逼近结果的好坏使用各点偏差的平方和或加权的方差最小：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1511.png" srcset="/img/loading.gif" lazyload alt="" /></p>
+<p>或：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1512.png" srcset="/img/loading.gif" lazyload alt="" /></p>
+<p>其中dk是加权因子，对可靠的点赋较大的比重，一般dk&gt;0。令F(x)为一个m次多项式：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1513.png" srcset="/img/loading.gif" lazyload alt="" /></p>
+<p>这里的最小二乘法问题就是要定出系数aj，使偏差平方和（上面的式子）达到极小。</p>
+<p><strong>光顺</strong></p>
+<p>通俗含义是指曲线的拐点不能太多。（据说拐来拐去看着不顺眼？？？）</p>
+<p>平面曲线相对光顺的条件是：</p>
+<ol>
+<li>具有二阶几何连续</li>
+<li>不存在多余拐点和奇异点</li>
+<li>曲率变化较小</li>
+</ol>
+<p>例如平面上的三次参数曲线段：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1514.png" srcset="/img/loading.gif" lazyload alt="" /></p>
+<p>其相应的拐点方程是：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1515.png" srcset="/img/loading.gif" lazyload alt="" /></p>
+<p>其中：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1516.png" srcset="/img/loading.gif" lazyload alt="" /></p>
+<p>如果p≠0，构造表达式：</p>
+<p><img src="https://www.muchenhen.com/wp-content/uploads/2018/12/1517.png" srcset="/img/loading.gif" lazyload alt="" /></p>
+<p>是一个权值为-2的相对不变量，并由它可得知：</p>
+<ol>
+<li>当I&gt;0时，相应曲线有两个实拐点。</li>
+<li>当I=0时，曲线上出现一个尖点</li>
+<li>当I&lt;0时，曲线上会出现一个二重点</li>
+</ol>
+<p>对于第一种情况，如果曲线段两端的曲率时异号，曲线段上不可避免会有一个拐点。如果曲线段两端点的曲率异号，在p、q、r满足某些条件时，曲线段上有两个拐点，并称之为多余拐点。为了使曲线光顺，必须寻找能消除多余拐点的插值方法。通常在不改变两个端点的切线方向的条件下，把切向量的模分别乘以x，y（x,y&gt;0），这样可以保证在(x,y)平面的第一象限内找到一个矩形区域，使得在其中构造的三次参数样条曲线没有多余的拐点、尖点和二重点。对于不同的函数表示的曲线和曲面使用的光顺算法不同。</p>
+<p><strong>拟合</strong></p>
+<p>拟合没有完整的数学表示和定义。拟合是指在曲线、曲面的设计过程中，使用插值或者逼近的方法使生成的曲线达到某些设计要求，在允许的范围内贴近原始的插值点或控制点序列。对于曲线和曲面，光滑指的是在切矢量上的连续性，或更精确的要求是指曲率的连续性。</p>
+
+
+  
+
+</article>
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+    <!-- 备案信息 ICP for China -->
+    <div class="beian">
+  <span>
+    <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+      
+    </a>
+  </span>
+  
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?bbb32ef470b36fe5f1e4e72f32112b68";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
