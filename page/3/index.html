@@ -227,6 +227,50 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/posts/59534/" target="_self">
+          UE4：Niagara扩展CameraQuery支持CPU获取ViewSize
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/posts/59534/" target="_self">
+        <div>
+          前言 TA大佬在niagara里需要做一个CPU粒子，需要用到ViewSize这个参数，从CameraQuery里只有一个GPU方法可以获取，只能考虑GPU粒子，希望能有一个CPU获取ViewSize的方法  具体问题 新建一个NiagaraScript，默认长这样：  在MapGet里新增一个CameraQuery节点  从这个Pin拉出来Get方法  可以看到这个是CameraQuery的G
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-08-19 16:10" pubdate>
+              2022-08-19
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/UE4/">#UE4</a>
+            
+              <a href="/tags/Tools/">#Tools</a>
+            
+              <a href="/tags/Niagara/">#Niagara</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/posts/61655/" target="_self">
           UE4：FSequencer的BakeTransform封装到蓝图
         </a>
@@ -703,73 +747,6 @@
               <a href="/tags/UE4/">#UE4</a>
             
               <a href="/tags/Optimization/">#Optimization</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/posts/34123/" target="_self">
-          UE4：移动端俯视角远距离摄像机的级联阴影优化
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/posts/34123/" target="_self">
-        <div>
-          前言 项目中使用了方向光级联阴影，但是leader跟我说这个级联阴影的ShadowMap的利用率很低，让我去看看能不能搞一搞，然鹅本人光照和阴影啥都没看过（甚至第一次听说CSM）当时真的是：  于是抓紧时间看了一下相关的知识和UE4的源码部分，算是一定程度解决了问题，本文作为这次任务的小总结。  级联阴影简介 级联阴影是对ShadowMap的一种优化，理想情况下，空间中的每一个阴影的像素都对应到
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-06-20 21:00" pubdate>
-              2022-06-20
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/UE4/" class="category-chain-item">UE4</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/UE4/">#UE4</a>
-            
-              <a href="/tags/Rendering/">#Rendering</a>
-            
-              <a href="/tags/Mobile/">#Mobile</a>
-            
-              <a href="/tags/Shadow/">#Shadow</a>
             
           </div>
         
