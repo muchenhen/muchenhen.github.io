@@ -31,7 +31,7 @@
 <meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2018/10/4.png">
 <meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2018/10/5.png">
 <meta property="article:published_time" content="2018-10-24T14:47:53.000Z">
-<meta property="article:modified_time" content="2025-09-09T06:53:09.177Z">
+<meta property="article:modified_time" content="2025-10-28T02:08:16.404Z">
 <meta property="article:author" content="木尘痕">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://www.muchenhen.com/wp-content/uploads/2018/10/1.jpg">
@@ -83,7 +83,7 @@
   <script  src="/js/color-schema.js" ></script>
 
   
-<meta name="generator" content="Hexo 7.3.0"></head>
+<meta name="generator" content="Hexo 8.1.0"></head>
 
 
 <body>
@@ -302,53 +302,53 @@ pAET-&gt;next=NULL;
 //初始化NET表
 NET \*pNET\[1024\];
 for(i=0; i&lt;=MaxY; i++)
-&#123;
+{
     pNET\[i\]=new NET;
     pNET\[i\]-&gt;next=NULL;
-&#125;
+}
 glClear(GL\_COLOR\_BUFFER\_BIT);        //赋值的窗口显示.
 glColor3f(0.0,0.0,0.0);             //设置直线的颜色红色
 glBegin(GL\_POINTS);
 //扫描并建立NET表
 for(i=0; i&lt;=MaxY; i++)
-&#123;
+{
     for(int j=0; jpolypoint\[j\].y)
-            &#123;
+            {
                 NET \*p=new NET;
                 p-&gt;x=polypoint\[j\].x;
                 p-&gt;ymax=polypoint\[(j-1+POINTNUM)%POINTNUM\].y;
                 p-&gt;dx=(polypoint\[(j-1+POINTNUM)%POINTNUM\].x-polypoint\[j\].x)/(polypoint\[(j-1+POINTNUM)%POINTNUM\].y-polypoint\[j\].y);
                 p-&gt;next=pNET\[i\]-&gt;next;
                 pNET\[i\]-&gt;next=p;
-            &#125;
+            }
             if(polypoint\[(j+1+POINTNUM)%POINTNUM\].y&gt;polypoint\[j\].y)
-            &#123;
+            {
                 NET \*p=new NET;
                 p-&gt;x=polypoint\[j\].x;
                 p-&gt;ymax=polypoint\[(j+1+POINTNUM)%POINTNUM\].y;
                 p-&gt;dx=(polypoint\[(j+1+POINTNUM)%POINTNUM\].x-polypoint\[j\].x)/(polypoint\[(j+1+POINTNUM)%POINTNUM\].y-polypoint\[j\].y);
                 p-&gt;next=pNET\[i\]-&gt;next;
                 pNET\[i\]-&gt;next=p;
-            &#125;
-        &#125;
-&#125;
+            }
+        }
+}
 //建立并更新活性边表AET
 for(i=0; i&lt;=MaxY; i++)
-&#123;
+{
     //计算新的交点x,更新AET
     NET \*p=pAET-&gt;next;
     while(p)
-    &#123;
+    {
         p-&gt;x=p-&gt;x + p-&gt;dx;
         p=p-&gt;next;
-    &#125;
+    }
     //更新后新AET先排序/
     //断表排序,不再开辟空间
     AET \*tq=pAET;
     p=pAET-&gt;next;
     tq-&gt;next=NULL;
     while(p)
-    &#123;
+    {
         while(tq-&gt;next &amp;&amp; p-&gt;x &gt;= tq-&gt;next-&gt;x)
             tq=tq-&gt;next;
         NET \*s=p-&gt;next;
@@ -356,29 +356,29 @@ for(i=0; i&lt;=MaxY; i++)
         tq-&gt;next=p;
         p=s;
         tq=pAET;
-    &#125;
+    }
     //(改进算法)先从AET表中删除ymax==i的结点
     AET \*q=pAET;
     p=q-&gt;next;
     while(p)
-    &#123;
+    {
         if(p-&gt;ymax==i)
-        &#123;
+        {
             q-&gt;next=p-&gt;next;
             delete p;
             p=q-&gt;next;
-        &#125;
+        }
         else
-        &#123;
+        {
             q=q-&gt;next;
             p=q-&gt;next;
-        &#125;
-    &#125;
+        }
+    }
     //将NET中的新点加入AET,并用插入法按X值递增排序
     p=pNET\[i\]-&gt;next;
     q=pAET;
     while(p)
-    &#123;
+    {
         while(q-&gt;next &amp;&amp; p-&gt;x &gt;= q-&gt;next-&gt;x)
             q=q-&gt;next;
         NET \*s=p-&gt;next;
@@ -386,17 +386,17 @@ for(i=0; i&lt;=MaxY; i++)
         q-&gt;next=p;
         p=s;
         q=pAET;
-    &#125;
+    }
     //配对填充颜色
 
     p=pAET-&gt;next;
     while(p &amp;&amp; p-&gt;next)
-    &#123;
+    {
         for(float j=p-&gt;x; j&lt;=p-&gt;next-&gt;x; j++)
             glVertex2i(static\_cast(j),i);
         p=p-&gt;next-&gt;next;//考虑端点情况
-    &#125;
-&#125;
+    }
+}
 glEnd();
 glFlush();
 </code></pre>

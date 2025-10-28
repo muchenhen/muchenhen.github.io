@@ -26,7 +26,7 @@
 <meta property="og:description" content="该容器从c11才有，内部是一个单向链表。 需要头文件&lt;forward_list&gt; 在std中定义如下： template &lt;class Type, class Allocator &#x3D; allocator&gt; class forward_list forward_list是一个受限制的list，优点是内存用量较少，行动也比较快。比起list有一些约束： 不提供双向迭代器，不支持">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2019-11-03T14:18:01.000Z">
-<meta property="article:modified_time" content="2025-09-09T06:53:09.172Z">
+<meta property="article:modified_time" content="2025-10-28T02:08:16.398Z">
 <meta property="article:author" content="木尘痕">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -77,7 +77,7 @@
   <script  src="/js/color-schema.js" ></script>
 
   
-<meta name="generator" content="Hexo 7.3.0"></head>
+<meta name="generator" content="Hexo 8.1.0"></head>
 
 
 <body>
@@ -436,7 +436,7 @@ printLists(“初始化：”, list1, list2);</p>
 <pre><code class="hljs">//在list2的第一个元素前插入6个新元素
 list2.insert\_after(list2.before\_begin(), 99);
 list2.push\_front(10);
-list2.insert\_after(list2.before\_begin(), &#123; 10,11,12,13 &#125;);
+list2.insert\_after(list2.before\_begin(), { 10,11,12,13 });
 printLists(&quot;6个新元素：&quot;, list1, list2);
 
 //把list2的所有元素插入到list1的开头

@@ -27,7 +27,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://www.muchenhen.com/wp-content/uploads/2019/03/QQ%E6%88%AA%E5%9B%BE20190301165057.png">
 <meta property="article:published_time" content="2019-03-01T08:52:32.000Z">
-<meta property="article:modified_time" content="2025-09-09T06:53:09.177Z">
+<meta property="article:modified_time" content="2025-10-28T02:08:16.404Z">
 <meta property="article:author" content="木尘痕">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://www.muchenhen.com/wp-content/uploads/2019/03/QQ%E6%88%AA%E5%9B%BE20190301165057.png">
@@ -79,7 +79,7 @@
   <script  src="/js/color-schema.js" ></script>
 
   
-<meta name="generator" content="Hexo 7.3.0"></head>
+<meta name="generator" content="Hexo 8.1.0"></head>
 
 
 <body>
@@ -252,19 +252,19 @@ glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);</p>
 GLFWwindow\* window = glfwCreateWindow(SCR\_WIDTH, SCR\_HEIGHT, &quot;相连的三角行&quot;, NULL, NULL);
 //检查窗口创建
 if (window == NULL)
-&#123;
+{
 	std::cout &lt;&lt; &quot;Failed to create GLFW window&quot; &lt;&lt; std::endl;
 	glfwTerminate();
 	return -1;
-&#125;
+}
 glfwMakeContextCurrent(window);
 glfwSetFramebufferSizeCallback(window, framebuffer\_size\_callback);
 
 if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-&#123;
+{
 	std::cout &lt;&lt; &quot;Failed to initialize GLAD&quot; &lt;&lt; std::endl;
 	return -1;
-&#125;
+}
 
 // 创建并编译着色器
 // 顶点着色器
@@ -276,10 +276,10 @@ int success;
 char infoLog\[512\];
 glGetShaderiv(vertexShader, GL\_COMPILE\_STATUS, &amp;success);
 if (!success)
-&#123;
+{
 	glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
 	std::cout &lt;&lt; &quot;ERROR::SHADER::VERTEX::COMPILATION\_FAILED\\n&quot; &lt;&lt; infoLog &lt;&lt; std::endl;
-&#125;
+}
 // 片段着色器
 int fragmentShader = glCreateShader(GL\_FRAGMENT\_SHADER);
 glShaderSource(fragmentShader, 1, &amp;fragmentShaderSource, NULL);
@@ -287,10 +287,10 @@ glCompileShader(fragmentShader);
 //检查编译错误
 glGetShaderiv(fragmentShader, GL\_COMPILE\_STATUS, &amp;success);
 if (!success)
-&#123;
+{
 	glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
 	std::cout &lt;&lt; &quot;ERROR::SHADER::FRAGMENT::COMPILATION\_FAILED\\n&quot; &lt;&lt; infoLog &lt;&lt; std::endl;
-&#125;
+}
 //链接着色器
 int shaderProgram = glCreateProgram();
 glAttachShader(shaderProgram, vertexShader);
@@ -298,16 +298,16 @@ glAttachShader(shaderProgram, fragmentShader);
 glLinkProgram(shaderProgram);
 //检查连接错误
 glGetProgramiv(shaderProgram, GL\_LINK\_STATUS, &amp;success);
-if (!success) &#123;
+if (!success) {
 	glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
 	std::cout &lt;&lt; &quot;ERROR::SHADER::PROGRAM::LINKING\_FAILED\\n&quot; &lt;&lt; infoLog &lt;&lt; std::endl;
-&#125;
+}
 glDeleteShader(vertexShader);
 glDeleteShader(fragmentShader);
 
 // 设置顶点数据和缓存，配置顶点属性
 // 添加一个新的顶点数组，形成两个三角形，共6个顶点
-float vertices\[\] = &#123;
+float vertices\[\] = {
 	//第一个三角形
 	-0.9f, -0.5f, 0.0f,  // left 
 	-0.0f, -0.5f, 0.0f,  // right
@@ -316,7 +316,7 @@ float vertices\[\] = &#123;
 	 0.0f, -0.5f, 0.0f,  // left
 	 0.9f, -0.5f, 0.0f,  // right
 	 0.45f, 0.5f, 0.0f   // top 
-&#125;;
+};
 
 unsigned int VBO, VAO;
 glGenVertexArrays(1, &amp;VAO);
@@ -336,7 +336,7 @@ glBindVertexArray(0);
 
 //渲染循环
 while (!glfwWindowShouldClose(window))
-&#123;
+{
 	//输入
 	processInput(window);
 
@@ -352,7 +352,7 @@ while (!glfwWindowShouldClose(window))
 	//交换缓冲区
 	glfwSwapBuffers(window);
 	glfwPollEvents();
-&#125;
+}
 
 //取消用过的资源的分配
 glDeleteVertexArrays(1, &amp;VAO);

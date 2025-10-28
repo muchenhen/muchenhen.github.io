@@ -18,18 +18,18 @@
   <meta name="author" content="木尘痕">
   <meta name="keywords" content="">
   
-    <meta name="description" content="读取方法 读取UPROPERTY标记的UObject类类型的属性 UE4提供一个迭代器进行字段遍历 TFieldIterator&lt;T&gt; for (TFieldIterator&lt;UProperty&gt; i ( GetClass() ); i; ++i) &#123; &#x2F;&#x2F; 进行相关操作 UProperty* prop&#x3D;*i; &#x2F;&#x2F;i指向一个UProperty &#125; 获">
+    <meta name="description" content="读取方法 读取UPROPERTY标记的UObject类类型的属性 UE4提供一个迭代器进行字段遍历 TFieldIterator&lt;T&gt; for (TFieldIterator&lt;UProperty&gt; i ( GetClass() ); i; ++i) { &#x2F;&#x2F; 进行相关操作 UProperty* prop&#x3D;*i; &#x2F;&#x2F;i指向一个UProperty } 获得了UPropert">
 <meta property="og:type" content="article">
 <meta property="og:title" content="UE4:反射系统获取UPROPERTY">
 <meta property="og:url" content="http://muchenhen.com/posts/36675/index.html">
 <meta property="og:site_name" content="虚无之境">
-<meta property="og:description" content="读取方法 读取UPROPERTY标记的UObject类类型的属性 UE4提供一个迭代器进行字段遍历 TFieldIterator&lt;T&gt; for (TFieldIterator&lt;UProperty&gt; i ( GetClass() ); i; ++i) &#123; &#x2F;&#x2F; 进行相关操作 UProperty* prop&#x3D;*i; &#x2F;&#x2F;i指向一个UProperty &#125; 获">
+<meta property="og:description" content="读取方法 读取UPROPERTY标记的UObject类类型的属性 UE4提供一个迭代器进行字段遍历 TFieldIterator&lt;T&gt; for (TFieldIterator&lt;UProperty&gt; i ( GetClass() ); i; ++i) { &#x2F;&#x2F; 进行相关操作 UProperty* prop&#x3D;*i; &#x2F;&#x2F;i指向一个UProperty } 获得了UPropert">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-08-23T09:33:03.000Z">
-<meta property="article:modified_time" content="2025-09-09T06:53:09.183Z">
+<meta property="article:modified_time" content="2025-10-28T02:08:16.409Z">
 <meta property="article:author" content="木尘痕">
-<meta property="article:tag" content="UE4">
 <meta property="article:tag" content="C++">
+<meta property="article:tag" content="UE4">
 <meta name="twitter:card" content="summary_large_image">
   
   
@@ -85,7 +85,7 @@
   <script  src="/js/color-schema.js" ></script>
 
   
-<meta name="generator" content="Hexo 7.3.0"></head>
+<meta name="generator" content="Hexo 8.1.0"></head>
 
 
 <body>
@@ -227,7 +227,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          674 字
+          664 字
         
       </span>
     
@@ -293,10 +293,10 @@
 <p>UE4提供一个迭代器进行字段遍历</p>
 <p><code>TFieldIterator&lt;T&gt;</code></p>
 <p><code>for (TFieldIterator&lt;UProperty&gt; i ( GetClass() ); i; ++i)</code></p>
-<p><code>&#123;</code></p>
+<p><code>{</code></p>
 <p><code>// 进行相关操作</code></p>
 <p><code>UProperty* prop=*i; //i指向一个UProperty</code></p>
-<p><code>&#125;</code></p>
+<p><code>}</code></p>
 <p>获得了UProperty，如果需要进一步访问该属性的Name和Value</p>
 <p><code>Name = prop.GetName();</code></p>
 <p><img src="data:image/png;base64,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" srcset="/img/loading.gif" lazyload alt="UProperty* Property  FString PropertyName  *Propertylterator;  Property- &gt;GetName ( ) " /></p>
