@@ -1,0 +1,849 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="木尘痕">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="一、摘要 本文介绍官方的《使用 Zen Storage Server 作为虚幻引擎的烘焙输出存储》，利用Lyra项目，一并介绍BuildGraph中相关的ZenExportSnapshotTask、ZenImportOplogTask、ZenImportSnapshotTask三个节点  二、Zen Storage 文档总结 从上文的官方文档进行总结有下面几点  1、目的与优势：   解决性能瓶">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UE5 ：Zen as Cook Storage 与 BuildGraph Zen Nodes">
+<meta property="og:url" content="http://muchenhen.com/posts/9545/index.html">
+<meta property="og:site_name" content="虚无之境">
+<meta property="og:description" content="一、摘要 本文介绍官方的《使用 Zen Storage Server 作为虚幻引擎的烘焙输出存储》，利用Lyra项目，一并介绍BuildGraph中相关的ZenExportSnapshotTask、ZenImportOplogTask、ZenImportSnapshotTask三个节点  二、Zen Storage 文档总结 从上文的官方文档进行总结有下面几点  1、目的与优势：   解决性能瓶">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2026/UE5ZenasCookStorage%E4%B8%8EBuildGraphZenNodes-2026-01-14-23-35-58.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2026/20260115235547300.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2026/20260116222357478.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2026/20260116222548656.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2026/20260116222858359.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2026/20260116222958960.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2026/20260116223123350.png">
+<meta property="article:published_time" content="2026-01-13T15:47:27.000Z">
+<meta property="article:modified_time" content="2026-01-16T14:42:52.658Z">
+<meta property="article:author" content="木尘痕">
+<meta property="article:tag" content="Cook">
+<meta property="article:tag" content="UE5">
+<meta property="article:tag" content="Zen">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2026/UE5ZenasCookStorage%E4%B8%8EBuildGraphZenNodes-2026-01-14-23-35-58.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>UE5 ：Zen as Cook Storage 与 BuildGraph Zen Nodes - 虚无之境</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"muchenhen.com","root":"/","version":"1.9.1","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"bbb32ef470b36fe5f1e4e72f32112b68","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+
+  
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>虚无之境</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/NagisaKaworu.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="UE5 ：Zen as Cook Storage 与 BuildGraph Zen Nodes"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        木尘痕
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-01-13 23:47" pubdate>
+          2026年1月13日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          16k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          27 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">UE5 ：Zen as Cook Storage 与 BuildGraph Zen Nodes</h1>
+            
+            <div class="markdown-body">
+              
+              <h2 id="一-摘要"><a class="markdownIt-Anchor" href="#一-摘要"></a> 一、摘要</h2>
+<p>本文介绍官方的<a target="_blank" rel="noopener" href="https://dev.epicgames.com/documentation/en-us/unreal-engine/using-zen-storage-server-as-cooked-output-store-for-unreal-engine">《使用 Zen Storage Server 作为虚幻引擎的烘焙输出存储》</a>，利用Lyra项目，一并介绍BuildGraph中相关的ZenExportSnapshotTask、ZenImportOplogTask、ZenImportSnapshotTask三个节点</p>
+<h2 id="二-zen-storage-文档总结"><a class="markdownIt-Anchor" href="#二-zen-storage-文档总结"></a> 二、Zen Storage 文档总结</h2>
+<p>从上文的官方文档进行总结有下面几点</p>
+<h3 id="1-目的与优势"><a class="markdownIt-Anchor" href="#1-目的与优势"></a> 1、<strong>目的与优势</strong>：</h3>
+<ul>
+<li>
+<p><strong>解决性能瓶颈</strong>：传统烘焙会生成数百万个小文件，导致文件系统读写、杀毒软件扫描（巨硬的Defender）及元数据更新缓慢。Zenserver 将数据聚合存储，可以大幅减少文件系统开销。</p>
+</li>
+<li>
+<p><strong>支持新功能</strong>：是 Zen Streaming和 Cooked Data Snapshots 的基础。本文不展开关于Zen Stream的内容，Snapshots也不进行深入解释。可以查看另外两篇官方文档或者等作者拖更。</p>
+</li>
+<li>
+<p><strong>空间优化</strong>：通过内容寻址存储实现跨项目、跨平台的重复数据删除，节省磁盘空间，降本增效（。）</p>
+</li>
+</ul>
+<h3 id="2-使用方法"><a class="markdownIt-Anchor" href="#2-使用方法"></a> 2、使用方法</h3>
+<p>文档中写目前在 UE 5.5 中默认关闭，反正我看了5.7也是默认关的。</p>
+<p>开启方式：Project Settings -&gt; Packaging -&gt; Use Zen Server as cooked output store</p>
+<p><img src="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2026/UE5ZenasCookStorage%E4%B8%8EBuildGraphZenNodes-2026-01-14-23-35-58.png" srcset="/img/loading.gif" lazyload alt="UE5ZenasCookStorage与BuildGraphZenNodes-2026-01-14-23-35-58" /></p>
+<p>或者在DefaultGame.ini中添加：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-section">[/Script/UnrealEd.ProjectPackagingSettings]</span><br><span class="hljs-attr">bUseZenStore</span>=<span class="hljs-literal">True</span><br></code></pre></td></tr></table></figure>
+<p><strong>注意</strong>：必须启动Use Io Store，但是不必须依赖 Use Pak File，具体差异不在这里赘述。</p>
+<p>开启后，项目的 Saved/Cooked 目录下不再有具体的资产文件（如 .uasset），只有一个 ue.projectstore 索引文件。实际数据存储在 AppData 或自定义路径下。</p>
+<h3 id="3-数据管理"><a class="markdownIt-Anchor" href="#3-数据管理"></a> 3、数据管理</h3>
+<p>Zenserver 作为一个服务运行，统一管理所有项目的数据。<br />
+清理机制：基于引用的垃圾回收。如果 ue.projectstore 文件被删除或超过 n 天未修改，对应的数据会被自动清理。</p>
+<h3 id="4-对stage的影响"><a class="markdownIt-Anchor" href="#4-对stage的影响"></a> 4、对Stage的影响</h3>
+<p>启动了Zen进行Storage的时候，Stage的时候UAT会从Zenserver读取数据。</p>
+<p>打包为.pak的情况，沈城的最终.pak和不使用zenserver的情况一致，Stage结果也不会包含<code>ue.projectstore</code></p>
+<p>pak也不启用，使用散文件的话，Stage产出的目录将不会有实际的文件，只会有一个<code>ue.projectstore</code>，运行时将会通过该文件连接到Zenserver，进行流式传输。流式传输的情况本文不深入讨论。</p>
+<h2 id="三-使用lyra测试"><a class="markdownIt-Anchor" href="#三-使用lyra测试"></a> 三、使用Lyra测试</h2>
+<h3 id="前置配置"><a class="markdownIt-Anchor" href="#前置配置"></a> 前置配置</h3>
+<p>我在WSL上运行Zenserver，作为中心存储，下文称作Remote Zen，为了避免端口冲突，我手动设置了8559，不是默认的8558</p>
+<p>在DefaultEngine中配置了如下选项：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-section">[Zen.AutoLaunch]</span><br><span class="hljs-attr">DataPath</span>=E:/UnrealProject/LyraStarterGame/Zen/Data<br><br><span class="hljs-section">[Zen.ConnectExisting]</span><br><span class="hljs-attr">HostName</span>=localhost<br><span class="hljs-attr">Port</span>=<span class="hljs-number">8558</span><br><br><span class="hljs-section">[StorageServers]</span><br><span class="hljs-attr">Shared</span>=(Host=<span class="hljs-string">&quot;http://172.28.34.131:8559&quot;</span>, Namespace=<span class="hljs-string">&quot;lyra.ddc&quot;</span>, Remote=<span class="hljs-literal">true</span>)<br></code></pre></td></tr></table></figure>
+<p>将本地ZenData目录指向了一个绝对路径，这里也可以填写相对路径，<strong>注意</strong>，<strong>这个参数会在执行BuildGraph的Zen相关节点时作为ZenData的目录</strong>。虽然可以通过环境变量和命令行参数进行覆盖，不过为了简单和尽量避免配置问题的角度，我建议只在这一个地方设置ZenData的位置</p>
+<p>这里通过StorageServers设置了Shared ddc的位置</p>
+<p>当我启动Editor完成了Shader编译之后，可以在Zen Dashboard中看到：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2026/20260115235547300.png" srcset="/img/loading.gif" lazyload alt="image.png" /></p>
+<p>ddc会在cook过程中被利用以加速cook进程。</p>
+<p>此时已经完成了本地的zenserver启动的配置和远程zenserver的启动配置，通过设置Shared DDC确认本地能访问到远程Zen并成功写入ddc</p>
+<h3 id="配置buildgraph"><a class="markdownIt-Anchor" href="#配置buildgraph"></a> 配置BuildGraph</h3>
+<p>这里给出一个简短的配置</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-meta">&lt;?xml version=<span class="hljs-string">&quot;1.0&quot;</span> encoding=<span class="hljs-string">&quot;utf-8&quot;</span>?&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">BuildGraph</span> <span class="hljs-attr">xmlns</span>=<span class="hljs-string">&quot;http://www.epicgames.com/BuildGraph&quot;</span>&gt;</span><br><br>  <span class="hljs-tag">&lt;<span class="hljs-name">Option</span> <span class="hljs-attr">Name</span>=<span class="hljs-string">&quot;ProjectFile&quot;</span> <span class="hljs-attr">DefaultValue</span>=<span class="hljs-string">&quot;&quot;</span> <span class="hljs-attr">Description</span>=<span class="hljs-string">&quot;Path to .uproject&quot;</span>/&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">Option</span> <span class="hljs-attr">Name</span>=<span class="hljs-string">&quot;ProjectName&quot;</span> <span class="hljs-attr">DefaultValue</span>=<span class="hljs-string">&quot;&quot;</span> <span class="hljs-attr">Description</span>=<span class="hljs-string">&quot;Project Name (e.g. Lyra)&quot;</span>/&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">Option</span> <span class="hljs-attr">Name</span>=<span class="hljs-string">&quot;TargetName&quot;</span>  <span class="hljs-attr">DefaultValue</span>=<span class="hljs-string">&quot;$(ProjectName)&quot;</span> <span class="hljs-attr">Description</span>=<span class="hljs-string">&quot;Target Name (e.g. LyraGame)&quot;</span>/&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">Option</span> <span class="hljs-attr">Name</span>=<span class="hljs-string">&quot;ZenPublishHost&quot;</span> <span class="hljs-attr">DefaultValue</span>=<span class="hljs-string">&quot;&quot;</span> <span class="hljs-attr">Description</span>=<span class="hljs-string">&quot;Zen Server URL&quot;</span>/&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">Option</span> <span class="hljs-attr">Name</span>=<span class="hljs-string">&quot;BuildChange&quot;</span> <span class="hljs-attr">DefaultValue</span>=<span class="hljs-string">&quot;00000&quot;</span> <span class="hljs-attr">Description</span>=<span class="hljs-string">&quot;ChangeList Number&quot;</span>/&gt;</span><br><br>  <span class="hljs-tag">&lt;<span class="hljs-name">Agent</span> <span class="hljs-attr">Name</span>=<span class="hljs-string">&quot;LocalZenTest&quot;</span> <span class="hljs-attr">Type</span>=<span class="hljs-string">&quot;Win64&quot;</span>&gt;</span><br><br>    <span class="hljs-tag">&lt;<span class="hljs-name">Node</span> <span class="hljs-attr">Name</span>=<span class="hljs-string">&quot;CompileAll&quot;</span>&gt;</span><br>      <span class="hljs-tag">&lt;<span class="hljs-name">Compile</span> <span class="hljs-attr">Target</span>=<span class="hljs-string">&quot;ShaderCompileWorker&quot;</span> <span class="hljs-attr">Platform</span>=<span class="hljs-string">&quot;Win64&quot;</span> <span class="hljs-attr">Configuration</span>=<span class="hljs-string">&quot;Development&quot;</span>/&gt;</span><br>      <span class="hljs-tag">&lt;<span class="hljs-name">Compile</span> <span class="hljs-attr">Target</span>=<span class="hljs-string">&quot;UnrealPak&quot;</span> <span class="hljs-attr">Platform</span>=<span class="hljs-string">&quot;Win64&quot;</span> <span class="hljs-attr">Configuration</span>=<span class="hljs-string">&quot;Development&quot;</span>/&gt;</span><br><br>      <span class="hljs-tag">&lt;<span class="hljs-name">Compile</span> <span class="hljs-attr">Target</span>=<span class="hljs-string">&quot;$(ProjectName)Editor&quot;</span> <span class="hljs-attr">Project</span>=<span class="hljs-string">&quot;$(ProjectFile)&quot;</span> <span class="hljs-attr">Platform</span>=<span class="hljs-string">&quot;Win64&quot;</span> <span class="hljs-attr">Configuration</span>=<span class="hljs-string">&quot;Development&quot;</span>/&gt;</span><br><br>      <span class="hljs-tag">&lt;<span class="hljs-name">Compile</span> <span class="hljs-attr">Target</span>=<span class="hljs-string">&quot;$(TargetName)&quot;</span> <span class="hljs-attr">Project</span>=<span class="hljs-string">&quot;$(ProjectFile)&quot;</span> <span class="hljs-attr">Platform</span>=<span class="hljs-string">&quot;Win64&quot;</span> <span class="hljs-attr">Configuration</span>=<span class="hljs-string">&quot;Development&quot;</span>/&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">Node</span>&gt;</span><br><br>    <span class="hljs-tag">&lt;<span class="hljs-name">Node</span> <span class="hljs-attr">Name</span>=<span class="hljs-string">&quot;CookAndPush&quot;</span> <span class="hljs-attr">Requires</span>=<span class="hljs-string">&quot;CompileAll&quot;</span>&gt;</span><br>      <span class="hljs-tag">&lt;<span class="hljs-name">Cook</span> <span class="hljs-attr">Project</span>=<span class="hljs-string">&quot;$(ProjectFile)&quot;</span> <span class="hljs-attr">Platform</span>=<span class="hljs-string">&quot;Windows&quot;</span> <span class="hljs-attr">Arguments</span>=<span class="hljs-string">&quot;-cookincremental -unversioned -compressed&quot;</span>/&gt;</span><br><br>      <span class="hljs-tag">&lt;<span class="hljs-name">Log</span> <span class="hljs-attr">Message</span>=<span class="hljs-string">&quot;Pushing to Zen Host: $(ZenPublishHost)&quot;</span>/&gt;</span><br><br>      <span class="hljs-tag">&lt;<span class="hljs-name">ZenExportSnapshot</span></span><br><span class="hljs-tag">        <span class="hljs-attr">Project</span>=<span class="hljs-string">&quot;$(ProjectFile)&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">Platform</span>=<span class="hljs-string">&quot;Windows&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">DestinationStorageType</span>=<span class="hljs-string">&quot;Zen&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">DestinationZenHost</span>=<span class="hljs-string">&quot;$(ZenPublishHost)&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">DestinationIdentifier</span>=<span class="hljs-string">&quot;$(ProjectName).dev.$(BuildChange)&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">SnapshotDescriptorFile</span>=<span class="hljs-string">&quot;$(RootDir)/Saved/ZenDesc/$(ProjectName).json&quot;</span></span><br><span class="hljs-tag">      /&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">Node</span>&gt;</span><br><br>  <span class="hljs-tag">&lt;/<span class="hljs-name">Agent</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">BuildGraph</span>&gt;</span><br></code></pre></td></tr></table></figure>
+<p>此处由于Lyra的Target.cs的命名和uproject的名字不一致，所以只好额外处理一下单独传递了ProjectName和TargetName</p>
+<p>在上面这个BuildGraph中，先是进行了所有的编译工作，然后使用Cook节点进行cook，最后使用<code>ZenExportSnapshot</code>节点进行oplog的Snapshot的导出和上传</p>
+<p>其中Cook的参数cookincremental顺便测试了5.7新引入的incremental cook功能，相关文章可以看这个 <a href="https://muchenhen.com/posts/46195/">UE5.7 解析：Incremental Cooking决策逻辑 </a></p>
+<p>对应使用这个BuildGraph的powershell脚本如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$</span><span class="language-bash">timestamp = Get-Date -Format <span class="hljs-string">&quot;yyyy-MM-dd HH:mm:ss&quot;</span></span><br>Write-Host &quot;[$timestamp] Starting BuildGraph execution...&quot;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$</span><span class="language-bash">process = Start-Process -FilePath <span class="hljs-string">&quot;F:\UE_Release\Engine\Build\BatchFiles\RunUAT.bat&quot;</span> `</span><br>    -ArgumentList @(<br>        &quot;BuildGraph&quot;,<br>        &quot;-Script=`&quot;E:\UnrealProject\LyraStarterGame\Graph\Tasks\PackageWithZenSnapshot.xml`&quot;&quot;,<br>        &quot;-Target=`&quot;CookAndPush`&quot;&quot;,<br>        &quot;-set:ProjectFile=`&quot;E:\UnrealProject\LyraStarterGame\LyraStarterGame.uproject`&quot;&quot;,<br>        &quot;-set:ProjectName=`&quot;Lyra`&quot;&quot;,<br>        &quot;-set:TargetName=`&quot;LyraGame`&quot;&quot;,<br>        &quot;-set:ZenPublishHost=`&quot;http://172.28.34.131:8559`&quot;&quot;,<br>        &quot;-set:BuildChange=00002&quot;<br>    ) `<br>    -NoNewWindow -PassThru -Wait<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$</span><span class="language-bash">timestamp = Get-Date -Format <span class="hljs-string">&quot;yyyy-MM-dd HH:mm:ss&quot;</span></span><br>Write-Host &quot;[$timestamp] BuildGraph execution completed with exit code: $($process.ExitCode)&quot;<br>exit $process.ExitCode<br></code></pre></td></tr></table></figure>
+<h3 id="进行cook"><a class="markdownIt-Anchor" href="#进行cook"></a> 进行Cook</h3>
+<p>通过log来确认zen的作用，下面直接给出一部分log</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs log">[2026-01-16 21:40:52] Starting BuildGraph execution...<br>Running AutomationTool...<br>Using bundled DotNet SDK version: 8.0.412 win-x64<br>Starting AutomationTool...<br>Parsing command line: BuildGraph -Script=E:\UnrealProject\LyraStarterGame\Graph\Tasks\PackageWithZenSnapshot.xml -Target=CookAndPush -set:ProjectFile=E:\UnrealProject\LyraStarterGame\LyraStarterGame.uproject -set:ProjectName=Lyra -set:TargetName=LyraGame -set:ZenPublishHost=http://172.28.34.131:8559 -set:BuildChange=00002<br>Initializing script modules...<br>Total script module initialization time: 0.22 s.<br>Using C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\MSBuild.exe<br>Executing commands...<br>****** [1/2] CompileAll<br><br>Running: F:\UE_Release\Engine\Binaries\ThirdParty\DotNet\8.0.412\win-x64\dotnet.exe &quot;F:\UE_Release\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll&quot; -Target=&quot;ShaderCompileWorker Win64 Development -Manifest=F:\UE_Release\Engine\Intermediate\Build\Manifest-1-ShaderCompileWorker-Win64-Development.xml&quot; -Target=&quot;UnrealPak Win64 Development -Manifest=F:\UE_Release\Engine\Intermediate\Build\Manifest-2-UnrealPak-Win64-Development.xml&quot; -Target=&quot;LyraEditor Win64 Development -Project=E:\UnrealProject\LyraStarterGame\LyraStarterGame.uproject -Manifest=F:\UE_Release\Engine\Intermediate\Build\Manifest-3-LyraEditor-Win64-Development.xml&quot; -Target=&quot;LyraGame Win64 Development -Project=E:\UnrealProject\LyraStarterGame\LyraStarterGame.uproject -Manifest=F:\UE_Release\Engine\Intermediate\Build\Manifest-4-LyraGame-Win64-Development.xml&quot; -log=&quot;F:\UE_Release\Engine\Programs\AutomationTool\Saved\Logs\UBA-ShaderCompileWorker-Win64-Development.txt&quot;<br></code></pre></td></tr></table></figure>
+<p>可能不是很容易看，但是不难注意到BuildGraph的第一个Node：CompileAll启动了，正确通过set设置了一些参数</p>
+<p>接下来是cook的一部分log：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><code class="hljs log">Reading tag &quot;CompileAll&quot;:&quot;#CompileAll&quot; from local file F:\UE_Release\Engine\Saved\BuildGraph\CompileAll\Tag-CompileAll.xml<br>Reading tag &quot;CompileAll&quot;:&quot;&quot; manifest from F:\UE_Release\Engine\Saved\BuildGraph\CompileAll\Manifest.xml<br>Compiling GameFeaturePlugins in branch UE5<br>Running UnrealEditor Cook for project E:\UnrealProject\LyraStarterGame\LyraStarterGame.uproject<br>Commandlet log file is F:\UE_Release\Engine\Programs\AutomationTool\Saved\Cook-2026.01.16-21.41.03.txt<br>Running: F:\UE_Release\Engine\Binaries\Win64\UnrealEditor-Cmd.exe &quot;E:\UnrealProject\LyraStarterGame\LyraStarterGame.uproject&quot; -run=Cook  -TargetPlatform=Windows -Unversioned -cookincremental -unversioned -compressed -abslog=&quot;F:\UE_Release\Engine\Programs\AutomationTool\Saved\Cook-2026.01.16-21.41.03.txt&quot; -stdout -CrashForUAT -unattended -NoLogTimes<br>…………………………<br>…………………………<br>…………………………<br>LogZenServiceInstance: Display: Launching zen utility &#x27;F:/UE_Release/Engine/Binaries/Win64/zen.exe service status&#x27;.<br>LogZenServiceInstance: Display: Launching zen utility &#x27;F:/UE_Release/Engine/Binaries/Win64/zen.exe service status&#x27;.<br>LogZenServiceInstance: Display: Read zen version cache file from &#x27;F:/UE_Release/Engine/Saved/Zen/zen.version&#x27;, version: &#x27;5.7.6-202510061608-windows-x64-release-9a1ebb9&#x27;<br>LogZenServiceInstance: Display: Read zen version cache file from &#x27;C:/Users/muche/AppData/Local/UnrealEngine/Common/Zen/Install/zen.version&#x27;, version: &#x27;5.7.6-202510061608-windows-x64-release-9a1ebb9&#x27;<br>LogZenServiceInstance: Display: Installed service at &#x27;C:/Users/muche/AppData/Local/UnrealEngine/Common/Zen/Install/zenserver.exe&#x27; is up to date<br>LogZenServiceInstance: Display: Launching executable &#x27;C:/Users/muche/AppData/Local/UnrealEngine/Common/Zen/Install/zenserver.exe&#x27;, working dir &#x27;C:/Users/muche/AppData/Local/UnrealEngine/Common/Zen/Install&#x27;, data dir &#x27;E:/UnrealProject/LyraStarterGame/Zen/Data&#x27;, args &#x27;--port 8558 --data-dir E:\UnrealProject\LyraStarterGame\Zen\Data --http asio --gc-cache-duration-seconds 1209600 --gc-interval-seconds 21600 --gc-low-diskspace-threshold 2147483648 --cache-bucket-limit-overwrites --quiet --http-forceloopback --owner-pid 7576  --child-id Zen_7576_Startup&#x27;<br>LogZenServiceInstance: Display: Unreal Zen Storage Server HTTP service at http://[::1]:8558 status: OK!.<br>LogDerivedDataCache: Display: ZenLocal: Using ZenServer HTTP service at [::1] with namespace ue.ddc status: OK!.<br>LogDerivedDataCache: Display: ../../../Engine/DerivedDataCache: Performance: Latency=0.01ms. RandomReadSpeed=883.90MBs, RandomWriteSpeed=296.18MBs. Assigned SpeedClass &#x27;Local&#x27;<br>LogZenServiceInstance: Display: Launching zen utility &#x27;F:/UE_Release/Engine/Binaries/Win64/zen.exe service status&#x27;.<br>LogZenServiceInstance: Display: Launching zen utility &#x27;F:/UE_Release/Engine/Binaries/Win64/zen.exe service status&#x27;.<br>LogZenServiceInstance: Display: Zen utility process has been running for 2.0 seconds without completing, still waiting...<br>LogZenServiceInstance: Display: Launching zen utility &#x27;F:/UE_Release/Engine/Binaries/Win64/zen.exe service status&#x27;.<br>LogZenServiceInstance: Display: Launching zen utility &#x27;F:/UE_Release/Engine/Binaries/Win64/zen.exe service status&#x27;.<br>LogZenStore: Display: Establishing oplog &#x27;LyraStarterGame.247567c8/EditorDomain&#x27;<br>LogZenStore: Display: Zen project &#x27;LyraStarterGame.247567c8&#x27; already exists<br>LogZenStore: Display: Zen oplog &#x27;LyraStarterGame.247567c8/EditorDomain&#x27; already exists<br>LogZenStore: Display: Establishing oplog &#x27;LyraStarterGame.247567c8/Windows&#x27;<br>LogZenStore: Display: Zen project &#x27;LyraStarterGame.247567c8&#x27; already exists<br>LogZenStore: Display: Zen oplog &#x27;LyraStarterGame.247567c8/Windows&#x27; already exists<br>LogZenStoreWriter: Display: Fetching oplog...<br>LogZenStoreWriter: Display: Fetching file manifest...<br>LogZenStoreWriter: Display: Fetched &#x27;5738&#x27; file(s) from oplog &#x27;LyraStarterGame.247567c8/Windows&#x27;<br>LogZenStoreWriter: Display: Fetched &#x27;4050&#x27; packages(s) from oplog &#x27;LyraStarterGame.247567c8/Windows&#x27;<br>LogCook: Display: Packages Cooked: 0, Packages Incrementally Skipped: 3819, Packages Skipped by Platform: 219, Total Packages: 4038<br>Pushing to Zen Host: http://172.28.34.131:8559<br>Running: F:\UE_Release\Engine\Binaries\Win64\ZenLaunch.exe &quot;E:\UnrealProject\LyraStarterGame\LyraStarterGame.uproject&quot; -SponsorProcessID=52616<br>LogZenServiceInstance: Display: Launching zen utility &#x27;F:/UE_Release/Engine/Binaries/Win64/zen.exe service status&#x27;.<br>LogZenServiceInstance: Display: Launching zen utility &#x27;F:/UE_Release/Engine/Binaries/Win64/zen.exe service status&#x27;.<br>LogZenServiceInstance: Display: Read zen version cache file from &#x27;F:/UE_Release/Engine/Saved/Zen/zen.version&#x27;, version: &#x27;5.7.6-202510061608-windows-x64-release-9a1ebb9&#x27;<br>LogZenServiceInstance: Display: Read zen version cache file from &#x27;C:/Users/muche/AppData/Local/UnrealEngine/Common/Zen/Install/zen.version&#x27;, version: &#x27;5.7.6-202510061608-windows-x64-release-9a1ebb9&#x27;<br>LogZenServiceInstance: Display: Installed service at &#x27;C:/Users/muche/AppData/Local/UnrealEngine/Common/Zen/Install/zenserver.exe&#x27; is up to date<br>LogZenServiceInstance: Display: Launching executable &#x27;C:/Users/muche/AppData/Local/UnrealEngine/Common/Zen/Install/zenserver.exe&#x27;, working dir &#x27;C:/Users/muche/AppData/Local/UnrealEngine/Common/Zen/Install&#x27;, data dir &#x27;E:/UnrealProject/LyraStarterGame/Zen/Data&#x27;, args &#x27;--port 8558 --data-dir E:\UnrealProject\LyraStarterGame\Zen\Data --http asio --gc-cache-duration-seconds 1209600 --gc-interval-seconds 21600 --gc-low-diskspace-threshold 2147483648 --cache-bucket-limit-overwrites --quiet --http-forceloopback --owner-pid 51344  --child-id Zen_51344_Startup&#x27;<br>LogZenServiceInstance: Display: Unreal Zen Storage Server HTTP service at http://[::1]:8558 status: OK!.<br>Took 4.42s to run ZenLaunch.exe, ExitCode=0<br>Running: F:\UE_Release\Engine\Binaries\Win64\zen.exe project-create --hosturl http://172.28.34.131:8559 lyrastartergame.oplog<br>Took 1.30s to run zen.exe, ExitCode=1<br>Running: F:\UE_Release\Engine\Binaries\Win64\zen.exe oplog-export --embedloosefiles --zen http://172.28.34.131:8559 --hosturl http://localhost:8558 --target-project lyrastartergame.oplog --target-oplog lyra.dev.00002.windows LyraStarterGame.247567c8 Windows<br>Took 5.39s to run zen.exe, ExitCode=0<br>Saving file list to F:\UE_Release\Engine\Saved\BuildGraph\CookAndPush\Tag-CookAndPush.xml<br><br>BUILD SUCCESSFUL<br></code></pre></td></tr></table></figure>
+<p>这一段有点长，但是不难看出其中有大量和Zen有关的log，一点一点看：</p>
+<p>先，系统对 Zen 组件进行可用性与版本一致性验证：多次调用 <code>zen.exe service status</code>，并分别从引擎侧缓存路径 <code>F:/UE_Release/Engine/Saved/Zen/zen.version</code> 与用户侧安装路径 <code>C:/Users/muche/AppData/Local/UnrealEngine/Common/Zen/Install/zen.version</code> 读取版本号，确认已安装的 <code>zenserver.exe</code> 与期望版本一致。随后在本机启动 Zen Storage Server，数据目录被绑定到项目级路径 <code>E:/UnrealProject/LyraStarterGame/Zen/Data</code>，并以 <code>--http-forceloopback</code> 将 HTTP 服务限制在回环地址 <code>[::1]:8558</code>，表征该实例被定位为本地单机服务而非对外暴露的共享节点。服务健康检查通过 “status: OK!” 明确给出。</p>
+<p>之后的<code>LogDerivedDataCache</code>表示同一个Zen用做了DDC后端，是前面我设置过的。</p>
+<p>再往后，先后建立 <code>LyraStarterGame.247567c8/EditorDomain</code> 与 <code>LyraStarterGame.247567c8/Windows</code> 两个 oplog，“project already exists”“oplog already exists”是因为这个log不是我第一次运行，已经存在了。<code>LogZenStoreWriter</code> 触发 oplog的fetch，从Windows的oplog中取到 5738 个文件条目与 4050 个 package 记录。这些是后续进行incremental cook所需的关键信息。</p>
+<p>其中这一行<code>Packages Cooked: 0, Packages Incrementally Skipped: 3819, ... Total Packages: 4038</code>，明确显示出本次Cook没有进行包的处理，全部跳过了。这句是本地cook完成的一个分界线，前面的zen是在操作local zen，后面是和remote zen进行交互。</p>
+<p>日志尾部可以看到remote的地址<code>http://172.28.34.131:8559</code>，是前面我设置的wsl的zen的地址，端口是我自定义的8559，随后BuildGraph的Node实际调用了本地的zen.exe执行了<code>project-create</code>和<code>oplog-export</code>。其中project-create和<code>oplog-export</code>在目标存在的时候会exit 1这是zen设计如此，可以增加<code>--force</code>或者<code>-f</code>来避免返回1，在实际使用上不存在特殊的差别。</p>
+<p>对于<code>zen.exe oplog-export --embedloosefiles --zen http://172.28.34.131:8559 --hosturl http://localhost:8558 --target-project lyrastartergame.oplog --target-oplog lyra.dev.00002.windows LyraStarterGame.247567c8 Windows</code>，解释一下几个参数的注释</p>
+<ul>
+<li><code>--embedloosefiles</code>：功能描述: “Export additional files referenced by path as attachments”（将通过路径引用的附加文件导出为附件）</li>
+<li><code>--zen</code>：目标zen的地址和端口，remote的，中心的那个</li>
+<li><code>--hosturl</code>：本机的zen</li>
+<li><code>--target-project</code>：目标的project的name，指的是zen里的project，后面有图解释</li>
+<li><code>--target-oplog</code>：
+<ul>
+<li><code>lyra.dev.00002.windows</code>：本地的要导出到目标的oplog的id，这个id是BuildGraph中计算后传递给Cook节点的，可以高度自定义</li>
+<li><code>LyraStarterGame.247567c8</code>：本地的zen的project的name，是uproject名字和路径的hash计算出的，计算逻辑在Zen的Node对应的cs的代码里</li>
+<li><code>Windows</code>：本地cook的platform作为oplop的name，本地cook会持续更新这个oplog</li>
+</ul>
+</li>
+</ul>
+<h3 id="remote-zen仪表盘"><a class="markdownIt-Anchor" href="#remote-zen仪表盘"></a> Remote Zen仪表盘</h3>
+<p>zen可以通过访问url/dashboard看到一些信息。</p>
+<p>当cook完全结束的时候，可以在远程的<code>http://172.28.34.131:8559/dashboard/?</code>看到如下一些东西：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2026/20260116222357478.png" srcset="/img/loading.gif" lazyload alt="image.png" /></p>
+<p>可以看到上面是不同oplog的projects，如果你在一台中心的zen上存放了不同的project就会有多个了<br />
+下面是ddc的namespace，有一个引擎的和一个lyra本身的，至于为什么叫ue4我不知道</p>
+<p>我们进入lyrastartergame.oplog看一下</p>
+<p><img src="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2026/20260116222548656.png" srcset="/img/loading.gif" lazyload alt="image.png" /></p>
+<p>可以看到上面info表示的是档期啊project的信息，其中remote上只有id，因为下面都是路径相关的</p>
+<p>下方的oplogs是我在进行测试的时候上传的三个不同id的Snapshot</p>
+<p>进入最新的一个lyra.dev.00002.windows查看一下</p>
+<p>点进去之后默认是list视图，我直接截图了tree视图</p>
+<p><img src="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2026/20260116222858359.png" srcset="/img/loading.gif" lazyload alt="image.png" /></p>
+<p>可以看到content下的tree结构，和对应资源的size和rawsize信息</p>
+<p>进入一个具体的贴图/game/characters/heroes/mannequin/textures/manny/t_manny_01_msk看一下：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2026/20260116222958960.png" srcset="/img/loading.gif" lazyload alt="image.png" /></p>
+<p>这就是一个完整的资源的数据和属性了，可以看到data里是uasset和ubulk</p>
+<p>而本地zen，<a target="_blank" rel="noopener" href="http://localhost:8558/dashboard/?page=project&amp;project=LyraStarterGame.247567c8%E4%B8%AD%E7%9C%8B%E5%88%B0%E7%9A%84%E5%A6%82%E4%B8%8B">http://localhost:8558/dashboard/?page=project&amp;project=LyraStarterGame.247567c8中看到的如下</a></p>
+<p><img src="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/Blogs/2026/20260116223123350.png" srcset="/img/loading.gif" lazyload alt="image.png" /></p>
+<p>这里能看到本地的项目的一些路径信息，oplogs是按照平台进行持续写入的</p>
+<p>关于oplog、Snapshot不在这里赘述具体的定义。</p>
+<h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
+<p>Zen可以作为Shared DDC的后端服务。</p>
+<p>Zen可以将cook数据进行cas存储节省空间，需要在项目中配置<code>Use Zen Server as cooked output store</code>和<code>Use to Store</code>，cook将不会产生散文件或者pak。</p>
+<p>Zen可以通过oplog进行快照导出，从一个Zen同步到另一个Zen，在多设备进行cook的时候可以通过导入不同CI产生的Snapshot，尽量让打包机的cook进行incremental，跳过更多packages，减少cook时间。</p>
+<p>Zen可以在浏览器中访问dashboard看到不同oplog的具体信息。</p>
+<p>Zen的Export操作和Import操作在使用UAT进行的时候是非异步的，同步完需要的差异数据之后才会继续。</p>
+<h2 id="其他"><a class="markdownIt-Anchor" href="#其他"></a> 其他</h2>
+<p>关于Zen的其他东西且待下回分解</p>
+
+              
+            </div>
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/UE5/">#UE5</a>
+      
+        <a href="/tags/Cook/">#Cook</a>
+      
+        <a href="/tags/Zen/">#Zen</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>UE5 ：Zen as Cook Storage 与 BuildGraph Zen Nodes</div>
+      <div>http://muchenhen.com/posts/9545/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>木尘痕</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年1月13日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/46195/" title="UE5.7 解析：Incremental Cooking决策逻辑">
+                        <span class="hidden-mobile">UE5.7 解析：Incremental Cooking决策逻辑</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+    <!-- 备案信息 ICP for China -->
+    <div class="beian">
+  <span>
+    <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+      
+    </a>
+  </span>
+  
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?bbb32ef470b36fe5f1e4e72f32112b68";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script>
+  (function() {
+    var enableLang = CONFIG.code_language.enable && CONFIG.code_language.default;
+    var enableCopy = CONFIG.copy_btn;
+    if (!enableLang && !enableCopy) {
+      return;
+    }
+
+    function getBgClass(ele) {
+      return Fluid.utils.getBackgroundLightness(ele) >= 0 ? 'code-widget-light' : 'code-widget-dark';
+    }
+
+    var copyTmpl = '';
+    copyTmpl += '<div class="code-widget">';
+    copyTmpl += 'LANG';
+    copyTmpl += '</div>';
+    jQuery('.markdown-body pre').each(function() {
+      var $pre = jQuery(this);
+      if ($pre.find('code.mermaid').length > 0) {
+        return;
+      }
+      if ($pre.find('span.line').length > 0) {
+        return;
+      }
+
+      var lang = '';
+
+      if (enableLang) {
+        lang = CONFIG.code_language.default;
+        if ($pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2 && $pre.children().hasClass('hljs')) {
+          lang = $pre[0].children[0].classList[1];
+        } else if ($pre[0].getAttribute('data-language')) {
+          lang = $pre[0].getAttribute('data-language');
+        } else if ($pre.parent().hasClass('sourceCode') && $pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2) {
+          lang = $pre[0].children[0].classList[1];
+          $pre.parent().addClass('code-wrapper');
+        } else if ($pre.parent().hasClass('markdown-body') && $pre[0].classList.length === 0) {
+          $pre.wrap('<div class="code-wrapper"></div>');
+        }
+        lang = lang.toUpperCase().replace('NONE', CONFIG.code_language.default);
+      }
+      $pre.append(copyTmpl.replace('LANG', lang).replace('code-widget">',
+        getBgClass($pre[0]) + (enableCopy ? ' code-widget copy-btn" data-clipboard-snippet><i class="iconfont icon-copy"></i>' : ' code-widget">')));
+
+      if (enableCopy) {
+        Fluid.utils.createScript('https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js', function() {
+          var clipboard = new window.ClipboardJS('.copy-btn', {
+            target: function(trigger) {
+              var nodes = trigger.parentNode.childNodes;
+              for (var i = 0; i < nodes.length; i++) {
+                if (nodes[i].tagName === 'CODE') {
+                  return nodes[i];
+                }
+              }
+            }
+          });
+          clipboard.on('success', function(e) {
+            e.clearSelection();
+            e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-copy', 'icon-success');
+            setTimeout(function() {
+              e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-success', 'icon-copy');
+            }, 2000);
+          });
+        });
+      }
+    });
+  })();
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
