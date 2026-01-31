@@ -227,6 +227,46 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/posts/25723/" target="_self">
+          UE5.7：StorageServerClient 接管机制导致的路径偏移与文件存在性误判
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/posts/25723/" target="_self">
+        <div>
+          前言 在虚幻引擎项目中使用 Zen Store 进行数据存储与流送时，底层文件系统的行为模式会发生显著变化。当项目目录下存在特定标记文件时，引擎会激活 StorageServerClient 机制，重组Platform File Wrapper Chain。这种接管行为不仅会改变运行时的文件读写路径落点，还会影响文件存在性的判定逻辑。本文通过分析源码，记录该机制对 SandboxFile 挂载的
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2026-01-31 12:51" pubdate>
+              2026-01-31
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/UE5/">#UE5</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/posts/4823/" target="_self">
           UE5 ：Zen as Cook Storage 探究和实例测试
         </a>
@@ -594,48 +634,6 @@
               <a href="/tags/UE4/">#UE4</a>
             
               <a href="/tags/iOS/">#iOS</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/posts/29435/" target="_self">
-          UE4：NiagaraSystem批量删除modules
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/posts/29435/" target="_self">
-        <div>
-          前言  如上图，NiagaraSystem中存在一些disabled的modules，TA大佬需要删除这些modules，但是一个一个删除太麻烦了，希望可以有一个批量删除的方法。 但是众所周知NiagaraSystem面向数据，在UNiagaraEmitter中根本没有modules相关的信息。 最后是通过编辑器界面Slate的数据获取方式找到了如何获取NiagaraSystem中的module
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-04-01 15:25" pubdate>
-              2023-04-01
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/UE4/">#UE4</a>
-            
-              <a href="/tags/Niagara/">#Niagara</a>
             
           </div>
         
