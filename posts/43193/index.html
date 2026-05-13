@@ -1,0 +1,846 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="木尘痕">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="从 GitLab CI 到 Horde：一个 UE5 项目的构建系统迁移复盘  前言 我们项目是一款基于 Unreal Engine 5（UE5）的大型游戏。在使用 Horde 之前，项目的构建流程主要依赖 GitLab CI；更早也接触过 Jenkins，也了解了一下 TeamCity。真正使用 Horde 半年多之后，我们对它的优点、局限和落地成本有了更具体的认识。 这篇文章不是 Horde">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从 GitLab CI 到 Horde：一个 UE5 项目的构建系统迁移复盘">
+<meta property="og:url" content="http://muchenhen.com/posts/43193/index.html">
+<meta property="og:site_name" content="虚无之境">
+<meta property="og:description" content="从 GitLab CI 到 Horde：一个 UE5 项目的构建系统迁移复盘  前言 我们项目是一款基于 Unreal Engine 5（UE5）的大型游戏。在使用 Horde 之前，项目的构建流程主要依赖 GitLab CI；更早也接触过 Jenkins，也了解了一下 TeamCity。真正使用 Horde 半年多之后，我们对它的优点、局限和落地成本有了更具体的认识。 这篇文章不是 Horde">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-05-13T08:55:58.000Z">
+<meta property="article:modified_time" content="2026-05-13T09:29:34.585Z">
+<meta property="article:author" content="木尘痕">
+<meta property="article:tag" content="CICD">
+<meta property="article:tag" content="Horde">
+<meta property="article:tag" content="Unreal Engine">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>从 GitLab CI 到 Horde：一个 UE5 项目的构建系统迁移复盘 - 虚无之境</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"muchenhen.com","root":"/","version":"1.9.1","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"bbb32ef470b36fe5f1e4e72f32112b68","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+
+  
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>虚无之境</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/NagisaKaworu.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="从 GitLab CI 到 Horde：一个 UE5 项目的构建系统迁移复盘"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        木尘痕
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-05-13 16:55" pubdate>
+          2026年5月13日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          6.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          12 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">从 GitLab CI 到 Horde：一个 UE5 项目的构建系统迁移复盘</h1>
+            
+            <div class="markdown-body">
+              
+              <h1 id="从-gitlab-ci-到-horde一个-ue5-项目的构建系统迁移复盘"><a class="markdownIt-Anchor" href="#从-gitlab-ci-到-horde一个-ue5-项目的构建系统迁移复盘"></a> 从 GitLab CI 到 Horde：一个 UE5 项目的构建系统迁移复盘</h1>
+<h2 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h2>
+<p>我们项目是一款基于 Unreal Engine 5（UE5）的大型游戏。在使用 Horde 之前，项目的构建流程主要依赖 GitLab CI；更早也接触过 Jenkins，也了解了一下 TeamCity。真正使用 Horde 半年多之后，我们对它的优点、局限和落地成本有了更具体的认识。</p>
+<p>这篇文章不是 Horde 部署教程，也不是 Horde、TeamCity、Jenkins 与 GitLab CI 的完整横向对比。</p>
+<h2 id="迁移前"><a class="markdownIt-Anchor" href="#迁移前"></a> 迁移前</h2>
+<p>我们早期使用 GitLab CI 的方式比较直接：通过 YAML 描述流水线，再在流水线中执行 UE 相关命令。</p>
+<p>当时主要构建的是 PC 版 Editor 的 Precompiled Binaries（给美术、策划使用的预编译 Editor 包），完整游戏包体的产出并不频繁。多数时候 GitLab CI 承担的是“构建并分发 Editor”的职责。</p>
+<p>这个阶段的问题不是 GitLab CI 完全不能用，而是它对 UE 项目的构建语义理解很弱。最初我们对 BuildGraph 的认知也不充分，更多是通过命令行串起需要的步骤，比如编译 Editor、Cook、编译 Game 等。随着项目复杂度上升，流水线里逐渐混入了更多项目自定义的代码生成、预处理与构建前后置逻辑。这些逻辑散落在 YAML、cmd、脚本和 API 调用中，维护成本开始上升。</p>
+<p>GitLab CI 阶段还有几个比较典型的问题：</p>
+<p>第一，YAML 本身的维护体验一般。普通服务端项目的流水线或许还好，但 UE 项目的构建步骤多、参数多、平台多，再叠加项目自定义逻辑后，YAML 很容易变成难读难改的脚本编排。</p>
+<p>第二，项目代码和美术资产统一使用 Perforce 管理，而 Git 仓库基本只是作为 GitLab CI pipeline 的入口存在。这意味着 GitLab CI 并没有真正承载版本控制，只是在 P4 旁边提供了一个构建执行入口。</p>
+<p>第三，Perforce 工作空间的同步、UGS badge、构建产物分发、流水线触发等都需要额外处理。比如 workspace sync 要自己实现，UGS badge 需要单独对接，流水线触发也依赖 API 和自定义机器人。</p>
+<p>所以，当时的 GitLab CI 解决了“能不能自动构建 Editor”的问题，但没有很好地解决“如何管理一个 UE 项目的构建工作流”的问题。</p>
+<h2 id="为什么选择-horde"><a class="markdownIt-Anchor" href="#为什么选择-horde"></a> 为什么选择 Horde</h2>
+<p>当时我们也考虑过 TeamCity，但没有实际试用。最终选择 Horde 的原因比较直接：它是 Epic 官方方案，也是 Epic 内部使用的构建系统。</p>
+<p>对 UE 项目来说，这一点有很强的吸引力。Jenkins、GitLab CI、TeamCity 都是通用 CI/CD 系统，可以通过脚本或插件适配 UE；而 Horde 的设计起点就是 UE 工作流，天然围绕 BuildGraph、Perforce、UGS、UBA、Agent、Stream、Template 这些概念展开。</p>
+<p>这并不意味着 Horde 在所有方面都比通用 CI 更成熟。实际上，后续的使用体验也证明，它在一些通用产品化能力上并不完善。但从选型角度看，如果项目本身已经使用 Perforce，并且希望把 UE 构建、UGS、构建产物分发、远程编译等能力整合起来，Horde 的方向是合理的。</p>
+<p>我们当时的迁移，并不是从 Git 工作流切换到 Perforce 工作流。项目从一开始就用 Perforce 管理代码和资产，Git 仓库仅用于触发 GitLab CI。迁移到 Horde，本质上是将构建执行入口从 GitLab CI 迁移到一个更贴近 P4 / UE / UGS 的系统里。</p>
+<h2 id="3-迁移后构建流程被推进-buildgraph"><a class="markdownIt-Anchor" href="#3-迁移后构建流程被推进-buildgraph"></a> 3. 迁移后：构建流程被“推”进 BuildGraph</h2>
+<p>迁移到 Horde 后，我们目前主要用它处理几类任务：</p>
+<ul>
+<li>Editor PCB 构建；</li>
+<li>Windows 平台打包；</li>
+<li>PS5 平台打包；</li>
+<li>代码提交后自动触发 Editor 构建。</li>
+</ul>
+<p>每日构建目前仍然依赖独立的定时程序触发，自动化测试暂时还没有接入。</p>
+<p>Horde 带来的最大变化，并不是 Web UI 换了，也不是触发按钮从 GitLab 变成了 Horde，而是构建流程的中心从 YAML / cmd 迁移到了 BuildGraph。</p>
+<p>Horde 的架构基本要求通过 BuildGraph 实际驱动构建任务。即使某些底层逻辑仍然是 cmd、bat 或项目自定义脚本，也需要组织进 BuildGraph 节点里。换句话说，使用 Horde 之后，BuildGraph 基本绕不开。</p>
+<p>早期在 GitLab CI 里，我们可以把命令直接塞进 YAML 里执行；迁移到 Horde 后，必须把流程显式地建模成 BuildGraph 的节点、依赖、参数和产物。这个过程一开始会增加学习成本，但后续带来的结构化收益比较明显。</p>
+<p>对 UE 项目来说，BuildGraph 比 YAML + cmd 更适合描述复杂构建流程。它可以更自然地表达节点依赖、平台差异、构建产物、条件分支和 UGS badge。结合 C# 自定义 Task，也可以比较方便地处理项目特定逻辑。</p>
+<p>即使不使用 Horde，只是把原来的 cmd 流程迁移到 BuildGraph，构建流程也会清晰很多。但如果只用 GitLab CI + BuildGraph，仍然没有 Horde 方便，因为 Horde 额外接管了 P4 workspace、构建调度、Artifact、UGS 分发和 UBA 等平台层能力。</p>
+<h2 id="horde-做得比较好的地方"><a class="markdownIt-Anchor" href="#horde-做得比较好的地方"></a> Horde 做得比较好的地方</h2>
+<p>半年多的使用下来，Horde 比较明显的收益主要集中在 UE 工作流整合上。</p>
+<p>第一，P4 workspace 相关的事情被平台吸收了一部分。以前流水线里需要关心 workspace 如何同步、构建机本地状态如何维护、命令在哪个目录执行。迁移到 Horde 后，这些事情至少有一部分从业务脚本中剥离了出去，使用者可以更专注于构建任务本身。</p>
+<p>第二，UGS 结合更自然。Editor PCB 的构建结果、badge 和构建状态可以更贴近团队日常使用的 UE 工具链，而不是只停留在 CI 页面里。</p>
+<p>第三，Artifact 管理体验比较好。Horde Server 基于 CAS，对重复内容比较友好，也有 GC 机制。对于 UE 项目这种大产物场景，这比简单将文件堆在共享目录里更合适。通过 UGS 分发 Editor PCB 时，整体速度和体验也比较满意。</p>
+<p>第四，UBA 是一个很明确的加分项。相比之前使用的编译加速工具，UBA 更贴合 UE 项目。接入后 Editor 编译时间有明显下降，而且几乎没有维护成本。由于 UBA 本身依赖 Horde 调度 Compute 资源，如果已经引入 Horde，UBA 基本可以视为一个很值得顺势接入的能力。</p>
+<p>从这个角度看，Horde 最值得肯定的地方，不是它作为一个通用 CI 产品有多成熟，而是它把 BuildGraph、Perforce workspace、UGS、Artifact 分发、UBA 这些 UE 大项目真正需要的能力串在了一起。单独看每一块，它未必都完美；但组合起来之后，它确实比在通用 CI 上自己拼装一套 UE 工作流更接近目标形态。</p>
+<h2 id="部署和使用中遇到的坑"><a class="markdownIt-Anchor" href="#部署和使用中遇到的坑"></a> 部署和使用中遇到的坑</h2>
+<p>Horde 的官方属性给了我们选型信心，但落地时也能明显感受到：官方不等于低门槛。</p>
+<p>很多细节并不在文档中，需要看示例、读源码，甚至通过实际运行行为去确认。Template 本身因为有 example，理解成本不算特别高；真正耗时的是 Server 部署、Agent 配置，以及一些没有充分暴露配置项的行为。</p>
+<h3 id="认证和用户管理不够开箱即用"><a class="markdownIt-Anchor" href="#认证和用户管理不够开箱即用"></a> 认证和用户管理不够开箱即用</h3>
+<p>Horde 提供了几种认证方式，但对我们来说都不是特别方便。它自身也没有提供一个简单完整的账号管理系统，而我们实际需要的只是比较基础的管理员 / 普通用户管理。</p>
+<p>这类问题会让人感觉 Horde 更像是默认你已经有一套内部认证体系，或者团队能接受它现有的认证方式。对于只想简单管理用户权限的团队来说，这部分体验并不算完整。</p>
+<h3 id="windows-agent-的运行身份问题"><a class="markdownIt-Anchor" href="#windows-agent-的运行身份问题"></a> Windows Agent 的运行身份问题</h3>
+<p>Agent 注册后，我们遇到过几次 workspace 更新失败的问题，其中包括编码相关问题。</p>
+<p>另一个更典型的问题是 Windows Service 的默认运行身份。Agent 作为 Windows 系统服务运行时，默认以 Local System 身份运行，这会导致 BuildGraph 中某些操作出现权限问题。普通命令行下能跑通的流程，服务化之后不一定能跑通，因为用户身份、网络权限、磁盘权限、环境变量都变了。</p>
+<p>我们最后通过手动在 cmd 中启动 Agent 的方式绕过了这个问题。</p>
+<h3 id="自定义-ugs-更新需要理解-horde-的分发机制"><a class="markdownIt-Anchor" href="#自定义-ugs-更新需要理解-horde-的分发机制"></a> 自定义 UGS 更新需要理解 Horde 的分发机制</h3>
+<p>UGS 更新可以通过 Horde Server 分发，但这里涉及 bundled 工具。如果团队对 UGS 做过修改，就需要理解 Horde Server 如何提供和更新这些工具。</p>
+<p>我们最后是通过阅读源码理解相关机制，再结合 Horde Server 配置和 API 解决。这个问题本身不是完全不能处理，但不属于非常直观的配置项。</p>
+<h3 id="pool-和-agent-分组存在隐性规则"><a class="markdownIt-Anchor" href="#pool-和-agent-分组存在隐性规则"></a> Pool 和 Agent 分组存在隐性规则</h3>
+<p>Horde 的 pool 默认通过配置文件里的 condition 来匹配 Agent。我们一开始希望自定义 Agent 所属 pool，后来翻代码才发现，可以将 condition 设置为 null，再手动给 Agent 添加 pool。</p>
+<p>最终我们通过修改 Horde Server 配置，把相关 condition 覆盖为 null，然后手动管理 Agent 所属 pool。</p>
+<p>这个例子比较典型：有些能力不是没有，但它未必通过文档或 UI 很清楚地暴露出来。</p>
+<h3 id="日志体验仍有不足"><a class="markdownIt-Anchor" href="#日志体验仍有不足"></a> 日志体验仍有不足</h3>
+<p>日志方面主要有两个问题。</p>
+<p>一个是 Web 上中文可能出现乱码，对中文团队来说，这会影响排查体验。虽然有ESP的帖子回复说可以通过culture=en来修改语言，但是实际测试还是会有部分中文log出现，并且不是我们自己写的log而是引擎的log。</p>
+<p>另一个是实时日志问题。由于 Serilog 的缓冲机制，网页上有可能过一段时间后就看不到实时日志。如果希望从根上调整，需要修改 Server 代码并重新部署。考虑到修改 Horde Server 源码会引入后续升级维护成本，我们没有选择动这一块。</p>
+<h3 id="部分配置写死在代码中"><a class="markdownIt-Anchor" href="#部分配置写死在代码中"></a> 部分配置写死在代码中</h3>
+<p>有些上传 Artifact 的任务属于 Horde 自身代码，超时时间是写死的。如果需要调整，也必须修改源码。</p>
+<p>对于希望把 Horde 当成成熟通用 CI 产品使用的团队来说，这一点需要提前预期。</p>
+<h3 id="前端状态没有按用户隔离"><a class="markdownIt-Anchor" href="#前端状态没有按用户隔离"></a> 前端状态没有按用户隔离</h3>
+<p>Horde Server 前端网页有一些状态不是按用户隔离的。比如色彩模式，一个人改了之后，其他人再次访问时也会受到影响。</p>
+<h2 id="不要盲目照搬官方-buildgraph-template"><a class="markdownIt-Anchor" href="#不要盲目照搬官方-buildgraph-template"></a> 不要盲目照搬官方 BuildGraph Template</h2>
+<p>迁移过程中还有一个比较重要的经验：BuildGraph 节点并不是拆得越细越好。</p>
+<p>UE 官方给出的 template 中，有些流程会由一个 Agent 编译完 Editor，然后上传产物，再由其他 Agent 下载产物继续执行后续节点。这个模型在设计上是合理的，也更模块化。但在我们的内网环境下，实际效果并不理想。</p>
+<p>如果一个 Agent 编译完成后，需要先上传到 Horde Server，再由另一个 Agent 下载继续执行，网络和存储吞吐就会变成瓶颈。在我们的环境里，这个传递过程的耗时甚至超过了同一台 Agent 本地继续执行的时间。</p>
+<p>所以我们最后没有完全照搬官方 template，而是把一个完整 Build 流程尽量收敛到同一个 Agent 节点中，避免不同 Agent 接力导致大量中间产物传递。</p>
+<p>BuildGraph 和 Horde 允许我们拆节点、做依赖、做并行，但大型 UE 项目的中间产物并不轻。如果网络、存储、Horde Server 吞吐跟不上，过度拆分反而会吞掉并行化收益。</p>
+<h2 id="horde-的-agent-调度不够精细"><a class="markdownIt-Anchor" href="#horde-的-agent-调度不够精细"></a> Horde 的 Agent 调度不够精细</h2>
+<p>Horde 的 Agent 调度主要基于 pool。这个模型可以表达“哪些机器能跑哪些任务”，但不太适合表达“哪些机器是稀缺资源，应该优先留给特定任务”。</p>
+<p>我们遇到过一个典型例子。</p>
+<p>当时有几台机器属于 GameBuild pool，其中部分机器安装了 PS5 SDK。一次 GameBuild 流水线需要在同一个 CL 上同时产出 Windows 和 PS5 包。当时一台 PS5 打包机正在执行其他任务，Horde 还可以调度另外两台机器：一台普通 GameBuild 机器，一台同时具备 GameBuild 和 PS5 能力的机器。</p>
+<p>理想情况下，Windows 任务应该分配给普通 GameBuild 机器，把具备 PS5 能力的机器留给 PS5 构建。但实际调度中，Windows 任务被分配到了同时具备 GameBuild 和 PS5 能力的机器上，导致另一台普通机器长时间闲置，而 PS5 构建任务反而在等待设备。</p>
+<p>这个问题本质上不是某一次调度偶然不理想，而是 Horde 的 pool 模型不太适合表达稀缺资源优先级。</p>
+<p>我们最后没有试图让调度器变得更聪明，而是反过来调整构建机能力：让 GameBuild pool 内的机器尽量都具备多平台构建能力。这样即使 Horde 调度不够精细，也不会因为某台特殊机器被占用而导致平台任务长时间等待。这个方案牺牲了一部分机器配置成本，但换来了调度稳定性。</p>
+<p>因此，我现在对 Horde Agent 调度的理解是：它更适合调度一组能力相对同质的 Agent，而不是精细管理稀缺构建资源。如果团队有主机平台 SDK、特殊设备、特殊许可证或特殊硬件，需要提前设计 pool 和构建机能力，不能完全指望调度器自动做最优选择。</p>
+<h2 id="关于-teamcity"><a class="markdownIt-Anchor" href="#关于-teamcity"></a> 关于 TeamCity</h2>
+<p>我们当时考虑过 TeamCity，但没有实际试用，所以这里不做 Horde 和 TeamCity 的结论性比较。</p>
+<p>从定位上看，TeamCity 是成熟的通用 CI/CD 平台，并且现在也有 Unreal Engine 相关支持。它在用户体系、权限管理、日志展示、Agent 指定、构建配置维护等方面，理论上可能会比 Horde 更接近传统 CI 产品体验。</p>
+<p>但这些只是基于产品定位的推测。没有在真实 UE 项目中试过 TeamCity，就不能简单判断它一定更适合或一定不适合。</p>
+<p>我个人仍然对 TeamCity 的 UE 方案保持好奇，尤其是它在 Agent 指定、稀缺构建机调度、权限和日志体验上的表现。但在这篇文章里，我只讨论我们实际使用过的 Horde，不做没有实践支撑的横评。</p>
+<h2 id="什么情况下考虑-horde"><a class="markdownIt-Anchor" href="#什么情况下考虑-horde"></a> 什么情况下考虑 Horde</h2>
+<p>重要前提：项目是否主要使用 Perforce。</p>
+<p>Horde 对 P4 workspace、CL、构建同步、UGS 这套工作流支持得更自然。如果代码和资产都在 P4 上，Horde 的很多能力可以顺着用起来。如果代码在 Git、资产在 P4，那么 Horde 仍然可以用，但 Git 侧同步、版本对应关系、触发逻辑就需要团队自己处理，整体价值会被打折。</p>
+<p>UGS 是加分项，但不是绝对前提。如果团队使用 UGS，Horde 的 badge、PCB 分发、构建状态反馈会更完整；如果不用 UGS，Horde 仍然可以作为 BuildGraph 驱动的构建调度系统存在。</p>
+<p>项目规模方面，我不认为只有大项目能用 Horde。小项目也可以用，只是可能用不到它的全部能力。大项目也撑得住，因为 Horde 本来就是面向复杂 UE 工作流设计的。</p>
+<p>真正需要判断的是团队是否已经需要这些能力：</p>
+<ul>
+<li>稳定产出 Editor PCB；</li>
+<li>Windows / 主机平台打包；</li>
+<li>Perforce workspace 自动管理；</li>
+<li>UGS badge 和构建结果反馈；</li>
+<li>构建产物分发与清理；</li>
+<li>远程编译加速；</li>
+<li>可维护的 BuildGraph 构建流程。</li>
+</ul>
+<p>如果这些需求已经出现，Horde 就值得考虑。</p>
+<p>如果已经使用 Horde，建议同时考虑接入 UBA。对 UE 项目来说，这是 Horde 体系里非常有价值的一部分。</p>
+<h2 id="迁移是否值得"><a class="markdownIt-Anchor" href="#迁移是否值得"></a> 迁移是否值得</h2>
+<p>对我们项目来说，迁移到 Horde 是比较值得的。</p>
+<p>即使不使用 Horde，只是把原来 GitLab CI 里的 cmd 流程迁移到 BuildGraph，体验也会比纯脚本拼装更好。BuildGraph 能让 UE 构建流程更结构化，也更容易表达节点、依赖、平台和产物。</p>
+<p>但只用 GitLab CI + BuildGraph，仍然没有 Horde 方便。Horde 额外处理了 Perforce workspace、任务调度、Artifact、UGS 分发和 UBA，这些能力对 UE 项目很关键。</p>
+<p>当然，Horde 也不是一个开箱即用、各方面都成熟的通用 CI 产品。它在账号管理、权限控制、日志体验、前端状态隔离、部分配置项暴露、Agent 精细调度等方面都有不足。实际落地时，团队需要接受一定的踩坑成本，也要有阅读源码、理解实现细节、通过配置或流程规避问题的准备。</p>
+<p><strong>Horde 更像 UE 构建基础设施，而不是普通 CI 产品的替代品。</strong></p>
+<p>如果你的项目主要在 P4 上，并且需要 BuildGraph、UGS、Editor PCB 分发、平台打包、Artifact 管理和 UBA，那么 Horde 的方向是对的。它未必在所有产品细节上都让人舒服，但它解决的是 UE 大项目真正会遇到的问题。</p>
+<p>如果你的项目只是想简单跑几条构建命令，或者代码主要托管在 Git 上，又没有 UGS / UBA / PCB 分发需求，那么 Horde 的接入成本可能会显得偏高。</p>
+<p>对我们来说，Horde 不是完美方案，但它比继续在 GitLab CI 上堆 YAML、cmd 和 API 更符合 UE 项目的长期构建需求。</p>
+
+              
+            </div>
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Unreal-Engine/">#Unreal Engine</a>
+      
+        <a href="/tags/Horde/">#Horde</a>
+      
+        <a href="/tags/CICD/">#CICD</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>从 GitLab CI 到 Horde：一个 UE5 项目的构建系统迁移复盘</div>
+      <div>http://muchenhen.com/posts/43193/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>木尘痕</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年5月13日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/25723/" title="UE5.7：StorageServerClient 接管机制导致的路径偏移与文件存在性误判">
+                        <span class="hidden-mobile">UE5.7：StorageServerClient 接管机制导致的路径偏移与文件存在性误判</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+    <!-- 备案信息 ICP for China -->
+    <div class="beian">
+  <span>
+    <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+      
+    </a>
+  </span>
+  
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?bbb32ef470b36fe5f1e4e72f32112b68";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script>
+  (function() {
+    var enableLang = CONFIG.code_language.enable && CONFIG.code_language.default;
+    var enableCopy = CONFIG.copy_btn;
+    if (!enableLang && !enableCopy) {
+      return;
+    }
+
+    function getBgClass(ele) {
+      return Fluid.utils.getBackgroundLightness(ele) >= 0 ? 'code-widget-light' : 'code-widget-dark';
+    }
+
+    var copyTmpl = '';
+    copyTmpl += '<div class="code-widget">';
+    copyTmpl += 'LANG';
+    copyTmpl += '</div>';
+    jQuery('.markdown-body pre').each(function() {
+      var $pre = jQuery(this);
+      if ($pre.find('code.mermaid').length > 0) {
+        return;
+      }
+      if ($pre.find('span.line').length > 0) {
+        return;
+      }
+
+      var lang = '';
+
+      if (enableLang) {
+        lang = CONFIG.code_language.default;
+        if ($pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2 && $pre.children().hasClass('hljs')) {
+          lang = $pre[0].children[0].classList[1];
+        } else if ($pre[0].getAttribute('data-language')) {
+          lang = $pre[0].getAttribute('data-language');
+        } else if ($pre.parent().hasClass('sourceCode') && $pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2) {
+          lang = $pre[0].children[0].classList[1];
+          $pre.parent().addClass('code-wrapper');
+        } else if ($pre.parent().hasClass('markdown-body') && $pre[0].classList.length === 0) {
+          $pre.wrap('<div class="code-wrapper"></div>');
+        }
+        lang = lang.toUpperCase().replace('NONE', CONFIG.code_language.default);
+      }
+      $pre.append(copyTmpl.replace('LANG', lang).replace('code-widget">',
+        getBgClass($pre[0]) + (enableCopy ? ' code-widget copy-btn" data-clipboard-snippet><i class="iconfont icon-copy"></i>' : ' code-widget">')));
+
+      if (enableCopy) {
+        Fluid.utils.createScript('https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js', function() {
+          var clipboard = new window.ClipboardJS('.copy-btn', {
+            target: function(trigger) {
+              var nodes = trigger.parentNode.childNodes;
+              for (var i = 0; i < nodes.length; i++) {
+                if (nodes[i].tagName === 'CODE') {
+                  return nodes[i];
+                }
+              }
+            }
+          });
+          clipboard.on('success', function(e) {
+            e.clearSelection();
+            e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-copy', 'icon-success');
+            setTimeout(function() {
+              e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-success', 'icon-copy');
+            }, 2000);
+          });
+        });
+      }
+    });
+  })();
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
