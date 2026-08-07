@@ -1,0 +1,911 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/xuange.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="木尘痕">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Horde 使用补充：Artifact 去重效果与带宽瓶颈  前言 上一篇文章记录了从 GitLab CI 迁移到 Horde 的过程，以及 BuildGraph、Perforce、UGS、Artifact 和 UBA 等能力在实际项目中的使用情况。当时对 Horde 的基本判断是：它并不是一个各方面都成熟的通用 CI 产品，但作为 UE 项目的构建基础设施，整体方向符合项目需求。 经过一段时间">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Horde 使用补充：Artifact 去重效果与带宽瓶颈">
+<meta property="og:url" content="http://muchenhen.com/posts/13783/index.html">
+<meta property="og:site_name" content="虚无之境">
+<meta property="og:description" content="Horde 使用补充：Artifact 去重效果与带宽瓶颈  前言 上一篇文章记录了从 GitLab CI 迁移到 Horde 的过程，以及 BuildGraph、Perforce、UGS、Artifact 和 UBA 等能力在实际项目中的使用情况。当时对 Horde 的基本判断是：它并不是一个各方面都成熟的通用 CI 产品，但作为 UE 项目的构建基础设施，整体方向符合项目需求。 经过一段时间">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-08-07T13:33:13.000Z">
+<meta property="article:modified_time" content="2026-08-07T13:37:02.942Z">
+<meta property="article:author" content="木尘痕">
+<meta property="article:tag" content="CICD">
+<meta property="article:tag" content="Horde">
+<meta property="article:tag" content="Unreal Engine">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Horde 使用补充：Artifact 去重效果与带宽瓶颈 - 虚无之境</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"muchenhen.com","root":"/","version":"1.9.1","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"bbb32ef470b36fe5f1e4e72f32112b68","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+
+  
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>虚无之境</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://cdn.jsdelivr.net/gh/muchenhen/MuImageStore@main/NagisaKaworu.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Horde 使用补充：Artifact 去重效果与带宽瓶颈"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        木尘痕
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-08-07 21:33" pubdate>
+          2026年8月7日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          9 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Horde 使用补充：Artifact 去重效果与带宽瓶颈</h1>
+            
+            <div class="markdown-body">
+              
+              <h1 id="horde-使用补充artifact-去重效果与带宽瓶颈"><a class="markdownIt-Anchor" href="#horde-使用补充artifact-去重效果与带宽瓶颈"></a> Horde 使用补充：Artifact 去重效果与带宽瓶颈</h1>
+<h2 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h2>
+<p>上一篇文章记录了从 GitLab CI 迁移到 Horde 的过程，以及 BuildGraph、Perforce、UGS、Artifact 和 UBA 等能力在实际项目中的使用情况。当时对 Horde 的基本判断是：它并不是一个各方面都成熟的通用 CI 产品，但作为 UE 项目的构建基础设施，整体方向符合项目需求。</p>
+<p>经过一段时间的持续运行，一些在迁移和探索阶段不容易察觉的问题开始逐渐显现。其中最值得补充的是 Horde Artifact 的去重机制。</p>
+<p>早期已经注意到 Horde Storage 采用了内容寻址存储，也因此默认认为不同构建版本之间的重复内容会自动得到复用。但从实际存储占用来看，这项能力并没有表现出预期中的效果。</p>
+<p>后续重新检查 BuildGraph 配置和 <code>CreateArtifact</code> Task 后，才发现此前遗漏了一个重要参数：<code>Dedupe</code>。</p>
+<p>这个参数带来的变化很明显，但实际收益并不只取决于 Horde。产物的拆分方式、相邻版本之间的变化范围，以及 Horde Server 自身的网络吞吐，都会直接影响最终效果。</p>
+<h2 id="被遗漏的-dedupe-参数"><a class="markdownIt-Anchor" href="#被遗漏的-dedupe-参数"></a> 被遗漏的 Dedupe 参数</h2>
+<p>项目早期的 BuildGraph 主要参考 Unreal Engine 官方提供的 Template 进行搭建，构建、打包和 Artifact 上传流程都能够正常运行。</p>
+<p>在这个阶段，关注点主要集中在以下几个方面：</p>
+<ul>
+<li>构建流程能否完整迁移到 BuildGraph；</li>
+<li>Agent 是否能够稳定完成任务；</li>
+<li>构建产物能否正常上传和下载；</li>
+<li>UGS 能否获取对应版本的 Editor；</li>
+<li>Windows 和主机平台能否正常产出包体。</li>
+</ul>
+<p>由于 Artifact 的基本功能已经能够使用，并且对 Horde Storage 的认知一直是“基于 CAS 的存储系统”，因此没有继续深入检查 <code>CreateArtifact</code> Task 的具体实现和全部参数。</p>
+<p>但在官方的 BuildGraph Task 文档中，<code>CreateArtifact</code> 还提供了一个可选的 <code>Dedupe</code> 参数，其作用是复用前一个 Artifact 中已经存在的 Blob。</p>
+<p>配置方式本身很简单：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">CreateArtifact</span></span><br><span class="hljs-tag">    <span class="hljs-attr">Name</span>=<span class="hljs-string">&quot;$(ArtifactName)&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">Type</span>=<span class="hljs-string">&quot;$(ArtifactType)&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">BaseDir</span>=<span class="hljs-string">&quot;$(ArtifactBaseDir)&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">Files</span>=<span class="hljs-string">&quot;$(ArtifactFiles)&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">Dedupe</span>=<span class="hljs-string">&quot;true&quot;</span> /&gt;</span><br></code></pre></td></tr></table></figure>
+<p>在没有显式开启该参数时，虽然 Horde Storage 本身仍然建立在内容寻址存储之上，但从项目实际观察到的结果看，不同构建版本之间并没有获得预期中的 Blob 复用效果。每个版本的 Artifact 基本都在独立增加存储占用。</p>
+<p>这也是探索阶段比较容易出现的一类问题：系统具备某项底层能力，并不代表当前使用的调用路径已经自动启用了这项能力。</p>
+<p><code>Dedupe</code> 又不是 <code>CreateArtifact</code> 的必填参数。如果主要根据官方示例完成流程搭建，而没有继续阅读 Task 文档或源码，很容易在流程已经正常运行后忽略它。</p>
+<h2 id="开启-dedupe-后的存储变化"><a class="markdownIt-Anchor" href="#开启-dedupe-后的存储变化"></a> 开启 Dedupe 后的存储变化</h2>
+<p>目前项目的完整包体约为 44GB，并被拆分为三千多个 Pak。日常构建频率约为每小时一次，Artifact 保留周期为 14 天。</p>
+<p>按照当前构建频率计算，14 天内至少会积累约 140 个完整包体。如果所有版本都独立占用空间，逻辑总量至少在 6TB 以上。</p>
+<p>开启 <code>Dedupe</code> 后，同一周期内这些 Artifact 的实际占用只有 800GB 多。</p>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th style="text-align:right">当前情况</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>单个完整包体</td>
+<td style="text-align:right">约 44GB</td>
+</tr>
+<tr>
+<td>Pak 数量</td>
+<td style="text-align:right">3000+</td>
+</tr>
+<tr>
+<td>构建频率</td>
+<td style="text-align:right">约每小时一次</td>
+</tr>
+<tr>
+<td>Artifact 保留周期</td>
+<td style="text-align:right">14 天</td>
+</tr>
+<tr>
+<td>保留版本数量</td>
+<td style="text-align:right">至少约 140 个</td>
+</tr>
+<tr>
+<td>未去重时的逻辑总量</td>
+<td style="text-align:right">至少约 6TB</td>
+</tr>
+<tr>
+<td>开启 Dedupe 后的实际占用</td>
+<td style="text-align:right">800GB 多</td>
+</tr>
+</tbody>
+</table>
+<p>这项收益对于高频构建的大型项目较为直接。</p>
+<p>游戏包体本身体积较大，同时还需要保留一定数量的历史版本，用于测试、问题复现和版本回退。如果每个版本都按照完整包体独立存储，磁盘占用会随着构建频率近似线性增长。</p>
+<p>在当前产物结构下，开启 <code>Dedupe</code> 后，磁盘增长速度主要由相邻版本之间实际发生变化的内容决定，而不再完全由每次构建的完整包体大小决定。</p>
+<h2 id="较高收益来自细粒度-pak-拆分"><a class="markdownIt-Anchor" href="#较高收益来自细粒度-pak-拆分"></a> 较高收益来自细粒度 Pak 拆分</h2>
+<p><code>Dedupe</code> 并不是一个对所有 Artifact 都能产生相同效果的开关。</p>
+<p>当前能够获得较高命中率，一个重要前提是包体已经拆分为三千多个 Pak。</p>
+<p>在每小时构建一次的情况下，相邻版本之间通常只有部分代码和资源发生变化。大量 Pak 的内容在连续多个版本中保持不变，因此可以直接复用已有 Blob，只有发生变化的部分需要增加新的存储数据。</p>
+<p>也就是说，当前的存储收益实际来自两个条件的共同作用：</p>
+<ol>
+<li><code>CreateArtifact</code> 显式开启了 <code>Dedupe</code>；</li>
+<li>最终产物具有足够细且相对稳定的文件边界。</li>
+</ol>
+<p>如果只有第一个条件，但最终产物仍然是少量大型文件，实际收益可能十分有限。</p>
+<p>这也解释了为什么在最初的探索阶段，即使更早发现 <code>Dedupe</code> 参数，也未必能够立即得到现在的效果。当时尚未采用当前的分 Chunk 策略，包体没有被拆分为数量较多的 Pak，相邻版本之间可直接复用的文件边界远少于现在。</p>
+<p>因此，不能将当前节省的存储空间完全归因于 Horde，也不能简单理解为增加一个参数后，任何项目都能获得相同量级的效果。</p>
+<p>更准确的结论是：</p>
+<blockquote>
+<p>Horde 提供了跨 Artifact 复用 Blob 的能力，而包体拆分策略决定了这项能力能够发挥到什么程度。</p>
+</blockquote>
+<h2 id="ps-平台的反例"><a class="markdownIt-Anchor" href="#ps-平台的反例"></a> PS 平台的反例</h2>
+<p>PS 平台的最终产物提供了一个较为明显的反例。</p>
+<p>该平台最终生成的主要包体是一个大型 <code>.pkg</code> 文件。实际测试中，即使相邻版本在内容层面的变化并不大，不同版本的 <code>.pkg</code> 在 <code>Dedupe</code> 下仍然几乎没有产生有效命中。</p>
+<p>每个版本依然会占据接近完整包体大小的存储空间。</p>
+<p>目前没有对 <code>.pkg</code> 内部的数据布局和版本间二进制差异进行进一步拆解，因此无法直接判断具体是哪一层处理导致了低命中率。但至少从最终结果来看，单一大型 <code>.pkg</code> 并不适合当前的 Artifact 去重方式。</p>
+<p>这个现象也说明，CAS 识别的是最终数据中的可复用内容，而不是资源或游戏逻辑层面的“相同”。</p>
+<p>两个版本可能只修改了少量游戏内容，但如果最终输出文件的二进制布局发生了较大变化，存储系统并不能根据业务语义判断其中哪些资源实际没有改变。</p>
+<p>对于需要评估 Artifact 去重收益的项目，不能只关注完整包体大小，还需要关注以下问题：</p>
+<ul>
+<li>最终产物由多少个文件组成；</li>
+<li>文件边界在不同版本之间是否稳定；</li>
+<li>单个文件内部的少量变化是否会导致整体二进制发生较大改变；</li>
+<li>压缩、签名和平台封装后，输出结果是否仍然具有可复用性；</li>
+<li>构建频率是否足够高，使相邻版本之间保持较小差异。</li>
+</ul>
+<p>因此，大文件并不天然意味着更高的去重收益。相比文件大小，产物结构和版本间的数据稳定性更重要。</p>
+<h2 id="对游戏分发的附带影响"><a class="markdownIt-Anchor" href="#对游戏分发的附带影响"></a> 对游戏分发的附带影响</h2>
+<p>细粒度 Pak 拆分带来的收益并不只体现在 Horde Artifact 存储上。</p>
+<p>同一套产物结构后来也被用于基于 Unsync 的游戏包分发。由于相邻版本之间大量 Pak 保持不变，分发时不再需要重复传输整个完整包体，只需要处理发生变化的部分。</p>
+<p>不过，这部分收益主要来自 Pak 拆分策略和 Unsync 的同步能力，并不属于 Horde Artifact 本身的功能，因此不适合直接计入 Horde 的优势。</p>
+<p>两者之间更准确的关系是：相同的产物结构同时改善了 Artifact 的去重效果和游戏包的增量分发效率。</p>
+<p>这也进一步说明，构建、存储和分发并不是完全独立的三个环节。对最终产物结构进行调整，可能同时影响多个基础设施系统的表现。</p>
+<h2 id="存储占用下降后带宽成为新的瓶颈"><a class="markdownIt-Anchor" href="#存储占用下降后带宽成为新的瓶颈"></a> 存储占用下降后，带宽成为新的瓶颈</h2>
+<p><code>Dedupe</code> 解决的主要是 Artifact 长期保留时的存储占用，但并不会消除构建完成时的上传压力。</p>
+<p>在当前环境中，多数 Agent 使用千兆内网，而 Horde Server 需要同时承接所有 Agent 的 Artifact 上传，以及客户端和其他 Agent 的 Artifact 下载。</p>
+<p>单台 Agent 的千兆带宽看起来并不低，但 Horde Server 面对的是多台构建机的汇聚流量。</p>
+<p>当多台 Agent 在接近的时间完成构建，并同时开始上传几十 GB 的产物时，Horde Server 如果同样只有千兆带宽，很容易成为整个链路的瓶颈。</p>
+<p>实际运行中已经出现过由于带宽不足导致 Artifact 上传时间过长，最终触发超时的情况。</p>
+<p>这类问题在排查时容易被误认为是以下原因：</p>
+<ul>
+<li>Agent 状态异常；</li>
+<li>Horde Server 处理能力不足；</li>
+<li>Artifact Task 本身不稳定；</li>
+<li>反向代理配置存在问题；</li>
+<li>上传超时时间设置过短。</li>
+</ul>
+<p>但如果服务端网络已经长时间跑满，仅调整任务配置或重试通常无法解决根本问题。</p>
+<p>在多数 Agent 使用千兆网络的情况下，Horde Server 所在机器更适合配置至少 10Gbps，也就是万兆级别的内网收发能力。</p>
+<p>万兆并不是 Horde 的通用最低配置，而是当前这种负载下较为合理的容量规划：</p>
+<ul>
+<li>单个完整产物约 44GB；</li>
+<li>构建频率较高；</li>
+<li>存在多台 Agent；</li>
+<li>多个任务可能同时上传；</li>
+<li>Horde Server 还需要同时提供 Artifact 下载。</li>
+</ul>
+<p>服务端网络不能只按照单台 Agent 的峰值配置，而应按照并发上传和下载产生的聚合流量配置。</p>
+<h2 id="万兆网络并不是唯一条件"><a class="markdownIt-Anchor" href="#万兆网络并不是唯一条件"></a> 万兆网络并不是唯一条件</h2>
+<p>将 Horde Server 升级为万兆网络后，网络链路的容量会得到明显改善，但网卡带宽并不是整个 Artifact 链路中唯一可能出现的瓶颈。</p>
+<p>完整的数据路径通常还包括：</p>
+<ul>
+<li>Agent 本地磁盘读取；</li>
+<li>Agent 网络出口；</li>
+<li>交换机端口和上联链路；</li>
+<li>反向代理；</li>
+<li>Horde Server 网络接口；</li>
+<li>Horde Server 或存储节点的磁盘写入；</li>
+<li>Artifact 后端存储；</li>
+<li>数据库及相关元数据操作。</li>
+</ul>
+<p>其中任何一层吞吐不足，都可能表现为上传速度下降或任务超时。</p>
+<p>因此，在处理 Artifact 上传问题时，更适合同时观察以下指标：</p>
+<ul>
+<li>Horde Server 的网络收发速率；</li>
+<li>Agent 的上传速率；</li>
+<li>服务端磁盘读写吞吐和延迟；</li>
+<li>同一时间的上传任务数量；</li>
+<li>反向代理和服务端是否存在连接或请求超时；</li>
+<li>Artifact 存储所在磁盘的剩余容量和性能。</li>
+</ul>
+<p>如果服务端已经具备万兆网络，但存储设备只能持续写入较低的速度，最终上传吞吐仍然会受磁盘限制。</p>
+<p>反过来，如果磁盘性能足够，但 Horde Server 只有千兆入口，多 Agent 并发时仍然会首先耗尽网络带宽。</p>
+<p>Artifact 基础设施的容量规划需要将网络和存储作为一条完整链路考虑，而不是单独提高某一项硬件规格。</p>
+<h2 id="对早期结论的修正"><a class="markdownIt-Anchor" href="#对早期结论的修正"></a> 对早期结论的修正</h2>
+<p>上一篇文章中曾将 Artifact 管理列为 Horde 做得比较好的部分，主要依据是 Horde Server 基于 CAS，并且具有产物管理、生命周期和分发能力。</p>
+<p>这个判断本身没有发生根本变化，但经过后续使用，需要增加几个限制条件。</p>
+<p>首先，底层采用 CAS，不代表当前 BuildGraph 流程已经获得了预期的跨版本去重效果。对于 <code>CreateArtifact</code>，需要明确检查 <code>Dedupe</code> 参数是否开启。</p>
+<p>其次，去重效果并不只由 Horde 决定。产物拆分越细、文件边界越稳定、相邻版本差异越小，复用效果通常越容易体现。单一大型平台包可能几乎无法受益。</p>
+<p>最后，存储空间和传输吞吐是两个不同问题。即使 <code>Dedupe</code> 大幅降低了长期磁盘占用，Artifact 在生成和分发时仍然会形成较高的瞬时网络负载。服务端需要按照多 Agent 汇聚流量进行网络规划。</p>
+<p>因此，对 Horde Artifact 更完整的理解应当是：</p>
+<blockquote>
+<p>Horde 提供了适合大型 UE 项目的产物存储基础，但能否真正获得较高的存储和分发效率，仍然取决于 BuildGraph 配置、产物结构，以及服务端基础设施是否匹配实际负载。</p>
+</blockquote>
+<h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
+<p>这次补充主要修正了探索阶段对 Artifact 的两个认识。</p>
+<p>一方面，Horde Storage 具备内容寻址和数据复用能力，但在 <code>CreateArtifact</code> 流程中，仍然需要显式开启 <code>Dedupe</code>，才能得到预期中的跨版本 Blob 复用效果。</p>
+<p>在约 44GB 包体、三千多个 Pak、每小时一次构建和 14 天保留周期的情况下，至少 6TB 的逻辑包体最终只占用了 800GB 多的实际空间。这项效果主要建立在细粒度 Pak 拆分和相邻版本差异较小的基础上。</p>
+<p>另一方面，存储占用的下降并不会同步解决 Artifact 上传时的带宽压力。多台千兆 Agent 并发上传时，Horde Server 需要承接聚合流量。对于当前规模，服务端配置万兆内网更接近合理的基础条件，否则大产物上传可能由于耗时过长而触发超时。</p>
+<p>Horde 的不少能力都存在类似特征：架构方向比较适合 UE 项目，但真正落地后的效果，往往取决于一些没有被充分强调的配置和工程条件。</p>
+<p>官方 Template 可以作为理解 Horde 工作流的入口，但不宜直接视为适合所有生产环境的最终方案。流程跑通之后，仍然需要结合产物结构、构建频率、Agent 数量、网络吞吐和存储成本，对每一条数据链路进行重新验证。</p>
+
+              
+            </div>
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Unreal-Engine/">#Unreal Engine</a>
+      
+        <a href="/tags/Horde/">#Horde</a>
+      
+        <a href="/tags/CICD/">#CICD</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Horde 使用补充：Artifact 去重效果与带宽瓶颈</div>
+      <div>http://muchenhen.com/posts/13783/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>木尘痕</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年8月7日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/43193/" title="从 GitLab CI 到 Horde：一个 UE5 项目的构建系统迁移复盘">
+                        <span class="hidden-mobile">从 GitLab CI 到 Horde：一个 UE5 项目的构建系统迁移复盘</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+    <!-- 备案信息 ICP for China -->
+    <div class="beian">
+  <span>
+    <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">
+      
+    </a>
+  </span>
+  
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?bbb32ef470b36fe5f1e4e72f32112b68";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script>
+  (function() {
+    var enableLang = CONFIG.code_language.enable && CONFIG.code_language.default;
+    var enableCopy = CONFIG.copy_btn;
+    if (!enableLang && !enableCopy) {
+      return;
+    }
+
+    function getBgClass(ele) {
+      return Fluid.utils.getBackgroundLightness(ele) >= 0 ? 'code-widget-light' : 'code-widget-dark';
+    }
+
+    var copyTmpl = '';
+    copyTmpl += '<div class="code-widget">';
+    copyTmpl += 'LANG';
+    copyTmpl += '</div>';
+    jQuery('.markdown-body pre').each(function() {
+      var $pre = jQuery(this);
+      if ($pre.find('code.mermaid').length > 0) {
+        return;
+      }
+      if ($pre.find('span.line').length > 0) {
+        return;
+      }
+
+      var lang = '';
+
+      if (enableLang) {
+        lang = CONFIG.code_language.default;
+        if ($pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2 && $pre.children().hasClass('hljs')) {
+          lang = $pre[0].children[0].classList[1];
+        } else if ($pre[0].getAttribute('data-language')) {
+          lang = $pre[0].getAttribute('data-language');
+        } else if ($pre.parent().hasClass('sourceCode') && $pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2) {
+          lang = $pre[0].children[0].classList[1];
+          $pre.parent().addClass('code-wrapper');
+        } else if ($pre.parent().hasClass('markdown-body') && $pre[0].classList.length === 0) {
+          $pre.wrap('<div class="code-wrapper"></div>');
+        }
+        lang = lang.toUpperCase().replace('NONE', CONFIG.code_language.default);
+      }
+      $pre.append(copyTmpl.replace('LANG', lang).replace('code-widget">',
+        getBgClass($pre[0]) + (enableCopy ? ' code-widget copy-btn" data-clipboard-snippet><i class="iconfont icon-copy"></i>' : ' code-widget">')));
+
+      if (enableCopy) {
+        Fluid.utils.createScript('https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js', function() {
+          var clipboard = new window.ClipboardJS('.copy-btn', {
+            target: function(trigger) {
+              var nodes = trigger.parentNode.childNodes;
+              for (var i = 0; i < nodes.length; i++) {
+                if (nodes[i].tagName === 'CODE') {
+                  return nodes[i];
+                }
+              }
+            }
+          });
+          clipboard.on('success', function(e) {
+            e.clearSelection();
+            e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-copy', 'icon-success');
+            setTimeout(function() {
+              e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-success', 'icon-copy');
+            }, 2000);
+          });
+        });
+      }
+    });
+  })();
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
